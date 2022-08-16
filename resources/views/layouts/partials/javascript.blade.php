@@ -69,4 +69,4 @@ $moment_time_format = App\Models\System::getProperty('time_format') == '12' ? 'h
 <script type="text/javascript" src="{{asset('js/currency_exchange.js') }}"></script>
 <script type="text/javascript" src="{{asset('js/customer.js') }}"></script>
 <script type="text/javascript" src="{{asset('js/cropper.js') }}"></script>
-<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+

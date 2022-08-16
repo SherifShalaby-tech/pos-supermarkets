@@ -109,6 +109,7 @@
 
     @include('layouts.partials.currencies_obj')
     @include('layouts.partials.javascript')
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <script>
         $.ajaxSetup({
             headers: {
