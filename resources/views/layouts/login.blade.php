@@ -1,8 +1,8 @@
 @php
-$logo = App\Models\System::getProperty('logo');
-$site_title = App\Models\System::getProperty('site_title');
+    $logo = App\Models\System::getProperty('logo');
+    $site_title = App\Models\System::getProperty('site_title');
 @endphp
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html>
 
 <head>
@@ -19,13 +19,13 @@ $site_title = App\Models\System::getProperty('site_title');
 </head>
 
 <body>
-    <input type="hidden" id="__language" value="{{session('language')}}">
-    <div class="page login-page" @yield('content') </div>
-        <script type="text/javascript">
-            base_path = "{{url('/')}}";
-        </script>
-        @include('layouts.partials.javascript')
-        @yield('javascript')
+<input type="hidden" id="__language" value="{{session('language')}}">
+<div class="page login-page" @yield('content') </div>
+<script type="text/javascript">
+    base_path = "{{url('/')}}";
+</script>
+@include('layouts.partials.javascript-auth')
+@yield('javascript')
 </body>
 
 </html>
