@@ -225,7 +225,7 @@ class SupplierServiceController extends Controller
                 ])
                 ->make(true);
         }
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
@@ -274,7 +274,7 @@ class SupplierServiceController extends Controller
         $supplier = Supplier::find($supplier_service->supplier_id);
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $taxes = Tax::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('supplier_service.show')->with(compact(
             'supplier_service',
@@ -317,7 +317,7 @@ class SupplierServiceController extends Controller
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
 
         $stores  = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('supplier_service.edit')->with(compact(
             'add_stock',

@@ -545,7 +545,7 @@ class SellController extends Controller
         $delivery_zones = DeliveryZone::pluck('name', 'id');
 
         $stores  = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('sale.create')->with(compact(
             'walk_in_customer',

@@ -119,7 +119,7 @@ class WagesAndCompensationController extends Controller
     {
         $employees = Employee::getDropdown();
         $payment_types = WagesAndCompensation::getPaymentTypes();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('wages_and_compensations.create')->with(compact(
             'employees',
@@ -234,7 +234,7 @@ class WagesAndCompensationController extends Controller
         $payment_types = WagesAndCompensation::getPaymentTypes();
 
         $wages_and_compensation = WagesAndCompensation::find($id);
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('wages_and_compensations.show')->with(compact(
             'wages_and_compensation',
@@ -256,7 +256,7 @@ class WagesAndCompensationController extends Controller
         $payment_types = WagesAndCompensation::getPaymentTypes();
 
         $wages_and_compensation = WagesAndCompensation::find($id);
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('wages_and_compensations.edit')->with(compact(
             'wages_and_compensation',

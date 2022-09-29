@@ -80,7 +80,7 @@ class CashOutController extends Controller
         )
             ->groupBy('cash_register_transactions.id')->orderBy('created_at', 'desc')->get();
 
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('cash_out.index')->with(compact(
             'users',
@@ -129,7 +129,7 @@ class CashOutController extends Controller
     public function edit($id)
     {
         $cash_out = CashRegisterTransaction::find($id);
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('cash_out.edit')->with(compact(
             'cash_out',

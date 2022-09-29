@@ -55,7 +55,7 @@ class CashOutAdjustmentController extends Controller
     public function create()
     {
         $stores = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('cash_out_adjustment.create')->with(compact(
             'stores',
@@ -116,7 +116,7 @@ class CashOutAdjustmentController extends Controller
     public function edit($id)
     {
         $stores = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
         $cash_out_adjustment = CashOutAdjustment::find($id);
 
         return view('cash_out_adjustment.edit')->with(compact(

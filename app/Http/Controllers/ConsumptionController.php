@@ -236,7 +236,7 @@ class ConsumptionController extends Controller
         $products = Product::getProductVariationDropDown(true);
         $units = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
 
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $chefs = Employee::getDropdownChefs();
 
@@ -309,7 +309,7 @@ class ConsumptionController extends Controller
         $products = Product::getProductVariationDropDown(true);
         $units = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
 
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $chefs = Employee::getDropdownChefs();
 
@@ -355,7 +355,7 @@ class ConsumptionController extends Controller
         $products = Product::getProductVariationDropDown(true);
         $units = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
 
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $chefs = Employee::getDropdownChefs();
 

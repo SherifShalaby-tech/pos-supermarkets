@@ -76,7 +76,7 @@ class ProductController extends Controller
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = Customer::getCustomerTreeArray();
         $stores  = Store::getDropdown();
-        $users  = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users  = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::pluck('name', 'id');
         $page = 'product_stock';
 
@@ -395,7 +395,7 @@ class ProductController extends Controller
         $suppliers = Supplier::pluck('name', 'id');
 
         $stores  = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('product.index')->with(compact(
             'product_classes',
@@ -439,7 +439,7 @@ class ProductController extends Controller
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = CustomerType::pluck('name', 'id');
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores  = Store::all();
         $quick_add = request()->quick_add;
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');

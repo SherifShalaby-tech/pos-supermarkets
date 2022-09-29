@@ -147,7 +147,7 @@ class QuotationController extends Controller
         $discount_customer_types = Customer::getCustomerTreeArray();
 
         $stores  = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('quotation.create')->with(compact(
             'walk_in_customer',
@@ -232,7 +232,7 @@ class QuotationController extends Controller
         $discount_customer_types = Customer::getCustomerTreeArray();
 
         $stores  = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('quotation.edit')->with(compact(
             'sale',

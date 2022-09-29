@@ -120,7 +120,7 @@ class ExpenseController extends Controller
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $stores = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('expense.create')->with(compact(
             'expense_categories',
@@ -252,7 +252,7 @@ class ExpenseController extends Controller
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $expense_beneficiaries = ExpenseBeneficiary::where('expense_category_id', $expense->expense_category_id)->pluck('name', 'id');
         $stores = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('expense.edit')->with(compact(
             'expense',

@@ -223,7 +223,7 @@ class RawMaterialController extends Controller
         $stores  = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
         $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
-        $users  = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users  = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $products = Product::getProductVariationDropDown(true);
 
         return view('raw_material.index')->with(compact(
@@ -251,7 +251,7 @@ class RawMaterialController extends Controller
         $units = Unit::getUnitDropdown(false, true);
         $units_all = Unit::getUnitDropdown(false, false);
 
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $quick_add = request()->quick_add;
         $suppliers = Supplier::pluck('name', 'id');
 
@@ -390,7 +390,7 @@ class RawMaterialController extends Controller
         $units = Unit::getUnitDropdown(false, true);
         $units_all = Unit::getUnitDropdown(false, false);
 
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
 
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');

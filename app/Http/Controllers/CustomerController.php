@@ -858,7 +858,7 @@ class CustomerController extends Controller
 
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');

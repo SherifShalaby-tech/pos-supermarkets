@@ -83,7 +83,7 @@ class RemoveStockController extends Controller
         $remove_stocks = $query->where('status', 'compensated')->orderBy('compensated_at', 'desc')->get();
 
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
@@ -132,7 +132,7 @@ class RemoveStockController extends Controller
         $remove_stocks = $query->get();
 
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 

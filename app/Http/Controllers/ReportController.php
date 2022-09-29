@@ -354,7 +354,7 @@ class ReportController extends Controller
 
         $stores = Store::getDropdown();
         $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('reports.daily_sales_summary')->with(compact(
             'stores',
@@ -2415,7 +2415,7 @@ class ReportController extends Controller
         )->groupBy('transactions.id')->get();
 
 
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
 
         return view('reports.user_report')->with(compact(

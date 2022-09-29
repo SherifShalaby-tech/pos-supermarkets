@@ -135,7 +135,7 @@ class TransferController extends Controller
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = Customer::getCustomerTreeArray();
 
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         $is_raw_material = request()->segment(1) == 'raw-materials' ? true : false;
 

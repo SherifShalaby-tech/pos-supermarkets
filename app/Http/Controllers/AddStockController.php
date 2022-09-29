@@ -232,7 +232,7 @@ class AddStockController extends Controller
                 ])
                 ->make(true);
         }
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
@@ -282,7 +282,7 @@ class AddStockController extends Controller
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
 
         $stores  = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('add_stock.create')->with(compact(
             'is_raw_material',
@@ -460,7 +460,7 @@ class AddStockController extends Controller
         $supplier = Supplier::find($add_stock->supplier_id);
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $taxes = Tax::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('add_stock.show')->with(compact(
             'add_stock',
@@ -503,7 +503,7 @@ class AddStockController extends Controller
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
 
         $stores  = Store::getDropdown();
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('add_stock.edit')->with(compact(
             'add_stock',
@@ -776,7 +776,7 @@ class AddStockController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
-        $users = User::pluck('name', 'id');
+        $users = User::Notview()->pluck('name', 'id');
 
         return view('add_stock.import')->with(compact(
             'suppliers',
@@ -908,7 +908,7 @@ class AddStockController extends Controller
     public function getSourceByTypeDropdown($type = null)
     {
         if ($type == 'user') {
-            $array = User::pluck('name', 'id');
+            $array = User::Notview()->pluck('name', 'id');
         }
         if ($type == 'pos') {
             $array = StorePos::pluck('name', 'id');

@@ -419,7 +419,7 @@ class SupplierController extends Controller
 
             $supplier_details = $query->first();
             $payment_type_array = $this->commonUtil->getPaymentTypeArray();
-            $users = User::pluck('name', 'id');
+            $users = User::Notview()->pluck('name', 'id');
 
             return view('supplier.partial.pay_supplier_due')->with(compact(
                 'supplier_details',

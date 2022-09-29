@@ -56,7 +56,7 @@ class GiftCardController extends Controller
         $gift_cards = $query->get();
 
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('gift_card.index')->with(compact(
             'gift_cards',

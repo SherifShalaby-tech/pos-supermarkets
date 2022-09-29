@@ -79,7 +79,7 @@ class CashInController extends Controller
         )
             ->groupBy('cash_register_transactions.id')->orderBy('created_at', 'desc')->get();
 
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('cash_in.index')->with(compact(
             'users',
@@ -128,7 +128,7 @@ class CashInController extends Controller
     public function edit($id)
     {
         $cash_in = CashRegisterTransaction::find($id);
-        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('cash_in.edit')->with(compact(
             'cash_in',
