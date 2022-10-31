@@ -62,6 +62,8 @@
                     <th>@lang('lang.payment_status')</th>
                     <th>@lang('lang.payment_type')</th>
                     <th class="sum">@lang('lang.grand_total')</th>
+                    <th>@lang('lang.createdBy')</th>
+                    <th>@lang('lang.returned_by')</th>
                     <th class="sum">@lang('lang.paid')</th>
                     <th class="sum">@lang('lang.due')</th>
                     <th class="notexport">@lang('lang.action')</th>
@@ -82,6 +84,8 @@
                     <td>@if(!empty($sale->transaction_payments->count() > 0)){{$payment_types[$sale->transaction_payments->first()->method]}}@endif
                     </td>
                     <td>{{@num_format($sale->final_total)}}</td>
+                    <td>{{$sale->created_by_user->name}}</td>
+                    <td>{{$sale->created_by_user->name}}</td>
                     <td>{{@num_format($sale->transaction_payments->sum('amount'))}}</td>
                     <td>{{@num_format($sale->final_total - $sale->transaction_payments->sum('amount'))}}</td>
 

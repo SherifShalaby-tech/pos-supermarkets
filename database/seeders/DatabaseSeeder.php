@@ -192,7 +192,8 @@ class DatabaseSeeder extends Seeder
         //call the permission and currencies seeder
         $this->call([
             PermissionTableSeeder::class,
-            CurrenciesTableSeeder::class
+            CurrenciesTableSeeder::class,
+            PrinterSeeder::class,
         ]);
     }
 }

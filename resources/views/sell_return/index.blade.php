@@ -98,6 +98,8 @@
                         <th class="sum">@lang('lang.grand_total')</th>
                         <th class="sum">@lang('lang.paid')</th>
                         <th class="sum">@lang('lang.due')</th>
+                        <th>@lang('lang.createdBy')</th>
+                        <th>@lang('lang.returned_by')</th>
                         <th>@lang('lang.notes')</th>
                         <th>@lang('lang.files')</th>
                         <th class="notexport">@lang('lang.action')</th>
@@ -218,6 +220,16 @@
                     {
                         data: "due",
                         name: "due",
+                        searchable: false
+                    },
+                    {
+                        data: "createdBy",
+                        name: "createdBy",
+                        searchable: false
+                    },
+                    {
+                        data: "returnedBy",
+                        name: "returnedBy",
                         searchable: false
                     },
                     {

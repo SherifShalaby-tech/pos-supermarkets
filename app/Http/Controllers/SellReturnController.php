@@ -154,6 +154,12 @@ class SellReturnController extends Controller
 
                     return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
                 })
+                ->addColumn('createdBy', function ($row) {
+                    return $row->created_by_user->name;
+                })
+                ->addColumn('returnedBy', function ($row) {
+                    return $row->created_by_user->name;
+                })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $paid = $row->transaction_payments->sum('amount');
                     $due = $row->final_total - $paid;

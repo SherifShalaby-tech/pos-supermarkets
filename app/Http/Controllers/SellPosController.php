@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Session;
 use App\Models\Brand;
 use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
@@ -1188,7 +1188,9 @@ class SellPosController extends Controller
                 ->leftjoin('users', 'transactions.created_by', 'users.id')
                 ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
                 ->where('type', 'sell')->where('status', '!=', 'draft');
-
+            if(strtolower(Session::get('user.job_title')) == 'cashier'){
+                $query->where('created_by',Auth::user()->id);
+            }
             if (!empty($store_id)) {
                 $query->where('transactions.store_id', $store_id);
             }

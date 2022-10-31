@@ -182,6 +182,18 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                 </span>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="printers">{{trans('lang.printers')}}</label>
+                <div class="input-group my-group">
+                    <select id="printers" data-live-search="true" class="selectpicker form-control" name="printers[]" multiple>
+                        @foreach($printers as $printer)
+                            <option value="{{$printer->id}}">{{$printer->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
     @endif
     <div class="col-md-12 " style="margin-top: 10px;">
         <div class="dropzone" id="my-dropzone">

@@ -602,6 +602,8 @@ class HomeController extends Controller
 
         $purchase = $transaction_query->total_purchases ?? 0;
 
+        $total_tax = Transaction::where('type','sell')->sum('total_tax'); // total tax
+
         $revenue -= $sell_return;
 
         $cost_query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
@@ -783,6 +785,7 @@ class HomeController extends Controller
         $data['sell_return'] = $sell_return;
         $data['profit'] = $profit;
         $data['purchase'] = $purchase;
+        $data['total_tax'] = $total_tax;
         $data['expense'] = $expense;
         $data['purchase_return'] = $purchase_return;
         $data['payment_received'] = $payment_received_total;

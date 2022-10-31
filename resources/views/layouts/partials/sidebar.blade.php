@@ -1053,7 +1053,24 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 @endif
                 @endif
 
+                 <!-- printers section -->
+                <li>
+                    <a href="#printers" aria-expanded="false" data-toggle="collapse"> <i
+                            class="dripicons-print"></i><span>@lang('lang.printers')</span></a>
+                    <ul id="printers"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'settings','extension', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade', 'tax', 'dining-room', 'dining-table', 'exchange-rate'])) show @endif">
+                            <li
+                                class="@if(request()->segment(1) == 'printers' && empty(request()->segment(2))) active @endif">
+                                <a href="{{route('printers.index')}}">{{__('lang.printers_list')}}</a>
+                            </li>
+                            <li
+                                class="@if(request()->segment(1) == 'printers' && request()->segment(2) == 'create') active @endif">
+                                <a href="{{route('printers.create')}}">{{__('lang.add_new_printer')}}</a>
+                            </li>
+                    </ul>
+                </li>
 
+                <!-- end of printers section -->
                 @if( !empty($module_settings['sms_module']) )
                 @if(auth()->user()->can('sms_module.sms.create_and_edit') ||
                 auth()->user()->can('sms_module.sms.view') )
