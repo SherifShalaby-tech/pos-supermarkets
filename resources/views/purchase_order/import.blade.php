@@ -50,7 +50,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <a class="btn btn-block btn-primary" href="{{asset('sample_files/purchase_order_import.csv')}}"><i class="fa fa-download"></i>@lang('lang.download_sample_file')</a>
+                                    <a class="btn btn-block btn-primary" href="{{asset('sample_files/purchase_order_import.xlsx')}}"><i class="fa fa-download"></i>@lang('lang.download_sample_file')</a>
                                 </div>
                             </div>
                         </div>
