@@ -30,6 +30,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::middleware('api')->get('/tutorials/get-tutorials-data-array-by-category/{category_id}', 'TutorialController@getTutorialsDataArrayByCategory');
 Route::middleware('api')->get('/tutorials/get-tutorials-categories-array', 'TutorialController@getTutorialsCategoryArray');
+Route::middleware('api')->get('printersPage', [PrintersController::class, 'index']);
 
 Route::post('login', [AuthController::class, 'login']);
 
