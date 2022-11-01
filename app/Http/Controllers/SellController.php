@@ -177,8 +177,8 @@ class SellController extends Controller
             if (strtolower($request->session()->get('user.job_title')) == 'cashier') {
                 $query->where('transactions.created_by', $request->session()->get('user.id'));
             }
-            if(strtolower(Session::get('user.job_title')) == 'cashier'){
-                $query->where('created_by',Auth::user()->id);
+            if(strtolower(session('user.job_title')) == 'cashier'){
+                $query->where('transactions.created_by',Auth::user()->id);
             }
 
             $sales = $query->select(
