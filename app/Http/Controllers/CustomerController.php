@@ -15,6 +15,7 @@ use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\System;
 use App\Models\Transaction;
+use App\Models\TransactionPayment;
 use App\Models\User;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
@@ -557,6 +558,12 @@ class CustomerController extends Controller
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $balance = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
         $referred_by = $customer->referred_by_users($customer->id);
+        $transactions_ids = Transaction::
+        where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled'])
+            ->where('customer_id', $id)->pluck('id');
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+
+        $payments=TransactionPayment::wherein('transaction_id',$transactions_ids)->get();
 
         return view('customer.show')->with(compact(
             'sales',
@@ -565,6 +572,8 @@ class CustomerController extends Controller
             'discounts',
             'customers',
             'customer',
+            'payment_type_array',
+            'payments',
             'customer_sizes',
             'balance',
             'referred_by',
