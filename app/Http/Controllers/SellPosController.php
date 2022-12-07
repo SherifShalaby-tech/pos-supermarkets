@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Session;
+
 use App\Models\Brand;
 use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
@@ -106,6 +106,8 @@ class SellPosController extends Controller
         $brands = Brand::all();
         $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
         $customers = Customer::getCustomerArrayWithMobile();
+        $clients = Customer::get(['id','name','mobile_number']);
+        $products = Product::get(['id','name']);
         $taxes = Tax::getDropdown();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
@@ -141,6 +143,8 @@ class SellPosController extends Controller
             'brands',
             'store_pos',
             'customers',
+            'clients',
+            'products',
             'stores',
             'store_poses',
             'cashiers',
@@ -176,6 +180,19 @@ class SellPosController extends Controller
     public function store(Request $request)
     {
         // try {
+        DB::beginTransaction();
+        if($request->ItemBorrowed){
+            foreach($request->ItemBorrowed as $deposite){
+                DB::table('item_borroweds')->insert([
+                    'name' => $deposite['name'],
+                    'customer_id' => $deposite['customer_id'],
+                    'admin_id' => Auth::user()->id,
+                    'status' => $deposite['status'],
+                    'deposit_amount' => $deposite['insurance_amount'],
+                    'return_date' => $deposite['return_date']
+                ]);
+            }
+        }
         $transaction_data = [
             'store_id' => $request->store_id,
             'customer_id' => $request->customer_id,
@@ -233,14 +250,11 @@ class SellPosController extends Controller
             'shared_commission' => !empty($request->shared_commission) ? 1 : 0,
             'created_by' => Auth::user()->id,
         ];
-
         $transaction_data['dining_room_id'] = null;
         if (!empty($request->dining_table_id)) {
             $dining_table = DiningTable::find($request->dining_table_id);
             $transaction_data['dining_room_id'] = $dining_table->dining_room_id;
         }
-        DB::beginTransaction();
-
         if (!empty($request->is_quotation)) {
             $transaction_data['is_quotation'] = 1;
             $transaction_data['status'] = 'draft';
@@ -1188,9 +1202,10 @@ class SellPosController extends Controller
                 ->leftjoin('users', 'transactions.created_by', 'users.id')
                 ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
                 ->where('type', 'sell')->where('status', '!=', 'draft');
-                if(strtolower(session('user.job_title')) == 'cashier'){
-                    $query->where('transactions.created_by',Auth::user()->id);
-                }
+
+            if(strtolower(session('user.job_title')) == 'cashier'){
+                $query->where('transactions.created_by',Auth::user()->id);
+            }
             if (!empty($store_id)) {
                 $query->where('transactions.store_id', $store_id);
             }
