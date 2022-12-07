@@ -53,6 +53,10 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('product/delete-product-image/{id}', 'ProductController@deleteProductImage');
     Route::resource('product', ProductController::class);
 
+    //item borrowed controller
+    Route::resource('item-borrowed',ItemBorrowedController::class);
+    Route::post('item-borrowed/give','ItemBorrowedController@give')->name('item-borrowed.give');
+
     Route::get('raw-material/add-stock/create', 'AddStockController@create');
     Route::get('raw-material/add-stock', 'AddStockController@index');
     Route::get('raw-material/add-product-row', 'RawMaterialController@addProductRow');
@@ -111,7 +115,10 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('customer-type/get-product-discount-row', 'CustomerTypeController@getProductDiscountRow');
     Route::get('customer-type/get-product-point-row', 'CustomerTypeController@getProductPointRow');
     Route::resource('customer-type', CustomerTypeController::class);
-
+    // Customer insurances
+    Route::resource('customer-insurances',CustomerInsurancesController::class);
+    Route::post('customer-insurances/received','CustomerInsurancesController@received')->name('customer-insurances.received');
+    // end of Customer insurances
     Route::get('supplier/get-dropdown', 'SupplierController@getDropdown');
     Route::get('supplier/get-details/{id}', 'SupplierController@getDetails');
     Route::post('supplier/pay-supplier-due/{supplier_id}', 'SupplierController@postPayContactDue');
@@ -394,7 +401,7 @@ Route::get('query/{query}', 'SettingController@runQuery');
 Route::get('/clear-cache', function () {
     \Artisan::call('cache:clear');
     \Artisan::call('config:cache');
-    \Artisan::call('config:clear');
+    \Artisan::call('storage:link');
     \Artisan::call('view:clear');
     \Artisan::call('route:clear');
 

@@ -34,17 +34,20 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         </li>
                         @endcan
                         @can('product_module.product_classification_tree.view')
-                        <li
-                            class="@if(request()->segment(1) == 'product-classification-tree' && empty(request()->segment(2))) active @endif">
-                            <a
-                                href="{{action('ProductClassificationTreeController@index')}}">{{__('lang.product_classification_tree')}}</a>
-                        </li>
+                            <li
+                                class="@if(request()->segment(1) == 'product-classification-tree' && empty(request()->segment(2))) active @endif">
+                                <a
+                                    href="{{action('ProductClassificationTreeController@index')}}">{{__('lang.product_classification_tree')}}</a>
+                            </li>
                         @endcan
+                            <li>
+                                <a href="{{route('item-borrowed.index')}}">{{trans('lang.Borrowed_products')}}</a>
+                            </li>
                         @can('product_module.barcode.create_and_edit')
-                        <li
-                            class="@if(request()->segment(1) == 'barcode' && request()->segment(2) == 'print-barcode')) active @endif">
-                            <a href="{{action('BarcodeController@create')}}">{{__('lang.print_barcode')}}</a>
-                        </li>
+                            <li
+                                class="@if(request()->segment(1) == 'barcode' && request()->segment(2) == 'print-barcode')) active @endif">
+                                <a href="{{action('BarcodeController@create')}}">{{__('lang.print_barcode')}}</a>
+                            </li>
                         @endcan
                     </ul>
                 </li>
@@ -831,6 +834,9 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 href="{{action('CustomerTypeController@index')}}">{{__('lang.view_all_customer_types')}}</a>
                         </li>
                         @endcan
+                        <li>
+                            <a href="{{route('customer-insurances.index')}}">{{trans('lang.customer_insurances')}}</a>
+                        </li>
                     </ul>
                 </li>
                 @endif
@@ -1053,24 +1059,24 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 @endif
                 @endif
 
-                 <!-- printers section -->
-                <li>
-                    <a href="#printers" aria-expanded="false" data-toggle="collapse"> <i
-                            class="dripicons-print"></i><span>@lang('lang.printers')</span></a>
-                    <ul id="printers"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'settings','extension', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade', 'tax', 'dining-room', 'dining-table', 'exchange-rate'])) show @endif">
-                            <li
-                                class="@if(request()->segment(1) == 'printers' && empty(request()->segment(2))) active @endif">
-                                <a href="{{route('printers.index')}}">{{__('lang.printers_list')}}</a>
-                            </li>
-                            <li
-                                class="@if(request()->segment(1) == 'printers' && request()->segment(2) == 'create') active @endif">
-                                <a href="{{route('printers.create')}}">{{__('lang.add_new_printer')}}</a>
-                            </li>
-                    </ul>
-                </li>
+                <!-- printers section -->
+                    <li>
+                        <a href="#printers" aria-expanded="false" data-toggle="collapse"> <i
+                                class="dripicons-print"></i><span>@lang('lang.printers')</span></a>
+                        <ul id="printers"
+                            class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'settings','extension', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade', 'tax', 'dining-room', 'dining-table', 'exchange-rate'])) show @endif">
+                                <li
+                                    class="@if(request()->segment(1) == 'printers' && empty(request()->segment(2))) active @endif">
+                                    <a href="{{route('printers.index')}}">{{__('lang.printers_list')}}</a>
+                                </li>
+                                <li
+                                    class="@if(request()->segment(1) == 'printers' && request()->segment(2) == 'create') active @endif">
+                                    <a href="{{route('printers.create')}}">{{__('lang.add_new_printer')}}</a>
+                                </li>
+                        </ul>
+                    </li>
 
-                <!-- end of printers section -->
+                    <!-- end of printers section -->
                 @if( !empty($module_settings['sms_module']) )
                 @if(auth()->user()->can('sms_module.sms.create_and_edit') ||
                 auth()->user()->can('sms_module.sms.view') )

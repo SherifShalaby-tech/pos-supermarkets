@@ -19,7 +19,7 @@ return [
     'email' => 'بريد إلكتروني',
     'login' => 'تسجيل الدخول',
     'developed_by' => 'تمت في',
-
+    'number_vs_base_unit'=>'معادلة الوحدات',
     'submit' => 'ارسل',
     'save' => 'حفظ',
     'close' => 'اغلق',
@@ -1265,6 +1265,7 @@ return [
     'sales_and_returns' => 'عوائد المبيعات',
     'delivery_cost_given_to_deliveryman' => 'مبلغ التوصيل يأخذه السائق مباشرة',
     'sale_payment_date' => 'تاريخ الدفع',
+    'import_req'=>'تأكد من صحة البيانات المدخلة ثم اعد المحاولة',
     'trash_employee' => 'سلة المهملات',
     'total_taxes' => 'اجمالى الضرايب',
     'printers' => 'الطابعات',
@@ -1275,7 +1276,21 @@ return [
     'createdBy' => 'انشئ بواسطة',
     'printer_deleted' => 'تم حذف الطابعة',
     'printer_updated' => 'تم تحديث الطابعة',
-    'returned_by' => 'ارتجع بواسطة'
+    'returned_by' => 'ارتجع بواسطة',
+    'insurance_amount' => 'مبلغ التأمين',
+    'return_date' => 'تاريخ العودة',
+    'Insurance' => 'التأمين',
+    'customer_insurances' => 'تأمينات العملاء',
+    'add_new_deposit' => 'اضافة تأمين جديد',
+    'deposit_date' => 'تاريخ الايداع',
+    'customer_phone' => 'رقم الزبون',
+    'product_description' => 'وصف المنتج',
+    'cashier_name' => 'امين الصندوق',
+    'penalties' => 'العقوبات',
+    'penalties_cause' => 'سبب العقوبات',
+    'the_amount_of_the_fine' => 'مبلغ العقوبة',
+    'Borrowed_products' => 'المنتجات المراد استعارتها',
+    'creator_name' => 'اسم المنشئ'
 
 
 ];

@@ -12,7 +12,7 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
+    'number_vs_base_unit'=>'Units equation',
     'dashboard' => 'Dashboard',
     'username' => 'Username',
     'password' => 'Password',
@@ -1281,6 +1281,7 @@ return [
     'number_of_orders' => 'Number of orders',
     'number_of_customer' => 'Number of customers',
     'cash_register_is_closed' => 'Cash register is closed',
+    'import_req'=>'Make sure the entered data is correct and try again',
     'trash_employee' => 'Trash',
     'total_taxes' => 'Total Taxes',
     'printers' => 'Printers',
@@ -1290,7 +1291,20 @@ return [
     'createdBy' => 'Created By',
     'printer_deleted' => 'Printer Deleted',
     'printer_updated' => 'Printer Updated',
-    'returned_by' => 'Returned By'
-
+    'returned_by' => 'Returned By',
+    'insurance_amount' => 'insurance amount',
+    'return_date' => 'Return Date',
+    'Insurance' => 'Insurance',
+    'customer_insurances' => 'Customer insurances',
+    'add_new_deposit' => 'add new deposit',
+    'deposit_date' => 'Deposit Date',
+    'customer_phone' => 'Customer Phone',
+    'product_description' => 'Product Description',
+    'cashier_name' => 'cashier name',
+    'penalties' => 'penalties',
+    'penalties_cause' => 'penalties cause',
+    'the_amount_of_the_fine' => 'penalty amount',
+    'cause_the_penalties' => 'cause the penalties',
+    'Borrowed_products' => 'Products to be borrowed'
 
 ];
