@@ -812,12 +812,29 @@ $(document).on("change", "#discount", function () {
         $("#discount_customer_types").attr("required", false);
     }
 });
-
+$(document).on("change", ".depends_on", function () {
+    if ($(this).val() == 1){
+        $(".selling_price_depends_div").removeClass("hide");
+        $(".purchase_price_depends_div").addClass('hide');
+    }else{
+        $(".selling_price_depends_div").addClass("hide");
+        $(".purchase_price_depends_div").removeClass('hide');
+    }
+});
+// //
 $(document).on("change", "#is_service", function () {
     if ($(this).prop("checked")) {
         $(".supplier_div").removeClass("hide");
+        $(".sell_price").removeClass('hide');
+        $(".purchase_price").removeClass('hide');
+        $(".other_cost").removeClass('hide');
+        $(".depends_on_div").addClass('hide');
     } else {
         $(".supplier_div").addClass("hide");
+        $(".sell_price").addClass('hide');
+        $(".purchase_price").addClass('hide');
+        $(".other_cost").addClass('hide');
+        $(".depends_on_div").removeClass('hide');
     }
 });
 $(document).on("change", "#sell_price", function () {

@@ -21,7 +21,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 <div class="row">
                                     <div class="col-md-2">
                                         <label for="store_id"><b>@lang('lang.store')</b></label>
-                                        {!! Form::select('store_id', $stores, session('user.is_superadmin') ? null : key($stores), ['class' => 'form-control','multiple', 'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('store_id', $stores, session('user.is_superadmin') ? null : key($stores), ['class' => 'form-control ','multiple','data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
 
                                     </div>
                                     <div class="col-md-3">
@@ -57,88 +57,94 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
         @if (strtolower(session('user.job_title')) != 'deliveryman')
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12 form-group">
-                        <div class="row">
-                            @if(auth()->user()->can('superadmin') || auth()->user()->is_admin)
-                                <!-- Count item widget-->
-                                <div class="col-sm-2">
-                                    <div class="wrapper count-title text-center">
-                                        <div class="icon"><i class="fa fa-cubes" style="color: #498636"></i>
-                                        </div>
-                                        <div class="name"><strong
-                                                style="color: #498636">@lang('lang.current_stock_value')</strong>
-                                        </div>
-                                        <div class="count-number current_stock_value-data">
-                                            {{ @num_format(0) }}</div>
-                                    </div>
+                    @if(auth()->user()->can('superadmin') || auth()->user()->is_admin)
+                        <!-- Count item widget-->
+                        <div class="col-sm-2">
+                            <div class="wrapper count-title text-center">
+                                <div class="icon"><i class="fa fa-cubes" style="color: #498636"></i>
                                 </div>
-                                <!-- Count item widget-->
-                                <div class="col-sm-2">
-                                    <div class="wrapper count-title text-center">
-                                        <div class="icon"><i class="dripicons-graph-bar"
-                                                style="color: #733686"></i>
-                                        </div>
-                                        <div class="name"><strong
-                                                style="color: #733686">@lang('lang.revenue')</strong>
-                                        </div>
-                                        <div class="count-number revenue-data">{{ @num_format(0) }}
-                                        </div>
-                                    </div>
+                                <div class="name"><strong
+                                        style="color: #498636">@lang('lang.current_stock_value')</strong>
                                 </div>
-                                <!-- Count item widget-->
-                                <div class="col-sm-2">
-                                    <div class="wrapper count-title text-center">
-                                        <div class="icon"><i class="dripicons-return" style="color: #ff8952"></i>
-                                        </div>
-                                        <div class="name"><strong
-                                                style="color: #ff8952">@lang('lang.sale_return')</strong>
-                                        </div>
-                                        <div class="count-number sell_return-data">
-                                            {{ @num_format(0) }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Count item widget-->
-                                <div class="col-sm-2">
-
-                                    <div class="wrapper count-title text-center">
-                                        <div class="icon"><i class="dripicons-media-loop" style="color: #297ff9"></i>
-                                        </div>
-                                        <div class="name"><strong
-                                                style="color: #297ff9">@lang('lang.total_taxes')</strong>
-                                        </div>
-                                        <div class="count-number total_tax">{{ @num_format(0) }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Count item widget-->
-                                <div class="col-sm-2">
-                                        <div class="wrapper count-title text-center">
-                                            <div class="icon"><i class="dripicons-media-loop"
-                                                    style="color: #00c689"></i>
-                                            </div>
-                                            <div class="name"><strong
-                                                    style="color: #00c689">@lang('lang.purchase_return')</strong>
-                                            </div>
-                                            <div class="count-number purchase_return-data">
-                                                {{ @num_format(0) }}</div>
-                                        </div>
-                                    </div>
-                                <!-- Count item widget-->
-                                <div class="col-sm-2">
-                                        <div class="wrapper count-title text-center">
-                                            <div class="icon"><i class="dripicons-trophy" style="color: #297ff9"></i>
-                                            </div>
-                                            <div class="name"><strong
-                                                    style="color: #297ff9">@lang('lang.profit')</strong>
-                                            </div>
-                                            <div class="count-number profit-data">{{ @num_format(0) }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
+                                <div class="count-number current_stock_value-data">
+                                    {{ @num_format(0) }}</div>
                             </div>
                         </div>
+                        <!-- Count item widget-->
+                        <div class="col-sm-2">
+                            <div class="wrapper count-title text-center">
+                                <div class="icon"><i class="dripicons-graph-bar"
+                                        style="color: #733686"></i>
+                                </div>
+                                <div class="name"><strong
+                                        style="color: #733686">@lang('lang.revenue')</strong>
+                                </div>
+                                <div class="count-number revenue-data">{{ @num_format(0) }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Count item widget-->
+                        <div class="col-sm-2">
+                            <div class="wrapper count-title text-center">
+                                <div class="icon"><i class="dripicons-return" style="color: #ff8952"></i>
+                                </div>
+                                <div class="name"><strong
+                                        style="color: #ff8952">@lang('lang.sale_return')</strong>
+                                </div>
+                                <div class="count-number sell_return-data">
+                                    {{ @num_format(0) }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Count item widget-->
+                        <div class="col-sm-2">
+                            <div class="wrapper count-title text-center">
+                                <div class="icon"><i class="dripicons-media-loop" style="color: #297ff9"></i>
+                                </div>
+                                <div class="name"><strong
+                                        style="color: #297ff9">@lang('lang.total_taxes')</strong>
+                                </div>
+                                <div class="count-number total_tax">{{ @num_format(0) }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Count item widget-->
+                        <div class="col-sm-2">
+                            <div class="wrapper count-title text-center">
+                                    <div class="icon"><i class="dripicons-media-loop"
+                                            style="color: #00c689"></i>
+                                    </div>
+                                    <div class="name"><strong
+                                            style="color: #00c689">@lang('lang.purchase_return')</strong>
+                                    </div>
+                                    <div class="count-number purchase_return-data">
+                                        {{ @num_format(0) }}</div>
+                                </div>
+                        </div>
+                        <!-- Count item widget-->
+                        <div class="col-sm-2">
+                            <div class="wrapper count-title text-center">
+                                    <div class="icon"><i class="dripicons-trophy" style="color: #297ff9"></i>
+                                    </div>
+                                    <div class="name"><strong
+                                            style="color: #297ff9">@lang('lang.profit')</strong>
+                                    </div>
+                                    <div class="count-number profit-data">{{ @num_format(0) }}
+                                    </div>
+                                </div>
+                        </div>
+                            <div class="col-sm-2">
+                                <div class="wrapper count-title text-center">
+                                    <div class="icon"><i class="dripicons-media-loop" style="color: #297ff9"></i>
+                                    </div>
+                                    <div class="name"><strong
+                                            style="color: #297ff9">@lang('lang.expenses')</strong>
+                                    </div>
+                                    <div class="count-number expenses">{{ @num_format(0) }}
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -207,6 +213,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     let total_tax_string = '<div>';
                     let purchase_return_string = '<div>';
                     let profit_string = '<div>';
+                    let expenses_string = '<div>';
                     result.forEach(element => {
                         currenct_stock_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
                                             data-currency_id="${element.currency.currency_id}"
@@ -287,6 +294,17 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                             <span
                                                 class="total">${__currency_trans_from_en(element.data.profit, false)}</span>
                                         </h3>`;
+                        expenses_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.expenses}"
+                                            data-orig_value="${element.data.expenses}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.expenses, false)}</span>
+                                        </h3>`;
                     });
                     currenct_stock_string += `</div>`;
                     revenue_string += `</div>`;
@@ -294,6 +312,8 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     purchase_return_string += `</div>`;
                     total_tax_string += `</div>`;
                     profit_string += `</div>`;
+                    expenses_string += `</div>`;
+
                     $(".revenue-data").html(revenue_string);
 
 
@@ -318,6 +338,10 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     $('.profit-data').hide();
                     $(".profit-data").html(profit_string);
                     $('.profit-data').show(500);
+
+                    $('.expenses').hide();
+                    $(".expenses").html(expenses_string);
+                    $('.expenses').show(500);
                 },
             });
             getChartAndTableSection(start_date, end_date, store_id);

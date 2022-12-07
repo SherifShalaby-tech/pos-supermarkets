@@ -33,7 +33,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('supplier_id', __('lang.supplier') . ':*', []) !!}
-                                        {!! Form::select('supplier_id', $suppliers, array_key_first($suppliers), ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('supplier_id', $suppliers, array_key_first($suppliers), ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -100,8 +100,11 @@
                                                 <th style="width: 20%" class="col-sm-4">@lang( 'lang.unit' )</th>
                                                 <th style="width: 20%" class="col-sm-4">@lang( 'lang.purchase_price' )
                                                 </th>
+                                                <th style="width: 20%" class="col-sm-4">@lang( 'lang.selling_price' )
+                                                </th>
                                                 <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
                                                 <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
+                                                <th style="width: 10%" class="col-sm-4">تغيير سعر المخزون الحالى</th>
                                                 <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
                                             </tr>
                                         </thead>

@@ -274,23 +274,54 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                 {!! Form::text('alert_quantity', !empty($recent_product) ? @num_format($recent_product->alert_quantity) : 3, ['class' => 'form-control', 'placeholder' => __('lang.alert_quantity')]) !!}
             </div>
         </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4 depends_on_div">
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input depends_on" type="radio" name="depends_on" id="selling_price_depends" value="1">
+                    <label class="form-check-label" for="selling_price_depends">سعر البيع يعتمد على سعر الشراء</label>
+                    <div class="form-group selling_price_depends_div hide">
+                        <label>سعر البيع يزيد عن سعر الشراء بــمبلغ</label>
+                        <select class="form-control mb-2" name="selling_price_depends_type">
+                            <option value="rate">نسبة</option>
+                            <option value="amount">مبلغ</option>
+                        </select>
+                        <input type="number" class="form-control" name="selling_price_depends" value="">
+
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input depends_on" type="radio" name="depends_on" id="purchase_price_depends" value="2">
+                    <label class="form-check-label" for="purchase_price_depends">سعر الشراء يعتمد على سعر البيع</label>
+                    <div class="form-group purchase_price_depends_div hide">
+                        <label>سعر الشراء يقل عن سعر البيع بــمبلغ</label>
+                        <select class="form-control mb-2" name="purchase_price_depends_type">
+                            <option value="rate">نسبة</option>
+                            <option value="amount">مبلغ</option>
+                        </select>
+                        <input type="number" class="form-control" name="purchase_price_depends" value="">
+
+                    </div>
+                </div>
+            </div>
+        </div>
     @endif
     <div class="col-md-4">
-        <div class="form-group">
+        <div class="form-group other_cost hide">
             {!! Form::label('other_cost', __('lang.other_cost'), []) !!}
             {!! Form::text('other_cost', !empty($recent_product) ? @num_format($recent_product->other_cost) : null, ['class' => 'form-control', 'placeholder' => __('lang.other_cost')]) !!}
         </div>
     </div>
     @can('product_module.purchase_price.create_and_edit')
         <div class="col-md-4">
-            <div class="form-group">
+            <div class="form-group purchase_price hide">
                 {!! Form::label('purchase_price', session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') : __('lang.cost') . ' *', []) !!}
                 {!! Form::text('purchase_price', !empty($recent_product) ? @num_format($recent_product->purchase_price) : null, ['class' => 'form-control', 'placeholder' => session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
             </div>
         </div>
     @endcan
     <div class="col-md-4">
-        <div class="form-group">
+        <div class="form-group sell_price hide">
             {!! Form::label('sell_price', __('lang.sell_price') . ' *', []) !!}
             {!! Form::text('sell_price', !empty($recent_product) ? @num_format($recent_product->sell_price) : null, ['class' => 'form-control', 'placeholder' => __('lang.sell_price'), 'required']) !!}
         </div>
@@ -410,7 +441,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         </div>
     </div>
 
-    <div class="col-md-12 this_product_have_variant_div">
+    <div class="col-md-12 this_product_have_variant_div" style="overflow: auto">
         <table class="table" id="variation_table">
             <thead>
                 <tr>
@@ -420,6 +451,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                     <th>@lang('lang.size')</th>
                     <th>@lang('lang.grade')</th>
                     <th>@lang('lang.unit')</th>
+                    <th>@lang('lang.number_vs_base_unit')</th>
                     <th>@lang('lang.purchase_price')</th>
                     <th>@lang('lang.sell_price')</th>
                     <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i

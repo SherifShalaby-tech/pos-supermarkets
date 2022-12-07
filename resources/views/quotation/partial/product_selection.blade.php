@@ -221,6 +221,8 @@
                                 @can('product_module.purchase_price.view')
                                 <th>@lang('lang.purchase_price')</th>
                                 @endcan
+                                <th>selling_price_depends</th>
+                                <th>purchase_price_depends</th>
                                 <th>@lang('lang.supplier')</th>
                                 <th>@lang('lang.created_by')</th>
                                 <th>@lang('lang.edited_by')</th>

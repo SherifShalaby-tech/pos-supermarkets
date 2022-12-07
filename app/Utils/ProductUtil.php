@@ -260,6 +260,7 @@ class ProductUtil extends Util
                     $variation->size_id = $v['size_id'] ?? null;
                     $variation->grade_id = $v['grade_id'] ?? null;
                     $variation->unit_id = $v['unit_id'] ?? null;
+                    $variation->number_vs_base_unit= $v['number_vs_base_unit'] ?? 0;
                     $variation->default_purchase_price = !empty($v['default_purchase_price']) ? $this->num_uf($v['default_purchase_price']) : $this->num_uf($product->purchase_price);
                     $variation->default_sell_price = !empty($v['default_sell_price']) ? $this->num_uf($v['default_sell_price']) : $this->num_uf($product->sell_price);
 
@@ -274,6 +275,7 @@ class ProductUtil extends Util
                     $variation_data['size_id'] = $v['size_id'] ?? null;
                     $variation_data['grade_id'] = $v['grade_id'] ?? null;
                     $variation_data['unit_id'] = $v['unit_id'] ?? null;
+                    $variation_data['number_vs_base_unit']= $v['number_vs_base_unit'] ?? 0;
                     $variation_data['default_purchase_price'] = !empty($v['default_purchase_price']) ? $this->num_uf($v['default_purchase_price']) : $this->num_uf($product->purchase_price);
                     $variation_data['default_sell_price'] = !empty($v['default_sell_price']) ? $this->num_uf($v['default_sell_price']) : $this->num_uf($product->sell_price);
                     $variation_data['is_dummy'] = 0;
@@ -291,6 +293,7 @@ class ProductUtil extends Util
             $variation_data['size_id'] = !empty($request->multiple_sizes) ? $request->multiple_sizes[0] : null;
             $variation_data['grade_id'] = !empty($request->multiple_grades) ? $request->multiple_grades[0] : null;
             $variation_data['unit_id'] = !empty($request->multiple_units) ? $request->multiple_units[0] : null;
+
             $variation_data['is_dummy'] = 1;
             $variation_data['default_purchase_price'] = $this->num_uf($product->purchase_price);
             $variation_data['default_sell_price'] = $this->num_uf($product->sell_price);
@@ -944,6 +947,15 @@ class ProductUtil extends Util
                 $add_stock->expiry_date = !empty($line['expiry_date']) ? $this->uf_date($line['expiry_date']) : null;
                 $add_stock->expiry_warning = $line['expiry_warning'];
                 $add_stock->convert_status_expire = $line['convert_status_expire'];
+                $add_stock->sell_price = $line['selling_price'];
+                $add_stock->bounce_qty = $line['bounce_qty'];
+                $add_stock->profit_bounce = $line['bounce_profit'];
+                $add_stock->bounce_purchase_price = $line['bounce_purchase_price'];
+                $add_stock->bounce_convert_status_expire = $line['bounce_convert_status_expire'];
+                $add_stock->bounce_expiry_warning = $line['bounce_expiry_warning'];
+                $add_stock->bounce_expiry_date = $line['bounce_expiry_date'];
+                $add_stock->bounce_manufacturing_date = $line['bounce_manufacturing_date'];
+                $add_stock->bounce_batch_number = $line['bounce_batch_number'];
                 $add_stock->save();
                 $keep_lines_ids[] = $line['add_stock_line_id'];
                 $qty =  $this->num_uf($line['quantity']);
@@ -962,9 +974,21 @@ class ProductUtil extends Util
                     'expiry_date' => !empty($line['expiry_date']) ? $this->uf_date($line['expiry_date']) : null,
                     'expiry_warning' => $line['expiry_warning'],
                     'convert_status_expire' => $line['convert_status_expire'],
+                    'sell_price' => $line['selling_price'],
+                    'bounce_qty' => $line['bounce_qty'],
+                    'profit_bounce' => $line['bounce_profit'],
+                    'bounce_purchase_price' => $line['bounce_purchase_price'],
+                    'bounce_convert_status_expire' => $line['bounce_convert_status_expire'],
+                    'bounce_expiry_warning' => $line['bounce_expiry_warning'],
+                    'bounce_expiry_date' => $line['bounce_expiry_date'],
+                    'bounce_manufacturing_date' => $line['bounce_manufacturing_date'],
+                    'bounce_batch_number' => $line['bounce_batch_number'],
                 ];
 
                 $add_stock = AddStockLine::create($add_stock_data);
+                if(isset($line['bounce_purchase_price'])){
+                    $product = Product::where('id',$line['product_id'])->update(['purchase_price' =>$line['bounce_purchase_price'] ,'purchase_price_depends' => $line['bounce_purchase_price']]);
+                }
                 $qty =  $this->num_uf($line['quantity']);
                 $keep_lines_ids[] = $add_stock->id;
                 $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $qty, 0);

@@ -88,6 +88,16 @@ $(document).ready(function () {
                 name: "default_purchase_price",
                 searchable: false,
             },
+            {
+                data: "selling_price_depends",
+                name: "products.selling_price_depends",
+                searchable: false,
+            },
+            {
+                data: "default_purchase_price",
+                name: "products.purchase_price_depends",
+                searchable: false,
+            },
             { data: "supplier", name: "supplier" },
             { data: "created_by", name: "users.name" },
             { data: "edited_by_name", name: "edited.name" },

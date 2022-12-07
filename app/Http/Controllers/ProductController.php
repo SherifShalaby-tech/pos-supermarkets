@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Printer;
+
 use App\Imports\ProductImport;
 use App\Models\Brand;
+use App\Models\Printer;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Customer;
@@ -67,7 +68,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -220,7 +221,6 @@ class ProductController extends Controller
                 DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as current_stock'),
             )->with(['supplier'])
                 ->groupBy('variations.id');
-
             return DataTables::of($products)
                 ->addColumn('image', function ($row) {
                     $image = $row->getFirstMediaUrl('product');
@@ -384,7 +384,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -431,7 +431,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -446,6 +446,7 @@ class ProductController extends Controller
         $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::pluck('name', 'id');
         $printers = Printer::get(['id','name']);
+
         if ($quick_add) {
             return view('product.create_quick_add')->with(compact(
                 'quick_add',
@@ -504,10 +505,9 @@ class ProductController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['purchase_price' => ['required', 'max:25', 'decimal']],
-            ['sell_price' => ['required', 'max:25', 'decimal']],
+            ['purchase_price' => ['max:25', 'decimal']],
+            ['sell_price' => ['max:25', 'decimal']],
         );
-
         try {
             $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);
 
@@ -547,7 +547,9 @@ class ProductController extends Controller
                 'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
-                'created_by' => Auth::user()->id
+                'created_by' => Auth::user()->id,
+                'selling_price_depends' => $request->selling_price_depends,
+                'purchase_price_depends' => $request->purchase_price_depends,
             ];
 
 
@@ -570,6 +572,7 @@ class ProductController extends Controller
                     }
                 }
             }
+
             $this->productUtil->createOrUpdateVariations($product, $request);
 
             if (!empty($request->consumption_details)) {
@@ -666,13 +669,13 @@ class ProductController extends Controller
         if (!auth()->user()->can('product_module.product.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
-        $product = Product::findOrFail($id);
+        $product = Product::with('variations')->findOrFail($id);
 
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -685,8 +688,7 @@ class ProductController extends Controller
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
         $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::pluck('name', 'id');
-
-
+        $units_js=$units->pluck('base_unit_multiplier', 'id');
         return view('product.edit')->with(compact(
             'raw_materials',
             'raw_material_units',
@@ -705,6 +707,7 @@ class ProductController extends Controller
             'discount_customer_types',
             'stores',
             'suppliers',
+            'units_js'
         ));
     }
 
@@ -872,8 +875,10 @@ class ProductController extends Controller
     public function getVariationRow()
     {
         $row_id = request()->row_id;
-
-        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        //'base_unit_multiplier'
+        $units = Unit::orderBy('name', 'asc');
+        $units_js=$units->pluck('base_unit_multiplier', 'id');
+        $units = $units->pluck('name', 'id');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -891,7 +896,8 @@ class ProductController extends Controller
             'row_id',
             'name',
             'purchase_price',
-            'sell_price'
+            'sell_price',
+            'units_js'
         ));
     }
 
@@ -1019,7 +1025,7 @@ class ProductController extends Controller
     public function saveImport(Request $request)
     {
         $this->validate($request, [
-            'file' => 'required|mimes:csv,txt'
+            'file' => 'required|mimes:csv,txt,xlsx'
         ]);
         try {
             DB::beginTransaction();
@@ -1034,7 +1040,7 @@ class ProductController extends Controller
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [
                 'success' => false,
-                'msg' => __('lang.something_went_wrong')
+                'msg' => __('lang.something_went_wrong') .' , '. __('lang.import_req')
             ];
         }
 
