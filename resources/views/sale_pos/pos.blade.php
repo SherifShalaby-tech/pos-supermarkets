@@ -98,7 +98,7 @@
                                 </div>
                                 <div class="col-md-12 main_settings">
                                     <div class="row table_room_hide">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             {!! Form::label('customer_id', __('lang.customer'), []) !!}
                                             <div class="input-group my-group">
                                                 {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'id' => 'customer_id', 'required']) !!}
@@ -118,7 +118,7 @@
                                                 data-target="#contact_details_modal">@lang('lang.details')</button>
                                         </div>
                                         @if (session('system_mode') == 'garments')
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <button type="button" class="btn btn-default" style="margin-top: 30px;"
                                                     data-toggle="modal" data-target="#customer_sizes_modal"><img
                                                         style="width: 20px; height: 25px;"
@@ -146,6 +146,18 @@
                                                     data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
                                             </div>
                                         @endif
+                                        <div class="col-md-2">
+                                            <button type="button"
+                                                    class="btn btn-default"
+                                                    style="margin-top: 30px;"
+                                                    data-toggle="modal" data-target="#deposit_modal">
+                                                <img
+                                                    style="width: 20px; height: 25px;"
+                                                    src="{{ asset('images/Deposit.jpg') }}"
+                                                    alt="@lang('lang.insurance_amount')" data-toggle="tooltip"
+                                                    title="@lang('lang.insurance_amount')">
+                                            </button>
+                                        </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-danger btn-xs  pull-right"
                                                 style="margin-top: 38px;" id="print_and_draft"><i
@@ -274,6 +286,10 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <span class="totals-title">{{ __('lang.delivery') }}</span><span
+                                                    id="delivery-cost">0.00</span>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <span class="totals-title">{{ __('lang.Insurance') }}</span><span
                                                     id="delivery-cost">0.00</span>
                                             </div>
                                         </div>
@@ -464,6 +480,7 @@
                     </div>
 
                     @include('sale_pos.partials.payment_modal')
+                    @include('sale_pos.partials.deposit_modal')
                     @include('sale_pos.partials.discount_modal')
                     {{-- @include('sale_pos.partials.tax_modal') --}}
                     @include('sale_pos.partials.delivery_cost_modal')
