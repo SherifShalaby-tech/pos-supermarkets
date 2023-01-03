@@ -27,6 +27,22 @@ class Category extends Model implements HasMedia
         'translations' => 'array',
     ];
 
+
+    public function productClass()
+    {
+        return $this->belongsTo(ProductClass::class,'product_class_id');
+    }
+
+    public function subCategories()
+    {
+        return $this->hasMany(Category::class,'parent_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class,'parent_id');
+    }
+
     public function getNameAttribute($name)
     {
         $translations = !empty($this->translations['name']) ? $this->translations['name'] : [];
@@ -38,4 +54,5 @@ class Category extends Model implements HasMedia
         }
         return $name;
     }
+
 }

@@ -22,7 +22,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('supplier_id', __('lang.supplier') . ':*', []) !!}
-                                        {!! Form::select('supplier_id', $suppliers, array_key_first($suppliers), ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('supplier_id', $suppliers, '', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
 

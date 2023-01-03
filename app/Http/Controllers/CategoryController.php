@@ -37,8 +37,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::whereNull('parent_id')->get();
-
+        $categories = Category::with('productClass')->whereNull('parent_id')->get();
         return view('category.index')->with(compact(
             'categories'
         ));
@@ -50,8 +49,7 @@ class CategoryController extends Controller
      */
     public function getSubCategories()
     {
-        $categories = Category::whereNotNull('parent_id')->get();
-
+        $categories = Category::with(['category','productClass'])->whereNotNull('parent_id')->get();
         return view('category.sub_categories')->with(compact(
             'categories'
         ));

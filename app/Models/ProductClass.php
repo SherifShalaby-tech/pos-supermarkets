@@ -28,6 +28,11 @@ class ProductClass extends Model implements HasMedia
         'translations' => 'array',
     ];
 
+    public function categories()
+    {
+        return $this->hasMany(category::class,'product_class_id');
+    }
+
     public function getNameAttribute($name)
     {
         $translations = !empty($this->translations['name']) ? $this->translations['name'] : [];

@@ -20,6 +20,7 @@
                             <tr>
                                 <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
+                                <th>@lang('lang.path')</th>
                                 <th>@lang('lang.description')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
@@ -31,8 +32,8 @@
                                     alt="photo" width="50" height="50">
                                 </td>
                                 <td>{{$category->name}}</td>
+                                <td>{!! '<a href="/product-class">'.$category->productClass?->name.'</a>'." / ".$category->name!!}</td>
                                 <td>{{$category->description}}</td>
-
                                 <td>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm dropdown-toggle"
