@@ -7,6 +7,8 @@ use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
 use App\Models\CustomerSize;
 use App\Models\CustomerType;
+use App\Models\DebtPayment;
+use App\Models\DebtTransactionPayment;
 use App\Models\Employee;
 use App\Models\Product;
 use App\Models\ProductClass;
@@ -26,6 +28,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use App\Utils\CashRegisterUtil;
 
 class CustomerController extends Controller
 {
@@ -36,18 +39,21 @@ class CustomerController extends Controller
     protected $commonUtil;
     protected $transactionUtil;
     protected $productUtil;
+    protected $cashRegisterUtil;
 
     /**
      * Constructor
      *
      * @param Util $commonUtil
      * @param TransactionUtil $transactionUtil
+     * @param CashRegisterUtil $cashRegisterUtil
      * @param ProductUtils $productUtil
      * @return void
      */
-    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, ProductUtil $productUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, CashRegisterUtil $cashRegisterUtil, ProductUtil $productUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->cashRegisterUtil = $cashRegisterUtil;
         $this->transactionUtil = $transactionUtil;
         $this->productUtil = $productUtil;
     }
@@ -558,12 +564,12 @@ class CustomerController extends Controller
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $balance = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
         $referred_by = $customer->referred_by_users($customer->id);
-        $transactions_ids = Transaction::
-        where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled'])
-            ->where('customer_id', $id)->pluck('id');
+//        $transactions_ids = Transaction::
+//        where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled'])
+//            ->where('customer_id', $id)->pluck('id');
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
 
-        $payments=TransactionPayment::wherein('transaction_id',$transactions_ids)->get();
+        $payments=DebtPayment::with('created_by_user')->where('customer_id', $id)->get();
 
         return view('customer.show')->with(compact(
             'sales',
@@ -779,7 +785,7 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function postPayContactDue(Request  $request)
+    public function postPayContactDue($customer_id)
     {
         try {
             DB::beginTransaction();
@@ -803,6 +809,161 @@ class CustomerController extends Controller
 
         return redirect()->back()->with(['status' => $output]);
     }
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $transaction_payment_id
+     * @return \Illuminate\Http\Response
+     */
+    public function paymentDuetEdit($id)
+    {
+        $payment = DebtPayment::find($id);
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        return view('customer.partial.edit_pay_customer_due')->with(compact(
+            'payment',
+            'payment_type_array'
+        ));
+    }
+    /**
+     * Adds Payments for Contact due
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function UpdatePayContactDue($id,Request  $request)
+    {
+        try {
+            DB::beginTransaction();
+            $amount = $this->commonUtil->num_uf($request->amount);
+            /**   delete  TransactionPayment and update  DebtPayment **/
+            $debt_payment=  DebtPayment::whereId($id)->first();
+            $debt_payment->amount=$amount;
+            $debt_payment->method=$request->method;
+            $debt_payment->ref_number=$request->ref_number;
+            $debt_payment->paid_on=$this->commonUtil->uf_date($request->paid_on);
+            $debt_payment->bank_deposit_date=!empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null;
+            $debt_payment->bank_name=$request->bank_name;
+            $debt_payment->created_by=auth()->id();
+            $debt_payment->save();
+
+            $customer_id=$debt_payment->customer_id;
+            if ($request->upload_documents) {
+                foreach ($request->file('upload_documents', []) as $key => $doc) {
+                    $debt_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                }
+            }
+            $old_DebtTransactionPayments = DebtTransactionPayment::where('debt_payment_id',$id)->get();
+
+            foreach ($old_DebtTransactionPayments as $old_DebtTransactionPayments){
+                $transaction_payment = TransactionPayment::find($old_DebtTransactionPayments->transaction_payment_id);
+                $transaction_id = $transaction_payment->transaction_id;
+                $transaction_payment->delete();
+                $this->transactionUtil->updateTransactionPaymentStatus($transaction_id);
+            }
+
+            DebtTransactionPayment::where('debt_payment_id',$id)->delete();
+            $transactions = Transaction::where('customer_id', $customer_id)
+                ->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])
+                ->orderBy('transaction_date', 'asc')->get();
+
+            $debt_payment_transactions=[];
+            foreach ($transactions as $transaction) {
+                $due_for_transaction = $this->getDueForTransaction($transaction->id);
+                $paid_amount = 0;
+                if ($amount > 0) {
+                    if ($amount >= $due_for_transaction) {
+                        $paid_amount = $due_for_transaction;
+                        $amount -= $due_for_transaction;
+                    } else if ($amount < $due_for_transaction) {
+                        $paid_amount = $amount;
+                        $amount = 0;
+                    }
+
+                    $payment_data = [
+                        'transaction_payment_id' =>  null,
+                        'transaction_id' =>  $transaction->id,
+                        'amount' => $paid_amount,
+                        'method' => $request->method,
+                        'paid_on' => $this->commonUtil->uf_date($request->paid_on),
+                        'ref_number' => $request->ref_number,
+                        'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
+                        'bank_name' => $request->bank_name,
+                    ];
+
+                    $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                    DebtTransactionPayment::create([
+                        'debt_payment_id'=>$debt_payment->id,
+                        'transaction_payment_id'=>$transaction_payment->id,
+                        'amount'=>$paid_amount,
+                    ]);
+                    $debt_payment_transactions[$transaction_payment->id]=$paid_amount;
+                    $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+
+                    if ($request->upload_documents) {
+                        foreach ($request->file('upload_documents', []) as $key => $doc) {
+                            $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                        }
+                    }
+                }
+            }
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => "File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage()
+            ];
+        }
+
+        return redirect()->back()->with(['status' => $output]);
+    }
+
+    /**
+     * Adds Payments for Contact due
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyPayContactDue($id)
+    {
+        try {
+            DB::beginTransaction();
+            /**   delete  TransactionPayment and update  DebtPayment **/
+
+            $old_DebtTransactionPayments = DebtTransactionPayment::where('debt_payment_id',$id)->get();
+            foreach ($old_DebtTransactionPayments as $old_DebtTransactionPayments){
+                $transaction_payment = TransactionPayment::find($old_DebtTransactionPayments->transaction_payment_id);
+                $transaction_id = $transaction_payment->transaction_id;
+                $transaction_payment->delete();
+                $this->transactionUtil->updateTransactionPaymentStatus($transaction_id);
+            }
+            DebtTransactionPayment::where('debt_payment_id',$id)->delete();
+            DebtPayment::whereId($id)->delete();
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => "File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage()
+            ];
+        }
+
+        return $output;
+    }
+
 
     public function getImportantDateRow()
     {
@@ -882,5 +1043,14 @@ class CustomerController extends Controller
             'product_classes',
             'products',
         ));
+    }
+    public function getDueForTransaction($transaction_id)
+    {
+        $transaction = Transaction::find($transaction_id);
+        $total_paid = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('transactions.id', $transaction_id)
+            ->sum('amount');
+
+        return $transaction->final_total - $total_paid;
     }
 }

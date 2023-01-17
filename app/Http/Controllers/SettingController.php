@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use PDF;
 class SettingController extends Controller
 {
     /**
@@ -437,5 +437,20 @@ class SettingController extends Controller
         }
 
         return $output;
+    }
+    public function getPdf(Request $request ){
+
+        // return response()->json('ssssssssssss');
+
+        // $pdf = PDF::loadHTML( $request['data'] );
+
+        $data = $request['data'];
+        $title = $request['title'];
+
+        $pdf = PDF::loadView('layouts.partials.pdf',compact('data','title'));
+
+        return response()->download( $pdf->download('Report.pdf') );
+        // return $pdf->download('Admins.pdf') ;
+
     }
 }

@@ -12,7 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
+    'type_Sell' => 'Acheter',
+    'type_Debt'=>'Dette',
     'dashboard' => 'Tableau de bord',
     'username' => 'Nom d\'utilisateur',
     'password' => 'Mot de passe',

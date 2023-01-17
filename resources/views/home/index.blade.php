@@ -21,7 +21,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 <div class="row">
                                     <div class="col-md-2">
                                         <label for="store_id"><b>@lang('lang.store')</b></label>
-                                        {!! Form::select('store_id', $stores, session('user.is_superadmin') ? null : key($stores), ['class' => 'form-control ', 'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('store_id', $stores,  key($stores), ['class' => 'form-control ', 'data-live-search' => 'true', 'id' => 'store_id', null]) !!}
 
                                     </div>
                                     <div class="col-md-3">

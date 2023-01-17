@@ -93,6 +93,9 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('customer/get-details-by-transaction-type/{customer_id}/{type}', 'CustomerController@getDetailsByTransactionType');
     Route::get('customer/get-customer-balance/{customer_id}', 'CustomerController@getCustomerBalance');
     Route::post('customer/pay-customer-due/{customer_id}', 'CustomerController@postPayContactDue');
+    Route::get('customer/pay-customer-due/edit/{id}', 'CustomerController@paymentDuetEdit');
+    Route::Put('customer/pay-customer-due/update/{id}', 'CustomerController@UpdatePayContactDue');
+    Route::delete('customer/pay-customer-due/delete/{id}', 'CustomerController@destroyPayContactDue');
     Route::get('customer/pay-customer-due/{customer_id}', 'CustomerController@getPayContactDue');
     Route::get('customer/get-important-date-row', 'CustomerController@getImportantDateRow');
     Route::post('customer/update-address/{customer_id}', 'CustomerController@updateAddress');
@@ -409,3 +412,4 @@ Route::post('/tokens/create', function (Request $request) {
 
     return ['token' => $token->plainTextToken];
 });
+Route::post('pdf', 'SettingController@getPdf');
