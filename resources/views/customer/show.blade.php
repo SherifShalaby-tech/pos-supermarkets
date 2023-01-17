@@ -79,7 +79,7 @@
                             <br>
                             @if ($balance < 0)
                                 <div class="col-md-12">
-                                    <button data-href="{{ action('CustomerController@getPayContactDue', $customer->id) }}"
+                                    <button data-href="{{ action('TransactionPaymentController@getCustomerDue', $customer->id) }}"
                                         class="btn btn-primary btn-modal"
                                         data-container=".view_modal">@lang('lang.pay')</button>
                                 </div>
@@ -403,15 +403,16 @@
                                     <thead>
                                     <tr>
                                         <th>@lang('lang.amount')</th>
+                                        <th>@lang('lang.type')</th>
                                         <th>@lang('lang.payment_date')</th>
                                         <th>@lang('lang.payment_type')</th>
                                         <th>@lang('lang.bank_name')</th>
                                         <th>@lang('lang.ref_number')</th>
                                         <th>@lang('lang.bank_deposit_date')</th>
-                                        <th>@lang('lang.card_number')</th>
-                                        <th>@lang('lang.year')</th>
-                                        <th>@lang('lang.month')</th>
+
                                         <th>@lang('lang.files')</th>
+                                        <th>@lang('lang.created_by')</th>
+                                        <th width="50%">@lang('lang.date_of_creation')</th>
                                         <th>@lang('lang.action')</th>
 
 
@@ -423,14 +424,14 @@
                                         @foreach ($payments as $payment)
                                             <tr>
                                                 <td>{{@num_format($payment->amount)}}</td>
+                                                <td><span class="type-{{$payment->type}}">{{__('lang.type_'.$payment->type)}}</span></td>
                                                 <td>{{@format_date($payment->paid_on)}}</td>
                                                 <td>{{$payment_type_array[$payment->method]}}</td>
                                                 <td>{{$payment->bank_name}}</td>
                                                 <td>{{$payment->ref_number}}</td>
                                                 <td>@if(!empty($payment->bank_deposit_date && ($payment->method == 'bank_transfer' || $payment->method == 'cheque'))){{@format_date($payment->bank_deposit_date)}} @endif</td>
-                                                <td>{{$payment->card_number}}</td>
-                                                <td>{{$payment->card_year}}</td>
-                                                <td>{{$payment->card_month}}</td>
+
+
                                                 <td>
                                                     @php
                                                         $payment_media = $payment->getMedia('transaction_payment');
@@ -442,6 +443,8 @@
 
                                                     @endif
                                                 </td>
+                                                <td>{{$payment->created_by_user->name}}</td>
+                                                <td>{{$payment->created_at->format('Y/m/d h:i A')}}</td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -452,14 +455,14 @@
                                                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
                                                             @can('sale.pay.create_and_edit')
                                                                 <li>
-                                                                    <a data-href="{{action('TransactionPaymentController@edit', $payment->id)}}"
+                                                                    <a data-href="{{action('CustomerController@paymentDuetEdit', $payment->id)}}"
                                                                        data-container=".view_modal" class="btn btn-modal"><i
                                                                             class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                                                                 </li>
                                                             @endcan
                                                             @can('sale.pay.delete')
                                                                 <li>
-                                                                    <a data-href="{{action('TransactionPaymentController@destroy', $payment->id)}}"
+                                                                    <a data-href="{{action('CustomerController@destroyPayContactDue', $payment->id)}}"
                                                                        data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                                                        class="btn text-red delete_item"><i class="fa fa-trash"></i>
                                                                         @lang('lang.delete')</a>

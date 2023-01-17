@@ -12,7 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
+    'type_Sell' => 'Satın Al',
+    'type_Debt'=>'Borç',
     'dashboard' => 'Gösterge Paneli',
     'username' => 'Kullanıcı adı',
     'password' => 'Parola',

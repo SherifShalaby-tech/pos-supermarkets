@@ -12,7 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
+    'type_Sell' => 'Kopen',
+    'type_schuld'=>'schuld',
     'dashboard' => 'Dashboard',
     'username' => 'gebruikersnaam',
     'password' => 'Wachtwoord',

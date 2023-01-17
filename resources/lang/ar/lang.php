@@ -12,7 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
+    'type_Sell'=>'شراء',
+    'type_Debt'=>'سداد',
     'dashboard' => 'نظرة عامة',
     'username' => 'اسم المستخدم',
     'password' => 'كلمة المرور',

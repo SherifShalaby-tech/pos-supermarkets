@@ -12,7 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
+    'type_Sell' => 'खरीदें',
+    'type_Debt'=>'ऋण',
     'dashboard' => 'डैशबोर्ड',
     'username' => 'उपयोगकर्ता नाम',
     'password' => 'कुंजिका',

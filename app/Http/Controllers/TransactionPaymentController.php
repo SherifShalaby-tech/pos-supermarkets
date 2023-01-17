@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\DebtPayment;
+use App\Models\DebtTransactionPayment;
 use App\Models\MoneySafe;
 use App\Models\StorePos;
 use App\Models\Transaction;
@@ -95,6 +97,7 @@ class TransactionPaymentController extends Controller
         try {
             $data = $request->except('_token');
 
+
             $payment_data = [
                 'transaction_payment_id' =>  !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
                 'transaction_id' =>  $request->transaction_id,
@@ -110,9 +113,29 @@ class TransactionPaymentController extends Controller
             ];
             DB::beginTransaction();
             $transaction = Transaction::find($request->transaction_id);
-
+            $debt_data = [
+                'amount' => $this->commonUtil->num_uf($request->amount),
+                'type' => 'Debt',
+                'customer_id' => $transaction->customer_id,
+                'method' => $request->method,
+                'paid_on' => $this->commonUtil->uf_date($request->paid_on),
+                'ref_number' => $request->ref_number,
+                'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
+                'bank_name' => $request->bank_name,
+                'created_by' => auth()->id(),
+            ];
+            $debt_payment=  DebtPayment::create($debt_data);
+            if ($request->upload_documents) {
+                foreach ($request->file('upload_documents', []) as $key => $doc) {
+                    $debt_payment->addMedia($doc)->toMediaCollection('debt_payment');
+                }
+            }
             $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
-
+            DebtTransactionPayment::create([
+                'debt_payment_id'=>$debt_payment->id,
+                'transaction_payment_id'=>$transaction_payment->id,
+                'amount'=>$this->commonUtil->num_uf($request->amount),
+            ]);
             if ($request->upload_documents) {
                 foreach ($request->file('upload_documents', []) as $key => $doc) {
                     $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
@@ -230,10 +253,42 @@ class TransactionPaymentController extends Controller
             $transaction = Transaction::find($transaction_id);
 
             $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+            $debt_data = [
+                'amount' => $this->commonUtil->num_uf($request->amount),
+                'method' => $request->method,
+                'paid_on' => $this->commonUtil->uf_date($request->paid_on),
+                'ref_number' => $request->ref_number,
+                'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
+                'bank_name' => $request->bank_name,
+                'created_by' => auth()->id(),
+            ];
+            $DebtTransactionPayment= DebtTransactionPayment::where('transaction_payment_id',$transaction_payment->id)->first();
+            if($DebtTransactionPayment){
+                $DebtTransactionPayment->amount=$this->commonUtil->num_uf($request->amount);
+                $DebtTransactionPayment->save();
+                $transaction_payment_d= DebtPayment::where('id',$transaction_payment->debt_payment_id)
+                    ->update($debt_data);
+            }else{
+                $debt_data['type'] = 'Debt';
+                $debt_data['customer_id'] = $transaction->customer_id;
+                $debt_payment=  DebtPayment::create($debt_data);
+                if ($request->upload_documents) {
+                    foreach ($request->file('upload_documents', []) as $key => $doc) {
+                        $debt_payment->addMedia($doc)->toMediaCollection('debt_payment');
+                    }
+                }
+                DebtTransactionPayment::create([
+                    'debt_payment_id'=>$debt_payment->id,
+                    'transaction_payment_id'=>$transaction_payment->id,
+                    'amount'=>$this->commonUtil->num_uf($request->amount),
+                ]);
+            }
+
 
             if ($request->upload_documents) {
                 foreach ($request->file('upload_documents', []) as $key => $doc) {
                     $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                    $transaction_payment_d->addMedia($doc)->toMediaCollection('debt_payment');
                 }
             }
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
@@ -322,7 +377,24 @@ class TransactionPaymentController extends Controller
             $transactions = Transaction::where('customer_id', $customer_id)->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])->orderBy('transaction_date', 'asc')->get();
 
             DB::beginTransaction();
-
+            $debt_data = [
+                'amount' => $amount,
+                'type' => 'Debt',
+                'customer_id' => $request->customer_id,
+                'method' => $request->method,
+                'paid_on' => $this->commonUtil->uf_date($request->paid_on),
+                'ref_number' => $request->ref_number,
+                'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
+                'bank_name' => $request->bank_name,
+                'created_by' => auth()->id(),
+            ];
+            $debt_payment=  DebtPayment::create($debt_data);
+            if ($request->upload_documents) {
+                foreach ($request->file('upload_documents', []) as $key => $doc) {
+                    $debt_payment->addMedia($doc)->toMediaCollection('debt_payment');
+                }
+            }
+            $debt_payment_transactions=[];
             foreach ($transactions as $transaction) {
                 $due_for_transaction = $this->getDueForTransaction($transaction->id);
                 $paid_amount = 0;
@@ -347,6 +419,12 @@ class TransactionPaymentController extends Controller
                     ];
 
                     $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                   DebtTransactionPayment::create([
+                        'debt_payment_id'=>$debt_payment->id,
+                        'transaction_payment_id'=>$transaction_payment->id,
+                        'amount'=>$paid_amount,
+                    ]);
+                    $debt_payment_transactions[$transaction_payment->id]=$paid_amount;
                     $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
                     $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
 
