@@ -1008,7 +1008,7 @@ class SellPosController extends Controller
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id, $store_id);
-                $System=System::where('key','weight_product'.$store_pos_id)=>first();
+                $System=System::where('key','weight_product'.$store_pos_id)->first();
                 if(!$System){
                     System::Create([
                         'key' => 'weight_product'.$store_pos_id,
