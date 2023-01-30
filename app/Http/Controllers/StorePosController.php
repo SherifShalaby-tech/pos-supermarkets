@@ -7,6 +7,7 @@ use App\Models\StorePos;
 use App\Models\System;
 use App\Models\User;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
