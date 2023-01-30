@@ -7,10 +7,12 @@
     $product_name = null ;
     $product_sale_price = null ;
     $product_purchase_price = null ;
+    $number_vs_base_unit = null ;
     if(!empty($item)){
     $product_name = $item->name;
     $product_sale_price = $item->sale_price;
     $product_purchase_price = $item->purchase_price;
+    $number_vs_base_unit = $item->number_vs_base_unit;
     }else if(!empty($name)){
     $product_name = $name;
     $product_sale_price = $sell_price;
@@ -43,12 +45,17 @@
     </td>
     <td>{!! Form::select('variations['.$row_id.'][unit_id]', $units, !empty($item) ? $item->unit_id: false, ['class'
         =>
-        'form-control selectpicker v_unit', 'data-live-search'=>"true", 'placeholder' => '']) !!}
+        'form-control selectpicker v_unit', 'data-live-search'=>"true", 'placeholder' => '','onchange'=>"get_unit($units_js,$row_id)" , 'id'=>'select_unit_id_'.$row_id]) !!}
     </td>
-    <td>{!! Form::text('variations['.$row_id.'][default_purchase_price]', $product_purchase_price , ['class' =>
+        @if(session('system_mode') != 'garments')
+            <td>{!! Form::number('variations['.$row_id.'][number_vs_base_unit]', $number_vs_base_unit , ['class' =>
+                'form-control
+                number_vs_base_unit', 'required','id'=>'number_vs_base_unit_'.$row_id]) !!}</td>
+        @endif
+    <td class="@if(empty($is_service)) hide @endif default_purchase_price_td">{!! Form::text('variations['.$row_id.'][default_purchase_price]', $product_purchase_price , ['class' =>
         'form-control
         default_purchase_price', 'required']) !!}</td>
-    <td>{!! Form::text('variations['.$row_id.'][default_sell_price]', $product_sale_price,
+    <td class="@if(empty($is_service)) hide @endif default_sell_price_td">{!! Form::text('variations['.$row_id.'][default_sell_price]', $product_sale_price,
         ['class' => 'form-control default_sell_price', 'required']) !!}</td>
     <td> <button type="button" class="btn btn-danger btn-xs remove_row mt-2"><i class="dripicons-cross"></i></button>
     </td>

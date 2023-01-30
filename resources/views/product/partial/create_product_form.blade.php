@@ -2,14 +2,15 @@
 $recent_product = App\Models\Product::where('is_raw_material', 0)
     ->orderBy('created_at', 'desc')
     ->first();
+$clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
 @endphp
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="i-checks">
-            <input id="is_service" name="is_service" type="checkbox"
+            <input id="is_service" name="is_consumption_details[0][amount_used]service" type="checkbox"
                 @if (session('system_mode') == 'restaurant') checked
                 @elseif(!empty($recent_product) && $recent_product->is_service == 1) checked @endif
-                value="1" class="form-control-custom">
+                value="0" class="form-control-custom">
             <label for="is_service"><strong>
                     @if (session('system_mode') == 'restaurant')
                         @lang('lang.or_add_new_product')
@@ -19,12 +20,31 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                 </strong></label>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="i-checks">
             <input id="active" name="active" type="checkbox" checked value="1" class="form-control-custom">
             <label for="active"><strong>
                     @lang('lang.active')
                 </strong></label>
+        </div>
+    </div>
+    <div class="col-md-3 ">
+        <div class="i-checks">
+            <input id="clear_all_input_form" name="clear_all_input_form"
+                   type="checkbox" @if ($clear_all_input_form == null || $clear_all_input_form == '1') checked @endif value="1"
+                   class="form-control-custom">
+            <label for="clear_all_input_form">
+                <strong>
+                    @lang('lang.clear_all_input_form')
+                </strong>
+            </label>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="i-checks">
+            <input id="have_weight" name="have_weight" type="checkbox"  value="1"
+                   class="form-control-custom">
+            <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
         </div>
     </div>
     <div class="col-md-4">
@@ -49,7 +69,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
         @endif
         <div class="input-group my-group">
-            {!! Form::select('product_class_id', $product_classes, !empty($recent_product) ? $recent_product->product_class_id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
+            {!! Form::select('product_class_id', $product_classes, !empty($recent_product) ? $recent_product->product_class_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
             <span class="input-group-btn">
                 @can('product_module.product_class.create_and_edit')
                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
@@ -60,11 +80,12 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         </div>
         <div class="error-msg text-red"></div>
     </div>
+
     @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
         <div class="col-md-4">
             {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
             <div class="input-group my-group">
-                {!! Form::select('category_id', $categories, !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                {!! Form::select('category_id', $categories, !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                 <span class="input-group-btn">
                     @can('product_module.category.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -78,7 +99,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="col-md-4">
             {!! Form::label('sub_category_id', __('lang.sub_category'), []) !!}
             <div class="input-group my-group">
-                {!! Form::select('sub_category_id', [], !empty($recent_product) ? $recent_product->sub_category_id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                {!! Form::select('sub_category_id', [], !empty($recent_product) ? $recent_product->sub_category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                 <span class="input-group-btn">
                     @can('product_module.sub_category.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -92,7 +113,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="col-md-4">
             {!! Form::label('brand_id', __('lang.brand'), []) !!}
             <div class="input-group my-group">
-                {!! Form::select('brand_id', $brands, !empty($recent_product) ? $recent_product->brand_id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                {!! Form::select('brand_id', $brands, !empty($recent_product) ? $recent_product->brand_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                 <span class="input-group-btn">
                     @can('product_module.brand.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -108,7 +129,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="form-group">
             {!! Form::label('name', __('lang.name') . ' *', []) !!}
             <div class="input-group my-group">
-                {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
+                {!! Form::text('name', null, ['class' => 'clear_input_form form-control', 'required', 'placeholder' => __('lang.name')]) !!}
                 <span class="input-group-btn">
                     <button class="btn btn-default bg-white btn-flat translation_btn" type="button"
                         data-type="product"><i class="dripicons-web text-primary fa-lg"></i></button>
@@ -124,14 +145,14 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('sku', __('lang.sku'), []) !!}
-            {!! Form::text('sku', null, ['class' => 'form-control', 'placeholder' => __('lang.sku')]) !!}
+            {!! Form::text('sku', null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.sku')]) !!}
         </div>
     </div>
     @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
         <div class="col-md-4">
             {!! Form::label('multiple_units', __('lang.unit'), []) !!}
             <div class="input-group my-group">
-                {!! Form::select('multiple_units[]', $units, !empty($recent_product) ? $recent_product->multiple_units : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'multiple_units']) !!}
+                {!! Form::select('multiple_units[]', $units, !empty($recent_product) ? $recent_product->multiple_units : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'multiple_units']) !!}
                 <span class="input-group-btn">
                     @can('product_module.unit.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -144,7 +165,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="col-md-4">
             {!! Form::label('multiple_colors', __('lang.color'), []) !!}
             <div class="input-group my-group">
-                {!! Form::select('multiple_colors[]', $colors, !empty($recent_product) ? $recent_product->multiple_colors : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'multiple_colors']) !!}
+                {!! Form::select('multiple_colors[]', $colors, !empty($recent_product) ? $recent_product->multiple_colors : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'multiple_colors']) !!}
                 <span class="input-group-btn">
                     @can('product_module.color.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -158,7 +179,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
     <div class="col-md-4">
         {!! Form::label('multiple_sizes', __('lang.size'), []) !!}
         <div class="input-group my-group">
-            {!! Form::select('multiple_sizes[]', $sizes, !empty($recent_product) ? $recent_product->multiple_sizes : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'multiple_sizes']) !!}
+            {!! Form::select('multiple_sizes[]', $sizes, !empty($recent_product) ? $recent_product->multiple_sizes : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'multiple_sizes']) !!}
             <span class="input-group-btn">
                 @can('product_module.size.create_and_edit')
                     <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -172,7 +193,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="col-md-4">
             {!! Form::label('multiple_grades', __('lang.grade'), []) !!}
             <div class="input-group my-group">
-                {!! Form::select('multiple_grades[]', $grades, !empty($recent_product) ? $recent_product->multiple_grades : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'multiple_grades']) !!}
+                {!! Form::select('multiple_grades[]', $grades, !empty($recent_product) ? $recent_product->multiple_grades : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'multiple_grades']) !!}
                 <span class="input-group-btn">
                     @can('product_module.grade.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -180,6 +201,18 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                                 class="fa fa-plus-circle text-primary fa-lg"></i></button>
                     @endcan
                 </span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="printers">{{trans('lang.printers')}}</label>
+                <div class="input-group my-group">
+                    <select id="printers" data-live-search="true" class="selectpicker form-control" name="printers[]" multiple>
+                        @foreach($printers as $printer)
+                            <option value="{{$printer->id}}">{{$printer->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
     @endif
@@ -259,34 +292,34 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="col-md-4">
             <div class="form-group">
                 {!! Form::label('alert_quantity', __('lang.alert_quantity'), []) !!}
-                {!! Form::text('alert_quantity', !empty($recent_product) ? @num_format($recent_product->alert_quantity) : 3, ['class' => 'form-control', 'placeholder' => __('lang.alert_quantity')]) !!}
+                {!! Form::text('alert_quantity', !empty($recent_product) ? @num_format($recent_product->alert_quantity) : 3, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.alert_quantity')]) !!}
             </div>
         </div>
     @endif
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('other_cost', __('lang.other_cost'), []) !!}
-            {!! Form::text('other_cost', !empty($recent_product) ? @num_format($recent_product->other_cost) : null, ['class' => 'form-control', 'placeholder' => __('lang.other_cost')]) !!}
+            {!! Form::text('other_cost', !empty($recent_product) ? @num_format($recent_product->other_cost) : null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.other_cost')]) !!}
         </div>
     </div>
     @can('product_module.purchase_price.create_and_edit')
-        <div class="col-md-4">
+        <div class="col-md-4 supplier_div">
             <div class="form-group">
                 {!! Form::label('purchase_price', session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') : __('lang.cost') . ' *', []) !!}
-                {!! Form::text('purchase_price', !empty($recent_product) ? @num_format($recent_product->purchase_price) : null, ['class' => 'form-control', 'placeholder' => session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
+                {!! Form::text('purchase_price', !empty($recent_product) ? @num_format($recent_product->purchase_price) : null, ['class' => 'clear_input_form form-control', 'placeholder' => session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
             </div>
         </div>
     @endcan
-    <div class="col-md-4">
+    <div class="col-md-4 supplier_div">
         <div class="form-group">
             {!! Form::label('sell_price', __('lang.sell_price') . ' *', []) !!}
-            {!! Form::text('sell_price', !empty($recent_product) ? @num_format($recent_product->sell_price) : null, ['class' => 'form-control', 'placeholder' => __('lang.sell_price'), 'required']) !!}
+            {!! Form::text('sell_price', !empty($recent_product) ? @num_format($recent_product->sell_price) : null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.sell_price'), 'required']) !!}
         </div>
     </div>
     <div class="col-md-4">
         {!! Form::label('tax_id', __('lang.tax'), []) !!}
         <div class="input-group my-group">
-            {!! Form::select('tax_id', $taxes, !empty($recent_product) ? $recent_product->tax_id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+            {!! Form::select('tax_id', $taxes, !empty($recent_product) ? $recent_product->tax_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
             <span class="input-group-btn">
                 @can('product_module.tax.create')
                     <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -300,7 +333,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('tax_method', __('lang.tax_method'), []) !!}
-            {!! Form::select('tax_method', ['inclusive' => __('lang.inclusive'), 'exclusive' => __('lang.exclusive')], !empty($recent_product) ? $recent_product->tax_method : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+            {!! Form::select('tax_method', ['inclusive' => __('lang.inclusive'), 'exclusive' => __('lang.exclusive')], !empty($recent_product) ? $recent_product->tax_method : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
         </div>
     </div>
     <br>
@@ -308,25 +341,25 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount_type', __('lang.discount_type'), []) !!}
-            {!! Form::select('discount_type', ['fixed' => __('lang.fixed'), 'percentage' => __('lang.percentage')], !empty($recent_product) ? $recent_product->discount_type : 'fixed', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+            {!! Form::select('discount_type', ['fixed' => __('lang.fixed'), 'percentage' => __('lang.percentage')], !empty($recent_product) ? $recent_product->discount_type : 'fixed', ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount', __('lang.discount'), []) !!}
-            {!! Form::text('discount', !empty($recent_product) ? @num_format($recent_product->discount) : null, ['class' => 'form-control', 'placeholder' => __('lang.discount')]) !!}
+            {!! Form::text('discount', !empty($recent_product) ? @num_format($recent_product->discount) : null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.discount')]) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount_start_date', __('lang.discount_start_date'), []) !!}
-            {!! Form::text('discount_start_date', !empty($recent_product) && !empty($recent_product->discount_start_date) ? @format_date($recent_product->discount_start_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.discount_start_date')]) !!}
+            {!! Form::text('discount_start_date', !empty($recent_product) && !empty($recent_product->discount_start_date) ? @format_date($recent_product->discount_start_date) : null, ['class' => 'clear_input_form form-control datepicker', 'placeholder' => __('lang.discount_start_date')]) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount_end_date', __('lang.discount_end_date'), []) !!}
-            {!! Form::text('discount_end_date', !empty($recent_product) && !empty($recent_product->discount_end_date) ? @format_date($recent_product->discount_end_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.discount_end_date')]) !!}
+            {!! Form::text('discount_end_date', !empty($recent_product) && !empty($recent_product->discount_end_date) ? @format_date($recent_product->discount_end_date) : null, ['class' => 'clear_input_form form-control datepicker', 'placeholder' => __('lang.discount_end_date')]) !!}
         </div>
     </div>
     <input type="hidden" name="default_purchase_price_percentage" id="default_purchase_price_percentage"
@@ -337,7 +370,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="form-group">
             {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
                 title="@lang('lang.discount_customer_info')"></i>
-            {!! Form::select('discount_customer_types[]', $discount_customer_types, !empty($recent_product) ? $recent_product->discount_customer_types : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple', 'data-actions-box' => 'true', 'id' => 'discount_customer_types']) !!}
+            {!! Form::select('discount_customer_types[]', $discount_customer_types, !empty($recent_product) ? $recent_product->discount_customer_types : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple', 'data-actions-box' => 'true', 'id' => 'discount_customer_types']) !!}
         </div>
     </div>
     <div class="col-md-4">
@@ -353,7 +386,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             <div class="form-group">
                 {!! Form::label('show_to_customer_types', __('lang.show_to_customer_types'), []) !!}
                 <i class="dripicons-question" data-toggle="tooltip" title="@lang('lang.show_to_customer_types_info')"></i>
-                {!! Form::select('show_to_customer_types[]', $customer_types, !empty($recent_product) ? $recent_product->show_to_customer_types : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
+                {!! Form::select('show_to_customer_types[]', $customer_types, !empty($recent_product) ? $recent_product->show_to_customer_types : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
             </div>
         </div>
     </div>
@@ -398,7 +431,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         </div>
     </div>
 
-    <div class="col-md-12 this_product_have_variant_div">
+    <div class="col-md-12 this_product_have_variant_div" style="overflow: auto">
         <table class="table" id="variation_table">
             <thead>
                 <tr>
@@ -408,8 +441,9 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                     <th>@lang('lang.size')</th>
                     <th>@lang('lang.grade')</th>
                     <th>@lang('lang.unit')</th>
-                    <th>@lang('lang.purchase_price')</th>
-                    <th>@lang('lang.sell_price')</th>
+                    <th>@lang('lang.number_vs_base_unit')</th>
+                    <th class="@if(empty($is_service)) hide @endif default_purchase_price_th">@lang('lang.purchase_price')</th>
+                    <th class="@if(empty($is_service)) hide @endif default_sell_price_th">@lang('lang.sell_price')</th>
                     <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
                                 class="dripicons-plus"></i></button></th>
                 </tr>

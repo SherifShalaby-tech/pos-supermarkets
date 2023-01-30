@@ -12,8 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-    'type_Sell' => 'خریدیں',
-     'type_Debt' => 'قرض',
+    'number_vs_base_unit'=>'اکائیوں کی مساوات',
+
     'dashboard' => 'ڈیش بورڈ',
     'username' => 'صارف نام',
     'password' => 'Passwordپاس ورڈ',

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Imports\ProductImport;
+use App\Models\AddStockLine;
 use App\Models\Brand;
+use App\Models\Printer;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Customer;
@@ -24,6 +26,7 @@ use App\Models\Variation;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +70,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -123,6 +126,7 @@ class ProductController extends Controller
                 ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'sub_categories.id')
                 ->leftjoin('brands', 'products.brand_id', 'brands.id')
                 ->leftjoin('supplier_products', 'products.id', 'supplier_products.product_id')
+                ->leftjoin('suppliers as suppliersf', 'supplier_products.supplier_id', 'suppliersf.id')
                 ->leftjoin('users', 'products.created_by', 'users.id')
                 ->leftjoin('users as edited', 'products.edited_by', 'users.id')
                 ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
@@ -210,6 +214,7 @@ class ProductController extends Controller
                 'grades.name as grade',
                 'units.name as unit',
                 'taxes.name as tax',
+                'suppliersf.name as supplier',
                 'variations.id as variation_id',
                 'variations.name as variation_name',
                 'variations.default_purchase_price',
@@ -220,7 +225,6 @@ class ProductController extends Controller
                 DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as current_stock'),
             )->with(['supplier'])
                 ->groupBy('variations.id');
-
             return DataTables::of($products)
                 ->addColumn('image', function ($row) {
                     $image = $row->getFirstMediaUrl('product');
@@ -241,16 +245,47 @@ class ProductController extends Controller
                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                     return $html;
                 })
-                ->editColumn('supplier_name', function ($row) {
-                    return $row->supplier->name ?? '';
-                })
+                // ->addColumn('supplier_name', function ($row) {
+                //     return $row->supplier ? $row->supplier->name : '';
+                // })
+
                 ->editColumn('batch_number', '{{$batch_number}}')
-                ->editColumn('default_sell_price', '{{@num_format($default_sell_price)}}')
+                ->editColumn('default_sell_price', function ($row) {
+                    $price= AddStockLine::where('variation_id',$row->variation_id)
+                        ->whereColumn('quantity',">",'quantity_sold')->first();
+                    $price= $price? ($price->sell_price > 0 ? $price->sell_price : $row->default_sell_price):$row->default_sell_price;
+                    return $this->productUtil->num_f($price);
+                })//, '{{@num_format($default_sell_price)}}')
+                ->editColumn('default_purchase_price', function ($row) {
+                    $price= AddStockLine::where('variation_id',$row->variation_id)
+                        ->whereColumn('quantity',">",'quantity_sold')->first();
+                    $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
+
+                    return $this->productUtil->num_f($price);
+                })
                 ->addColumn('tax', '{{$tax}}')
                 ->editColumn('brand', '{{$brand}}')
                 ->editColumn('unit', '{{$unit}}')
-                ->editColumn('color', '{{$color}}')
-                ->editColumn('size', '{{$size}}')
+                ->editColumn('color', function ($row){
+                    $color='';
+                    if(isset($row->multiple_colors)){
+                      $color_m=Color::whereId($row->multiple_colors)->first();
+                      if($color_m){
+                         $color= $color_m ->name;
+                      }
+                    }
+                    return $color;
+                })
+                ->editColumn('size', function ($row){
+                    $size='';
+                    if(isset($row->multiple_sizes)){
+                      $size_m=Size::whereId($row->multiple_sizes)->first();
+                      if($size_m){
+                         $size= $size_m ->name;
+                      }
+                    }
+                    return $size;
+                })
                 ->editColumn('grade', '{{$grade}}')
                 ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
                 ->addColumn('current_stock_value', function ($row) {
@@ -262,7 +297,7 @@ class ProductController extends Controller
                 ->editColumn('exp_date', '@if(!empty($exp_date)){{@format_date($exp_date)}}@endif')
                 ->addColumn('manufacturing_date', '@if(!empty($manufacturing_date)){{@format_date($manufacturing_date)}}@endif')
                 ->editColumn('discount', '{{@num_format($discount)}}')
-                ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
+//                ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
                 ->editColumn('active', function ($row) {
                     if ($row->active) {
                         return __('lang.yes');
@@ -271,15 +306,25 @@ class ProductController extends Controller
                     }
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
-                ->addColumn('supplier', function ($row) {
-                    $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
+                ->addColumn('supplier_name', function ($row) {
+                    $addStocks =  AddStockLine::select('id','transaction_id')
+                        ->with(['transaction:id,supplier_id','transaction.supplier:id,name'])
+                        ->whereProductId($row->id)
+                        ->get();
+                    $supplierNames = array();
+                    foreach ($addStocks as $supplier)
+                    {
+                        array_push($supplierNames,$supplier->transaction->supplier->name);
+                    }
+                    return implode(' , ',array_unique($supplierNames));
+/*                    $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
                         ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
                         ->where('transactions.type', 'add_stock')
                         ->where('add_stock_lines.product_id', $row->id)
                         ->select('suppliers.name')
                         ->orderBy('transactions.id', 'desc')
                         ->first();
-                    return $query->name ?? '';
+                    return $query->name;*/
                 })
                 ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
                     if ($row->is_service == 1 || $is_add_stock == 1) {
@@ -384,7 +429,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -431,7 +476,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -445,6 +490,7 @@ class ProductController extends Controller
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
         $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::pluck('name', 'id');
+        $printers = Printer::get(['id','name']);
 
         if ($quick_add) {
             return view('product.create_quick_add')->with(compact(
@@ -465,6 +511,7 @@ class ProductController extends Controller
                 'customer_types',
                 'discount_customer_types',
                 'stores',
+                'printers'
             ));
         }
 
@@ -485,6 +532,7 @@ class ProductController extends Controller
             'customer_types',
             'discount_customer_types',
             'stores',
+            'printers'
         ));
     }
 
@@ -505,8 +553,7 @@ class ProductController extends Controller
             ['purchase_price' => ['required', 'max:25', 'decimal']],
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
-
-        try {
+//        try {
             $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);
 
             $product_data = [
@@ -545,6 +592,7 @@ class ProductController extends Controller
                 'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
+                'have_weight' => !empty($request->have_weight) ? 1 : 0,
                 'created_by' => Auth::user()->id
             ];
 
@@ -552,6 +600,22 @@ class ProductController extends Controller
             DB::beginTransaction();
 
             $product = Product::create($product_data);
+            if($request->printers){
+                // loop printers
+                foreach ($request->printers as $printer){
+                    $data = [
+                        'printer_id' => $printer,
+                        'product_id' => $product['id'],
+                    ];
+                    $insert_data[] = $data;
+                    $insert_data = collect($insert_data);
+                    $chunks = $insert_data->chunk(100);
+                    foreach ($chunks as $chunk)
+                    {
+                        DB::table('printer_product')->insert($chunk->toArray());
+                    }
+                }
+            }
 
             $this->productUtil->createOrUpdateVariations($product, $request);
 
@@ -581,13 +645,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+//        } catch (\Exception $e) {
+//            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+//            $output = [
+//                'success' => false,
+//                'msg' => __('lang.something_went_wrong')
+//            ];
+//        }
 
         return $output;
     }
@@ -649,13 +713,13 @@ class ProductController extends Controller
         if (!auth()->user()->can('product_module.product.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
-        $product = Product::findOrFail($id);
+        $product = Product::with('variations')->findOrFail($id);
 
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -668,8 +732,7 @@ class ProductController extends Controller
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
         $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::pluck('name', 'id');
-
-
+        $units_js=$units->pluck('base_unit_multiplier', 'id');
         return view('product.edit')->with(compact(
             'raw_materials',
             'raw_material_units',
@@ -688,6 +751,7 @@ class ProductController extends Controller
             'discount_customer_types',
             'stores',
             'suppliers',
+            'units_js'
         ));
     }
 
@@ -749,6 +813,7 @@ class ProductController extends Controller
                 'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
+                'have_weight' => !empty($request->have_weight) ? 1 : 0,
                 'edited_by' => Auth::user()->id,
             ];
 
@@ -855,8 +920,10 @@ class ProductController extends Controller
     public function getVariationRow()
     {
         $row_id = request()->row_id;
-
-        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        //'base_unit_multiplier'
+        $units = Unit::orderBy('name', 'asc');
+        $units_js=$units->pluck('base_unit_multiplier', 'id');
+        $units = $units->pluck('name', 'id');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -864,6 +931,7 @@ class ProductController extends Controller
         $name = request()->name;
         $purchase_price = request()->purchase_price;
         $sell_price = request()->sell_price;
+        $is_service = request()->is_service;
 
         return view('product.partial.variation_row')->with(compact(
             'units',
@@ -874,7 +942,9 @@ class ProductController extends Controller
             'row_id',
             'name',
             'purchase_price',
-            'sell_price'
+            'sell_price',
+            'units_js',
+            'is_service'
         ));
     }
 
@@ -992,6 +1062,28 @@ class ProductController extends Controller
      */
     public function getImport()
     {
+        $prices=DB::table('new_name')->get();
+
+
+        foreach($prices as $price){
+        //     $variation = Variation::find($price->id);
+        //     if($variation){
+        //         $variation->default_purchase_price=$price->Purchase_Price;
+        //         $variation->default_sell_price=$price->sell_price;
+                $product = Product::where('sku',$price->Sku)->first();
+                if($product){
+                    $product->name=$price->Product_Name;
+                    // $product->sell_price=$price->sell_price;
+                    $product->save();
+                }
+        //         $variation->save();
+            }
+
+
+
+        // }
+
+
         return view('product.import');
     }
 
@@ -1001,23 +1093,32 @@ class ProductController extends Controller
      */
     public function saveImport(Request $request)
     {
+
+
+
         $this->validate($request, [
-            'file' => 'required|mimes:csv,txt'
+            'file' => 'required|mimes:csv,txt,xlsx'
         ]);
         try {
             DB::beginTransaction();
             Excel::import(new ProductImport($this->productUtil, $request), $request->file);
             DB::commit();
-
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
             ];
         } catch (\Exception $e) {
+/*            $failures = $e->failures();
+            foreach ($failures as $failure) {
+                $failure->row(); // row that went wrong
+                $failure->attribute(); // either heading key (if using heading row concern) or column index
+              return  $failure->errors(); // Actual error messages from Laravel validator
+                $failure->values(); // The values of the row that has failed.
+            }*/
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [
                 'success' => false,
-                'msg' => __('lang.something_went_wrong')
+                'msg' => __('lang.something_went_wrong') .' , '. __('lang.import_req')
             ];
         }
 

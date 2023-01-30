@@ -7,6 +7,8 @@ use App\Models\Employee;
 use App\Models\GiftCard;
 use App\Models\Leave;
 use App\Models\Product;
+use App\Models\Category;
+
 use App\Models\Store;
 use App\Models\System;
 use App\Models\Transaction;
@@ -19,7 +21,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 class HomeController extends Controller
 {
     protected $commonUtil;
@@ -32,12 +33,51 @@ class HomeController extends Controller
      */
     public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil)
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except('dd');
         $this->commonUtil = $commonUtil;
         $this->productUtil = $productUtil;
         $this->transactionUtil = $transactionUtil;
     }
+    //  public function dd()
+    // {
+    //     $old_parents= DB::table('categories_old')->whereNull('parent_id')->get();
+    //     $old_subs= DB::table('categories_old')->whereNotNull('parent_id')->get();
+    //     $old_class= DB::table('product_classes_old')->get();
 
+
+
+    //     // dd($old_class,$old_subs,$old_parents);
+    //     foreach($old_subs as $k=>$old_sub){
+    //         DB::table('product_classes')->insert([
+    //             'name'=>$old_sub->name,
+    //             'sort'=>$k+1,
+    //             'status'=>1,
+    //             'translations'=>$old_sub->translations
+    //         ]);
+    //     }
+
+    //     foreach($old_class as $k=>$old_clas){
+
+    //       $new_parent= Category::create([
+    //             'name'=>$old_clas->name,
+    //             'description'=>null,
+    //             'parent_id'=>null,
+    //             'translations'=>$old_clas->translations
+    //             ]);
+
+
+    //       $old_parents=  DB::table('categories_old')->where('parent_id',$old_clas->id)->get();
+    //         foreach($old_parents as $k=>$old_parent){
+    //           DB::table('categories')->insert([
+    //             'name'=>$old_parent->name,
+    //             'description'=>$old_parent->description,
+    //             'parent_id'=>$new_parent->id,
+    //             'translations'=>$old_parent->translations
+    //         ]);
+    //         }
+    //     }
+
+    // }
     /**
      * Show the application dashboard.
      *
@@ -53,7 +93,7 @@ class HomeController extends Controller
         if (strtolower(session('user.job_title')) == 'cashier') {
             $store_pos_id = session('user.pos_id');
         } else {
-            if (!Auth::user()->is_superadmin && !auth()->user()->is_admin) {
+            if (!Auth::user()->is_superadmin && !auth()->user()->is_admin && !strtolower(session('user.job_title'))  =="Accountant" ) {
                 $employee = Employee::where('user_id', Auth::user()->id)->first();
                 $store_ids = $employee->store_id;
                 $store_pos_id = null;
@@ -79,7 +119,7 @@ class HomeController extends Controller
         $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
 
         $store_pos_id = null;
-        if (!Auth::user()->is_superadmin && !auth()->user()->is_admin) {
+        if (!Auth::user()->is_superadmin && !auth()->user()->is_admin && !strtolower(session('user.job_title'))  =="Accountant" ) {
             $employee = Employee::where('user_id', Auth::user()->id)->first();
             $store_id = $employee->store_id;
             $store_pos_id = null;
@@ -534,7 +574,7 @@ class HomeController extends Controller
             $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
         }
 
-        if (!Auth::user()->is_superadmin && !auth()->user()->is_admin) {
+        if (!Auth::user()->is_superadmin && !auth()->user()->is_admin && !strtolower(session('user.job_title'))  =="Accountant" ) {
             $store_pos_id = null;
             if (!empty(session('user.pos_id'))) {
                 $store_pos_id = session('user.pos_id');
@@ -602,6 +642,8 @@ class HomeController extends Controller
 
         $purchase = $transaction_query->total_purchases ?? 0;
 
+        $total_tax = Transaction::where('type','sell')->sum('total_tax'); // total tax
+
         $revenue -= $sell_return;
 
         $cost_query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
@@ -658,7 +700,8 @@ class HomeController extends Controller
             $gift_card_sold = GiftCard::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('balance');
         }
 
-        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;  //excluding taxes from profit as its not part of profit
+        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;
+        //excluding taxes from profit as its not part of profit
         $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
         if (!empty($start_date)) {
             $expense_query->whereDate('transaction_date', '>=', $start_date);
@@ -783,6 +826,7 @@ class HomeController extends Controller
         $data['sell_return'] = $sell_return;
         $data['profit'] = $profit;
         $data['purchase'] = $purchase;
+        $data['total_tax'] = $total_tax;
         $data['expense'] = $expense;
         $data['purchase_return'] = $purchase_return;
         $data['payment_received'] = $payment_received_total;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\System;
 use App\Models\User;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -103,7 +104,12 @@ class StorePosController extends Controller
             DB::beginTransaction();
 
             $store_pos = StorePos::create($data);
-
+            System::Create([
+                'key' => 'weight_product'.$store_pos->id,
+                'value' => 0,
+                'date_and_time' => Carbon::now(),
+                'created_by' => Auth::user()->id
+            ]);
             $store_pos_id = $store_pos->id;
 
             DB::commit();

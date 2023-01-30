@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    if(!$('#clear_all_input_form').is(':checked')){
+        $('.clear_input_form').val('');
+        $('.clear_input_form').selectpicker('refresh');
+    }
     //Prevent enter key function except texarea
     $("form").on("keyup keypress", function (e) {
         var keyCode = e.keyCode || e.which;
@@ -86,7 +90,19 @@ $(document).on("click", ".add_row", function () {
         },
     });
 });
-
+$(document).on("click", "#clear_all_input_form", function () {
+    var value = $('#clear_all_input_form').is(':checked')?1:0;
+    $.ajax({
+        method: "get",
+        url: "/create-or-update-system-property/clear_all_input_form/"+value,
+        contentType: "html",
+        success: function (result) {
+            if (result.success) {
+                swal("Success", response.msg, "success");
+            }
+        },
+    });
+});
 $(document).on("change", ".v_size, .v_color", function () {
     let row = $(this).parents(".variation_row");
     let name = row.find(".name_hidden").val();
@@ -148,6 +164,11 @@ myDropzone = new Dropzone("div#my-dropzone", {
                                 $("#sku").val("").change();
                                 $("#name").val("").change();
                                 $(".translations").val("").change();
+
+                                if(!$('#clear_all_input_form').is(':checked')){
+                                    $('.clear_input_form').val('');
+                                    $('.clear_input_form').selectpicker('refresh');
+                                }
                             } else {
                                 swal("Error", response.msg, "error");
                             }
@@ -815,9 +836,27 @@ $(document).on("change", "#discount", function () {
 
 $(document).on("change", "#is_service", function () {
     if ($(this).prop("checked")) {
+        $(this).val(1);
         $(".supplier_div").removeClass("hide");
+        $(".sell_price").removeClass('hide');
+        $(".purchase_price").removeClass('hide');
+        $(".purchase_price_th").removeClass('hide');
+        $(".sell_price_th").removeClass('hide');
+        $(".default_purchase_price_td").removeClass('hide');
+        $(".default_sell_price_td").removeClass('hide');
+        $(".default_purchase_price_th").removeClass('hide');
+        $(".default_sell_price_th").removeClass('hide');
     } else {
+        $(this).val(0);
         $(".supplier_div").addClass("hide");
+        $(".sell_price").addClass('hide');
+        $(".purchase_price").addClass('hide');
+        $(".purchase_price_th").addClass('hide');
+        $(".sell_price_th").addClass('hide');
+        $(".default_purchase_price_td").addClass('hide');
+        $(".default_sell_price_td").addClass('hide');
+        $(".default_purchase_price_th").addClass('hide');
+        $(".default_sell_price_th").addClass('hide');
     }
 });
 $(document).on("change", "#sell_price", function () {

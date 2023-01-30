@@ -12,14 +12,14 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-    'type_Sell' => 'खरीदें',
-    'type_Debt'=>'ऋण',
+
     'dashboard' => 'डैशबोर्ड',
     'username' => 'उपयोगकर्ता नाम',
     'password' => 'कुंजिका',
     'email' => 'ईमेल',
     'login' => 'लॉग इन करें',
     'developed_by' => 'द्वारा विकसित',
+    'number_vs_base_unit'=>'इकाइयाँ समीकरण',
 
     'submit' => 'प्रस्तुत करना',
     'save' => 'सहेजें',

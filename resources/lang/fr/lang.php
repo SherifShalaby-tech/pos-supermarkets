@@ -12,8 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-    'type_Sell' => 'Acheter',
-    'type_Debt'=>'Dette',
+    'number_vs_base_unit'=>'Équation des unitésn',
+
     'dashboard' => 'Tableau de bord',
     'username' => 'Nom d\'utilisateur',
     'password' => 'Mot de passe',

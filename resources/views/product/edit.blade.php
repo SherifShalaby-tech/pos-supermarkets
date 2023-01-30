@@ -14,7 +14,7 @@
                             <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
                             {!! Form::open(['url' => action('ProductController@update', $product->id), 'id' => 'product-edit-form', 'method' => 'PUT', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="i-checks">
                                         <input id="is_service" name="is_service" type="checkbox"
                                             @if (!empty($product->is_service)) checked @endif value="1"
@@ -28,7 +28,7 @@
                                             </strong></label>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="i-checks">
                                         <input id="active" name="active" type="checkbox"
                                             @if (!empty($product->active)) checked @endif value="1"
@@ -38,16 +38,25 @@
                                             </strong></label>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group supplier_div @if (empty($product->is_service)) hide @endif">
+                                <div class="col-md-3">
+                                    <div class="i-checks">
+                                        <input id="have_weight" name="have_weight" type="checkbox"
+                                               @if (!empty($product->have_weight)) checked @endif value="1" class="form-control-custom">
+                                        <label for="have_weight"><strong>
+                                                @lang('lang.have_weight')
+                                            </strong></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 supplier_div @if (empty($product->is_service)) hide @endif">
+                                    <div class="form-group ">
                                         {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
                                         <div class="input-group my-group">
                                             {!! Form::select('supplier_id', $suppliers, !empty($product->supplier) ? $product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             <span class="input-group-btn">
                                                 @can('supplier_module.supplier.create_and_edit')
                                                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
-                                                        data-href="{{ action('SupplierController@create') }}?quick_add=1"
-                                                        data-container=".view_modal"><i
+                                                            data-href="{{ action('SupplierController@create') }}?quick_add=1"
+                                                            data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
                                                 @endcan
                                             </span>
@@ -125,7 +134,7 @@
                                     <div class="form-group">
                                         {!! Form::label('name', __('lang.name') . ' *', []) !!}
                                         <div class="input-group my-group">
-                                            {!! Form::text('name', $product->name, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
+                                            {!! Form::text('name', $product->name, ['class' => 'form-control', 'required', 'placeholder' => "mada"]) !!}
                                             <span class="input-group-btn">
                                                 <button type="button"
                                                     class="btn btn-default bg-white btn-flat translation_btn" type="button"
@@ -324,14 +333,14 @@
                                     </div>
                                 </div>
                                 @can('product_module.purchase_price.create_and_edit')
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 supplier_div @if (empty($product->is_service)) hide @endif">
                                         <div class="form-group">
                                             {!! Form::label('purchase_price', session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') : __('lang.cost') . ' *', []) !!}
                                             {!! Form::text('purchase_price', @num_format($product->purchase_price), ['class' => 'form-control', 'placeholder' => session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
                                         </div>
                                     </div>
                                 @endcan
-                                <div class="col-md-4">
+                                <div class="col-md-4 supplier_div @if (empty($product->is_service)) hide @endif">
                                     <div class="form-group">
                                         {!! Form::label('sell_price', __('lang.sell_price') . ' *', []) !!}
                                         {!! Form::text('sell_price', @num_format($product->sell_price), ['class' => 'form-control', 'placeholder' => __('lang.sell_price'), 'required']) !!}
@@ -468,8 +477,9 @@
                                                 <th>@lang('lang.size')</th>
                                                 <th>@lang('lang.grade')</th>
                                                 <th>@lang('lang.unit')</th>
-                                                <th>@lang('lang.purchase_price')</th>
-                                                <th>@lang('lang.sell_price')</th>
+                                                <th>@lang('lang.number_vs_base_unit')</th>
+                                                <th class="supplier_div @if (empty($product->is_service)) hide @endif">@lang('lang.purchase_price')</th>
+                                                <th class="supplier_div @if (empty($product->is_service)) hide @endif">@lang('lang.sell_price')</th>
                                                 <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
                                                             class="dripicons-plus"></i></button></th>
                                             </tr>
@@ -479,6 +489,7 @@
                                                 @include('product.partial.edit_variation_row', [
                                                     'row_id' => $loop->index,
                                                     'item' => $item,
+                                                    'is_service' => $product->is_service,
                                                 ])
                                             @endforeach
                                         </tbody>
