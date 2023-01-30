@@ -12,7 +12,6 @@ use App\Models\ConsumptionProduct;
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
 use App\Models\CustomerImportantDate;
-use App\Models\DebtPayment;
 use App\Models\DiningTable;
 use App\Models\EarningOfPoint;
 use App\Models\Employee;
@@ -1554,8 +1553,6 @@ class TransactionUtil extends Util
         $inputs['created_by'] = auth()->user()->id;
 
         $parent_payment = TransactionPayment::create($inputs);
-        $inputs['type'] ='Debt';
-        $DebtPayment= DebtPayment::create($inputs);
         $customer = Customer::findOrFail($customer_id);
 
 
@@ -1569,7 +1566,6 @@ class TransactionUtil extends Util
         if ($request->upload_documents) {
             foreach ($request->file('upload_documents', []) as $key => $doc) {
                 $parent_payment->addMedia($doc)->toMediaCollection('transaction_payment');
-                $DebtPayment->addMedia($doc)->toMediaCollection('transaction_payment');
             }
         }
 

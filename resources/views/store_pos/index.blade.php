@@ -18,6 +18,7 @@
                     <table id="store_table" class="table dataTable">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>@lang('lang.store')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.user')</th>
@@ -36,6 +37,7 @@
                         <tbody>
                             @foreach($store_poses as $store_pos)
                             <tr>
+                                <td>{{$store_pos->id}}</td>
                                 <td>{{$store_pos->store->name ?? ''}}</td>
                                 <td>{{$store_pos->name}}</td>
                                 <td>{{$store_pos->user->name}}</td>

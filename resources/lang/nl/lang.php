@@ -12,15 +12,14 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-    'type_Sell' => 'Kopen',
-    'type_schuld'=>'schuld',
+
     'dashboard' => 'Dashboard',
     'username' => 'gebruikersnaam',
     'password' => 'Wachtwoord',
     'email' => 'E-mail',
     'login' => 'Log in',
     'developed_by' => 'Ontwikkeld door',
-
+    'number_vs_base_unit'=>'Units equation',
     'submit' => 'Indienen',
     'save' => 'Sparen',
     'close' => 'Dichtbij',

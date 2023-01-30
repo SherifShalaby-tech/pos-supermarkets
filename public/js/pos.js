@@ -247,7 +247,7 @@ $(document).ready(function () {
                             ._trigger("select", "autocompleteselect", ui);
                         $(this).autocomplete("close");
                     } else if (ui.content.length == 0) {
-                        swal("Product not found");
+                        // swal("Product not found");
                     }
                 },
                 focus: function (event, ui) {
@@ -289,14 +289,15 @@ $(document).ready(function () {
             var string = "";
             if (item.is_service == 0 && item.qty_available <= 0) {
                 string +=
-                    '<li class="ui-state-disabled">' +
-                    item.text +
+                    '<li class="ui-state-disabled">'
+                    +item.text +
                     " (" +
                     LANG.out_of_stock +
                     ") </li>";
             } else {
                 string += item.text;
             }
+            console.log(item)
             return $("<li>")
                 .append("<div>" + string + "</div>")
                 .appendTo(ul);
@@ -341,6 +342,7 @@ function get_label_product_row(
     if (add_via_ajax) {
         var store_id = $("#store_id").val();
         var customer_id = $("#customer_id").val();
+        var store_pos_id =  $("#store_pos_id").val();
         let currency_id = $("#received_currency_id").val();
 
         if (edit_row_count !== 0) {
@@ -358,6 +360,7 @@ function get_label_product_row(
             data: {
                 product_id: product_id,
                 row_count: row_count,
+                store_pos_id: store_pos_id,
                 variation_id: variation_id,
                 store_id: store_id,
                 customer_id: customer_id,
@@ -538,7 +541,7 @@ function calculate_sub_totals() {
         let sell_price = __read_number($(tr).find(".sell_price"));
         let price_hidden = __read_number($(tr).find(".price_hidden"));
         let sub_total = 0;
-
+        console.log(sell_price)
         if (sell_price > price_hidden) {
             let price_discount = (sell_price - price_hidden);
 
@@ -553,6 +556,7 @@ function calculate_sub_totals() {
             );
             $(tr).find(".plus_sign_text").text("+");
             sub_total = sell_price * quantity;
+            console.log(sub_total)
         } else if (sell_price < price_hidden) {
             let price_discount = (price_hidden - sell_price);
             $(tr).find(".product_discount_type").val("fixed");

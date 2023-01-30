@@ -56,7 +56,20 @@ $(document).on("change", "#store_id", function () {
         getCurrencyDropDown();
     }
 });
+$(document).on("click", ".add_bounce_btn", function () {
+    var index_id=$(this).attr('index_id');
+    console.log(index_id);
+    let bounce_details_td = $(".bounce_details_td_"+index_id),
+        add_qty_bounce_dive = $(".add_qty_bounce_dive_"+index_id);
+    if(add_qty_bounce_dive.hasClass('hide') && bounce_details_td.hasClass('hide')){
+        add_qty_bounce_dive.removeClass('hide');
+        bounce_details_td.removeClass('hide');
+    }else{
+        add_qty_bounce_dive.addClass('hide');
+        bounce_details_td.addClass('hide');
+    }
 
+});
 function getCurrencyDropDown() {
     let store_id = $("#store_id").val();
     let default_currency_id = $("#default_currency_id").val();
@@ -246,3 +259,22 @@ function reset_row_numbering() {
             .text(ele + 2 - 1);
     });
 }
+$(document).on("change", ".bounce_qty,.quantity ,.purchase_price ,.selling_price", function () {
+
+    index_id = $(this).attr('index_id');
+     console.log(index_id);
+    if($(".quantity_"+index_id).val() != null){
+    let quantity = parseInt($(".quantity_"+index_id).val()),
+        purchase_price = parseInt($(".purchase_price_"+index_id).val()),
+        sell_price = parseInt($(".selling_price_"+index_id).val()),
+        all_ty = parseInt($('.bounce_qty_'+index_id).val()) + quantity;
+       
+
+            let bounce_purchase_price_val = (purchase_price * quantity ) / all_ty ;
+            let bounce_profit_val = sell_price - bounce_purchase_price_val;
+            $(".bounce_purchase_price_"+index_id).val(bounce_purchase_price_val.toFixed(2));
+            $(".bounce_profit_"+index_id).val( bounce_profit_val.toFixed(2));
+        }
+
+});
+

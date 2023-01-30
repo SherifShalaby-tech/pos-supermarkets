@@ -12,15 +12,22 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-    'type_Sell'=>'شراء',
-    'type_Debt'=>'سداد',
+    'have_weight'=>'يعتمد علي الميزان',
+    'type_Debt' => 'سداد دين',
+    'change_current_stock' => 'تغيير سعر البيع للمخزون الحالى ',
+    'clear_all_input_form'=>'الاحتفاظ بالبيانات بعد عملية الإدخال',
+    'add_a_free_amount'=>'اضافة كمية مجانية من نفس المنتج',
+    'free_amount'=>'الكمية المجانية',
+    'new_purchase_price'=>'سعر الشراء الجديد',
     'dashboard' => 'نظرة عامة',
+    'path' => 'المسار',
+    'showChild' => 'عرض المحتوى',
     'username' => 'اسم المستخدم',
     'password' => 'كلمة المرور',
     'email' => 'بريد إلكتروني',
     'login' => 'تسجيل الدخول',
     'developed_by' => 'تمت في',
-
+    'number_vs_base_unit'=>'معادلة الوحدات',
     'submit' => 'ارسل',
     'save' => 'حفظ',
     'close' => 'اغلق',
@@ -1266,6 +1273,18 @@ return [
     'sales_and_returns' => 'عوائد المبيعات',
     'delivery_cost_given_to_deliveryman' => 'مبلغ التوصيل يأخذه السائق مباشرة',
     'sale_payment_date' => 'تاريخ الدفع',
+    'import_req'=>'تأكد من صحة البيانات المدخلة ثم اعد المحاولة',
+    'trash_employee' => 'سلة المهملات',
+    'total_taxes' => 'اجمالى الضرايب',
+    'printers' => 'الطابعات',
+    'add_new_printer' => 'اضافة طابعة جديدة',
+    'printers_list' => 'قائمة الطابعات',
+    'not_active' => 'غير نشيط',
+    'is_cashier' => 'الطابعة متاحة فى الكاشير',
+    'createdBy' => 'انشئ بواسطة',
+    'printer_deleted' => 'تم حذف الطابعة',
+    'printer_updated' => 'تم تحديث الطابعة',
+    'returned_by' => 'ارتجع بواسطة'
 
 
 ];

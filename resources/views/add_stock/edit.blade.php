@@ -81,31 +81,34 @@
                                 <div class="col-md-10 offset-md-1">
                                     <table class="table table-bordered table-striped table-condensed" id="product_table">
                                         <thead>
-                                            <tr>
+                                           <tr>
+                                                <th>#</th>
                                                 <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
-                                                <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
-                                                <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
-                                                <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
-                                                <th style="width: 25%" class="col-sm-4">@lang( 'lang.unit' )</th>
-                                                <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )
-                                                </th>
-                                                <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
-                                                <th style="width: 12%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
-                                                <th style="width: 12%" class="col-sm-4">@lang( 'lang.action' )</th>
+                                                <th style="width: 10%" class="col-sm-8">@lang( 'lang.products' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.sku' )</th>
+                                                <th style="width: 5%" class="col-sm-4">@lang( 'lang.quantity' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.unit' )</th>
+                                                <th style="width: 30%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
+                                                <th style="width: 30%" class="col-sm-4">@lang( 'lang.selling_price' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.change_current_stock' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($add_stock->add_stock_lines as $product)
-                                                <tr>
-                                                    <td><img src="@if (!empty($product->product->getFirstMediaUrl('product'))) {{ $product->product->getFirstMediaUrl('product') }}@else{{ asset('/uploads/' . session('logo')) }} @endif"
-                                                            alt="photo" width="50" height="50"></td>
-                                                    <td>
-                                                        {{ $product->product->name }}
-
-                                                        @if ($product->variation->name != 'Default')
-                                                            <b>{{ $product->variation->name }}</b>
-                                                        @endif
-                                                        <input type="hidden"
+                                            <tr class="product_row">
+                                                <td class="row_number"></td>
+                                                <td><img src="@if(!empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                                    alt="photo" width="50" height="50"></td>
+                                                <td>
+                                                    @if($product->variation->name != "Default")
+                                                    <b>{{$product->variation->name}} {{$product->sub_sku}}</b>
+                                                    @else
+                                                    {{$product->product->name}}
+                                                    @endif
+                                                     <input type="hidden"
                                                             name="add_stock_lines[{{ $loop->index }}][add_stock_line_id]"
                                                             value="{{ $product->id }}">
                                                         <input type="hidden"
@@ -114,33 +117,43 @@
                                                         <input type="hidden"
                                                             name="add_stock_lines[{{ $loop->index }}][variation_id]"
                                                             value="{{ $product->variation_id }}">
-                                                    </td>
-                                                    <td>
-                                                        {{ $product->variation->sub_sku }}
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control quantity" min=1
-                                                            name="add_stock_lines[{{ $loop->index }}][quantity]" required
-                                                            value="@if (isset($product->quantity)) {{ @num_format($product->quantity) }}@else{{ 1 }} @endif">
-                                                    </td>
-                                                    <td> {{ $product->product->units->pluck('name')[0] ?? '' }}</td>
-                                                    <td>
-                                                        <input type="text" class="form-control purchase_price"
+                                                </td>
+                                                <td>
+                                                    {{$product->variation->sub_sku}}
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control quantity  quantity_{{$loop->index}}" min=1 name="add_stock_lines[{{$loop->index}}][quantity]" required
+                                                        value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif" index_id="{{$loop->index}}">
+                                                </td>
+                                                <td>
+                                                    {{$product->product->units->pluck('name')[0]??''}}
+                                                </td>
+                                                <td>
+                                                     <input type="text" class="form-control purchase_price purchase_price_{{$loop->index}}"
                                                             name="add_stock_lines[{{ $loop->index }}][purchase_price]"
-                                                            required
+                                                            required index_id="{{$loop->index}}"
                                                             value="@if (isset($product->purchase_price)) {{ @num_format($product->purchase_price) }}@else{{ 0 }} @endif">
-                                                        <input class="final_cost" type="hidden"
+                                                        <input class="final_cost" type="hidden" 
                                                             name="add_stock_lines[{{ $loop->index }}][final_cost]"
                                                             value="@if (isset($product->final_cost)) {{ @num_format($product->final_cost) }}@else{{ 0 }} @endif">
-                                                    </td>
-                                                    <td>
-                                                        <span
+                                                </td>
+                                                <td>
+                                                     <input type="text" class="form-control selling_price selling_price_{{$loop->index}}"
+                                                            name="add_stock_lines[{{ $loop->index }}][selling_price]"
+                                                            required index_id="{{$loop->index}}"
+                                                            value="@if (isset($product->sell_price)) {{ @num_format($product->sell_price) }}@else{{ 0 }} @endif">
+                                                        
+                                                    
+                                                </td>
+                                                <td>
+                                                    <span
                                                             class="sub_total_span">{{ @num_format($product->sub_total) }}</span>
                                                         <input type="hidden" class="form-control sub_total"
                                                             name="add_stock_lines[{{ $loop->index }}][sub_total]"
                                                             value="{{ $product->sub_total }}">
-                                                    </td>
-                                                    @php
+                                                   
+                                                </td>
+                                                 @php
                                                         $current_stock = App\Models\ProductStore::where('product_id', $product->product_id)
                                                             ->where('store_id', $add_stock->store_id)
                                                             ->sum('qty_available');
@@ -155,13 +168,15 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <button type="button" class="btn btn-danger btn-sx remove_row"
-                                                            data-index="{{ $loop->index }}"><i
-                                                                class="fa fa-times"></i></button>
+                                                        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class=""  value="1"></div>
                                                     </td>
-                                                </tr>
-                                                <tr class="row_details_{{ $loop->index }}">
-                                                    <td> {!! Form::text('add_stock_lines[' . $loop->index . '][batch_number]', $product->batch_number, ['class' => 'form-control', 'placeholder' => __('lang.batch_number')]) !!}</td>
+                                                <td rowspan="2">
+                                                    <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$loop->index}}"><i
+                                                            class="fa fa-times"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr class="row_details_{{$loop->index}}">
+                                                <td> {!! Form::text('add_stock_lines[' . $loop->index . '][batch_number]', $product->batch_number, ['class' => 'form-control', 'placeholder' => __('lang.batch_number')]) !!}</td>
                                                     <td>
                                                         {!! Form::text('add_stock_lines[' . $loop->index . '][manufacturing_date]', !empty($product->manufacturing_date) ? @format_date($product->manufacturing_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.manufacturing_date'), 'readonly']) !!}
                                                     </td>
@@ -174,7 +189,43 @@
                                                     <td>
                                                         {!! Form::text('add_stock_lines[' . $loop->index . '][convert_status_expire]', $product->convert_status_expire, ['class' => 'form-control', 'placeholder' => __('lang.convert_status_expire')]) !!}
                                                     </td>
-                                                </tr>
+                                                    <td class="td_add_qty_bounce" colspan="4" >
+                                                        <button type="button" class="btn btn-success add_bounce_btn" index_id="{{$loop->index}}">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                        {{__('lang.add_a_free_amount')}}
+                                                        <div class="add_qty_bounce_dive_{{$loop->index}} mt-2 hide">
+                                                            <label> {{__('lang.free_amount')}}</label>
+                                                            {!! Form::text('add_stock_lines['.$loop->index.'][bounce_qty]', null, ['class' => 'form-control bounce_qty bounce_qty_'.$loop->index , "index_id"=>"$loop->index"]) !!}
+                                                            <label> {{__('lang.profit')}}</label>
+                                                            {!! Form::text('add_stock_lines['.$loop->index.'][bounce_profit]', null, ['class' => 'form-control bounce_profit_'.$loop->index,'readonly']) !!}
+                                                            <label> {{__('lang.new_purchase_price')}}</label>
+                                                            {!! Form::text('add_stock_lines['.$loop->index.'][bounce_purchase_price]', null, ['class' => 'form-control bounce_purchase_price_'.$loop->index,'readonly']) !!}
+                                                        </div>
+                                                    </td>
+                                                
+                                            </tr>
+                                            <tr class="hide bounce_details_td_{{$loop->index}}">
+                                                <td>
+                                                    {!! Form::label('', __('lang.batch_number'), []) !!} <br>
+                                                    {!!Form::text('add_stock_lines['.$loop->index.'][bounce_batch_number]', null, ['class' => 'form-control']) !!}
+                                                </td>
+                                                <td> {!! Form::label('', __('lang.manufacturing_date'), []) !!}<br>
+                                                    {!! Form::text('add_stock_lines['.$loop->index.'][bounce_manufacturing_date]', null, ['class' => 'form-control datepicker',
+                                                    'readonly']) !!}
+                                                </td>
+                                                <td> {!! Form::label('', __('lang.expiry_date'), []) !!}<br>
+                                                    {!! Form::text('add_stock_lines['.$loop->index.'][bounce_expiry_date]', null, ['class' => 'form-control datepicker expiry_date',
+                                                    'readonly']) !!}
+                                                </td>
+                                                <td> {!! Form::label('', __('lang.days_before_the_expiry_date'), []) !!}<br>
+                                                    {!! Form::text('add_stock_lines['.$loop->index.'][bounce_expiry_warning]', null, ['class' => 'form-control days_before_the_expiry_date']) !!}
+                                                </td>
+                                                <td> {!! Form::label('', __('lang.convert_status_expire'), []) !!}<br>
+                                                    {!! Form::text('add_stock_lines['.$loop->index.'][bounce_convert_status_expire]', null, ['class' => 'form-control']) !!}
+                                                </td>
+                                            </tr>
+                                                
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -365,10 +416,11 @@
             product_selected = [];
             product_table.ajax.reload();
         })
-        $(document).ready(function() {
-            $('#payment_status').change();
-            $('#source_type').change();
-        })
+        @if (!empty($product_id) && !empty($variation_id))
+            $(document).ready(function(){
+            get_label_product_row({{ $product_id }},{{ $variation_id }});
+            })
+        @endif
         $('#po_no').change(function() {
             let po_no = $(this).val();
 
@@ -387,7 +439,6 @@
         });
         $(document).on("click", '#submit-btn-add-product', function(e) {
             e.preventDefault();
-            console.log('click');
             var sku = $('#sku').val();
             if ($("#product-form-quick-add").valid()) {
                 tinyMCE.triggerSave();
@@ -459,8 +510,6 @@
             if (payment_status === 'paid') {
                 $('.due_fields').addClass('hide');
             }
-
-            $
         })
         $('#method').change(function() {
             var method = $(this).val();
@@ -472,8 +521,12 @@
                 $('.not_cash_fields').removeClass('hide');
                 $('.not_cash').attr('required', true);
             }
-        })
+        });
 
+        $(document).ready(function() {
+            $('#payment_status').change();
+            $('#source_type').change();
+        })
         $('#source_type').change(function() {
             if ($(this).val() !== '') {
                 $.ajax({
@@ -482,19 +535,17 @@
                     data: {},
                     success: function(result) {
                         $("#source_id").empty().append(result);
-                        $('#source_id').val('{{$add_stock->source_id}}');
                         $("#source_id").selectpicker("refresh");
                     },
                 });
             }
-        })
-        $(document).on('click', '#add-selected-btn', function() {
-            $('#select_products_modal').modal('hide');
-            $.each(product_selected, function(index, value) {
-                get_label_product_row(value.product_id, value.variation_id);
-            });
-            product_selected = [];
-            product_table.ajax.reload();
+        });
+
+        $(document).on('change', '.expiry_date', function() {
+            if ($(this).val() != '') {
+                let tr = $(this).parents('tr');
+                tr.find('.days_before_the_expiry_date').val(15);
+            }
         })
     </script>
 @endsection

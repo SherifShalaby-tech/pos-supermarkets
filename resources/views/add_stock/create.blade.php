@@ -27,13 +27,13 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('store_id', __('lang.store') . ':*', []) !!}
-                                        {!! Form::select('store_id', $stores, session('user.store_id'), ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('store_id', $stores, "Please Select", ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('supplier_id', __('lang.supplier') . ':*', []) !!}
-                                        {!! Form::select('supplier_id', $suppliers, array_key_first($suppliers), ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('supplier_id', $suppliers, $suppliers, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required','selected', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -47,7 +47,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('status', __('lang.status') . ':*', []) !!}
-                                        {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], 'received', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -88,20 +88,21 @@
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col-md-10 offset-md-1">
+                                <div class="col-md-12">
                                     <table class="table table-bordered table-striped table-condensed" id="product_table">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
                                                 <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
-                                                <th style="width: 20%" class="col-sm-8">@lang( 'lang.products' )</th>
-                                                <th style="width: 20%" class="col-sm-4">@lang( 'lang.sku' )</th>
-                                                <th style="width: 20%" class="col-sm-4">@lang( 'lang.quantity' )</th>
-                                                <th style="width: 20%" class="col-sm-4">@lang( 'lang.unit' )</th>
-                                                <th style="width: 20%" class="col-sm-4">@lang( 'lang.purchase_price' )
-                                                </th>
+                                                <th style="width: 10%" class="col-sm-8">@lang( 'lang.products' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.sku' )</th>
+                                                <th style="width: 5%" class="col-sm-4">@lang( 'lang.quantity' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.unit' )</th>
+                                                <th style="width: 30%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
+                                                <th style="width: 30%" class="col-sm-4">@lang( 'lang.selling_price' )</th>
                                                 <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
                                                 <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.change_current_stock' )</th>
                                                 <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
                                             </tr>
                                         </thead>
@@ -159,7 +160,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
-                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], 'user', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -172,7 +173,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('payment_status', __('lang.payment_status') . ':*', []) !!}
-                                        {!! Form::select('payment_status', $payment_status_array, 'paid', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('payment_status', $payment_status_array, 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
 

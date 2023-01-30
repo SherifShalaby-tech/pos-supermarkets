@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
 use App\Models\Category;
+use App\Models\Color;
 use App\Models\Coupon;
 use App\Models\Currency;
 use App\Models\Customer;
@@ -17,6 +18,7 @@ use App\Models\GiftCard;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\SalesPromotion;
+use App\Models\Size;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\System;
@@ -555,7 +557,7 @@ class SellPosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // try {
+         try {
         DB::beginTransaction();
         $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
 
@@ -721,13 +723,13 @@ class SellPosController extends Controller
             'html_content' => $html_content,
             'msg' => __('lang.success')
         ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+         } catch (\Exception $e) {
+             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+             $output = [
+                 'success' => false,
+                 'msg' => __('lang.something_went_wrong')
+             ];
+         }
 
         return $output;
     }
@@ -887,6 +889,8 @@ class SellPosController extends Controller
                     'products.id as product_id',
                     'products.name',
                     'products.type',
+                    'products.multiple_colors',
+                    'products.multiple_sizes',
                     'products.is_service',
                     'variations.id as variation_id',
                     'variations.name as variation',
@@ -934,7 +938,7 @@ class SellPosController extends Controller
                         $i++;
                         $result[] = [
                             'id' => $i,
-                            'text' => $text . ' - ' . $variation['sub_sku'],
+                            'text' =>$text . ' - ' . $variation['sub_sku'],
                             'product_id' => $key,
                             'variation_id' => $variation['variation_id'],
                             'qty_available' => $variation['qty'],
@@ -985,12 +989,13 @@ class SellPosController extends Controller
 
             $product_id = $request->input('product_id');
             $variation_id = $request->input('variation_id');
+            $store_pos_id = $request->input('store_pos_id');
             $store_id = $request->input('store_id');
             $customer_id = $request->input('customer_id');
             $currency_id = $request->input('currency_id');
             $dining_table_id = $request->input('dining_table_id');
             $is_direct_sale = $request->input('is_direct_sale');
-            $edit_quantity = !empty($request->input('edit_quantity')) ? $request->input('edit_quantity') : 1;
+
             $added_products = json_decode($request->input('added_products'), true);
 
             $currency_id = $request->currency_id;
@@ -999,24 +1004,29 @@ class SellPosController extends Controller
 
             //Check for weighing scale barcode
             $weighing_barcode = request()->get('weighing_scale_barcode');
-            if (empty($variation_id) && !empty($weighing_barcode)) {
-                $product_details = $this->__parseWeighingBarcode($weighing_barcode);
-                if ($product_details['success']) {
-                    $product_id = $product_details['product_id'];
-                    $variation_id = $product_details['variation_id'];
-                    $quantity = $product_details['qty'];
-                    $edit_quantity = $quantity;
-                } else {
-                    $output['success'] = false;
-                    $output['msg'] = $product_details['msg'];
-                    return $output;
-                }
-            }
 
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id, $store_id);
+                $have_weight = System::getProperty('weight_product'.$store_pos_id);
 
+                $quantity =  $have_weight? (float)$have_weight: 1;
+                $edit_quantity = empty($request->input('edit_quantity')) > 1 && $products->first()->have_weight != 1 ? $request->input('edit_quantity') : $quantity;
+                if (empty($variation_id) && !empty($weighing_barcode) && $products->first()->have_weight != 1) {
+
+                    $product_details = $this->__parseWeighingBarcode($weighing_barcode);
+                    if ($product_details['success']) {
+                        $product_id = $product_details['product_id'];
+                        $variation_id = $product_details['variation_id'];
+                        $quantity = $product_details['qty'];
+                        $edit_quantity = $quantity;
+                    } else {
+                        $output['success'] = false;
+                        $output['msg'] = $product_details['msg'];
+                        return $output;
+                    }
+
+                }
                 $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
                 // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
                 $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
@@ -1031,6 +1041,61 @@ class SellPosController extends Controller
             }
             return  $output;
         }
+//        if ($request->ajax()) {
+//            $weighing_scale_barcode = $request->input('weighing_scale_barcode');
+//
+//            $store_pos_id = $request->input('store_pos_id');
+//
+//            $product_id = $request->input('product_id');
+//            $variation_id = $request->input('variation_id');
+//            $store_id = $request->input('store_id');
+//            $customer_id = $request->input('customer_id');
+//            $currency_id = $request->input('currency_id');
+//            $dining_table_id = $request->input('dining_table_id');
+//            $is_direct_sale = $request->input('is_direct_sale');
+//            $edit_quantity = !empty($request->input('edit_quantity')) ? $request->input('edit_quantity') : 1;
+//            $added_products = json_decode($request->input('added_products'), true);
+//
+//            $currency_id = $request->currency_id;
+//            $currency = Currency::find($currency_id);
+//            $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
+//            $have_weight = System::getProperty('weight_product'.$store_pos_id);
+//            $quantity =  $have_weight? (float)$have_weight: 1;
+//            //Check for weighing scale barcode
+//            $weighing_barcode = request()->get('weighing_scale_barcode');
+//            if (empty($variation_id) && !empty($weighing_barcode)) {
+//
+//                $product_details = $this->__parseWeighingBarcode($weighing_barcode);
+//                if ($product_details['success']) {
+//                    $product_id = $product_details['product_id'];
+//                    $variation_id = $product_details['variation_id'];
+//                    $quantity = $product_details['qty'];
+//                    $edit_quantity = $quantity;
+//                } else {
+//                    $output['success'] = false;
+//                    $output['msg'] = $product_details['msg'];
+//                    return $output;
+//                }
+//            }
+//
+//            if (!empty($product_id)) {
+//                $index = $request->input('row_count');
+//                $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id, $store_id);
+//
+//                $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
+//                // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
+//                $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
+//                $html_content =  view('sale_pos.partials.product_row')
+//                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'is_direct_sale', 'dining_table_id', 'exchange_rate'))->render();
+//
+//                $output['success'] = true;
+//                $output['html_content'] = $html_content;
+//            } else {
+//                $output['success'] = false;
+//                $output['msg'] = __('lang.sku_no_match');
+//            }
+//            return  $output;
+//        }
     }
 
     /**
@@ -1189,17 +1254,20 @@ class SellPosController extends Controller
                 ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
                 ->where('type', 'sell')->where('status', '!=', 'draft');
 
+            if(strtolower(session('user.job_title')) == 'cashier'){
+                $query->where('transactions.created_by',Auth::user()->id);
+            }
             if (!empty($store_id)) {
                 $query->where('transactions.store_id', $store_id);
             }
             if (!empty(request()->start_date)) {
-                $query->whereDate('transaction_date', '>=', request()->start_date);
+                $query->whereDate('transactions.transaction_date', '>=', request()->start_date);
             }
             if (!empty(request()->end_date)) {
-                $query->whereDate('transaction_date', '<=', request()->end_date);
+                $query->whereDate('transactions.transaction_date', '<=', request()->end_date);
             }
             if (!empty(request()->customer_id)) {
-                $query->where('customer_id', request()->customer_id);
+                $query->where('transactions.customer_id', request()->customer_id);
             }
             if (!empty(request()->deliveryman_id)) {
                 $query->where('transactions.deliveryman_id', request()->deliveryman_id);

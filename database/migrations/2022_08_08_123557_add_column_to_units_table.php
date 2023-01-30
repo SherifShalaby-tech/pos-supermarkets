@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddChangeColumnsToProductsTable extends Migration
+class AddColumnToUnitsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class AddChangeColumnsToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->string('name', 50)->change();
+        Schema::table('units', function (Blueprint $table) {
+            $table->unsignedBigInteger('parent_id')->nullable();
+
         });
     }
 
@@ -25,7 +26,7 @@ class AddChangeColumnsToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('units', function (Blueprint $table) {
             //
         });
     }
