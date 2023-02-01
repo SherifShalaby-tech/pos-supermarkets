@@ -1,4 +1,4 @@
-<tr class="row_{{$row_id}}" data-row_id="{{$row_id}}">
+<tr class="{{$item->name == 'Default' ? "hide" : ''}}  row_{{$row_id}}" data-row_id="{{$row_id}}">
     @if(!empty($item))
     {!! Form::hidden('variations['.$row_id.'][id]', !empty($item) ? $item->id : null, ['class' => 'form-control'])
     !!}
@@ -39,7 +39,7 @@
     <td> <button type="button" class="btn btn-danger btn-xs remove_row mt-2"><i class="dripicons-cross"></i></button>
     </td>
 </tr>
-<tr class="variant_store_checkbox_{{$row_id}}">
+<tr class="{{$item->name == 'Default' ? "hide" : ''}} variant_store_checkbox_{{$row_id}}">
     <td colspan="9">
         <input name="variant_different_prices_for_stores" type="checkbox" value="1" data-row_id="{{$row_id}}"
         class="variant_different_prices_for_stores"><strong>@lang('lang.variant_different_prices_for_stores')</strong>
@@ -47,7 +47,7 @@
 </tr>
 
 @foreach ($stores as $store)
-<tr class="variant_store_prices_{{$row_id}}" style="display: none;">
+<tr class="{{$item->name == 'Default' ? "hide" : ''}} variant_store_prices_{{$row_id}}" style="display: none;">
     <td>
         {{$store->name}}
     </td>

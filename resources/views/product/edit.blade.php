@@ -48,7 +48,7 @@
                                     </div>
                                 </div>
 
-                                
+
                                 <div class="col-md-4 supplier_div @if (empty($product->is_service)) hide @endif">
                                     <div class="form-group ">
                                         {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
