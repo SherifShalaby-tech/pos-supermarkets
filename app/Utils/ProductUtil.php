@@ -192,8 +192,10 @@ class ProductUtil extends Util
     public function createOrUpdateProductStore($product, $variation, $request, $variant_stores = [])
     {
         $stores = Store::all();
-
         $product_stores = $request->product_stores;
+        if($request->has('store_ids')){
+            $stores = Store::wherein('id',$request->store_ids)->get();
+        }
         //veriation is default
         if ($variation->name == 'Default') {
             foreach ($stores as $store) {
