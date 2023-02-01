@@ -1021,7 +1021,8 @@ class SellPosController extends Controller
                 $have_weight = System::getProperty('weight_product'.$store_pos_id);
 
                 $quantity =  $have_weight? (float)$have_weight: 1;
-                $edit_quantity = empty($request->input('edit_quantity')) > 1 && $products->first()->have_weight != 1 ? $request->input('edit_quantity') : $quantity;
+                $edit_quantity = !$products->first()->have_weight ? $request->input('edit_quantity') : $quantity;
+               
                 if (empty($variation_id) && !empty($weighing_barcode) && $products->first()->have_weight != 1) {
 
                     $product_details = $this->__parseWeighingBarcode($weighing_barcode);

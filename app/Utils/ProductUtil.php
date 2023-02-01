@@ -589,6 +589,7 @@ class ProductUtil extends Util
             'products.is_service',
             'products.alert_quantity',
             'products.tax_id',
+            'products.have_weight',
             'products.tax_method',
             'product_stores.qty_available',
             'products.sell_price',
