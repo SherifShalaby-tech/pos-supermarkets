@@ -78,23 +78,23 @@
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col-md-10 offset-md-1">
+                                <div class="col-md-12">
                                     <table class="table table-bordered table-striped table-condensed" id="product_table">
                                         <thead>
-                                           <tr>
-                                                <th>#</th>
-                                                <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
-                                                <th style="width: 10%" class="col-sm-8">@lang( 'lang.products' )</th>
-                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.sku' )</th>
-                                                <th style="width: 5%" class="col-sm-4">@lang( 'lang.quantity' )</th>
-                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.unit' )</th>
-                                                <th style="width: 30%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
-                                                <th style="width: 30%" class="col-sm-4">@lang( 'lang.selling_price' )</th>
-                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
-                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
-                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.change_current_stock' )</th>
-                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
-                                            </tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
+                                            <th style="width: 10%" class="col-sm-8">@lang( 'lang.products' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.sku' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.quantity' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.unit' )</th>
+                                            <th style="width: 30%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
+                                            <th style="width: 30%" class="col-sm-4">@lang( 'lang.selling_price' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.change_current_stock' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
+                                        </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($add_stock->add_stock_lines as $product)
@@ -133,7 +133,7 @@
                                                             name="add_stock_lines[{{ $loop->index }}][purchase_price]"
                                                             required index_id="{{$loop->index}}"
                                                             value="@if (isset($product->purchase_price)) {{ @num_format($product->purchase_price) }}@else{{ 0 }} @endif">
-                                                        <input class="final_cost" type="hidden" 
+                                                        <input class="final_cost" type="hidden"
                                                             name="add_stock_lines[{{ $loop->index }}][final_cost]"
                                                             value="@if (isset($product->final_cost)) {{ @num_format($product->final_cost) }}@else{{ 0 }} @endif">
                                                 </td>
@@ -142,8 +142,8 @@
                                                             name="add_stock_lines[{{ $loop->index }}][selling_price]"
                                                             required index_id="{{$loop->index}}"
                                                             value="@if (isset($product->sell_price)) {{ @num_format($product->sell_price) }}@else{{ 0 }} @endif">
-                                                        
-                                                    
+
+
                                                 </td>
                                                 <td>
                                                     <span
@@ -151,7 +151,7 @@
                                                         <input type="hidden" class="form-control sub_total"
                                                             name="add_stock_lines[{{ $loop->index }}][sub_total]"
                                                             value="{{ $product->sub_total }}">
-                                                   
+
                                                 </td>
                                                  @php
                                                         $current_stock = App\Models\ProductStore::where('product_id', $product->product_id)
@@ -203,7 +203,7 @@
                                                             {!! Form::text('add_stock_lines['.$loop->index.'][bounce_purchase_price]', null, ['class' => 'form-control bounce_purchase_price_'.$loop->index,'readonly']) !!}
                                                         </div>
                                                     </td>
-                                                
+
                                             </tr>
                                             <tr class="hide bounce_details_td_{{$loop->index}}">
                                                 <td>
@@ -225,7 +225,7 @@
                                                     {!! Form::text('add_stock_lines['.$loop->index.'][bounce_convert_status_expire]', null, ['class' => 'form-control']) !!}
                                                 </td>
                                             </tr>
-                                                
+
                                             @endforeach
                                         </tbody>
                                     </table>
