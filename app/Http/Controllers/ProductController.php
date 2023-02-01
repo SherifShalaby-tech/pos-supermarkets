@@ -486,6 +486,7 @@ class ProductController extends Controller
         $discount_customer_types = CustomerType::pluck('name', 'id');
         $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores  = Store::all();
+        $stores_select  = Store::orderBy('name', 'asc')->pluck('name', 'id')->toarray();
         $quick_add = request()->quick_add;
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
         $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
@@ -506,6 +507,7 @@ class ProductController extends Controller
                 'colors',
                 'sizes',
                 'grades',
+                'stores_select',
                 'taxes',
                 'customers',
                 'customer_types',
@@ -528,6 +530,7 @@ class ProductController extends Controller
             'sizes',
             'grades',
             'taxes',
+            'stores_select',
             'customers',
             'customer_types',
             'discount_customer_types',
@@ -550,8 +553,9 @@ class ProductController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['purchase_price' => ['required', 'max:25', 'decimal']],
-            ['sell_price' => ['required', 'max:25', 'decimal']],
+            ['store_ids' => ['required']],
+//            ['purchase_price' => ['required', 'max:25', 'decimal']],
+//            ['sell_price' => ['required', 'max:25', 'decimal']],
         );
 //        try {
             $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);

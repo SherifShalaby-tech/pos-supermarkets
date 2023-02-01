@@ -13,7 +13,21 @@
 
         <div class="modal-body">
             <input type="hidden" name="active" value="1">
+
             <div class="row">
+                <div class="col-md-4">
+                    <div class="i-checks">
+                        <input id="have_weight" name="have_weight" type="checkbox"  value="1"
+                               class="form-control-custom">
+                        <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('store_ids', __('lang.store'), []) !!}
+                        {!! Form::select('store_ids[]', $stores_select, array_keys($stores_select), ['class' => 'form-control filter_product', 'placeholder' => __('lang.all'), 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
+                    </div>
+                </div>
                 @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                 <div class="col-md-4">
                     <div class="form-group">
@@ -324,6 +338,8 @@
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
     });
+    $('#store_ids').selectpicker('selectAll');
+
     $('.selectpicker').selectpicker('render');
     tinymce.init({
         selector: "#product_details",

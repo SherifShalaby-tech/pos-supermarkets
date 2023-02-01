@@ -47,7 +47,13 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="form-group">
+            {!! Form::label('store_ids', __('lang.store'), []) !!}
+            {!! Form::select('store_ids[]', $stores_select, array_keys($stores_select) , ['class' => ' selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple','id'=>'store_ids']) !!}
+        </div>
+    </div>
+    <div class="col-md-4 supplier_div">
         <div class="form-group supplier_div">
             {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
             <div class="input-group my-group">
@@ -386,7 +392,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             <div class="form-group">
                 {!! Form::label('show_to_customer_types', __('lang.show_to_customer_types'), []) !!}
                 <i class="dripicons-question" data-toggle="tooltip" title="@lang('lang.show_to_customer_types_info')"></i>
-                {!! Form::select('show_to_customer_types[]', $customer_types, !empty($recent_product) ? $recent_product->show_to_customer_types : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
+                {!! Form::select('show_to_customer_types[]', $customer_types, !empty($recent_product) ? $recent_product->show_to_customer_types : false, ['class' => ' selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
             </div>
         </div>
     </div>

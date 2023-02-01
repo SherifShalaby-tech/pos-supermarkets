@@ -88,6 +88,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('#discount_customer_types').selectpicker('selectAll');
+            $('#store_ids').selectpicker('selectAll');
+
             $('#category_id').change();
 
             if($('#is_service').prop('checked')){
