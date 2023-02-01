@@ -94,7 +94,7 @@ class StoreController extends Controller
 
             $store_id = $store->id;
 
-            $this->productUtil->createProductStoreForThisStoreIfNotExist($store_id);
+//            $this->productUtil->createProductStoreForThisStoreIfNotExist($store_id);
             DB::commit();
             $output = [
                 'success' => true,
