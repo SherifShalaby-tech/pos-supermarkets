@@ -136,7 +136,10 @@ class SellController extends Controller
                 $query->where('status', request()->status);
             }
             if (!empty($store_id)) {
-                $query->where('store_id', $store_id);
+                $query->where('transactions.store_id', $store_id);
+            }elseif (!session('user.is_superadmin')) {
+                $employee = Employee::where('user_id', auth()->user()->id)->first();
+                $query->wherein('transactions.store_id', (array) $employee->store_id);
             }
             if (!empty(request()->deliveryman_id)) {
                 $query->where('deliveryman_id', request()->deliveryman_id);
