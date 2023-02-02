@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Imports\ProductImport;
 use App\Models\AddStockLine;
 use App\Models\Brand;
+use App\Models\Employee;
 use App\Models\Printer;
 use App\Models\Category;
 use App\Models\Color;
@@ -136,10 +137,14 @@ class ProductController extends Controller
 
             $store_query = '';
             if (!empty($store_id)) {
-                // $products->where('product_stores.store_id', $store_id);
+                 $products->where('product_stores.store_id', $store_id);
                 $store_query = 'AND store_id=' . $store_id;
             }
-
+            if (!session('user.is_superadmin')) {
+                $employee = Employee::where('user_id', auth()->user()->id)->first();
+                $products->wherein('product_stores.store_id', (array) $employee->store_id);
+//                $store_query = 'AND store_id in (' . (array) $employee->store_id .')';
+            }
             if (!empty(request()->product_id)) {
                 $products->where('products.id', request()->product_id);
             }

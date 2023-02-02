@@ -1144,7 +1144,10 @@ class TransactionUtil extends Util
             $data['pos_id'] = $request->pos_id;
         }
         if (!session('user.is_superadmin')) {
-            $data['store_id'] = session('user.store_id');
+            $employee = Employee::where('user_id', auth()->user()->id)->first();
+            if(in_array($data['store_id'],(array) $employee->store_id)){
+                $data['store_id'] =$data['store_id'];
+            }
             // $data['pos_id'] = session('user.pos_id');
         }
 

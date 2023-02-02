@@ -89,11 +89,8 @@ class StoreController extends Controller
             $data = $request->except('_token', 'quick_add');
             $data['created_by'] = Auth::user()->id;
             DB::beginTransaction();
-
             $store = Store::create($data);
-
             $store_id = $store->id;
-
 //            $this->productUtil->createProductStoreForThisStoreIfNotExist($store_id);
             DB::commit();
             $output = [

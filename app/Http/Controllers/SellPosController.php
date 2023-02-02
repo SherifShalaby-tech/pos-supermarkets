@@ -828,6 +828,10 @@ class SellPosController extends Controller
         }
         if (!empty($request->store_id)) {
             $query->where('product_stores.store_id', $request->store_id);
+        }elseif (!session('user.is_superadmin')) {
+            $employee = Employee::where('user_id', auth()->user()->id)->first();
+            $query->wherein('product_stores.store_id', (array) $employee->store_id);
+//                $store_query = 'AND store_id in (' . (array) $employee->store_id .')';
         }
 
         $query->addSelect(
