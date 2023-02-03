@@ -242,6 +242,8 @@ class ProductUtil extends Util
     {
         $variations = $request->variations;
         $keey_variations = [];
+        $purchase_price=!empty($request->is_service) ? $this->num_uf($product->purchase_price):0;
+        $sell_price= !empty($request->is_service) ? $this->num_uf($product->sell_price):0;
         if (!empty($variations)) {
             foreach ($variations as $v) {
 
@@ -306,8 +308,8 @@ class ProductUtil extends Util
             $variation_data['unit_id'] = !empty($request->multiple_units) ? $request->multiple_units[0] : null;
 
             $variation_data['is_dummy'] = 1;
-            $variation_data['default_purchase_price'] = $this->num_uf($product->purchase_price);
-            $variation_data['default_sell_price'] = $this->num_uf($product->sell_price);
+            $variation_data['default_purchase_price'] = $purchase_price;
+            $variation_data['default_sell_price'] = $sell_price;
 
             $variation = Variation::create($variation_data);
             $variation_array[] = ['variation' => $variation, 'variant_stores' =>  []];
