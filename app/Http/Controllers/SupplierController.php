@@ -450,11 +450,8 @@ class SupplierController extends Controller
             $inputs['paid_on'] = $this->commonUtil->uf_date($inputs['paid_on']) . ' ' . date('H:i:s');
             $inputs['amount'] = $this->commonUtil->num_uf($inputs['amount']);
 
-
-
             $inputs['payment_for'] = $supplier_id;
             $inputs['created_by'] = auth()->user()->id;
-
             $parent_payment = TransactionPayment::create($inputs);
 
             if ($request->upload_documents) {
