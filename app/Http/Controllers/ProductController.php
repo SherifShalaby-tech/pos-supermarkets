@@ -865,41 +865,50 @@ class ProductController extends Controller
 
             DB::beginTransaction();
             $product = Product::find($id);
-            $index_discounts=[];
-            $index_discounts_olds=[];
-            if(count($request->discount_type)>0){
-                $index_discounts=array_keys($request->discount_type);
-                if($request->discount_ids != null ){
-                    $index_discounts_olds=array_keys($request->discount_ids);
-                    ProductDiscount::where('product_id',$product->id)->whereNotIn('id',$request->discount_ids)->delete();
-                }
-            }
-
-            foreach ($index_discounts as $index_discount){
-                $discount_customers = $this->getDiscountCustomerFromType($request->get('discount_customer_types_'.$index_discount));
-                $data_des=[
-                    'product_id' => $product->id,
-                    'discount_type' => $request->discount_type[$index_discount],
-                    'discount_customer_types' => $request->get('discount_customer_types_'.$index_discount),
-                    'discount_customers' => $discount_customers,
-                    'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),
-                    'discount_start_date' => !empty($request->discount_start_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_start_date[$index_discount]) : null,
-                    'discount_end_date' => !empty($request->discount_end_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_end_date[$index_discount]) : null
-                ];
-
-
-                if(in_array($index_discount,$index_discounts_olds)){
-                    ProductDiscount::where('id',$request->discount_ids[$index_discount])->update($data_des);
-                }else{
-                    ProductDiscount::create($data_des);
-                }
-
-
-            }
             $product->update($product_data);
 
             $this->productUtil->createOrUpdateVariations($product, $request);
 
+            $index_discounts=[];
+            $index_discounts_olds=[];
+            if($request->discount_type){
+                if(count($request->discount_type)>0){
+                    $index_discounts=array_keys($request->discount_type);
+                    if($request->discount_ids != null ){
+                        $index_discounts_olds=array_keys($request->discount_ids);
+                        ProductDiscount::where('product_id',$product->id)->whereNotIn('id',$request->discount_ids)->delete();
+                    }else{
+                        ProductDiscount::where('product_id',$product->id)->delete();
+                    }
+                }
+
+                foreach ($index_discounts as $index_discount){
+                    $discount_customers = $this->getDiscountCustomerFromType($request->get('discount_customer_types_'.$index_discount));
+                    $data_des=[
+                        'product_id' => $product->id,
+                        'discount_type' => $request->discount_type[$index_discount],
+                        'discount_customer_types' => $request->get('discount_customer_types_'.$index_discount),
+                        'discount_customers' => $discount_customers,
+                        'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),
+                        'discount_start_date' => !empty($request->discount_start_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_start_date[$index_discount]) : null,
+                        'discount_end_date' => !empty($request->discount_end_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_end_date[$index_discount]) : null
+                    ];
+
+
+                    if(in_array($index_discount,$index_discounts_olds)){
+                        ProductDiscount::where('id',$request->discount_ids[$index_discount])->update($data_des);
+                    }else{
+                        ProductDiscount::create($data_des);
+                    }
+
+
+                }
+
+
+
+            }else{
+                ProductDiscount::where('product_id',$product->id)->delete();
+            }
 
             if (!empty($request->consumption_details)) {
                 $variations = $product->variations()->get();
