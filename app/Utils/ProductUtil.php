@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\EarningOfPoint;
 use App\Models\Product;
 use App\Models\ProductClass;
+use App\Models\ProductDiscount;
 use App\Models\ProductStore;
 use App\Models\PurchaseOrderLine;
 use App\Models\PurchaseReturnLine;
@@ -634,8 +635,10 @@ class ProductUtil extends Util
             $customer_type_id = (string) $customer->customer_type_id;
         }
         if (!empty($customer_type_id)) {
+
             $product = Product::whereJsonContains('discount_customer_types', $customer_type_id)
                 ->where('id', $product_id)
+                ->where('discount', '>',0)
                 ->select(
                     'products.discount_type',
                     'products.discount',
@@ -643,6 +646,17 @@ class ProductUtil extends Util
                     'products.discount_end_date',
                 )
                 ->first();
+            if(!$product){
+                $product = ProductDiscount::whereJsonContains('discount_customer_types', $customer_type_id)
+                    ->where('product_id', $product_id)
+                    ->select(
+                        'discount_type',
+                        'discount',
+                        'discount_start_date',
+                        'discount_end_date',
+                    )
+                    ->first();
+            }
 
             if (!empty($product)) {
                 if (!empty($product->discount_start_date) && !empty($product->discount_end_date)) {
@@ -711,7 +725,8 @@ class ProductUtil extends Util
 
         $customer_type_id = (string) $customer->customer_type_id;
         if (!empty($customer_type_id)) {
-            $sales_promotions = SalesPromotion::whereJsonContains('customer_type_ids', $customer_type_id)
+            $sales_promotions = SalesPromotion::
+                    whereJsonContains('customer_type_ids', $customer_type_id)
                 ->whereJsonContains('store_ids', $store_id)
                 ->whereDate('start_date', '<=', date('Y-m-d'))
                 ->whereDate('end_date', '>=', date('Y-m-d'))
@@ -731,7 +746,8 @@ class ProductUtil extends Util
                     $package_promotion_qty = $sales_promotion->package_promotion_qty;
 
                     $is_valid = $this->comparePackagePromotionData($package_promotion_qty, $qty_array);
-                    if ($is_valid) {
+                    if ($is_valid > 0) {
+                        $sales_promotion->count_discount_number=$is_valid;
                         return $sales_promotion;
                     }
                 }
@@ -749,15 +765,19 @@ class ProductUtil extends Util
      */
     public function comparePackagePromotionData($package_promotion_qty, $qty_array)
     {
+        $count_discount_array=[];
         foreach ($package_promotion_qty as $product_id => $qty) {
             if (!isset($qty_array[$product_id])) {
-                return false;
+                return 0;
             }
             if ($qty_array[$product_id] < $qty) {
-                return false;
+                return 0;
             }
+
+            $count_discount_for=(int)($qty_array[$product_id]/(float)$qty );
+            array_push($count_discount_array,$count_discount_for);
         }
-        return true;
+        return min($count_discount_array);
     }
 
     //function to compare two array have equal value or not
@@ -1357,8 +1377,25 @@ class ProductUtil extends Util
 
         return (array)$product_ids;
     }
+    /**
+     * extract products using product tree selection
+     *
+     * @param array $data_selected
+     * @return array
+     */
+    public function extractProductVariationIdsfromProductTree($data_selected)
+    {
+        $product_ids = [];
+        if (!empty($data_selected['product_selected'])) {
+            $p = array_values(Variation::whereIn('id', $data_selected['product_selected'])->select('id')->pluck('id')->toArray());
+            $product_ids = array_merge($product_ids, $p);
+        }
 
-    public function getProductDetailsUsingArrayIds($array, $store_ids = null)
+        $product_ids  = array_unique($product_ids);
+
+        return (array)$product_ids;
+    }
+    public function getProductDetailsUsingArrayIds($array, $store_ids = null,$variations= null)
     {
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
@@ -1366,16 +1403,30 @@ class ProductUtil extends Util
         if (!empty($store_ids)) {
             $query->whereIn('product_stores.store_id', $store_ids);
         }
-        $query->whereIn('products.id', $array)
-            ->select(
+        if (!empty($variations)) {
+            $query->whereIn('variations.id', $array);
+        }else{
+            $query->whereIn('products.id', $array);
+        }
+
+        $query->select(
                 'products.*',
+                'variations.id as variations_id',
+                'variations.name as variations_name',
+                'variations.sub_sku as variations_sku',
+                'variations.default_sell_price as variations_sell_price',
+                'variations.default_purchase_price as variations_purchase_price',
                 DB::raw('SUM(product_stores.qty_available) as current_stock'),
                 DB::raw("(SELECT transaction_date FROM transactions LEFT JOIN add_stock_lines ON transactions.id=add_stock_lines.transaction_id WHERE add_stock_lines.product_id=products.id ORDER BY transaction_date DESC LIMIT 1) as date_of_purchase")
-            )
-            ->groupBy('products.id');
+            );
+        if(!empty($variations)){
+            $query->groupBy('variations.id');
+        }else{
+            $query ->groupBy('products.id');
+        }
+
 
         $products = $query->get();
-
         return $products;
     }
 

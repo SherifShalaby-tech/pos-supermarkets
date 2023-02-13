@@ -19,7 +19,7 @@
                 <img src="@if (!empty($product->getFirstMediaUrl('product'))) {{ $product->getFirstMediaUrl('product') }}@else{{ asset('/uploads/' . session('logo')) }} @endif"
                      width="100%" />
                 <p><span
-                        style="font-size:12px !important; font-weight: bold; color: black;">{{ $product->name }}</span>
+                        style="font-size:12px !important; font-weight: bold; color: black;">{{ $Variation? ($Variation->name != "Default" ? $Variation->name: $product->name ): $product->name }}</span>
                     <br> <span style="color: black; font-weight: bold;">{{ $product->sub_sku }}</span> <br>
                     @if (!empty($currency))
                         <span

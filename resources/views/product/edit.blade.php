@@ -371,37 +371,50 @@
                                 </div>
                                 <br>
                                 <div class="clearfix"></div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('discount_type', __('lang.discount_type'), []) !!}
-                                        {!! Form::select('discount_type', ['fixed' => __('lang.fixed'), 'percentage' => __('lang.percentage')], $product->discount_type, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                                    </div>
+
+
+                                <div class="col-md-12">
+                                    <table class="table table-bordered" id="consumption_table_discount">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 20%;">@lang('lang.discount_type')</th>
+                                            <th style="width: 15%;">@lang('lang.discount')</th>
+                                            <th style="width: 20%;">@lang('lang.discount_start_date')</th>
+                                            <th style="width: 20%;">@lang('lang.discount_end_date')</th>
+                                            <th style="width: 20%;">@lang('lang.customer_type') <i class="dripicons-question" data-toggle="tooltip"
+                                                                                                   title="@lang('lang.discount_customer_info')"></i></th>
+                                            <th style="width: 5%;"><button class="btn btn-xs btn-success add_discount_row"
+                                                                           type="button"><i class="fa fa-plus"></i></button></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @php
+                                            $discounts = \App\Models\ProductDiscount::where('product_id',$product->id)->get();
+                                            $index_old=0;
+                                        @endphp
+
+                                        @if($product->discount)
+                                            @php
+                                            $index_old=1;
+                                            @endphp
+                                            @include('product.partial.raw_discount', [
+                                                'row_id' => 0,
+                                                'discount_product'=>$product,
+                                            ])
+                                        @endif
+                                        @foreach($discounts as $discount)
+                                            @include('product.partial.raw_discount', [
+                                            'row_id' => $loop->index + $index_old,
+                                            'discount'=>$discount,
+                                            ])
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                    <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('discount', __('lang.discount'), []) !!}
-                                        {!! Form::text('discount', @num_format($product->discount), ['class' => 'form-control', 'placeholder' => __('lang.discount')]) !!}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('discount_start_date', __('lang.discount_start_date'), []) !!}
-                                        {!! Form::text('discount_start_date', !empty($product->discount_start_date) ? @format_date($product->discount_start_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.discount_start_date')]) !!}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('discount_end_date', __('lang.discount_end_date'), []) !!}
-                                        {!! Form::text('discount_end_date', !empty($product->discount_end_date) ? @format_date($product->discount_end_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.discount_end_date')]) !!}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
-                                            title="@lang('lang.discount_customer_info')"></i>
-                                        {!! Form::select('discount_customer_types[]', $discount_customer_types, $product->discount_customer_types, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple', 'data-actions-box' => 'true', 'id' => 'discount_customer_types']) !!}
-                                    </div>
-                                </div>
+
+
+
                                 <div class="col-md-4">
                                     <div class="i-checks">
                                         <input id="show_to_customer" name="show_to_customer" type="checkbox"

@@ -151,7 +151,11 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                                                                 $products = App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')
                                                                                     ->where('category_id', $category->id)
                                                                                     ->whereNotNull('products.name')
-                                                                                    ->select('products.id', 'products.name', 'variations.name as variation_name', 'variations.sub_sku as sku', 'variations.default_sell_price as sell_price')
+                                                                                    ->select('products.id', 'products.name',
+                                                                                     'variations.id as variation_id',
+                                                                                     'variations.name as variation_name',
+                                                                                      'variations.sub_sku as sku',
+                                                                                      'variations.default_sell_price as sell_price')
                                                                                     ->groupBy('variations.id')
                                                                                     ->get();
                                                                             @endphp
@@ -279,9 +283,10 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                                                 $current_stock = App\Models\ProductStore::where('product_id', $product->id)
                                                                     ->select(
                                                                         DB::raw('SUM(product_stores.qty_available)
-                                                as current_stock'),
+                                                                        as current_stock'),
                                                                     )
                                                                     ->first();
+
                                                             @endphp
                                                             <div class="col-md-6">
                                                                 <div class="row">
@@ -309,11 +314,11 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                                                                 @endif
                                                                             </label>
                                                                         </div>
-                                                                        <div class="col-md-12">
-                                                                            <label
-                                                                                style="color: #222;">@lang('lang.price'):
-                                                                                {{ @num_format($product->sell_price) }}</label>
-                                                                        </div>
+{{--                                                                        <div class="col-md-12">--}}
+{{--                                                                            <label--}}
+{{--                                                                                style="color: #222;">@lang('lang.price'):--}}
+{{--                                                                                {{ @num_format($product->sell_price) }}</label>--}}
+{{--                                                                        </div>--}}
                                                                     </div>
                                                                 </div>
                                                             </div>

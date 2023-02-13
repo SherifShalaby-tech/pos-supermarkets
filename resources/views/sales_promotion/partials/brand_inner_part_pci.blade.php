@@ -30,8 +30,8 @@
                             $query->where('sub_category_id', $sub_category_id);
                         }
                         $products = $query
-                            ->select('products.id', 'products.name', 'variations.name as variation_name', 'variations.sub_sku as sku', 'variations.default_sell_price as sell_price')
-                            ->groupBy('products.id')
+                            ->select('products.id', 'products.name','variations.id as variation_id', 'variations.name as variation_name', 'variations.sub_sku as sku', 'variations.default_sell_price as sell_price')
+                            ->groupBy('variations.id')
                             ->get();
                     @endphp
                     @foreach ($products as $product)

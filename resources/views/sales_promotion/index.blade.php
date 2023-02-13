@@ -42,11 +42,29 @@
                 <td>@if(!empty($sales_promotion->end_date)){{@format_date($sales_promotion->end_date)}}@endif</td>
                 <td>@if($sales_promotion->purchase_condition){{@num_format($sales_promotion->purchase_condition_amount)}}@endif
                 </td>
-                <td>@if(!empty($sales_promotion->products)){{implode(', ',
-                    $sales_promotion->products->pluck('name')->toArray())}}@endif</td>
-                <td>@if($sales_promotion->product_condition)
-                    @if(!empty($sales_promotion->condition_products)){{implode(', ',
-                    $sales_promotion->condition_products->pluck('name')->toArray())}}@endif @endif</td>
+                <td>
+                    @foreach($sales_promotion->variations as $k=> $variation)
+                        @if($k != 0)
+                            ,
+                        @endif
+                        @if($variation->name != "Default")
+                            {{$variation->name}}
+                        @else
+                            {{$variation->product->name}}
+                        @endif
+                    @endforeach
+                </td>
+                <td> @foreach($sales_promotion->condition_variations as $condition_k=> $condition_variation)
+                        @if($condition_k != 0)
+                            ,
+                        @endif
+                        @if($condition_variation->name != "Default")
+                            {{$condition_variation->name}}
+                        @else
+                            {{$condition_variation->product->name}}
+                        @endif
+                    @endforeach
+                </td>
                 <td>{{ucfirst($sales_promotion->created_by_user->name ?? '')}}</td>
                 <td>{{$sales_promotion->created_at}}</td>
                 <td>@if(!empty($sales_promotion->generate_barcode)) <img style="margin-top:10px;"
