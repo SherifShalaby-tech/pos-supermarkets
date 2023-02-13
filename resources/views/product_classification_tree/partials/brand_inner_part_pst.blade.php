@@ -23,15 +23,20 @@
             <div class="accordion-inner">
                 @php
                 $query =
-                App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('brand_id',
-                $brand->id);
+                App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')
+                ->where('brand_id',$brand->id);
                 if(!empty($category_id)){
                 $query->where('category_id', $category_id);
                 }
                 if(!empty($sub_category_id)){
                 $query->where('sub_category_id', $sub_category_id);
                 }
-                $products = $query->select('products.id', 'products.name', 'variations.name as variation_name', 'variations.sub_sku as sku', 'variations.default_sell_price as sell_price')->groupBy('variations.id')->get();
+                $products = $query
+                ->select('products.id', 'products.name',
+                 'variations.id as variation_id',
+                 'variations.name as variation_name',
+                  'variations.sub_sku as sku',
+                  'variations.default_sell_price as sell_price')->groupBy('variations.id')->get();
                 @endphp
                 @foreach ($products as
                 $product)
