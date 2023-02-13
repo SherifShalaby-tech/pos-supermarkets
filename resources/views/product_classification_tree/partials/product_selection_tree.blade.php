@@ -83,7 +83,6 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                         </div>
                                     </div>
                                     <div id="collapse{{@replace_space($class->name)}}" class="accordion-body collapse">
-
                                         <div class="accordion-inner">
                                             @php
                                             $i = 0;
@@ -215,7 +214,6 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                             @endforeach
 
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +221,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                         </div>
 
 
-                        
+
 
 
                     </div>
