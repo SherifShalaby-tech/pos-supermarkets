@@ -41,10 +41,11 @@
                                             <thead>
                                                 <tr>
                                                     <th style="width: 30%">{{ __('lang.product') }}</th>
-                                                    <th style="width: 20%">{{ __('lang.quantity') }}</th>
-                                                    <th style="width: 20%">{{ __('lang.returned_quantity') }}</th>
-                                                    <th style="width: 20%">{{ __('lang.price') }}</th>
-                                                    <th style="width: 20%">{{ __('lang.discount') }}</th>
+                                                    <th style="width: 20%">{{ __('lang.product_code') }}</th>
+                                                    <th style="width: 15%">{{ __('lang.quantity') }}</th>
+                                                    <th style="width: 15%">{{ __('lang.returned_quantity') }}</th>
+                                                    <th style="width: 15%">{{ __('lang.price') }}</th>
+                                                    <th style="width: 15%">{{ __('lang.discount') }}</th>
                                                     <th style="width: 10%">{{ __('lang.sub_total') }}</th>
                                                     <th style="width: 20%"></th>
                                                 </tr>

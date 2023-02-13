@@ -132,7 +132,8 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
 
                                                             @if($brands->count() == 0 && $sub_categories->count() == 0)
                                                             @php
-                                                                $products = App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('category_id', $category->id)->whereNotNull('products.name')->select('products.id', 'products.name', 'variations.name as variation_name','variations.sub_sku as sku', 'variations.default_sell_price as sell_price')->groupBy('variations.id')->get();
+                                                                $products = App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('category_id', $category->id)->whereNotNull('products.name')
+                                                                ->select('products.id', 'products.name',  'variations.id as variation_id','variations.name as variation_name','variations.sub_sku as sku', 'variations.default_sell_price as sell_price')->groupBy('variations.id')->get();
                                                             @endphp
                                                             @foreach ($products as $product)
                                                             @include('product_classification_tree.partials.product_inner_part_pst', [
@@ -159,7 +160,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                             value="{{$sub_category->id}}"
                                                                             @if(in_array($sub_category->id,
                                                                         $sub_category_selected)) checked @endif
-                                                                        class="my-new-checkbox">
+                                                                        class="my-new-checkbox" >
                                                                         <div class="accordion-heading"
                                                                             style="width: 80%">
                                                                             <a class="accordion-toggle"

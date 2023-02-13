@@ -209,19 +209,20 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                 </span>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="printers">{{trans('lang.printers')}}</label>
-                <div class="input-group my-group">
-                    <select id="printers" data-live-search="true" class="selectpicker form-control" name="printers[]" multiple>
-                        @foreach($printers as $printer)
-                            <option value="{{$printer->id}}">{{$printer->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
+
+    @endif
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="printers">{{trans('lang.printers')}}</label>
+            <div class="input-group my-group">
+                <select id="printers" data-live-search="true" class="selectpicker form-control" name="printers[]" multiple>
+                    @foreach($printers as $printer)
+                        <option value="{{$printer->id}}">{{$printer->name}}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
-    @endif
+    </div>
     <div class="col-md-12 " style="margin-top: 10px;">
         <div class="dropzone" id="my-dropzone">
             <div class="dz-message" data-dz-message><span>@lang('lang.drop_file_here_to_upload')</span></div>
@@ -344,41 +345,35 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
     </div>
     <br>
     <div class="clearfix"></div>
-    <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('discount_type', __('lang.discount_type'), []) !!}
-            {!! Form::select('discount_type', ['fixed' => __('lang.fixed'), 'percentage' => __('lang.percentage')], !empty($recent_product) ? $recent_product->discount_type : 'fixed', ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-        </div>
+    <div class="col-md-12">
+        <table class="table table-bordered" id="consumption_table_discount">
+            <thead>
+            <tr>
+                <th style="width: 20%;">@lang('lang.discount_type')</th>
+                <th style="width: 15%;">@lang('lang.discount')</th>
+                <th style="width: 20%;">@lang('lang.discount_start_date')</th>
+                <th style="width: 20%;">@lang('lang.discount_end_date')</th>
+                <th style="width: 20%;">@lang('lang.customer_type') <i class="dripicons-question" data-toggle="tooltip"
+                                                                       title="@lang('lang.discount_customer_info')"></i></th>
+                <th style="width: 5%;"><button class="btn btn-xs btn-success add_discount_row"
+                                                type="button"><i class="fa fa-plus"></i></button></th>
+            </tr>
+            </thead>
+            <tbody>
+            @include('product.partial.raw_discount', ['row_id' => 0])
+            </tbody>
+        </table>
+        <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
     </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('discount', __('lang.discount'), []) !!}
-            {!! Form::text('discount', !empty($recent_product) ? @num_format($recent_product->discount) : null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.discount')]) !!}
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('discount_start_date', __('lang.discount_start_date'), []) !!}
-            {!! Form::text('discount_start_date', !empty($recent_product) && !empty($recent_product->discount_start_date) ? @format_date($recent_product->discount_start_date) : null, ['class' => 'clear_input_form form-control datepicker', 'placeholder' => __('lang.discount_start_date')]) !!}
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('discount_end_date', __('lang.discount_end_date'), []) !!}
-            {!! Form::text('discount_end_date', !empty($recent_product) && !empty($recent_product->discount_end_date) ? @format_date($recent_product->discount_end_date) : null, ['class' => 'clear_input_form form-control datepicker', 'placeholder' => __('lang.discount_end_date')]) !!}
-        </div>
-    </div>
+
+
+
+
     <input type="hidden" name="default_purchase_price_percentage" id="default_purchase_price_percentage"
         value="{{ App\Models\System::getProperty('default_purchase_price_percentage') ?? 75 }}">
     <input type="hidden" name="default_profit_percentage" id="default_profit_percentage"
         value="{{ App\Models\System::getProperty('default_profit_percentage') ?? 0 }}">
-    <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
-                title="@lang('lang.discount_customer_info')"></i>
-            {!! Form::select('discount_customer_types[]', $discount_customer_types, !empty($recent_product) ? $recent_product->discount_customer_types : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple', 'data-actions-box' => 'true', 'id' => 'discount_customer_types']) !!}
-        </div>
-    </div>
+
     <div class="col-md-4">
         <div class="i-checks">
             <input id="show_to_customer" name="show_to_customer" type="checkbox" checked value="1"

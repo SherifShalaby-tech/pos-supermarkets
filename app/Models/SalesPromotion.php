@@ -46,10 +46,18 @@ class SalesPromotion extends Model
     {
         return $this->belongsToJson(Product::class, 'product_ids');
     }
+    public function variations()
+    {
+        return $this->belongsToJson(Variation::class, 'product_ids');
+    }
 
     public function condition_products()
     {
         return $this->belongsToJson(Product::class, 'condition_product_ids');
+    }
+    public function condition_variations()
+    {
+        return $this->belongsToJson(Variation::class, 'condition_product_ids');
     }
 
     public function created_by_user()

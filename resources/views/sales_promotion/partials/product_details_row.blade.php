@@ -1,23 +1,41 @@
 @foreach ($products as $product)
 <tr>
+    @php
+
+        $stockLines=\App\Models\AddStockLine::where('variation_id',$product->variations_id)
+        ->whereColumn('quantity',">",'quantity_sold')
+        ->first();
+
+
+        $default_sell_price=$stockLines?$stockLines->sell_price : $product->variations_sell_price;
+        $default_purchase_price=$stockLines?$stockLines->purchase_price : $product->variations_purchase_price;
+
+
+    @endphp
     <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
             alt="photo" width="50" height="50"></td>
-    <td>{{$product->name}}</td>
-    <td>{{$product->sku}}</td>
-    <td>{{@num_format($product->purchase_price)}}</td>
-    <td>{{@num_format($product->sell_price)}}</td>
+    <td>
+        @if($product->variations_name != "Default")
+            {{$product->variations_name}}
+        @else
+            {{$product->name}}
+        @endif
+    </td>
+    <td>{{$product->variations_sku}}</td>
+    <td>{{@num_format($default_purchase_price)}}</td>
+    <td>{{@num_format($default_sell_price)}}</td>
     <td>@if($product->is_service){{'-'}}@else{{@num_format($product->current_stock)}}@endif</td>
     <td>@if(!empty($product->expiry_date)){{@format_date($product->expiry_date)}}@endif</td>
     <td>@if(!empty($product->date_of_purchase)){{@format_date($product->date_of_purchase)}}@endif</td>
 
     <td class="qty_hide @if ($type != 'package_promotion') hide @endif"><input type="text" class="qty form-control"
-            name="package_promotion_qty[{{$product->id}}]" id=""
-            value="@if(!empty($package_promotion_qty) && array_key_exists($product->id, $package_promotion_qty)){{$package_promotion_qty[$product->id]}}@else{{'1'}}@endif">
+            name="package_promotion_qty[{{$product->variations_id}}]" id=""
+            value="@if(!empty($package_promotion_qty) && array_key_exists($product->variations_id, $package_promotion_qty)){{$package_promotion_qty[$product->variations_id]}}@else{{'1'}}@endif">
     </td>
     <td><button type="button" class="btn btn-xs btn-danger text-white remove_row_sp"
-            data-product_id="{{$product->id}}"><i class="fa fa-times"></i></button></td>
-    <input type="hidden" class="purchase_price" name="purchase_price" value="{{$product->purchase_price}}">
-    <input type="hidden" class="sell_price" name="sell_price" value="{{$product->sell_price}}">
+            data-product_id="{{$product->variations_id}}"><i class="fa fa-times"></i></button></td>
+    <input type="hidden" class="purchase_price" name="purchase_price" value="{{$default_purchase_price}}">
+    <input type="hidden" class="sell_price" name="sell_price" value="{{$default_sell_price}}">
 </tr>
 @endforeach
 <input type="hidden" name="sell_price_total" id="sell_price_total" value="{{$products->sum('sell_price')}}">

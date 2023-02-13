@@ -350,6 +350,23 @@ $(document).on("change", "#category_id", function () {
         },
     });
 });
+$(document).on("click", ".add_discount_row", function () {
+    let row_id = parseInt($("#raw_discount_index").val());
+    $("#raw_discount_index").val(row_id + 1);
+
+    $.ajax({
+        method: "get",
+        url: "/product/get-raw-discount",
+        data: { row_id: row_id },
+        success: function (result) {
+            $("#consumption_table_discount > tbody").prepend(result);
+            $(".selectpicker").selectpicker("refresh");
+            $(".datepicker").datepicker("refresh");
+
+            // $(".raw_material_unit_id").selectpicker("refresh");
+        },
+    });
+});
 var brand_id = null;
 $(document).on("submit", "form#quick_add_brand_form", function (e) {
     e.preventDefault();

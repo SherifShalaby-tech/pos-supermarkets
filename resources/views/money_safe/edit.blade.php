@@ -29,7 +29,7 @@
             </div>
             <div class="form-group bank_fields">
                 {!! Form::label('bank_name', __('lang.bank_name') . ':*') !!}
-                {!! Form::text('bank_name', $money_safe->bank_name, ['class' => 'form-control bank_required', 'placeholder' => __('lang.bank_name'), 'required']) !!}
+                {!! Form::text('bank_name', $money_safe->bank_name, ['class' => 'form-control '.$money_safe->type == 'bank'? 'bank_required':'', 'placeholder' => __('lang.bank_name'),$money_safe->type == 'bank'? 'required':'' ]) !!}
             </div>
             <div class="form-group bank_fields">
                 {!! Form::label('IBAN', __('lang.IBAN') . ':') !!}

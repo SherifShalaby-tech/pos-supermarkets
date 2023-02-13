@@ -419,13 +419,13 @@ class SellController extends Controller
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('return.sell_return.create_and_edit')) {
-                            if (empty($row->return_parent)) {
+//                            if (empty($row->return_parent)) {
                                 $html .=
                                     '<li>
                                     <a href="' . action('SellReturnController@add', $row->id) . '" class="btn"><i
                                         class="fa fa-undo"></i> ' . __('lang.sale_return') . '</a>
                                     </li>';
-                            }
+//                            }
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('sale.pay.create_and_edit')) {
