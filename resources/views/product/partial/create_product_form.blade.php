@@ -91,7 +91,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
         <div class="col-md-4">
             {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
             <div class="input-group my-group">
-                {!! Form::select('category_id', $categories, !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                {!! Form::select('category_id', $categories, !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
                 <span class="input-group-btn">
                     @can('product_module.category.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -119,7 +119,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
         <div class="col-md-4">
             {!! Form::label('brand_id', __('lang.brand'), []) !!}
             <div class="input-group my-group">
-                {!! Form::select('brand_id', $brands, !empty($recent_product) ? $recent_product->brand_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                {!! Form::select('brand_id', $brands, !empty($recent_product) ? $recent_product->brand_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
                 <span class="input-group-btn">
                     @can('product_module.brand.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"

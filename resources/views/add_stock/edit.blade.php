@@ -168,7 +168,7 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class=""  value="1"></div>
+                                                        <div class="i-checks"><input name="add_stock_lines[{{$loop->index}}][stock_pricechange]" id="active" type="checkbox" class="" checked value="1"></div>
                                                     </td>
                                                 <td rowspan="2">
                                                     <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$loop->index}}"><i

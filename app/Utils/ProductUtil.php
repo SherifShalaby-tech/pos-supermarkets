@@ -1026,6 +1026,14 @@ class ProductUtil extends Util
                 $keep_lines_ids[] = $add_stock->id;
                 $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $qty, 0);
             }
+
+
+            if(!empty($line['stock_pricechange'])){
+                AddStockLine::where('variation_id',$line['variation_id'])
+                    ->whereColumn('quantity',">",'quantity_sold')->update([
+                        'sell_price' => $line['selling_price'],
+                ]);
+            }
         }
 
         if (!empty($keep_lines_ids)) {
