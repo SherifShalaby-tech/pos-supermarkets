@@ -73,7 +73,7 @@
                                         {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
                                     @endif
                                     <div class="input-group my-group">
-                                        {!! Form::select('product_class_id', $product_classes, $product->product_class_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('product_class_id', $product_classes, $product->product_class_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
                                         <span class="input-group-btn">
                                             @can('product_module.product_class.create_and_edit')
                                                 <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
@@ -89,7 +89,7 @@
                                     <div class="col-md-4">
                                         {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
                                         <div class="input-group my-group">
-                                            {!! Form::select('category_id', $categories, $product->category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                            {!! Form::select('category_id', $categories, $product->category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.category.create_and_edit')
                                                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
@@ -119,7 +119,7 @@
                                     <div class="col-md-4">
                                         {!! Form::label('brand_id', __('lang.brand') . ' *', []) !!}
                                         <div class="input-group my-group">
-                                            {!! Form::select('brand_id', $brands, $product->brand_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                            {!! Form::select('brand_id', $brands, $product->brand_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.brand.create_and_edit')
                                                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"

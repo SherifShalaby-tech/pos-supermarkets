@@ -50,7 +50,7 @@ $i = $index;
             class="current_stock_text">@if($product->is_service) {{'-'}} @else @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif</span>
     </td>
     <td>
-        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class="" checked value="1"></div>
+        <div class="i-checks"><input name="add_stock_lines[{{$i}}][stock_pricechange]" id="active" type="checkbox" class="" checked value="1"></div>
     </td>
     <td rowspan="2">
         <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$i}}"><i
