@@ -166,7 +166,7 @@ class SalesPromotionController extends Controller
         $product_classes = ProductClass::get();
         $pct_data = $sales_promotion->pct_data;
         $pci_data = $sales_promotion->pci_data;
-        $product_details = $this->productUtil->getProductDetailsUsingArrayIds($sales_promotion->product_ids, $sales_promotion->store_ids);
+        $product_details = $this->productUtil->getProductDetailsUsingArrayIds($sales_promotion->product_ids, $sales_promotion->store_ids,true);
 
         return view('sales_promotion.edit')->with(compact(
             'sales_promotion',
@@ -200,6 +200,7 @@ class SalesPromotionController extends Controller
             ['start_date' => ['required', 'max:255']],
             ['end_date' => ['required', 'max:255']],
         );
+//        dd($request->all());
 
         try {
             $data['name'] = $request->name;
@@ -218,8 +219,8 @@ class SalesPromotionController extends Controller
             $data['discount_type'] = !empty($request->discount_type) ? $request->discount_type : 'fixed';
             $data['actual_sell_price'] = !empty($request->actual_sell_price) ? $this->productUtil->num_uf($request->actual_sell_price) : 0;
             $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
-            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct); //product ids to get the discount
-            $data['condition_product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pci); //product ids condition to get the discount
+            $data['product_ids'] = $this->productUtil->extractProductVariationIdsfromProductTree($request->pct); //product ids to get the discount
+            $data['condition_product_ids'] = $this->productUtil->extractProductVariationIdsfromProductTree($request->pci); //product ids condition to get the discount
             $data['pct_data'] = $request->pct ?? [];
             $data['pci_data'] = $request->pci ?? []; //product condition items
             $data['package_promotion_qty'] = $request->package_promotion_qty ?? []; //package promotion qty condition
@@ -281,10 +282,14 @@ class SalesPromotionController extends Controller
         $store_ids = $request->store_ids;
         $type = $request->type;
         $array = $request->array;
+        $is_edit=$request->is_edit == '1'?1:0;
+        if($request->product_array_old_ids){
+            $array=array_diff($array,$request->product_array_old_ids);
+        }
         $products = $this->productUtil->getProductDetailsUsingArrayIds($array, $store_ids,true);
-
         return view('sales_promotion.partials.product_details_row')->with(compact(
             'products',
+            'is_edit',
             'type'
         ));
     }

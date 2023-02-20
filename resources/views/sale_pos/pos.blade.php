@@ -276,6 +276,11 @@
                                                 <span class="totals-title">{{ __('lang.delivery') }}</span><span
                                                     id="delivery-cost">0.00</span>
                                             </div>
+                                            <div class="col-sm-4 red">
+                                                <span class="totals-title red">{{ __('lang.sales_promotion') }}</span><span
+                                                    id="sales_promotion-cost_span">0.00</span>
+                                                <input type="hidden" id="sales_promotion-cost" value="0">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -762,7 +767,14 @@
     <!-- This will be printed -->
     <section class="invoice print_section print-only" id="receipt_section"> </section>
 @endsection
+@section('style')
 
+    <style>
+        .red {
+            color: #a50d0d !important;
+        }
+    </style>
+@endsection
 @section('javascript')
     <script src="{{ asset('js/onscan.min.js') }}"></script>
     <script src="{{ asset('js/pos.js') }}"></script>
