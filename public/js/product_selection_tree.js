@@ -41,6 +41,7 @@ $(document).on(
     function (e, clickedIndex, isSelected, oldValue) {
         if (doc_ready === 1 && is_edit_page != "1") {
             let selectedOptionValue = $(this).val();
+
             $(".product_checkbox").prop("checked", false);
 
             for (var i = 0; i < selectedOptionValue.length; i++) {
@@ -96,22 +97,34 @@ function toggleAccordianTillItem(product) {
 let product_array = [];
 let unique_product_array = [];
 $(document).on("hidden.bs.modal", "#pctModal", function () {
-    $("#sale_promotion_table tbody").empty();
+     product_array_old_ids=[];
+    if (is_edit_page != "1") {
+        $("#sale_promotion_table tbody").empty();
+
+    }else{
+        console.log($(".product_variations_ids"));
+        $(".product_variations_ids").each((i, obj) => {
+            product_array_old_ids.push($(obj).val());
+        });
+    }
     product_array = [];
     unique_product_array = [];
 
     $(".product_checkbox").each((i, obj) => {
         if ($(obj).prop("checked") === true) {
-            product_array.push($(obj).val());
+                product_array.push($(obj).val());
+
         }
     });
     unique_product_array = product_array.filter(onlyUnique);
-    getProductRows(unique_product_array);
+    product_array_old_ids = product_array_old_ids.filter(onlyUnique);
+    getProductRows(unique_product_array,product_array_old_ids);
 });
 
 if (is_edit_page == "1") {
-    $("#sale_promotion_table tbody").empty();
+    // $("#sale_promotion_table tbody").empty();
     product_array = [];
+    product_q_array = [];
     unique_product_array = [];
 
     $(".product_checkbox").each((i, obj) => {
@@ -119,11 +132,12 @@ if (is_edit_page == "1") {
             product_array.push($(obj).val());
         }
     });
+
     unique_product_array = product_array.filter(onlyUnique);
-    getProductRows(unique_product_array);
+    // getProductRows(unique_product_array);
 }
 
-function getProductRows(array) {
+function getProductRows(array, product_array_old_ids= null) {
     $(".footer_sell_price_total").text(__currency_trans_from_en(0, false));
     $(".footer_purchase_price_total").text(__currency_trans_from_en(0, false));
     $.ajax({
@@ -134,6 +148,8 @@ function getProductRows(array) {
             store_ids: $("#store_ids").val(),
             type: $("#type").val(),
             array: array,
+            product_array_old_ids: product_array_old_ids,
+            is_edit: is_edit_page,
         },
         dataType: "html",
         success: function (result) {

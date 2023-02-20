@@ -82,6 +82,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+
                                             @include(
                                                 'sales_promotion.partials.product_details_row',
                                                 [
@@ -189,7 +190,7 @@
                 $('.new_price').removeClass('hide');
             } else {
                 $('.new_price').addClass('hide');
-                $('.qty').val(1);
+                // $('.qty').val(1);
             }
         })
         $(document).on('change', '#discount_type, #discount_value', function() {

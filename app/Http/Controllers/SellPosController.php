@@ -1236,7 +1236,6 @@ class SellPosController extends Controller
             $added_products = json_decode($request->input('added_products'), true);
             $added_qty = json_decode($request->input('added_qty'), true);
             $qty_array = [];
-
             foreach ($added_qty as $value) {
                 $qty_array[$value['product_id']] = $value['qty'];
             }
@@ -1244,7 +1243,8 @@ class SellPosController extends Controller
             $sale_promotion_details = $this->productUtil->getSalePromotionDetailsIfValidForThisSale($store_id, $customer_id, $added_products, $qty_array);
 
             if (!empty($sale_promotion_details)) {
-                $result = ['valid' => true, 'sale_promotion_details' => $sale_promotion_details];
+                    $result = ['valid' => true, 'sale_promotion_details' => $sale_promotion_details];
+
             }
         }
         return $result;

@@ -1146,27 +1146,6 @@ class ProductController extends Controller
      */
     public function getImport()
     {
-        $prices=DB::table('new_name')->get();
-
-
-        foreach($prices as $price){
-        //     $variation = Variation::find($price->id);
-        //     if($variation){
-        //         $variation->default_purchase_price=$price->Purchase_Price;
-        //         $variation->default_sell_price=$price->sell_price;
-                $product = Product::where('sku',$price->Sku)->first();
-                if($product){
-                    $product->name=$price->Product_Name;
-                    // $product->sell_price=$price->sell_price;
-                    $product->save();
-                }
-        //         $variation->save();
-            }
-
-
-
-        // }
-
 
         return view('product.import');
     }

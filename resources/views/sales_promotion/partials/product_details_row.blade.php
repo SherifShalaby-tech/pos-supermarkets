@@ -9,6 +9,11 @@
 
         $default_sell_price=$stockLines?$stockLines->sell_price : $product->variations_sell_price;
         $default_purchase_price=$stockLines?$stockLines->purchase_price : $product->variations_purchase_price;
+        $q=1;
+        if(!empty($package_promotion_qty) &&
+         array_key_exists($product->variations_id, $package_promotion_qty)){
+           $q= (int)$package_promotion_qty[$product->variations_id];
+        }
 
 
     @endphp
@@ -26,11 +31,16 @@
     <td>{{@num_format($default_sell_price)}}</td>
     <td>@if($product->is_service){{'-'}}@else{{@num_format($product->current_stock)}}@endif</td>
     <td>@if(!empty($product->expiry_date)){{@format_date($product->expiry_date)}}@endif</td>
-    <td>@if(!empty($product->date_of_purchase)){{@format_date($product->date_of_purchase)}}@endif</td>
-
-    <td class="qty_hide @if ($type != 'package_promotion') hide @endif"><input type="text" class="qty form-control"
+    <td> @if(!empty($product->date_of_purchase)){{@format_date($product->date_of_purchase)}}@endif</td>
+    <td class="qty_hide @if ($type != 'package_promotion') hide @endif">
+        <input type="text" class="qty product_qty_checkbox form-control"
             name="package_promotion_qty[{{$product->variations_id}}]" id=""
-            value="@if(!empty($package_promotion_qty) && array_key_exists($product->variations_id, $package_promotion_qty)){{$package_promotion_qty[$product->variations_id]}}@else{{'1'}}@endif">
+            value="{{$q}}">
+
+        <input type="hidden" class="product_variations_ids form-control"
+               name="product_variation_id[{{$product->variations_id}}]" id=""
+               value="{{$product->variations_id}}">
+
     </td>
     <td><button type="button" class="btn btn-xs btn-danger text-white remove_row_sp"
             data-product_id="{{$product->variations_id}}"><i class="fa fa-times"></i></button></td>

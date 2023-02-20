@@ -724,6 +724,7 @@ class ProductUtil extends Util
         $added_products = (array)$added_products;
 
         $customer_type_id = (string) $customer->customer_type_id;
+        $array_sales_promotions=[];
         if (!empty($customer_type_id)) {
             $sales_promotions = SalesPromotion::
                     whereJsonContains('customer_type_ids', $customer_type_id)
@@ -732,30 +733,61 @@ class ProductUtil extends Util
                 ->whereDate('end_date', '>=', date('Y-m-d'))
                 ->get();
             foreach ($sales_promotions as $sales_promotion) {
-                if ($sales_promotion->type == 'item_discount') {
-                    if (!$sales_promotion->product_condition) {
-                        return $sales_promotion;
-                    } else {
-                        $is_valid = $this->compareArray($sales_promotion->condition_product_ids, $added_products);
-                        if ($is_valid) {
-                            return $sales_promotion;
-                        }
-                    }
+                $v_sales_promotion = $this->getSalePromotionDetailsIfValidForThisSaleArray($sales_promotion, $added_products, $qty_array);
+                if($v_sales_promotion['vale_return'] != null ){
+                    array_push($array_sales_promotions,$v_sales_promotion['vale_return']);
                 }
-                if ($sales_promotion->type == 'package_promotion') {
-                    $package_promotion_qty = $sales_promotion->package_promotion_qty;
+                if(empty($v_sales_promotion['qty_array'])){
+                    break;
 
-                    $is_valid = $this->comparePackagePromotionData($package_promotion_qty, $qty_array);
-                    if ($is_valid > 0) {
-                        $sales_promotion->count_discount_number=$is_valid;
-                        return $sales_promotion;
-                    }
                 }
             }
         }
-        return null;
-    }
 
+        return $array_sales_promotions;
+    }
+    public function getSalePromotionDetailsIfValidForThisSaleArray($sales_promotion,$added_products,$qty_array)
+    {
+        $data['vale_return']=null;
+        $data['qty_array']=$qty_array;
+
+        if ($sales_promotion->type == 'item_discount') {
+            if (!$sales_promotion->product_condition) {
+                $data['vale_return']= $sales_promotion;
+            } else {
+                $is_valid = $this->compareArray($sales_promotion->condition_product_ids, $added_products);
+                if ($is_valid) {
+                    $data['vale_return']= $sales_promotion;
+                }
+            }
+        }
+        if ($sales_promotion->type == 'package_promotion') {
+            $package_promotion_qty = $sales_promotion->package_promotion_qty;
+
+            $is_valid = $this->comparePackagePromotionData($package_promotion_qty, $qty_array);
+            if ($is_valid > 0) {
+                foreach ($package_promotion_qty as $v_id=>$item_qty){
+                   $All_item_qty= $item_qty*$is_valid;
+                   if(in_array($v_id,array_keys($qty_array))){
+                       $new_qty=$qty_array[$v_id]-$All_item_qty;
+                       if($new_qty<=0){
+                           unset($qty_array[$v_id]);
+                       }else{
+                           $qty_array[$v_id]=$new_qty;
+                       }
+                    }
+
+                }
+                $sales_promotion->count_discount_number=$is_valid;
+                $data['vale_return']=$sales_promotion;
+                $data['qty_array']=$qty_array;
+            }
+
+
+        }
+
+        return $data;
+    }
     /**
      * compare package promotion data with add product data
      *
@@ -1427,6 +1459,39 @@ class ProductUtil extends Util
                 DB::raw('SUM(product_stores.qty_available) as current_stock'),
                 DB::raw("(SELECT transaction_date FROM transactions LEFT JOIN add_stock_lines ON transactions.id=add_stock_lines.transaction_id WHERE add_stock_lines.product_id=products.id ORDER BY transaction_date DESC LIMIT 1) as date_of_purchase")
             );
+        if(!empty($variations)){
+            $query->groupBy('variations.id');
+        }else{
+            $query ->groupBy('products.id');
+        }
+
+        $products = $query->get();
+        return $products;
+    }
+    public function getVariationDetailsUsingArrayIds($array, $store_ids = null,$variations= null)
+    {
+        $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+
+        if (!empty($store_ids)) {
+            $query->whereIn('product_stores.store_id', $store_ids);
+        }
+        if (!empty($variations)) {
+            $query->whereIn('variations.id', $array);
+        }else{
+            $query->whereIn('products.id', $array);
+        }
+
+        $query->select(
+            'products.*',
+            'variations.id as variations_id',
+            'variations.name as variations_name',
+            'variations.sub_sku as variations_sku',
+            'variations.default_sell_price as variations_sell_price',
+            'variations.default_purchase_price as variations_purchase_price',
+            DB::raw('SUM(product_stores.qty_available) as current_stock'),
+            DB::raw("(SELECT transaction_date FROM transactions LEFT JOIN add_stock_lines ON transactions.id=add_stock_lines.transaction_id WHERE add_stock_lines.product_id=products.id ORDER BY transaction_date DESC LIMIT 1) as date_of_purchase")
+        );
         if(!empty($variations)){
             $query->groupBy('variations.id');
         }else{
