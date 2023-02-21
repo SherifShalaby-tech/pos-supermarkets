@@ -32,7 +32,7 @@
                                     <tr>
                                         <td>{{ $exchange_rate->received_currency->currency }}({{ $exchange_rate->received_currency->code }})
                                         </td>
-                                        <td>{{ @num_format($exchange_rate->conversion_rate) }}</td>
+                                        <td>{{ number_format($exchange_rate->conversion_rate,env('Conversion_Rate',4)) }}</td>
                                         <td>{{ $exchange_rate->default_currency->currency }}({{ $exchange_rate->default_currency->code }})
                                         </td>
                                         <td>{{ $exchange_rate->created_by_user->name }}</td>
