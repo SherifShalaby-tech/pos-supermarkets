@@ -543,117 +543,13 @@ function check_for_sale_promotion() {
                     __currency_trans_from_en(sum_item_discount+discount, false)
                 );
                 __write_number($("#total_pp_discount"), discount);
-                // if (result.sale_promotion_details.type === "item_discount") {
-                //     let product_ids = result.sale_promotion_details.product_ids;
-                //     let discount_type =
-                //         result.sale_promotion_details.discount_type;
-                //     let discount_value =
-                //         result.sale_promotion_details.discount_value;
-                //     let purchase_condition =
-                //         result.sale_promotion_details.purchase_condition;
-                //     let purchase_condition_amount =
-                //         result.sale_promotion_details.purchase_condition_amount;
-                //     product_ids.forEach((product_id) => {
-                //         $("#product_table tbody")
-                //             .find("tr")
-                //             .each(function () {
-                //                 var row_product_id = $(this)
-                //                     .find(".product_id")
-                //                     .val()
-                //                     .trim();
-                //                 if (row_product_id == product_id) {
-                //                     if (discount_type == "fixed") {
-                //                         $(this)
-                //                             .find(".promotion_discount_type")
-                //                             .val("fixed");
-                //                     } else if (discount_type == "percentage") {
-                //                         $(this)
-                //                             .find(".promotion_discount_type")
-                //                             .val("percentage");
-                //                     }
-                //                     $(this)
-                //                         .find(".promotion_discount_value")
-                //                         .val(discount_value);
-                //                     $(this)
-                //                         .find(
-                //                             ".promotion_purchase_condition_amount"
-                //                         )
-                //                         .val(purchase_condition_amount);
-                //                     $(this)
-                //                         .find(".promotion_purchase_condition")
-                //                         .val(purchase_condition);
-                //                 }
-                //             });
-                //     });
-                // }
-                //
-                // if (
-                //     result.sale_promotion_details.type === "package_promotion"
-                // ) {
-                //     let discount = 0;
-                //     if (
-                //         result.sale_promotion_details.discount_type === "fixed"
-                //     ) {
-                //         discount =
-                //             ( parseFloat(
-                //                 result.sale_promotion_details.actual_sell_price
-                //             ) -
-                //             parseFloat(
-                //                 result.sale_promotion_details.discount_value
-                //             ) ) *  parseFloat(result.sale_promotion_details.count_discount_number);
-                //
-                //     }
-                //     if (
-                //         result.sale_promotion_details.discount_type ===
-                //         "percentage"
-                //     ) {
-                //         let discount_value =
-                //             (parseFloat(
-                //                 result.sale_promotion_details.actual_sell_price
-                //             ) *
-                //                 parseFloat(
-                //                     result.sale_promotion_details.discount_value
-                //                 )) /
-                //             100;
-                //         discount =
-                //             (parseFloat(
-                //                 result.sale_promotion_details.actual_sell_price
-                //             ) - discount_value ) *  parseFloat(result.sale_promotion_details.count_discount_number);;
-                //
-                //     }
-                //     if (result.sale_promotion_details.purchase_condition) {
-                //         let purchase_condition_amount =
-                //             result.sale_promotion_details
-                //                 .purchase_condition_amount;
-                //         let grand_total = __read_number($("#grand_total"));
-                //         if (purchase_condition_amount > grand_total) {
-                //             discount = 0;
-                //         }
-                //     }
-                //
-                //     var product_ids = result.sale_promotion_details.product_ids;
-                //     $("#product_table > tbody > tr").each(function (ele, tr) {
-                //         let product_id = __read_number(
-                //             $(tr).find(".product_id")
-                //         );
-                //         if (product_ids.includes(product_id)) {
-                //             $(tr).find(".sell_price").attr("readonly", true);
-                //             //neglect all other discount for this product if any
-                //             $(tr).find(".promotion_discount_value").val(0);
-                //             $(tr).find(".product_discount_value").val(0);
-                //         }
-                //     });
-                //     __write_number($("#total_pp_discount"), discount);
-                //     $("span#sales_promotion-cost_span").text(
-                //         __currency_trans_from_en(discount, false)
-                //     );
-                // }
 
                 calculate_sub_totals();
             }else{
                 $("span#sales_promotion-cost_span").text(
                     __currency_trans_from_en(0, false)
                 );
+                __write_number($("#total_pp_discount"), 0);
                 calculate_sub_totals();
             }
         },
@@ -769,7 +665,7 @@ function calculate_sub_totals() {
     total += total_tax_payable;
 
     __write_number($("#grand_total"), grand_total); // total without any discounts
-
+    total -= total_coupon_discount;
     let discount_amount = get_discount_amount(total);
     $(".discount_span").text(__currency_trans_from_en(discount_amount, false));
     total -= discount_amount;
