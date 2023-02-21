@@ -29,7 +29,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('conversion_rate', __('lang.enter_the_rate') . ':*') !!}
-                        {!! Form::text('conversion_rate', @num_format($exchange_rate->conversion_rate), ['class' => 'form-control', 'placeholder' => __('lang.enter_the_rate'), 'required']) !!}
+                        {!! Form::text('conversion_rate', number_format($exchange_rate->conversion_rate,env('Conversion_Rate',4)) , ['class' => 'form-control', 'placeholder' => __('lang.enter_the_rate'), 'required']) !!}
                     </div>
                 </div>
                 <div class="col-md-4">
