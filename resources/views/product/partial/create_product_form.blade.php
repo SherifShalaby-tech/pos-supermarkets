@@ -10,7 +10,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             <input id="is_service" name="is_service" type="checkbox"
                 @if (session('system_mode') == 'restaurant') checked
                 @elseif(!empty($recent_product) && $recent_product->is_service == 1) checked @endif
-                value="0" class="form-control-custom">
+                 class="form-control-custom">
             <label for="is_service"><strong>
                     @if (session('system_mode') == 'restaurant')
                         @lang('lang.or_add_new_product')
