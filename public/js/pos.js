@@ -2052,7 +2052,9 @@ $(document).on("change", "#customer_id", function () {
         data: {},
         success: function (result) {
             $(".customer_name").text(result.name);
+            $(".customer_name_span").text(result.name);
             $(".customer_address").text(result.address);
+            $(".customer_address_span").text(result.address);
             $(".delivery_address").text(result.address);
 
             $(".customer_due_span").text(
@@ -2064,6 +2066,7 @@ $(document).on("change", "#customer_id", function () {
         },
     });
     getCustomerBalance();
+    getCustomerPointDetails();
     getCustomerSizes(customer_id);
 });
 
