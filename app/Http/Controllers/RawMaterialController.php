@@ -77,6 +77,8 @@ class RawMaterialController extends Controller
                 ->leftjoin('units', 'variations.unit_id', 'units.id')
                 ->leftjoin('brands', 'products.brand_id', 'brands.id')
                 ->leftjoin('users', 'products.created_by', 'users.id')
+                ->leftjoin('supplier_products', 'products.id', 'supplier_products.product_id')
+                ->leftjoin('suppliers', 'supplier_products.supplier_id', 'suppliers.id')
                 ->leftjoin('users as edited', 'products.edited_by', 'users.id')
                 ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
@@ -111,9 +113,9 @@ class RawMaterialController extends Controller
                 'add_stock_lines.manufacturing_date',
                 'users.name as created_by_name',
                 'edited.name as edited_by_name',
+                'suppliers.name as supplier_name',
                 DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as current_stock'),
-            )->with(['supplier'])
-                ->groupBy('variations.id');
+            )->groupBy('variations.id');
 
             return DataTables::of($products)
                 ->addColumn('image', function ($row) {
@@ -135,15 +137,18 @@ class RawMaterialController extends Controller
                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                     return $html;
                 })
-                ->editColumn('supplier_name', function ($row) {
-                    return $row->supplier->name ?? '';
-                })
+                // ->editColumn('supplier_name', function ($row) {
+                //     return $row->supplier->name ?? '';
+                // })
                 ->editColumn('batch_number', '{{$batch_number}}')
                 ->editColumn('brand', '{{$brand}}')
                 ->editColumn('current_stock', '@if($is_service)-@else{{@num_format($current_stock)}}@endif')
                 ->editColumn('exp_date', '@if(!empty($exp_date)){{@format_date($exp_date)}}@endif')
                 ->addColumn('manufacturing_date', '@if(!empty($manufacturing_date)){{@format_date($manufacturing_date)}}@endif')
-                ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
+                ->editColumn('default_purchase_price', function ($row) {
+                    return number_format($row->default_purchase_price <= 0 && $row->purchase_price > 0 ? $row->purchase_price:$row->default_purchase_price , 2);
+                })
+                // } '{{@num_format($default_purchase_price)}}')
                 ->editColumn('created_by', '{{$created_by_name}}')
                 ->addColumn('products_view', function ($row) {
                     return '<a data-href="' . action('RawMaterialController@show', $row->id) . '"
@@ -398,12 +403,14 @@ class RawMaterialController extends Controller
         $stores  = Store::all();
         $suppliers = Supplier::pluck('name', 'id');
 
+        $units_js=$units->pluck('base_unit_multiplier', 'id');
 
         return view('raw_material.edit')->with(compact(
             'raw_material',
             'products',
             'brands',
             'units',
+            'units_js',
             'units_all',
             'colors',
             'sizes',
