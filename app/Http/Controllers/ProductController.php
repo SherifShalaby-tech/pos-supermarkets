@@ -513,7 +513,7 @@ class ProductController extends Controller
         $discount_customer_types = CustomerType::pluck('name', 'id');
         $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $stores  = Store::all();
-        $stores_select  = Store::orderBy('name', 'asc')->pluck('name', 'id')->toarray();
+        $stores_select  = Store::getDropdown();
         $quick_add = request()->quick_add;
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
         $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
@@ -584,7 +584,7 @@ class ProductController extends Controller
 //            ['purchase_price' => ['required', 'max:25', 'decimal']],
 //            ['sell_price' => ['required', 'max:25', 'decimal']],
         );
-//        try {
+        try {
 
 
 
@@ -690,13 +690,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-//        } catch (\Exception $e) {
-//            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-//            $output = [
-//                'success' => false,
-//                'msg' => __('lang.something_went_wrong')
-//            ];
-//        }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return $output;
     }
