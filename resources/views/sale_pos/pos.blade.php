@@ -117,16 +117,7 @@
                                                 data-toggle="modal"
                                                 data-target="#contact_details_modal">@lang('lang.details')</button>
                                         </div>
-                                        @if (session('system_mode') == 'garments')
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-default" style="margin-top: 30px;"
-                                                    data-toggle="modal" data-target="#customer_sizes_modal"><img
-                                                        style="width: 20px; height: 25px;"
-                                                        src="{{ asset('images/269 Garment Icon.png') }}"
-                                                        alt="@lang('lang.customer_size')" data-toggle="tooltip"
-                                                        title="@lang('lang.customer_size')"></button>
-                                            </div>
-                                        @endif
+
                                         <div class="col-md-2">
                                             <label for="customer_type_name" style="margin-top: 40px;">@lang('lang.customer_type'):
                                                 <span class="customer_type_name"></span></label>
@@ -139,13 +130,11 @@
                                                 <span class="points"><span
                                                         class="customer_points_span">{{ @num_format(0) }}</span></span></label>
                                         </div>
-                                        @if (session('system_mode') == 'pos' || session('system_mode') == 'restaurant')
                                             <div class="col-md-2">
                                                 <button type="button" class="btn btn-danger btn-xs pull-right"
                                                     style="margin-top: 38px;" data-toggle="modal"
                                                     data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
                                             </div>
-                                        @endif
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-danger btn-xs  pull-right"
                                                 style="margin-top: 38px;" id="print_and_draft"><i
