@@ -467,7 +467,7 @@
                                 </td>
                             </tr>
                         @endif
-                        @if(env('SHOW_DUE',false)   && $total_due < 0)
+                        @if(env('SHOW_DUE',false) && $transaction->customer_id !=  env('DEFAULT_CUSTMER',1) && $total_due < 0)
                             <tr>
                                 <td style="padding: 7px;width:30%">{{ __('lang.total_due', [], 'ar') }} <br>
                                     {{ __('lang.total_due', [], 'en') }}</td>

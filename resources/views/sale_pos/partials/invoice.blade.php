@@ -389,7 +389,7 @@ if (empty($invoice_lang)) {
                             @endif
                         @endif
 
-                        @if(env('SHOW_DUE',false)   && $total_due < 0)
+                        @if(env('SHOW_DUE',false) && $transaction->customer_id !=  env('DEFAULT_CUSTMER',1) && $total_due < 0)
                             <tr>
                                 <td style="font-size: 16px; padding: 5px;width:30%">@lang('lang.total_due', [], $invoice_lang)</td>
                                 <td colspan="2" style="font-size: 16px; padding: 5px;width:40%; text-align: right;">
