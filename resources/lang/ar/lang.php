@@ -531,6 +531,7 @@ return [
     'payment_start_date' => 'تاريخ بدء الدفع',
     'payment_end_date' => 'تاريخ انتهاء الدفع',
     'due' => 'متأخرات',
+    'total_due' => 'اجمالي متأخرات',
     'deliveryman' => 'رجل التوصيل',
     'delivery_cost_paid_by_customer' => 'تكلفة التوصيل التي يدفعها العميل',
     'delivery_cost' => 'تكلفة التوصيل',

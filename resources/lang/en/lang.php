@@ -28,7 +28,7 @@ return [
     'email' => 'Email',
     'login' => 'Login',
     'developed_by' => 'Developed by',
-
+    'total_due' => 'Total Due',
     'submit' => 'Submit',
     'save' => 'Save',
     'close' => 'Close',

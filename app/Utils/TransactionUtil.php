@@ -1352,18 +1352,21 @@ class TransactionUtil extends Util
                 $invoice_lang = request()->session()->get('language');
             }
         }
+       $total_due= $this->getCustomerBalance($transaction->customer_id)['balance'];
 
         if ($invoice_lang == 'ar_and_en') {
             $html_content = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
                 'transaction',
                 'payment_types',
                 'print_gift_invoice',
+                'total_due',
             ))->render();
         } else {
             $html_content = view('sale_pos.partials.invoice')->with(compact(
                 'transaction',
                 'payment_types',
                 'invoice_lang',
+                'total_due',
                 'print_gift_invoice'
             ))->render();
         }
@@ -1375,6 +1378,7 @@ class TransactionUtil extends Util
                 'sale',
                 'payment_type_array',
                 'invoice_lang',
+                'total_due',
                 'print_gift_invoice',
             ))->render();
         }

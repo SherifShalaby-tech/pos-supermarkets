@@ -329,8 +329,33 @@ function get_label_product_row(
 
                 //Increment product quantity
                 qty_element = $(this).find(".quantity");
-                var qty = __read_number(qty_element);
-                __write_number(qty_element, qty + 1);
+                have_weight = $(this).find(".have_weight");
+
+                var qty = __read_number(qty_element),
+                    is_have_weight = __read_number(have_weight);
+                if(is_have_weight != 1){
+                    __write_number(qty_element, qty + 1);
+                }else{
+
+                    var key='weight_product'+$("#store_pos_id").val();
+                    $.ajax({
+                        method: "GET",
+                        url: "/get-system-property/"+key,
+                        dataType: "json",
+                        async: false,
+                        success: function (result) {
+                            if (!result.success) {
+                                swal("Error", result.msg, "error");
+                                return;
+                            }else{
+                                new_qty=parseFloat(qty)+parseFloat(result.value)
+                                __write_number(qty_element, new_qty);
+                            }
+                        },
+                    });
+
+                }
+
                 qty_element.change;
                 check_for_sale_promotion();
                 calculate_sub_totals();
