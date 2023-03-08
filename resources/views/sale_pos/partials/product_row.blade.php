@@ -28,6 +28,8 @@
             @endif
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][is_service]" class="is_service"
                    value="{{$product->is_service}}">
+            <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][have_weight]" class="have_weight"
+                   value="{{$product->have_weight}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][product_id]" class="product_id"
                    value="{{$product->product_id}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]" class="variation_id"

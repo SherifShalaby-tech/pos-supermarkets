@@ -299,6 +299,19 @@ class SettingController extends Controller
             'module_settings',
         ));
     }
+    /**
+     * get module settings
+     *
+     * @return void
+     */
+    public function getSystemProperty($key)
+    {
+        $output['value'] = System::getProperty($key)?:1;
+        $output['success'] = true;
+        return $output;
+
+
+    }
 
     /**
      * update module settings

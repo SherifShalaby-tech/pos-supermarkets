@@ -476,6 +476,17 @@
                             {{ @num_format($sale->final_total - $sale->transaction_payments->sum('amount')) }}
                         </td>
                     </tr>
+                    @if(env('SHOW_DUE',false) && $total_due < 0)
+                        <tr>
+                            <th>@lang('lang.total_due'):</th>
+
+                            <td style="padding: 7px;width:30%">{{ __('lang.total_due') }} </td>
+                            <td  style="text-align: right;">
+                                {{ @num_format($total_due*-1) }}
+                            </td>
+                        </tr>
+
+                    @endif
                 </table>
             </div>
             <div class="col-md-12">

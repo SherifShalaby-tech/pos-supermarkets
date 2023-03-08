@@ -467,6 +467,17 @@
                                 </td>
                             </tr>
                         @endif
+                        @if(env('SHOW_DUE',false)   && $total_due < 0)
+                            <tr>
+                                <td style="padding: 7px;width:30%">{{ __('lang.total_due', [], 'ar') }} <br>
+                                    {{ __('lang.total_due', [], 'en') }}</td>
+                                <td colspan="2" style="font-size: 16px; padding: 5px;width:40%; text-align: right;">
+                                    {{ @num_format($total_due*-1) }}
+                                    {{ $transaction->received_currency->symbol }}
+                                </td>
+                            </tr>
+
+                        @endif
                     @endif <!-- end of print gift invoice -->
                     <tr>
                         <td class="centered" colspan="3">
