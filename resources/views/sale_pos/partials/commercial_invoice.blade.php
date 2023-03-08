@@ -476,7 +476,7 @@
                             {{ @num_format($sale->final_total - $sale->transaction_payments->sum('amount')) }}
                         </td>
                     </tr>
-                    @if(env('SHOW_DUE',false) && $total_due < 0)
+                    @if(env('SHOW_DUE',false) && $sale->customer_id !=  env('DEFAULT_CUSTMER',1) && $total_due < 0)
                         <tr>
                             <th>@lang('lang.total_due'):</th>
 

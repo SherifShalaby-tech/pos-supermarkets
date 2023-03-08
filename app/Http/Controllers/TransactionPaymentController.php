@@ -419,18 +419,20 @@ class TransactionPaymentController extends Controller
                     ];
 
                     $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
-                   DebtTransactionPayment::create([
-                        'debt_payment_id'=>$debt_payment->id,
-                        'transaction_payment_id'=>$transaction_payment->id,
-                        'amount'=>$paid_amount,
-                    ]);
-                    $debt_payment_transactions[$transaction_payment->id]=$paid_amount;
-                    $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+                    if($transaction_payment){
+                        DebtTransactionPayment::create([
+                            'debt_payment_id'=>$debt_payment->id,
+                            'transaction_payment_id'=>$transaction_payment->id,
+                            'amount'=>$paid_amount,
+                        ]);
+                        $debt_payment_transactions[$transaction_payment->id]=$paid_amount;
+                        $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                        $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
 
-                    if ($request->upload_documents) {
-                        foreach ($request->file('upload_documents', []) as $key => $doc) {
-                            $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                        if ($request->upload_documents) {
+                            foreach ($request->file('upload_documents', []) as $key => $doc) {
+                                $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                            }
                         }
                     }
                 }
