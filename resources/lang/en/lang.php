@@ -1300,6 +1300,9 @@ return [
     'createdBy' => 'Created By',
     'printer_deleted' => 'Printer Deleted',
     'printer_updated' => 'Printer Updated',
-    'returned_by' => 'Returned By'
+    'returned_by' => 'Returned By',
 
+
+    'wrong_gift_card'=>'This card is no longer available currently checking the gift card number',
+    'wrong_gift_card_amount'=>'The maximum amount of support for this card is :amount',
 ];

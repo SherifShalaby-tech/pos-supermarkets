@@ -1285,7 +1285,10 @@ return [
     'createdBy' => 'انشئ بواسطة',
     'printer_deleted' => 'تم حذف الطابعة',
     'printer_updated' => 'تم تحديث الطابعة',
-    'returned_by' => 'ارتجع بواسطة'
+    'returned_by' => 'ارتجع بواسطة',
 
+
+    'wrong_gift_card'=>'هذة البطاقة لم تعد متاحة حاليا تاكد من رقم بطاقة الهدايا',
+    'wrong_gift_card_amount'=>'الحد القصي لمبلغ الدفع لهذة البطاقة هو :amount',
 
 ];

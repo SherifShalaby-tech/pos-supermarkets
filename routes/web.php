@@ -185,6 +185,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('transaction-payment/pay-customer-due/{customer_id}', 'TransactionPaymentController@payCustomerDue');
     Route::get('transaction-payment/get-customer-due/{customer_id}', 'TransactionPaymentController@getCustomerDue');
     Route::get('transaction-payment/add-payment/{id}', 'TransactionPaymentController@addPayment');
+    Route::get('transaction-payment/by-method-gift-card/{gift_card_number}', 'TransactionPaymentController@showMethodGiftCard');
     Route::resource('transaction-payment', TransactionPaymentController::class);
 
     Route::get('store-pos/get-pos-details-by-store/{store_id}', 'StorePosController@getPosDetailsByStore');
@@ -283,6 +284,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::get('sales-promotion/get-sale-promotion-details/{id}', 'SalesPromotionController@getSalePromotionDetails');
     Route::get('sales-promotion/get-product-details-rows', 'SalesPromotionController@getProductDetailsRows');
+    Route::get('sales-promotion/get-product-condition-tree', 'SalesPromotionController@getProductConditionTree');
     Route::resource('sales-promotion', SalesPromotionController::class);
 
     Route::get('cash/print-closing-cash/{cash_register_id}', 'CashController@printClosingCash');

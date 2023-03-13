@@ -329,4 +329,15 @@ class SalesPromotionController extends Controller
 
         return $data_array;
     }
+    public function getProductConditionTree()
+    {
+        $products =      Product::orderBy('name', 'asc')->pluck('name', 'id');
+        $product_classes = ProductClass::get();
+
+        $tree_html=view('sales_promotion.partials.product_condition_tree')->with(compact(
+            'products',
+            'product_classes'
+        ))->render();
+        return $tree_html;
+    }
 }

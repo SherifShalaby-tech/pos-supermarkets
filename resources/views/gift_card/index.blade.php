@@ -117,6 +117,15 @@
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
+                                @can('sale.pay.view')
+
+                                   <li>
+                                        <a data-href="{{action('TransactionPaymentController@showMethodGiftCard', $gift_card->card_number) }}"
+                                           data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
+                                            {{ __('lang.view_payments')}}</a>
+                                    </li>
+                                        <li class="divider"></li>
+                                @endcan
                                 @can('coupons_and_gift_cards.gift_card.delete')
                                 <li>
                                     <a data-href="{{action('GiftCardController@destroy', $gift_card->id)}}"

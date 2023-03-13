@@ -17,6 +17,7 @@ use App\Models\DiningRoom;
 use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\ExchangeRate;
+use App\Models\GiftCard;
 use App\Models\Grade;
 use App\Models\Product;
 use App\Models\ProductClass;
@@ -28,6 +29,7 @@ use App\Models\System;
 use App\Models\Tax;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
+use App\Models\TransactionPayment;
 use App\Models\TransactionSellLine;
 use App\Models\Unit;
 use App\Models\User;
@@ -691,15 +693,25 @@ class SellController extends Controller
             DB::beginTransaction();
 
             $transaction_sell_lines = TransactionSellLine::where('transaction_id', $id)->get();
-            foreach ($transaction_sell_lines as $transaction_sell_line) {
-                if ($transaction->status == 'final') {
-                    $product = Product::find($transaction_sell_line->product_id);
-                    if (!$product->is_service) {
-                        $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
-                    }
+            $transaction_sell_payments = TransactionPayment::where('transaction_id', $id)->get();
+            foreach($transaction_sell_payments as $transaction_sell_payment) {
+                if($transaction_sell_payment->method == 'gift_card') {
+                  $GiftCard= GiftCard::where('card_number', $transaction_sell_payment->gift_card_number)->update([
+                       'balance' => DB::raw('balance + '.$transaction_sell_payment->amount),
+                   ]);
+//                    dd($GiftCard);
                 }
-                $transaction_sell_line->delete();
             }
+            foreach ($transaction_sell_lines as $transaction_sell_line) {
+                    if ($transaction->status == 'final') {
+                        $product = Product::find($transaction_sell_line->product_id);
+                        if (!$product->is_service) {
+                            $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
+                        }
+                    }
+                    $transaction_sell_line->delete();
+                }
+
             Transaction::where('return_parent_id', $id)->delete();
             Transaction::where('parent_sale_id', $id)->delete();
 
