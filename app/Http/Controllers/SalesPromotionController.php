@@ -62,15 +62,11 @@ class SalesPromotionController extends Controller
     {
 
         $stores = Store::getDropdown();
-        $products =      Product::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
-        $product_classes = ProductClass::get();
 
         return view('sales_promotion.create')->with(compact(
             'stores',
-            'products',
             'customer_types',
-            'product_classes'
         ));
     }
 
@@ -161,22 +157,15 @@ class SalesPromotionController extends Controller
     {
         $sales_promotion = SalesPromotion::find($id);
         $stores = Store::getDropdown();
-        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
-        $product_classes = ProductClass::get();
-        $pct_data = $sales_promotion->pct_data;
-        $pci_data = $sales_promotion->pci_data;
+
         $product_details = $this->productUtil->getProductDetailsUsingArrayIds($sales_promotion->product_ids, $sales_promotion->store_ids,true);
 
         return view('sales_promotion.edit')->with(compact(
             'sales_promotion',
             'stores',
-            'products',
             'customer_types',
-            'product_classes',
             'product_details',
-            'pct_data',
-            'pci_data',
         ));
     }
 
@@ -333,9 +322,37 @@ class SalesPromotionController extends Controller
     {
         $products =      Product::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
-
-        $tree_html=view('sales_promotion.partials.product_condition_tree')->with(compact(
+        $pct_data=[];
+        $pci_data=[];
+        if(\request()->sales_promotion_id != null ){
+            $sales_promotion = SalesPromotion::find(\request()->sales_promotion_id);
+            $pct_data = $sales_promotion->pct_data;
+            $pci_data = $sales_promotion->pci_data;
+        }
+        $tree_html=view('sales_promotion.partials.product_condition_tree_modal_body')->with(compact(
             'products',
+            'pci_data',
+            'pct_data',
+            'product_classes'
+        ))->render();
+        return $tree_html;
+    }
+    public function getProductSelectionTree()
+    {
+        $pct_data=[];
+        $pci_data=[];
+        if(\request()->sales_promotion_id != null ){
+            $sales_promotion = SalesPromotion::find(\request()->sales_promotion_id);
+            $pct_data = $sales_promotion->pct_data;
+            $pci_data = $sales_promotion->pci_data;
+        }
+        $products =      Product::orderBy('name', 'asc')->pluck('name', 'id');
+        $product_classes = ProductClass::get();
+
+        $tree_html=view('product_classification_tree.partials.product_selection_tree_modal_body')->with(compact(
+            'products',
+            'pci_data',
+            'pct_data',
             'product_classes'
         ))->render();
         return $tree_html;

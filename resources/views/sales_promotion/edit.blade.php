@@ -160,6 +160,7 @@
                             </div>
                             <br>
                             <input type="hidden" name="is_edit_page" id="is_edit_page" value="1">
+                            <input type="hidden" name="sales_promotion_id" id="sales_promotion_id" value="{{$sales_promotion->id}}">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">

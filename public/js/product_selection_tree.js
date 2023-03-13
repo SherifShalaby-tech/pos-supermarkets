@@ -183,24 +183,58 @@ $(document).on("change", "#type", function () {
         $(".qty_hide").removeClass("hide");
     } else {
         $(".product_condition_div").removeClass("hide");
-        is_show=$("#div_product_condition_tree").attr('is-show');
-        console.log(is_show)
-        if(is_show == '0'){
-            console.log('true'+is_show);
-            $.ajax({
-                async: false,
-                method: "get",
-                url: "/sales-promotion/get-product-condition-tree",
-                dataType: "html",
-                success: function (result) {
-                    $("#div_product_condition_tree").attr('is-show',1);
-                    console.log(result);
-                   $('#div_product_condition_tree').append(result)
-                },
-            });
-        }
-
-
         $(".qty_hide").addClass("hide");
     }
 });
+
+$(document).on("click", "#button_product_condition_tree", function () {
+    is_show = $("#button_product_condition_tree").attr('is-show');
+    if (is_show == '0') {
+        sales_promotion_id=null;
+
+        if(is_edit_page == "1"){
+            sales_promotion_id =$("#sales_promotion_id").val();
+        }
+        $.ajax({
+            async: false,
+            method: "get",
+            url: "/sales-promotion/get-product-condition-tree",
+            data: {
+                sales_promotion_id:sales_promotion_id
+            },
+            dataType: "html",
+            success: function (result) {
+                $("#button_product_condition_tree").attr('is-show', 1);
+                $('#pci_modal_body').append(result);
+                $("#search_pci").selectpicker("refresh");
+            },
+        });
+    }
+});
+
+
+$(document).on("click", "#button_product_selection_tree", function () {
+    is_show = $("#button_product_selection_tree").attr('is-show');
+    if (is_show == '0') {
+        sales_promotion_id=null;
+
+        if(is_edit_page == "1"){
+            sales_promotion_id =$("#sales_promotion_id").val();
+        }
+        $.ajax({
+            async: false,
+            method: "get",
+            url: "/sales-promotion/get-product-selection-tree",
+            data: {
+                sales_promotion_id:sales_promotion_id
+            },
+            dataType: "html",
+            success: function (result) {
+                $("#button_product_selection_tree").attr('is-show', 1);
+                $('#pct_modal_body').append(result);
+                $("#search_pct").selectpicker("refresh");
+            },
+        });
+    }
+});
+

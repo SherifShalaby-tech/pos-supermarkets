@@ -54,7 +54,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6 " id="div_product_condition_tree" is-show="0">
+                                        <div class="col-md-6 ">
+                                            @include('sales_promotion.partials.product_condition_tree')
                                         </div>
                                     </div>
                                 </div>
@@ -137,6 +138,8 @@
                                 </div>
                             </div>
                             <br>
+                            <input type="hidden" name="is_edit_page" id="is_edit_page" value="0">
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
