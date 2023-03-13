@@ -420,7 +420,7 @@ class Util
             'gift_card' => __('lang.gift_card'),
             'bank_transfer' => __('lang.bank_transfer'),
             'deposit' => __('lang.use_the_balance'),
-            'paypal' => __('lang.paypal'),
+//            'paypal' => __('lang.paypal'),
         ];
     }
 

@@ -201,14 +201,30 @@ class TransactionPaymentController extends Controller
     public function show($id)
     {
         $transaction = Transaction::find($id);
-        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
-
+        $payment_type_array = $this->commonUtil->getPaymentTypeArrayForPos();
         return view('transaction_payment.show')->with(compact(
             'transaction',
             'payment_type_array'
         ));
     }
+    /**
+     * Display the specified resource.
+     *
+     * @param  string  $gift_card_number
+     * @return \Illuminate\Http\Response
+     */
+    public function showMethodGiftCard($gift_card_number)
+    {
 
+        $transaction_payments=TransactionPayment::with('transaction')
+            ->where('gift_card_number',$gift_card_number)->get();
+
+        $payment_type_array = $this->commonUtil->getPaymentTypeArrayForPos();
+        return view('gift_card.show')->with(compact(
+            'transaction_payments',
+            'payment_type_array'
+        ));
+    }
     /**
      * Show the form for editing the specified resource.
      *

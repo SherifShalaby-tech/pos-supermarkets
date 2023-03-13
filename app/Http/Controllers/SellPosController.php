@@ -330,7 +330,22 @@ class SellPosController extends Controller
                         'payment_note' => $request->payment_note,
                         'change_amount' => $payment['change_amount'] ?? 0,
                     ];
-
+                        if($payment['method'] == 'gift_card'){
+                           $gift_card= GiftCard::where('card_number', $request->gift_card_number)->first();
+                           if(!$gift_card){
+                               $output = [
+                                         'success' => false,
+                                         'msg' => __('lang.wrong_gift_card')
+                                     ];
+                               return $output;
+                           }elseif ($gift_card->balance < $amount){
+                               $output = [
+                                   'success' => false,
+                                   'msg' => __('lang.wrong_gift_card_amount',['amount'=>$gift_card->balance])
+                               ];
+                               return $output;
+                           }
+                        }
                     $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
                     $transaction = $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
                     $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit', null, $transaction_payment->id);

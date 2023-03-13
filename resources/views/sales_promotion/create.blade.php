@@ -54,8 +54,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            @include('sales_promotion.partials.product_condition_tree')
+                                        <div class="col-md-6 " id="div_product_condition_tree" is-show="0">
                                         </div>
                                     </div>
                                 </div>

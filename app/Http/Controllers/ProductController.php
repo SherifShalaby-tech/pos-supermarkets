@@ -584,7 +584,7 @@ class ProductController extends Controller
 //            ['purchase_price' => ['required', 'max:25', 'decimal']],
 //            ['sell_price' => ['required', 'max:25', 'decimal']],
         );
-        try {
+//        try {
 
 
 
@@ -627,9 +627,12 @@ class ProductController extends Controller
 
             $product = Product::create($product_data);
             $index_discounts=[];
-            if(count($request->discount_type)>0){
-                $index_discounts=array_keys($request->discount_type);
+            if($request->has('discount_type')){
+                if(count($request->discount_type)>0){
+                    $index_discounts=array_keys($request->discount_type);
+                }
             }
+
 
             foreach ($index_discounts as $index_discount){
                 $discount_customers = $this->getDiscountCustomerFromType($request->get('discount_customer_types_'.$index_discount));
@@ -690,13 +693,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+//        } catch (\Exception $e) {
+//            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+//            $output = [
+//                'success' => false,
+//                'msg' => __('lang.something_went_wrong')
+//            ];
+//        }
 
         return $output;
     }

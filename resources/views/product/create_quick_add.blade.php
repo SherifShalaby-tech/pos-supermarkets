@@ -17,15 +17,46 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="i-checks">
+                        <input id="is_service" name="is_service" type="checkbox"
+                               @if (session('system_mode') == 'restaurant') checked
+                               @elseif(!empty($recent_product) && $recent_product->is_service == 1) checked @endif
+                               class="form-control-custom">
+                        <label for="is_service"><strong>
+                                @if (session('system_mode') == 'restaurant')
+                                    @lang('lang.or_add_new_product')
+                                @else
+                                    @lang('lang.add_new_service')
+                                @endif
+                            </strong></label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="i-checks">
                         <input id="have_weight" name="have_weight" type="checkbox"  value="1"
                                class="form-control-custom">
                         <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('store_ids', __('lang.store'), []) !!}
-                        {!! Form::select('store_ids[]', $stores_select, array_keys($stores_select), ['class' => 'form-control filter_product', 'placeholder' => __('lang.all'), 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
+                        {!! Form::select('store_ids[]', $stores_select, array_keys($stores_select), ['class' => 'selectpicker form-control filter_product', 'placeholder' => __('lang.all'), 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
+                    </div>
+                </div>
+                <div class="col-md-4 supplier_div">
+                    <div class="form-group supplier_div">
+                        {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
+                        <div class="input-group my-group">
+                            {!! Form::select('supplier_id', $suppliers, !empty($recent_product->supplier) ? $recent_product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                            <span class="input-group-btn">
+                    @can('supplier_module.supplier.create_and_edit')
+                                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
+                                            data-href="{{ action('SupplierController@create') }}?quick_add=1"
+                                            data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                                @endcan
+                </span>
+                        </div>
                     </div>
                 </div>
                 @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
@@ -159,7 +190,7 @@
                 </div>
                 @endif
                 @can('product_module.purchase_price.create_and_edit')
-                <div class="col-md-4">
+                <div class="col-md-4 supplier_div">
                     <div class="form-group">
                         {!! Form::label('purchase_price', session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') :
                         __('lang.cost') . ' *', []) !!}
@@ -168,7 +199,7 @@
                     </div>
                 </div>
                 @endcan
-                <div class="col-md-4">
+                <div class="col-md-4 supplier_div ">
                     <div class="form-group">
                         {!! Form::label('sell_price', __('lang.sell_price') . ' *', []) !!}
                         {!! Form::text('sell_price', null, ['class' => 'form-control', 'placeholder' =>
@@ -196,46 +227,28 @@
                 </div>
                 <br>
                 <div class="clearfix"></div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('discount_type', __('lang.discount_type'), []) !!}
-                        {!! Form::select('discount_type', ['fixed' => __('lang.fixed'), 'percentage' =>
-                        __('lang.percentage')],
-                        'fixed', ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                        'placeholder' => __('lang.please_select')]) !!}
-                    </div>
+                <div class="col-md-12">
+                    <table class="table table-bordered" id="consumption_table_discount">
+                        <thead>
+                        <tr>
+                            <th style="width: 20%;">@lang('lang.discount_type')</th>
+                            <th style="width: 15%;">@lang('lang.discount')</th>
+                            <th style="width: 20%;">@lang('lang.discount_start_date')</th>
+                            <th style="width: 20%;">@lang('lang.discount_end_date')</th>
+                            <th style="width: 20%;">@lang('lang.customer_type') <i class="dripicons-question" data-toggle="tooltip"
+                                                                                   title="@lang('lang.discount_customer_info')"></i></th>
+                            <th style="width: 5%;"><button class="btn btn-xs btn-success add_discount_row"
+                                                           type="button"><i class="fa fa-plus"></i></button></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @include('product.partial.raw_discount', ['row_id' => 0])
+                        </tbody>
+                    </table>
+                    <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('discount', __('lang.discount'), []) !!}
-                        {!! Form::text('discount', null, ['class' => 'form-control', 'placeholder' =>
-                        __('lang.discount')]) !!}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('discount_start_date', __('lang.discount_start_date'), []) !!}
-                        {!! Form::text('discount_start_date', null, ['class' => 'form-control datepicker',
-                        'placeholder' => __('lang.discount_start_date')]) !!}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('discount_end_date', __('lang.discount_end_date'), []) !!}
-                        {!! Form::text('discount_end_date', null, ['class' => 'form-control datepicker',
-                        'placeholder' => __('lang.discount_end_date')]) !!}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('discount_customer_types', __('lang.customers'), []) !!} <i
-                            class="dripicons-question" data-toggle="tooltip"
-                            title="@lang('lang.discount_customer_info')"></i>
-                        {!! Form::select('discount_customer_types[]', $discount_customer_types,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                        'style' =>'width: 80%', 'multiple']) !!}
-                    </div>
-                </div>
+
+
                 <div class="col-md-4">
                     <div class="i-checks">
                         <input id="show_to_customer" name="show_to_customer" type="checkbox" checked value="1"
@@ -361,5 +374,55 @@
             $(".show_to_customer_type_div").slideDown();
         }
     });
+    $(document).on("click", ".add_discount_row", function () {
+        let row_id = parseInt($("#raw_discount_index").val());
+        $("#raw_discount_index").val(row_id + 1);
 
+        $.ajax({
+            method: "get",
+            url: "/product/get-raw-discount",
+            data: { row_id: row_id },
+            success: function (result) {
+                $("#consumption_table_discount > tbody").prepend(result);
+                $(".selectpicker").selectpicker("refresh");
+                $(".datepicker").datepicker("refresh");
+
+                // $(".raw_material_unit_id").selectpicker("refresh");
+            },
+        });
+    });
+
+
+    $(document).ready(function() {
+        if ($('#is_service').prop('checked')) {
+            $('.supplier_div').removeClass('hide');
+        } else {
+            $('.supplier_div').addClass('hide');
+        }
+    });
+    $(document).on("change", "#is_service", function () {
+        if ($(this).prop("checked")) {
+            $(this).val(1);
+            $(".supplier_div").removeClass("hide");
+            $(".sell_price").removeClass('hide');
+            $(".purchase_price").removeClass('hide');
+            $(".purchase_price_th").removeClass('hide');
+            $(".sell_price_th").removeClass('hide');
+            $(".default_purchase_price_td").removeClass('hide');
+            $(".default_sell_price_td").removeClass('hide');
+            $(".default_purchase_price_th").removeClass('hide');
+            $(".default_sell_price_th").removeClass('hide');
+        } else {
+            $(this).val(0);
+            $(".supplier_div").addClass("hide");
+            $(".sell_price").addClass('hide');
+            $(".purchase_price").addClass('hide');
+            $(".purchase_price_th").addClass('hide');
+            $(".sell_price_th").addClass('hide');
+            $(".default_purchase_price_td").addClass('hide');
+            $(".default_sell_price_td").addClass('hide');
+            $(".default_purchase_price_th").addClass('hide');
+            $(".default_sell_price_th").addClass('hide');
+        }
+    });
 </script>

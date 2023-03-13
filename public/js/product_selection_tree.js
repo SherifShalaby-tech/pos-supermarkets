@@ -183,6 +183,24 @@ $(document).on("change", "#type", function () {
         $(".qty_hide").removeClass("hide");
     } else {
         $(".product_condition_div").removeClass("hide");
+        is_show=$("#div_product_condition_tree").attr('is-show');
+        console.log(is_show)
+        if(is_show == '0'){
+            console.log('true'+is_show);
+            $.ajax({
+                async: false,
+                method: "get",
+                url: "/sales-promotion/get-product-condition-tree",
+                dataType: "html",
+                success: function (result) {
+                    $("#div_product_condition_tree").attr('is-show',1);
+                    console.log(result);
+                   $('#div_product_condition_tree').append(result)
+                },
+            });
+        }
+
+
         $(".qty_hide").addClass("hide");
     }
 });
