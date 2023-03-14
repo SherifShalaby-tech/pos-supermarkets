@@ -527,7 +527,7 @@ function check_for_sale_promotion() {
                                 .find("tr")
                                 .each(function () {
                                     var row_product_id = $(this)
-                                        .find(".product_id")
+                                        .find(".variation_id")
                                         .val()
                                         .trim();
                                     var qty = $(this)
