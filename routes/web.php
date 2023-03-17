@@ -284,6 +284,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::get('sales-promotion/get-sale-promotion-details/{id}', 'SalesPromotionController@getSalePromotionDetails');
     Route::get('sales-promotion/get-product-details-rows', 'SalesPromotionController@getProductDetailsRows');
+    Route::get('sales-promotion/get-product-condition-rows', 'SalesPromotionController@getProductConditionRows');
     Route::get('sales-promotion/get-product-condition-tree', 'SalesPromotionController@getProductConditionTree');
     Route::get('sales-promotion/get-product-selection-tree', 'SalesPromotionController@getProductSelectionTree');
     Route::resource('sales-promotion', SalesPromotionController::class);

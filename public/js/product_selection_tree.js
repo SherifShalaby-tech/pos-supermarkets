@@ -118,6 +118,8 @@ $(document).on("hidden.bs.modal", "#pctModal", function () {
     });
     unique_product_array = product_array.filter(onlyUnique);
     product_array_old_ids = product_array_old_ids.filter(onlyUnique);
+
+    console.log('product_array_old_ids',product_array_old_ids ,'unique_product_array',unique_product_array );
     getProductRows(unique_product_array,product_array_old_ids);
 });
 
