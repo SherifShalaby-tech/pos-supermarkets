@@ -511,7 +511,7 @@ class ProductUtil extends Util
         if (!is_null($variation_id) && $variation_id !== '0') {
             $product->where('v.id', $variation_id);
         }
-        if (!is_null($store_id) && $store_id !== '0') {
+        if (is_null($store_id) && $store_id == '0') {
             $product->where('product_stores.store_id', $store_id);
         }
         $product->where('products.id', $product_id)->groupBy('v.id');
