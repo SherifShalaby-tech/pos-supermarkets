@@ -58,7 +58,7 @@ return [
     'December' => 'December',
     'site_title' => 'Site Title',
     'help' => 'Help',
-
+    'required_field'=>'required',
     'required_fields_info' => 'The field labels marked with * are required input fields.',
     'product' => 'Product',
     'add_new_product' => 'Add New Product',
@@ -237,6 +237,7 @@ return [
     'amount' => 'Amount',
     'notes' => 'Notes',
     'is_service' => 'Is Service',
+    'is_have_service'=>'No Service',
     'paid_amount' => 'Paid Amount',
     'pending_amount' => 'Pending Amount',
     'invoice_date' => 'Invoice Date',
