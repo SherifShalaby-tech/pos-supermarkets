@@ -105,10 +105,12 @@ $(document).on("change", "select#paying_currency_id", function () {
 });
 
 function get_label_product_row(product_id, variation_id) {
+ 
     //Get item addition method
     var add_via_ajax = true;
     var store_id = $("#store_id").val();
     var is_added = false;
+    var qty;
     //Search for variation id in each row of pos table
     $("#product_table tbody")
         .find("tr")
@@ -120,17 +122,21 @@ function get_label_product_row(product_id, variation_id) {
                 is_added = true;
 
                 //Increment product quantity
+                //get product qty
                 qty_element = $(this).find(".quantity");
-                var qty = __read_number(qty_element);
-                __write_number(qty_element, qty + 1);
-                qty_element.change;
+                qty = __read_number(qty_element);
+                qty+=1;
                 calculate_sub_totals();
                 $("input#search_product").val("");
                 $("input#search_product").focus();
+                //remove if exist
+                $(this).closest("tr").next().remove();
+                $(this).closest("tr").next().next().remove();
+                $(this).closest("tr").remove();
             }
         });
 
-    if (add_via_ajax) {
+    // if (add_via_ajax) {
         var row_count = parseInt($("#row_count").val());
         let currency_id = $('#paying_currency_id').val()
         $("#row_count").val(row_count + 1);
@@ -145,6 +151,7 @@ function get_label_product_row(product_id, variation_id) {
                 variation_id: variation_id,
                 store_id: store_id,
                 currency_id: currency_id,
+                qty:qty
             },
             success: function (result) {
                 $("table#product_table tbody").prepend(result);
@@ -154,7 +161,7 @@ function get_label_product_row(product_id, variation_id) {
                 reset_row_numbering();
             },
         });
-    }
+    // }
 }
 function calculate_sub_totals() {
     var total = 0;
@@ -201,10 +208,12 @@ function calculate_final_cost_for_products() {
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         total_qauntity += quantity;
-        item_count++;
+        if($(tr).find(".quantity").val()){
+            item_count++;
+        }
     });
 
-    $('.items_count_span').text(item_count / 2);
+    $('.items_count_span').text(item_count);
     $('.items_quantity_span').text(total_qauntity);
     let unit_other_expenses =
         __read_number($("#other_expenses")) / total_qauntity;
