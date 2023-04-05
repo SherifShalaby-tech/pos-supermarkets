@@ -57,7 +57,7 @@ return [
     'December' => 'ديسمبر',
     'site_title' => 'عنوان الموقع',
     'help' => 'مساعدة',
-
+    'required_field'=>'يجب الادخال',
     'required_fields_info' => 'الحقول المميزة بعلامة * هي حقول إدخال مطلوبة.',
     'product' => 'منتج',
     'add_new_product' => 'اضافة منتج جديد',
@@ -235,7 +235,8 @@ return [
     'bank_name' => 'اسم البنك',
     'amount' => 'المبلغ',
     'notes' => 'ملاحظات',
-    'is_service' => 'هي خدمة',
+    'is_service' => ' خدمة',
+    'is_have_service'=>'بدون خدمه',
     'paid_amount' => 'المبلغ المدفوع',
     'pending_amount' => 'المبلغ المتبقي',
     'invoice_date' => 'تاريخ الفاتورة',
