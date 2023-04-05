@@ -23,18 +23,25 @@ $i = $index;
         {{$product->sub_sku}}
     </td>
     <td>
+        @if($qty)
+        <input type="text" class="form-control quantity quantity_{{$i}}" min=1 name="add_stock_lines[{{$i}}][quantity]" required
+        value="{{$qty}}"  index_id="{{$i}}">
+        @else
         <input type="text" class="form-control quantity quantity_{{$i}}" min=1 name="add_stock_lines[{{$i}}][quantity]" required
             value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif"  index_id="{{$i}}">
+        @endif
     </td>
     <td>
         {{$product->units->pluck('name')[0]??''}}
     </td>
     <td>
+        <span class="text-secondary font-weight-bold">*</span>
         <input type="text" class="form-control purchase_price purchase_price_{{$i}}" name="add_stock_lines[{{$i}}][purchase_price]" required
             value="@if($product->purchase_price_depends == null) {{@num_format($product->default_purchase_price / $exchange_rate)}} @else {{@num_format($product->purchase_price_depends / $exchange_rate)}} @endif" index_id="{{$i}}">
             <input class="final_cost" type="hidden" name="add_stock_lines[{{$i}}][final_cost]" value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price / $exchange_rate)}}@else{{0}}@endif"  >
     </td>
     <td>
+        <span class="text-secondary font-weight-bold">*</span>
         <input type="text" class="form-control selling_price selling_price_{{$i}}" name="add_stock_lines[{{$i}}][selling_price]" required index_id="{{$i}}"
                value="@if($product->selling_price_depends == null) {{@num_format($product->sell_price)}} @else {{@num_format($product->selling_price_depends)}} @endif"  >
 {{--        <input class="final_cost" type="hidden" name="add_stock_lines[{{$i}}][final_cost]" value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price / $exchange_rate)}}@else{{0}}@endif">--}}
@@ -50,7 +57,7 @@ $i = $index;
             class="current_stock_text">@if($product->is_service) {{'-'}} @else @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif</span>
     </td>
     <td>
-        <div class="i-checks"><input name="add_stock_lines[{{$i}}][stock_pricechange]" id="active" type="checkbox" class="" checked value="1"></div>
+        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class="" checked value="1"></div>
     </td>
     <td rowspan="2">
         <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$i}}"><i
@@ -119,8 +126,6 @@ $i = $index;
     $('.datepicker').datepicker({
         language: "{{session('language')}}",
     })
-
-
     // let quantity = parseInt($(".quantity").val()),
     //     purchase_price = parseInt($(".purchase_price").val()),
     //     sell_price = parseInt($(".selling_price").val()),
