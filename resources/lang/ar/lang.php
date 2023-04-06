@@ -12,6 +12,38 @@ return [
     | these language lines according to your application's requirements.
     |
     */
+    'manufacturers' => 'المصنعين',
+    'add_manufacturer' => 'اضافة مصنع جديد',
+    'edit_manufacturer' => 'تعديل مصنع',
+    'manufacturings' => 'التصنيع الخارجي',
+    'view_all_manufacturings' => 'عمليات التصنيع',
+    'view_all_processes' => 'عمليات المعالجة',
+    'manufacturing' => 'تصنيع',
+    'manufacturer' => 'المصنع',
+    'manufacturing_status' => 'حالة التصنيع',
+    'edit_manufacturing_status' => 'تعديل حالة التصنيع ',
+    'manufacturing_material' => 'مادة التصنيع ',
+    'product_received' => 'المنتجات المستلمة',
+    'product_received_quantity' => 'الكميه المستلمه',
+    'product_received_date' => 'تاريخ الاستلام',
+    'processed' => 'العمليات المستلمة',
+    'under_processing' => 'تحت التصنيع',
+    'path' => 'مسار القسم الفرعي',
+    'delete_all' => 'حذف جماعي',
+
+    'received' => 'استلام',
+    'underManufacturing' => 'تحت التصنيع',
+    'manufactured' => 'تم تصنيعها',
+    'add_new_manufacturing' => 'اضافه عملية تصنيع جديدة',
+    'add_new_production' => 'اضافه عملية تصنيع جديدة',
+
+
+
+
+
+
+
+
     'have_weight'=>'يعتمد علي الميزان',
     'type_Debt' => 'سداد دين',
     'change_current_stock' => 'تغيير سعر البيع للمخزون الحالى ',
