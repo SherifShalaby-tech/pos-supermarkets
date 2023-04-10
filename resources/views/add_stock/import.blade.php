@@ -168,7 +168,7 @@
 
 @section('javascript')
     <script src="{{ asset('js/add_stock.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         $('#po_no').change(function() {
             let po_no = $(this).val();
 
