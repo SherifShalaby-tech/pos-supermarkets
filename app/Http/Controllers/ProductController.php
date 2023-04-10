@@ -581,6 +581,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+
         if (!auth()->user()->can('product_module.product.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
@@ -681,12 +682,16 @@ class ProductController extends Controller
                 }
             }
 
-
-            if ($request->images) {
-                foreach ($request->images as $image) {
-                    $product->addMedia($image)->toMediaCollection('product');
+            if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                foreach ($request->cropImages as $imageData) {
+                    $extention = explode(";",explode("/",$imageData)[1])[0];
+                    $image = rand(1,1500)."_image.".$extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+                    $product->addMedia($filePath)->toMediaCollection('product');
                 }
             }
+
 
             if (!empty($request->supplier_id)) {
                 SupplierProduct::updateOrCreate(
