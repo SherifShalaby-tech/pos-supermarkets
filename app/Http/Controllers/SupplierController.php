@@ -150,9 +150,17 @@ class SupplierController extends Controller
             DB::beginTransaction();
             $supplier = Supplier::create($data);
 
-            if ($request->has('image')) {
-                $supplier->addMedia($request->image)->toMediaCollection('supplier_photo');
+
+            if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                foreach ($request->cropImages as $imageData) {
+                    $extention = explode(";",explode("/",$imageData)[1])[0];
+                    $image = rand(1,1500)."_image.".$extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+                    $supplier->addMedia($filePath)->toMediaCollection('supplier_photo');
+                }
             }
+
 
             if (!empty($request->products)) {
                 foreach ($request->products as $product) {

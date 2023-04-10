@@ -98,7 +98,7 @@ $(document).on("click", "#clear_all_input_form", function () {
         contentType: "html",
         success: function (result) {
             if (result.success) {
-                swal("Success", response.msg, "success");
+                swal("Success", "all inputs cleared", "success");
             }
         },
     });
@@ -122,143 +122,141 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
     }
 });
 
-Dropzone.autoDiscover = false;
-myDropzone = new Dropzone("div#my-dropzone", {
-    addRemoveLinks: true,
-    autoProcessQueue: false,
-    uploadMultiple: true,
-    parallelUploads: 100,
-    maxFilesize: 12,
-    paramName: "images",
-    clickable: true,
-    method: "POST",
-    url: $("form#product-form").attr("action"),
-    headers: {
-        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-    },
-    renameFile: function (file) {
-        var dt = new Date();
-        var time = dt.getTime();
-        return time + file.name;
-    },
-    acceptedFiles: ".jpeg,.jpg,.png,.gif",
-    init: function () {
-        var myDropzone = this;
+// Dropzone.autoDiscover = false;
+// myDropzone = new Dropzone("div#my-dropzone", {
+//     addRemoveLinks: true,
+//     autoProcessQueue: false,
+//     uploadMultiple: true,
+//     parallelUploads: 100,
+//     maxFilesize: 12,
+//     paramName: "images",
+//     clickable: true,
+//     method: "POST",
+//     url: $("form#product-form").attr("action"),
+//     headers: {
+//         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+//     },
+//     renameFile: function (file) {
+//         var dt = new Date();
+//         var time = dt.getTime();
+//         return time + file.name;
+//     },
+//     acceptedFiles: ".jpeg,.jpg,.png,.gif",
+//     init: function () {
+//         var myDropzone = this;
         $("#submit-btn").on("click", function (e) {
             e.preventDefault();
             if ($("#product-form").valid()) {
                 tinyMCE.triggerSave();
-                if (myDropzone.getAcceptedFiles().length) {
-                    myDropzone.processQueue();
-                } else {
-                    document.getElementById("loader").style.display = "block";
-                    document.getElementById("content").style.display = "none";
-                    $.ajax({
-                        type: "POST",
-                        url: $("form#product-form").attr("action"),
-                        data: $("#product-form").serialize(),
-                        success: function (response) {
-                            myFunction();
-                            if (response.success) {
-                                swal("Success", response.msg, "success");
-                                $("#sku").val("").change();
-                                $("#name").val("").change();
-                                $(".translations").val("").change();
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("content").style.display = "none";
+                $.ajax({
+                    type: "POST",
+                    url: $("form#product-form").attr("action"),
+                    data: $("#product-form").serialize(),
+                    success: function (response) {
+                        myFunction();
+                        if (response.success) {
+                            swal("Success", response.msg, "success");
+                            $("#sku").val("").change();
+                            $("#name").val("").change();
+                            $(".translations").val("").change();
 
-                                if(!$('#clear_all_input_form').is(':checked')){
-                                    $('.clear_input_form').val('');
-                                    $('.clear_input_form').selectpicker('refresh');
-                                }
-                            } else {
-                                swal("Error", response.msg, "error");
+                            if(!$('#clear_all_input_form').is(':checked')){
+                                $('.clear_input_form').val('');
+                                $('.clear_input_form').selectpicker('refresh');
                             }
-                        },
-                        error: function (response) {
-                            myFunction();
-                            if (!response.success) {
-                                swal("Error", response.msg, "error");
-                            }
-                        },
-                    });
-                }
+                            const previewContainer = document.querySelector('.preview-container');
+                            previewContainer.innerHTML = '';
+                        } else {
+                            swal("Error", response.msg, "error");
+                        }
+                    },
+                    error: function (response) {
+                        myFunction();
+                        if (!response.success) {
+                            swal("Error", response.msg, "error");
+                        }
+                    },
+                });
             }
         });
-
-        this.on("sending", function (file, xhr, formData) {
-            document.getElementById("loader").style.display = "block";
-            document.getElementById("content").style.display = "none";
-            var data = $("#product-form").serializeArray();
-            $.each(data, function (key, el) {
-                formData.append(el.name, el.value);
-            });
-        });
-        this.on("complete", function (file) {
-            this.removeAllFiles(true);
-            myFunction();
-        });
-    },
-    error: function (file, response) {
-        console.log(response);
-    },
-    successmultiple: function (file, response) {
-        if (response.success) {
-            swal("Success", response.msg, "success");
-        }
-        if (!response.success) {
-            swal("Error", response.msg, "error");
-        }
-    },
-    completemultiple: function (file, response) {},
-    reset: function () {
-        this.removeAllFiles(true);
-    },
-});
+//
+//         this.on("sending", function (file, xhr, formData) {
+//             document.getElementById("loader").style.display = "block";
+//             document.getElementById("content").style.display = "none";
+//             var data = $("#product-form").serializeArray();
+//             $.each(data, function (key, el) {
+//                 formData.append(el.name, el.value);
+//             });
+//         });
+//         this.on("complete", function (file) {
+//             this.removeAllFiles(true);
+//             myFunction();
+//         });
+//     },
+//     error: function (file, response) {
+//         console.log(response);
+//     },
+//     successmultiple: function (file, response) {
+//         if (response.success) {
+//             swal("Success", response.msg, "success");
+//         }
+//         if (!response.success) {
+//             swal("Error", response.msg, "error");
+//         }
+//     },
+//     completemultiple: function (file, response) {},
+//     reset: function () {
+//         this.removeAllFiles(true);
+//     },
+// });
 
 var modalTemplate = $("#product_cropper_modal");
 
-myDropzone.on("thumbnail", function (file) {
-    if (file.cropped) return;
-
-    var cachedFilename = file.name;
-    myDropzone.removeFile(file);
-
-    var $cropperModal = $(modalTemplate);
-    var $uploadCrop = $cropperModal.find("#product_crop");
-
-    $cropperModal.find(".product_preview_div").empty();
-
-    var $img = document.getElementById("product_sample_image");
-
-    var reader = new FileReader();
-    var cropper;
-    reader.onloadend = function () {
-        $($img).attr("src", reader.result);
-        $cropperModal.modal("show");
-        modalTemplate.on("shown.bs.modal", function () {
-            cropper= null;
-            cropper = new Cropper($img, {
-                initialAspectRatio: 1 / 1,
-                aspectRatio: 1 / 1,
-                cropBoxResizable: false,
-                viewMode: 2,
-                preview: ".product_preview_div",
-            });
-        });
-    };
-    reader.readAsDataURL(file);
-
-    $uploadCrop.on("click", function () {
-        var blob = cropper.getCroppedCanvas().toDataURL();
-        var newFile = dataURItoBlob(blob);
-        newFile.cropped = true;
-        newFile.name = cachedFilename;
-
-        myDropzone.addFile(newFile);
-        $cropperModal.modal("hide");
-        cropper.destroy();
-        cropper = null;
-    });
-});
+// myDropzone.on("thumbnail", function (file) {
+//     if (file.cropped) return;
+//
+//     var cachedFilename = file.name;
+//     myDropzone.removeFile(file);
+//
+//     var $cropperModal = $(modalTemplate);
+//     var $uploadCrop = $cropperModal.find("#product_crop");
+//
+//     $cropperModal.find(".product_preview_div").empty();
+//
+//     var $img = document.getElementById("product_sample_image");
+//
+//     var reader = new FileReader();
+//     var cropper;
+//     reader.onloadend = function () {
+//         $($img).attr("src", reader.result);
+//         $cropperModal.modal("show");
+//         modalTemplate.on("shown.bs.modal", function () {
+//             cropper= null;
+//             cropper = new Cropper($img, {
+//                 initialAspectRatio: 1 / 1,
+//                 aspectRatio: 1 / 1,
+//                 cropBoxResizable: false,
+//                 viewMode: 2,
+//                 preview: ".product_preview_div",
+//             });
+//         });
+//     };
+//     reader.readAsDataURL(file);
+//
+//     $uploadCrop.on("click", function () {
+//         var blob = cropper.getCroppedCanvas().toDataURL();
+//         var newFile = dataURItoBlob(blob);
+//         newFile.cropped = true;
+//         newFile.name = cachedFilename;
+//
+//         myDropzone.addFile(newFile);
+//         $cropperModal.modal("hide");
+//         cropper.destroy();
+//         cropper = null;
+//     });
+// });
 // modalTemplate.on("hidden.bs.modal", function () {
 //     console.log(cropper);
 //     if (typeof cropper !== "undefined") {
