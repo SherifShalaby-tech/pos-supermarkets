@@ -84,11 +84,17 @@ class AddStockController extends Controller
             $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
             $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
-            $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
-                ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
-                ->leftjoin('users', 'transactions.created_by', '=', 'users.id')
-                ->leftjoin('currencies as paying_currency', 'transactions.paying_currency_id', 'paying_currency.id')
-                ->where('type', 'add_stock')->where('status', '!=', 'draft');
+            $query=Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+            ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
+            ->leftjoin('users', 'transactions.created_by', '=', 'users.id')
+            ->leftjoin('currencies as paying_currency', 'transactions.paying_currency_id', 'paying_currency.id')
+            ->where('manufacturing_id','!=',null)
+            ->whereIn('type',['material_manufactured','add_stock'])
+           ->orWhere(function($query){
+                $manufacturingIds=Transaction::where('type','material_manufactured')->pluck('manufacturing_id');
+                $query->whereNotIn('manufacturing_id',$manufacturingIds)->where('type','material_under_manufacture');
+            })
+            ->where('status', '!=', 'draft');
 
             if (!empty($store_id)) {
                 $query->where('transactions.store_id', $store_id);
@@ -743,17 +749,36 @@ class AddStockController extends Controller
             $product_id = $request->input('product_id');
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
-            $qty = $request->qty?$request->qty:null;
+            $qty = $request->qty?$request->qty:0;
+            $is_batch = $request->is_batch;
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
 
                 return view('add_stock.partials.product_row')
-                    ->with(compact('products', 'index', 'currency', 'exchange_rate','qty'));
+                    ->with(compact('products', 'index', 'currency', 'exchange_rate','qty','is_batch'));
             }
         }
     }
+    public function addProductBatchRow(Request $request)
+    {
+        if ($request->ajax()) {
+            $currency_id = $request->currency_id;
+            $currency = Currency::find($currency_id);
+            $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
 
+            $product_id = $request->input('product_id');
+            $variation_id = $request->input('variation_id');
+            $store_id = $request->input('store_id');
+            if (!empty($product_id)) {
+                $index = $request->input('row_count');
+                $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
+
+                return view('add_stock.partials.product_batch_row')
+                    ->with(compact('products', 'index', 'currency', 'exchange_rate'));
+            }
+        }
+    }
     public function getPurchaseOrderDetails($id)
     {
         $purchase_order = Transaction::find($id);

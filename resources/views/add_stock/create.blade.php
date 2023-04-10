@@ -18,6 +18,7 @@
                                 <h4>@lang('lang.add_stock')</h4>
                             @endif
                         </div>
+                        <p class="italic pt-3 pl-3"><small>@lang('lang.required_fields_info')</small></p>
                         {!! Form::open(['url' => action('AddStockController@store'), 'method' => 'post', 'id' => 'add_stock_form', 'enctype' => 'multipart/form-data']) !!}
                         <input type="hidden" name="row_count" id="row_count" value="0">
                         <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{ $is_raw_material }}">
@@ -28,14 +29,12 @@
                                     <div class="form-group">
                                         {!! Form::label('store_id', __('lang.store') . ':*', []) !!}
                                         {!! Form::select('store_id', $stores, "Please Select", ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                                        <span class="text-secondary font-weight-bold small">{{__('lang.required_field')}}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('supplier_id', __('lang.supplier') . ':*', []) !!}
                                         {!! Form::select('supplier_id', $suppliers, $suppliers, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required','selected', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                                        <span class="text-secondary font-weight-bold small">{{__('lang.required_field')}}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -50,7 +49,6 @@
                                     <div class="form-group">
                                         {!! Form::label('status', __('lang.status') . ':*', []) !!}
                                         {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                                        <span class="text-secondary font-weight-bold small">{{__('lang.required_field')}}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -116,9 +114,9 @@
                                 </div>
                             </div>
                             <div class="col-md-12 text-center">
-                                <h4><span>@lang('lang.items_count'): <span class="items_count_span"
-                                        style="margin-right: 15px;">0</span> </span><span> @lang('lang.items_quantity'): <span
-                                        class="items_quantity_span" style="margin-right: 15px;">0</span></span></h4>
+                                <h4>@lang('lang.items_count'): <span class="items_count_span"
+                                        style="margin-right: 15px;">0</span><br> @lang('lang.items_quantity'): <span
+                                        class="items_quantity_span" style="margin-right: 15px;">0</span></h4>
                             </div>
                             <br>
                             <div class="col-md-12">
@@ -162,15 +160,14 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
-                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::label('source_type', __('lang.source_type'). ':*', []) !!} <br>
+                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'),'required']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
+                                        {!! Form::label('source_of_payment', __('lang.source_of_payment'). ':*', []) !!} <br>
                                         {!! Form::select('source_id', $users, null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
-                                        <span class="text-secondary font-weight-bold small">{{__('lang.required_field')}}</span>
                                     </div>
                                 </div>
 
@@ -178,7 +175,6 @@
                                     <div class="form-group">
                                         {!! Form::label('payment_status', __('lang.payment_status') . ':*', []) !!}
                                         {!! Form::select('payment_status', $payment_status_array, 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                                        <span class="text-secondary font-weight-bold small">{{__('lang.required_field')}}</span>
                                     </div>
                                 </div>
 

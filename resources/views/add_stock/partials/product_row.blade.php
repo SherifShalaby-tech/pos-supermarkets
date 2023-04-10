@@ -12,6 +12,8 @@ $i = $index;
         @else
         {{$product->product_name}}
         @endif
+        <input type="hidden" name="is_batch_product" class="is_batch_product"
+            value="{{$is_batch}}">
         <input type="hidden" name="add_stock_lines[{{$i}}][is_service]" class="is_service"
             value="{{$product->is_service}}">
         <input type="hidden" name="add_stock_lines[{{$i}}][product_id]" class="product_id"
@@ -57,7 +59,7 @@ $i = $index;
             class="current_stock_text">@if($product->is_service) {{'-'}} @else @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif</span>
     </td>
     <td>
-        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class="" checked value="1"></div>
+        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class="stock_pricechange stockId{{$product->id}}" checked value="1"></div>
     </td>
     <td rowspan="2">
         <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$i}}"><i
@@ -66,7 +68,14 @@ $i = $index;
 </tr>
 <tr class="row_details_{{$i}}">
     <td> {!! Form::label('', __('lang.batch_number'), []) !!} <br> {!!
-        Form::text('add_stock_lines['.$i.'][batch_number]', null, ['class' => 'form-control']) !!}</td>
+        Form::text('add_stock_lines['.$i.'][batch_number]', null, ['class' => 'form-control batchNumber']) !!}
+       <button type="button" class="btn btn-success add_new_batch mt-2" id="addBatch" data-product="{{$product}}" index_id="{{$i}}">
+            <i class="fa fa-plus"></i>
+        </button> 
+        {{__('lang.add_a_new_batch')}}
+        @include(
+            'quotation.partial.new_batch_modal'
+        )
     <td> {!! Form::label('', __('lang.manufacturing_date'), []) !!}<br>
         {!! Form::text('add_stock_lines['.$i.'][manufacturing_date]', null, ['class' => 'form-control datepicker',
         'readonly']) !!}

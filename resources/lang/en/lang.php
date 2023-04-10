@@ -37,7 +37,9 @@ return [
     'add_new_manufacturing' => 'Add New Manufacturing',
     'add_new_production' => 'Add New Manufacturing',
 
-
+    'manufactured_cost'=>'Cost',
+    'manufactured_unit_cost_purchase'=>'Unit cost purchasing',
+    'manufactured_unit_cost_sell'=>'Unit cost selling',
 
 
 
@@ -91,6 +93,7 @@ return [
     'required_fields_info' => 'The field labels marked with * are required input fields.',
     'product' => 'Product',
     'add_new_product' => 'Add New Product',
+    'add_a_new_batch'=>"Add New Batch",
     'class' => 'Class',
     'submit' => 'Submit',
     'class_name' => 'Class Name',
@@ -266,7 +269,7 @@ return [
     'amount' => 'Amount',
     'notes' => 'Notes',
     'is_service' => 'Is Service',
-    'is_have_service'=>'No Service',
+    'is_have_service'=>'Service',
     'paid_amount' => 'Paid Amount',
     'pending_amount' => 'Pending Amount',
     'invoice_date' => 'Invoice Date',
