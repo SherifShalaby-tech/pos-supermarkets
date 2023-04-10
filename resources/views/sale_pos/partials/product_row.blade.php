@@ -35,9 +35,6 @@
                    value="{{$product->product_id}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]" class="variation_id"
                    value="{{$product->variation_id}}">
-            @php
-            $notBatch="notBatch";
-            @endphp
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][batch_number]" class="batch_number"
                     value="@if($product->batch_number){{$product->batch_number}}@else {{false}} @endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][price_hidden]" class="price_hidden"
