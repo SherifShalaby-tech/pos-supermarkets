@@ -47,6 +47,10 @@ class Transaction extends Model  implements HasMedia
 
         return $source->name ?? null;
     }
+    public function manufacturing()
+    {
+        return $this->belongsTo(Manufacturing::class);
+    }
     public function purchase_order_lines()
     {
         return $this->hasMany(PurchaseOrderLine::class);

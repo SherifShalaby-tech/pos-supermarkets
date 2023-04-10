@@ -14,6 +14,12 @@ class Manufacturing extends Model
       "created_by",
       "edited_by",
     ];
+    public function transactions(){
+        return $this->hasMany(Transaction::class,"manufacturing_id","id")->where("status","approved");
+    }
+    public function manufacturing_products(){
+        return $this->hasMany(manufacturingProduct::class,"manufacturing_id","id")->where("status","0");
+    }
     public function store(){
         return $this->belongsTo(Store::class,"store_id","id");
     }

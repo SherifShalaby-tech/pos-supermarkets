@@ -37,7 +37,9 @@ return [
     'add_new_manufacturing' => 'اضافه عملية تصنيع جديدة',
     'add_new_production' => 'اضافه عملية تصنيع جديدة',
 
-
+    'manufactured_cost'=>'التكلفة',
+    'manufactured_unit_cost_sell'=>'تكلفة الوحده للبيع ',
+    'manufactured_unit_cost_purchase'=>'تكلفة الوحده للشراء ',
 
 
 
@@ -89,7 +91,7 @@ return [
     'December' => 'ديسمبر',
     'site_title' => 'عنوان الموقع',
     'help' => 'مساعدة',
-
+    'required_field'=>'يجب الادخال',
     'required_fields_info' => 'الحقول المميزة بعلامة * هي حقول إدخال مطلوبة.',
     'product' => 'منتج',
     'add_new_product' => 'اضافة منتج جديد',
@@ -267,7 +269,8 @@ return [
     'bank_name' => 'اسم البنك',
     'amount' => 'المبلغ',
     'notes' => 'ملاحظات',
-    'is_service' => 'هي خدمة',
+    'is_service' => ' خدمة',
+    'is_have_service'=>'خدمة',
     'paid_amount' => 'المبلغ المدفوع',
     'pending_amount' => 'المبلغ المتبقي',
     'invoice_date' => 'تاريخ الفاتورة',
@@ -1089,7 +1092,7 @@ return [
     'customer_size_details' => 'تفاصيل مقاسات العميل',
     'crop' => 'اقتصاص',
     'crop_image_before_upload' => 'صورة المحاصيل قبل التحميل',
-
+    'add_a_new_batch'=>'تشغيلة جديدة',
     'add_new_raw_material' => 'إضافة مادة أولية جديدة',
     'raw_materials' => 'مادة أولية',
     'raw_material' => 'مادة أولية',

@@ -265,7 +265,8 @@ $(document).ready(function () {
                             $(this).val(null);
                             get_label_product_row(
                                 ui.item.product_id,
-                                ui.item.variation_id
+                                ui.item.variation_id,
+                                ui.item.batch_number
                             );
                         } else {
                             out_of_stock_handle(
@@ -276,7 +277,8 @@ $(document).ready(function () {
                     } else {
                         get_label_product_row(
                             ui.item.product_id,
-                            ui.item.variation_id
+                            ui.item.variation_id,
+                            ui.item.batch_number
                         );
                     }
                 },
@@ -295,7 +297,12 @@ $(document).ready(function () {
                     LANG.out_of_stock +
                     ") </li>";
             } else {
-                string += item.text;
+                if(item.batch_number==null){
+                    string += item.text ;
+                    }
+                    else{
+                    string += item.text +"  "+ item.batch_number;
+                    }
             }
             console.log(item)
             return $("<li>")
@@ -308,6 +315,7 @@ $(document).ready(function () {
 function get_label_product_row(
     product_id = null,
     variation_id = null,
+    batch_number=null,
     edit_quantity = 1,
     edit_row_count = 0,
     weighing_scale_barcode = null
@@ -316,60 +324,53 @@ function get_label_product_row(
     var add_via_ajax = true;
 
     var is_added = false;
+    var is_batch = false;
 
     //Search for variation id in each row of pos table
     $("#product_table tbody")
         .find("tr")
         .each(function () {
             var row_v_id = $(this).find(".variation_id").val();
-
-            if (row_v_id == variation_id && !is_added) {
-                add_via_ajax = false;
-                is_added = true;
-
-                //Increment product quantity
-                qty_element = $(this).find(".quantity");
-                have_weight = $(this).find(".have_weight");
-
-                var qty = __read_number(qty_element),
-                    is_have_weight = __read_number(have_weight);
-                if(is_have_weight != 1){
+            var row_batch_number = $(this).find(".batch_number").val();
+            console.log(batch_number)
+            if(batch_number!=null){
+                if (row_v_id == variation_id && row_batch_number ==batch_number && !is_added) {
+                    add_via_ajax = false;
+                    is_added = true;
+                    is_batch=true;
+                    //Increment product quantity
+                    qty_element = $(this).find(".quantity");
+                    var qty = __read_number(qty_element);
                     __write_number(qty_element, qty + 1);
-                }else{
-
-                    var key='weight_product'+$("#store_pos_id").val();
-                    $.ajax({
-                        method: "GET",
-                        url: "/get-system-property/"+key,
-                        dataType: "json",
-                        async: false,
-                        success: function (result) {
-                            if (!result.success) {
-                                swal("Error", result.msg, "error");
-                                return;
-                            }else{
-                                new_qty=parseFloat(qty)+parseFloat(result.value)
-                                __write_number(qty_element, new_qty);
-                            }
-                        },
-                    });
-
+                    qty_element.change;
+                    check_for_sale_promotion();
+                    calculate_sub_totals();
+                    $("input#search_product").val("");
+                    $("input#search_product").focus();
+                    $(this).insertBefore($("#product_table  tbody tr:first"));
                 }
-
-                qty_element.change;
-                check_for_sale_promotion();
-                calculate_sub_totals();
-                $("input#search_product").val("");
-                $("input#search_product").focus();
-                $(this).insertBefore($("#product_table  tbody tr:first"));
-
+            }else{
+                if (row_v_id == variation_id && row_batch_number ==false && !is_added) {
+                    add_via_ajax = false;
+                    is_added = true;
+                    is_batch=false;
+                    //Increment product quantity
+                    qty_element = $(this).find(".quantity");
+                    var qty = __read_number(qty_element);
+                    __write_number(qty_element, qty + 1);
+                    qty_element.change;
+                    check_for_sale_promotion();
+                    calculate_sub_totals();
+                    $("input#search_product").val("");
+                    $("input#search_product").focus();
+                    $(this).insertBefore($("#product_table  tbody tr:first"));
+                }
             }
         });
 
     if (add_via_ajax) {
         var store_id = $("#store_id").val();
         var customer_id = $("#customer_id").val();
-        var store_pos_id =  $("#store_pos_id").val();
         let currency_id = $("#received_currency_id").val();
 
         if (edit_row_count !== 0) {
@@ -387,7 +388,6 @@ function get_label_product_row(
             data: {
                 product_id: product_id,
                 row_count: row_count,
-                store_pos_id: store_pos_id,
                 variation_id: variation_id,
                 store_id: store_id,
                 customer_id: customer_id,
@@ -396,8 +396,10 @@ function get_label_product_row(
                 weighing_scale_barcode: weighing_scale_barcode,
                 dining_table_id: $("#dining_table_id").val(),
                 is_direct_sale: $("#is_direct_sale").val(),
+                batch_number:batch_number
             },
             success: function (result) {
+                
                 if (!result.success) {
                     swal("Error", result.msg, "error");
                     return;

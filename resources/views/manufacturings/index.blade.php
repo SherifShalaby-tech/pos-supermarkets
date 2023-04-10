@@ -24,6 +24,9 @@
                                 <th>@lang('lang.status')</th>
                                 <th >@lang('lang.store')</th>
                                 <th>@lang('lang.manufacturer')</th>
+                                <th>@lang('lang.manufactured_unit_cost_purchase')</th>
+                                <th>@lang('lang.manufactured_unit_cost_sell')</th>
+                                <th>@lang('lang.manufactured_cost')</th>
                                 @if($type == "process")
                                     <th>@lang('lang.product_received')</th>
                                     <th>@lang('lang.product_received_quantity')</th>
@@ -55,6 +58,16 @@
                                 <td>{{$type}}</td>
                                 <td>{{$manufacturing->store->name ??""}}</td>
                                 <td>{{$manufacturing->manufacturer->name ??""}}</td>
+                                <td>{{number_format($manufacturing->manufacture_cost_unit_purchase, 2, '.', ',')}}</td>
+                                <td>{{number_format($manufacturing->manufacture_cost_unit_sell, 2, '.', ',')}}</td>
+                                <td>
+                                    @foreach($manufacturing->transactions as $transaction) 
+                                        @foreach($transaction->transaction_payments as $payment)
+                                            {{number_format($payment->amount, 2, '.', ',')}}
+                                        @endforeach
+                                    <br>
+                                    @endforeach
+                                </td>
                                 @if($type == "process")
                                     <td>
                                         @foreach($manufacturing->material_recived as $material)

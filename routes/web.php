@@ -146,6 +146,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::get('add-stock/get-source-by-type-dropdown/{type}', 'AddStockController@getSourceByTypeDropdown');
     Route::get('add-stock/add-product-row', 'AddStockController@addProductRow');
+    Route::get('add-stock/add-product-different-batch-row', 'AddStockController@addProductBatchRow');
+
     Route::get('add-stock/get-purchase-order-details/{id}', 'AddStockController@getPurchaseOrderDetails');
     Route::post('add-stock/save-import', 'AddStockController@saveImport');
     Route::get('add-stock/get-import', 'AddStockController@getImport');
