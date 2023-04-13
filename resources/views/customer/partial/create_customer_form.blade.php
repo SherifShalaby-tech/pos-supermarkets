@@ -130,7 +130,7 @@
         <div class="col-md-3">
             <div class="form-group">
                 {!! Form::label('referred_type', __('lang.referred_type'), []) !!}
-                {!! Form::select('ref[0][referred_type]', ['customer' => __('lang.customer'), 'supplier' => 'Supplier', 'employee' => __('lang.employee')], 'customer', ['class' => 'form-control selectpicker referred_type', 'data-live-search' => 'true']) !!}
+                {!! Form::select('ref[0][referred_type]', ['customer' => __('lang.customer'), 'supplier' => 'Supplier', 'employee' => __('lang.employee')],null, ['class' => 'form-control selectpicker referred_type', 'data-live-search' => 'true','placeholder'=>'please select']) !!}
             </div>
         </div>
         <div class="col-md-3">
