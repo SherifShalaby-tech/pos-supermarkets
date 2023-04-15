@@ -13,6 +13,9 @@
         </div>
     </div>
     <div class="col-md-3">
+        <button type="button" class="btn btn-danger btn-xs remove_row_ref" style="margin-top: 15px;"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="col-md-3">
     </div>
     <div class="col-md-12 referred_details mb-4">
     </div>

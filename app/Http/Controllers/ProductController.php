@@ -647,6 +647,7 @@ class ProductController extends Controller
                 $data_des=[
                     'product_id' => $product->id,
                     'discount_type' => $request->discount_type[$index_discount],
+                    'discount_category' => $request->discount_category[$index_discount],
                     'discount_customer_types' => $request->get('discount_customer_types_'.$index_discount),
                     'discount_customers' => $discount_customers,
                     'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),

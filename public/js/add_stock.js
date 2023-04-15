@@ -28,9 +28,10 @@ $(document).ready(function () {
                             .data("ui-autocomplete")
                             ._trigger("select", "autocompleteselect", ui);
                         $(this).autocomplete("close");
-                    } else if (ui.content.length == 0) {
-                        swal("Product not found");
-                    }
+                    } 
+                    // else if (ui.content.length == 0) {
+                    //     swal("Product not found");
+                    // }
                 },
                 focus: function (event, ui) {},
                 select: function (event, ui) {

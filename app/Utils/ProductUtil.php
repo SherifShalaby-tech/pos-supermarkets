@@ -581,84 +581,47 @@ class ProductUtil extends Util
      *
      * @return Obj
      */
-    public function getDetailsFromProductByStore($product_id, $variation_id = null, $store_id = null,$batch_number)
-    {   $product='';
-        if($batch_number==null){
-            $product = Product::
-            leftjoin('variations as v', 'products.id', '=', 'v.product_id')
-            ->leftjoin('taxes', 'products.tax_id', '=', 'taxes.id')
-            ->leftjoin('product_stores', 'v.id', '=', 'product_stores.variation_id')
-            ->whereNull('v.deleted_at');
-            if (!is_null($variation_id) && $variation_id !== '0') {
-                $product->where('v.id', $variation_id);
-            }
-            if (!is_null($store_id) && $store_id !== '0') {
-                $product->where('product_stores.store_id', $store_id);
-            }
-    
-            $product->where('products.id', $product_id);
-    
-            $products = $product->select(
-                'products.id as product_id',
-                'products.name as product_name',
-                'products.is_service',
-                'products.alert_quantity',
-                'products.tax_id',
-                'products.tax_method',
-                'product_stores.qty_available',
-                'products.sell_price',
-                'taxes.rate as tax_rate',
-                'v.id as variation_id',
-                'v.name as variation_name',
-                'v.default_purchase_price',
-                'v.default_sell_price',
-                'v.sub_sku'
-            )->groupBy('v.id')
-                ->get();
-    
-            return $products;
+    public function getDetailsFromProductByStore($product_id, $variation_id = null, $store_id = null,$batch_number_id)
+    {  
+        $product = Product::
+        leftjoin('variations as v', 'products.id', '=', 'v.product_id')
+        ->leftjoin('taxes', 'products.tax_id', '=', 'taxes.id')
+        ->leftjoin('product_stores', 'v.id', '=', 'product_stores.variation_id');
+        if (!is_null($batch_number_id) && $batch_number_id !== '0') {
+            $product->leftjoin('add_stock_lines', 'products.id', '=', 'add_stock_lines.product_id');
+            $product->where('add_stock_lines.id', $batch_number_id);
         }
-        else{
-            $product = Product::
-            leftjoin('add_stock_lines', 'products.id', '=', 'add_stock_lines.product_id')
-            ->leftjoin('variations as v', 'products.id', '=', 'v.product_id')
-            ->leftjoin('taxes', 'products.tax_id', '=', 'taxes.id')
-            ->leftjoin('product_stores', 'v.id', '=', 'product_stores.variation_id')
-            ->whereNull('v.deleted_at');
-            if (!is_null($variation_id) && $variation_id !== '0') {
-                $product->where('v.id', $variation_id);
-            }
-            if (!is_null($store_id) && $store_id !== '0') {
-                $product->where('product_stores.store_id', $store_id);
-            }
-            if (!is_null($batch_number) && $batch_number !== '0') {
-                $product->where('add_stock_lines.batch_number', $batch_number);
-            }
-    
-            $product->where('products.id', $product_id);
-    
-            $products = $product->select(
-                'products.id as product_id',
-                'products.name as product_name',
-                'products.is_service',
-                'products.alert_quantity',
-                'products.tax_id',
-                'products.tax_method',
-                'product_stores.qty_available',
-                'add_stock_lines.batch_number',
-                'products.sell_price',
-                'taxes.rate as tax_rate',
-                'v.id as variation_id',
-                'v.name as variation_name',
-                'v.default_purchase_price',
-                'v.default_sell_price',
-                'v.sub_sku'
-            )->groupBy('v.id')
-                ->get();
-    
-            return $products;
+        $product->whereNull('v.deleted_at');
+        if (!is_null($variation_id) && $variation_id !== '0') {
+            $product->where('v.id', $variation_id);
         }
-    }
+        if (!is_null($store_id) && $store_id !== '0') {
+            $product->where('product_stores.store_id', $store_id);
+        }
+
+        $product->where('products.id', $product_id);
+        $selectRaws=['products.id as product_id',
+        'products.name as product_name',
+        'products.is_service',
+        'products.alert_quantity',
+        'products.tax_id',
+        'products.tax_method',
+        'product_stores.qty_available',
+        'products.sell_price',
+        'taxes.rate as tax_rate',
+        'v.id as variation_id',
+        'v.name as variation_name',
+        'v.default_purchase_price',
+        'v.default_sell_price',
+        'v.sub_sku'];
+        if (!is_null($batch_number_id) && $batch_number_id !== '0') {
+            array_push($selectRaws,'add_stock_lines.batch_number');
+            array_push($selectRaws,'add_stock_lines.id as stock_id');
+        }
+        $products = $product->select($selectRaws);
+        $products=$product->groupBy('v.id')->get();
+        return $products;
+}
 
     /**
      * get the product discount details for product if exist
@@ -690,12 +653,14 @@ class ProductUtil extends Util
                 $product = ProductDiscount::whereJsonContains('discount_customer_types', $customer_type_id)
                     ->where('product_id', $product_id)
                     ->select(
+                        'id',
                         'discount_type',
                         'discount',
+                        'discount_category',
                         'discount_start_date',
                         'discount_end_date',
                     )
-                    ->first();
+                    ->get();
             }
 
             if (!empty($product)) {

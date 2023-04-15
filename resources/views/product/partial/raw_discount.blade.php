@@ -9,6 +9,9 @@
             {!! Form::text('discount['.$row_id.']',  @num_format($discount->discount), ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.discount')]) !!}
         </td>
         <td>
+            {!! Form::text('discount_category['.$row_id.']', $discount->discount_category, ['class' => 'clear_input_form form-control','maxlength'=>"2" , 'pattern'=>"\d{2}"]) !!}
+        </td>
+        <td>
             {!! Form::text('discount_start_date['.$row_id.']', @format_date($discount->discount_start_date) , ['class' => 'clear_input_form form-control datepicker', 'placeholder' => __('lang.discount_start_date')]) !!}
         </td>
         <td>
@@ -29,6 +32,9 @@
         {!! Form::text('discount['.$row_id.']', @num_format($discount_product->discount) , ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.discount')]) !!}
     </td>
     <td>
+        {!! Form::text('discount_category['.$row_id.']', $discount_product->discount_category , ['class' => 'clear_input_form form-control', 'maxlength'=>"2" , 'pattern'=>"\d{2}"]) !!}
+    </td>
+    <td>
         {!! Form::text('discount_start_date['.$row_id.']',  !empty($discount_product->discount_start_date) ? @format_date($discount_product->discount_start_date) : null, ['class' => 'clear_input_form form-control datepicker', 'placeholder' => __('lang.discount_start_date')]) !!}
     </td>
     <td>
@@ -47,6 +53,9 @@
         </td>
         <td>
             {!! Form::text('discount['.$row_id.']', !empty($recent_product) ? @num_format($recent_product->discount) : null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.discount')]) !!}
+        </td>
+        <td>
+            {!! Form::text('discount_category['.$row_id.']', !empty($recent_product) ? $recent_product->discount_category : null, ['class' => 'clear_input_form form-control', 'maxlength'=>"2" , 'pattern'=>"\d{2}"]) !!}
         </td>
         <td>
             {!! Form::text('discount_start_date['.$row_id.']', !empty($recent_product) && !empty($recent_product->discount_start_date) ? @format_date($recent_product->discount_start_date) : null, ['class' => 'clear_input_form form-control datepicker', 'placeholder' => __('lang.discount_start_date')]) !!}

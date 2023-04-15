@@ -1326,4 +1326,7 @@ return [
     'wrong_gift_card'=>'هذة البطاقة لم تعد متاحة حاليا تاكد من رقم بطاقة الهدايا',
     'wrong_gift_card_amount'=>'الحد القصي لمبلغ الدفع لهذة البطاقة هو :amount',
 
+    'discount_category'=>'الاسم المختصر للخصم',
+    'category_discount'=>'فئة',
+
 ];

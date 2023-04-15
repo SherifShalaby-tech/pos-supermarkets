@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\MoneySafe;
 use App\Models\Product;
 use App\Models\StorePos;
@@ -90,7 +91,7 @@ class SupplierController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $supplier_categories = SupplierCategory::pluck('name', 'id');
+        $supplier_categories = Category::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
 
         if ($quick_add) {

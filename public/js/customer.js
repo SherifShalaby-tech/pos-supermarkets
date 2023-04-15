@@ -128,3 +128,6 @@ $(document).on("click", ".add_referrals", function (e) {
         },
     });
 });
+$(document).on("click", ".remove_row_ref", function () {
+    $(this).closest(".referred_row").remove();
+});
