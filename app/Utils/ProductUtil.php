@@ -1056,6 +1056,16 @@ class ProductUtil extends Util
                 ];
 
                 $add_stock = AddStockLine::create($add_stock_data);
+                if($line['new_batch_number']!=1){
+                    $add_batch_stock=$add_stock->replicate();
+                    $add_batch_stock->id=$add_stock->id+1;
+                    $add_batch_stock->batch_number=$line['new_batch_number'];
+                    $add_batch_stock->quantity=$line['bounce_qty'] > 0 ? $this->num_uf($line['batch_quantity'])+$line['bounce_qty']: $this->num_uf($line['quantity']);
+                    $add_batch_stock->final_cost=$this->num_uf($line['batch_final_cost']);
+                    $add_batch_stock->manufacturing_date=!empty($line['batch_manufacturing_date']) ? $this->uf_date($line['batch_manufacturing_date']) : null;
+                    $add_batch_stock->sell_price=$line['batch_selling_price'];
+                    $add_batch_stock->save();
+                }
                 if(isset($line['bounce_purchase_price'])){
                     $product = Product::where('id',$line['product_id'])->update(['purchase_price' =>$line['bounce_purchase_price'] ,'purchase_price_depends' => $line['bounce_purchase_price']]);
                 }
