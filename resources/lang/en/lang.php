@@ -1341,4 +1341,6 @@ return [
 
     'discount_category'=>'Brief Discount Name',
     'category_discount'=>'Category',
+    'new_batch'=>'New Batch Number',
+    'watsapp_numbers'=>'Watsapp Numbers',
 ];

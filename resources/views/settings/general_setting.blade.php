@@ -55,6 +55,10 @@
                         </div>
                     @endif
                     <div class="col-md-3">
+                        {!! Form::label('Watsapp Numbers', __('lang.watsapp_numbers')) !!}
+                        {!! Form::text('watsapp_numbers', !empty($settings['watsapp_numbers']) ? $settings['watsapp_numbers'] : null, ['class' => 'form-control',Auth::user()->is_superadmin == 1?'':'disabled']) !!}
+                    </div>
+                    <div class="col-md-3">
                         <div class="i-checks">
                             <input id="show_the_window_printing_prompt" name="show_the_window_printing_prompt"
                                 type="checkbox" @if (!empty($settings['show_the_window_printing_prompt']) && $settings['show_the_window_printing_prompt'] == '1') checked @endif value="1"

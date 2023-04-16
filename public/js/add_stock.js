@@ -74,8 +74,18 @@ $(document).on("click", ".add_bounce_btn", function () {
 $(document).on("click", "#addBatch", function () {
     var index=$(this).data('index');
     $('#batch_number_row'+index).toggle();
-    $('#batch_number_row'+index+' .batchNumber').prop('required', true);
-    $('.stockId'+index).prop('checked', false);
+    if($('#batch_number_row'+index+' .batchNumber').prop('required')){
+        $('#batch_number_row'+index+' .batchNumber').prop('required', false);
+    } else {
+        $('#batch_number_row'+index+' .batchNumber').prop('required', true);
+    }
+    ///
+    if($('.stockId'+index).prop('checked')){
+        $('.stockId'+index).prop('checked', false);
+    } else {
+        $('.stockId'+index).prop('checked', true);
+    }
+    
 });
 // $(document).on("click", "#addBatch", function () {
 //     $('#addNewBatch').modal('show');
@@ -298,7 +308,7 @@ $(document).on("click", ".remove_row", function () {
     $(this).closest("tr").remove();
     $(".row_details_" + index).remove();
     $(".bounce_details_td_" + index).remove();
-
+    $(".row_batch_details_" + index).remove();
     calculate_sub_totals();
     reset_row_numbering();
 });
