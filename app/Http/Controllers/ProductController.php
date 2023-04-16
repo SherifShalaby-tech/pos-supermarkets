@@ -111,8 +111,9 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        if (request()->ajax()) {
+        $process_type = $request->process_type??null;
 
+        if (request()->ajax()) {
             $products = Product::leftjoin('variations', function ($join) {
                 $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
             })
@@ -128,7 +129,6 @@ class ProductController extends Controller
                 ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'sub_categories.id')
                 ->leftjoin('brands', 'products.brand_id', 'brands.id')
                 ->leftjoin('supplier_products', 'products.id', 'supplier_products.product_id')
-                ->leftjoin('suppliers as suppliersf', 'supplier_products.supplier_id', 'suppliersf.id')
                 ->leftjoin('users', 'products.created_by', 'users.id')
                 ->leftjoin('users as edited', 'products.edited_by', 'users.id')
                 ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
@@ -138,14 +138,10 @@ class ProductController extends Controller
 
             $store_query = '';
             if (!empty($store_id)) {
-                 $products->where('product_stores.store_id', $store_id);
+                // $products->where('product_stores.store_id', $store_id);
                 $store_query = 'AND store_id=' . $store_id;
             }
-            if (!session('user.is_superadmin')) {
-                $employee = Employee::where('user_id', auth()->user()->id)->first();
-                $products->wherein('product_stores.store_id', (array) $employee->store_id);
-//                $store_query = 'AND store_id in (' . (array) $employee->store_id .')';
-            }
+
             if (!empty(request()->product_id)) {
                 $products->where('products.id', request()->product_id);
             }
@@ -220,11 +216,10 @@ class ProductController extends Controller
                 'grades.name as grade',
                 'units.name as unit',
                 'taxes.name as tax',
-                'suppliersf.name as supplier',
                 'variations.id as variation_id',
                 'variations.name as variation_name',
                 'variations.default_purchase_price',
-                'variations.default_sell_price',
+                'variations.default_sell_price as default_sell_price',
                 'add_stock_lines.expiry_date as exp_date',
                 'users.name as created_by_name',
                 'edited.name as edited_by_name',
@@ -243,9 +238,6 @@ class ProductController extends Controller
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
                 ->editColumn('sub_sku', '{{$sub_sku}}')
-                ->editColumn('is_service',function ($row) {
-                    return $row->is_service=='1'?'<span class="badge badge-danger">'.Lang::get('lang.is_have_service').'</span>':'';
-                })
                 ->addColumn('product_class', '{{$product_class}}')
                 ->addColumn('category', '{{$category}}')
                 ->addColumn('sub_category', '{{$sub_category}}')
@@ -254,10 +246,9 @@ class ProductController extends Controller
                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                     return $html;
                 })
-                // ->addColumn('supplier_name', function ($row) {
-                //     return $row->supplier ? $row->supplier->name : '';
-                // })
-
+                ->editColumn('supplier_name', function ($row) {
+                    return $row->supplier->name ?? '';
+                })
                 ->editColumn('batch_number', '{{$batch_number}}')
                 ->editColumn('default_sell_price', function ($row) {
                     $price= AddStockLine::where('variation_id',$row->variation_id)
@@ -271,40 +262,12 @@ class ProductController extends Controller
                     $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
 
                     return $this->productUtil->num_f($price);
-                })
+                })//, '{{@num_format($default_purchase_price)}}')
                 ->addColumn('tax', '{{$tax}}')
                 ->editColumn('brand', '{{$brand}}')
                 ->editColumn('unit', '{{$unit}}')
-                ->editColumn('color', function ($row){
-                    $color='';
-                    if($row->variation_name == "Default"){
-                        if(isset($row->multiple_colors)){
-                          $color_m=Color::whereId($row->multiple_colors)->first();
-                          if($color_m){
-                             $color= $color_m ->name;
-                          }
-                        }
-                    }else{
-                        $color = $row->color;
-                    }
-                    return $color;
-                })
-                ->editColumn('size', function ($row){
-                    $size='';
-                    if($row->variation_name == "Default"){
-
-                        if(isset($row->multiple_sizes)){
-                            $size_m=Size::whereId($row->multiple_sizes)->first();
-                            if($size_m){
-                                $size= $size_m ->name;
-                            }
-                        }
-
-                    }else{
-                        $size = $row->size;
-                    }
-                    return $size;
-                })
+                ->editColumn('color', '{{$color}}')
+                ->editColumn('size', '{{$size}}')
                 ->editColumn('grade', '{{$grade}}')
                 ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
                 ->addColumn('current_stock_value', function ($row) {
@@ -327,7 +290,6 @@ class ProductController extends Controller
                     return $discount_text;
                     //'{{@num_format($discount)}}'
                 })
-//                ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
                 ->editColumn('active', function ($row) {
                     if ($row->active) {
                         return __('lang.yes');
@@ -336,46 +298,50 @@ class ProductController extends Controller
                     }
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
-                ->addColumn('supplier_name', function ($row) {
-                    $addStocks =  AddStockLine::select('id','transaction_id')
-                        ->with(['transaction:id,supplier_id','transaction.supplier:id,name'])
-                        ->whereProductId($row->id)
-                        ->get();
-                    $supplierNames = array();
-                    foreach ($addStocks as $supplier)
-                    {
-                        array_push($supplierNames,$supplier->transaction->supplier->name);
-                    }
-                    return implode(' , ',array_unique($supplierNames));
-/*                    $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
+                ->addColumn('supplier', function ($row) {
+                    $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
                         ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
                         ->where('transactions.type', 'add_stock')
                         ->where('add_stock_lines.product_id', $row->id)
                         ->select('suppliers.name')
                         ->orderBy('transactions.id', 'desc')
                         ->first();
-                    return $query->name;*/
+                    return $query->name ?? '';
                 })
-                ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
-                    if($row->is_service == 0 ){
-                        if ($is_add_stock == 1) {
+                ->addColumn('selection_checkbox', function ($row) use ($is_add_stock,$process_type) {
+                    if ($row->is_service == 1 || $is_add_stock == 1) {
+                        $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                    } else {
+                        if ($row->current_stock > 0) {
                             $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                         } else {
-                            if ($row->current_stock > 0 ) {
+                            // if received_manufacturing_products open all products to add to stock
+                            if ($process_type == "received_manufacturing_products"){
                                 $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
-                            } else {
+                            }else{
                                 $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
                             }
                         }
-                    }else{
-                        $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                     }
+
+                    return $html;
+                })->addColumn('selection_checkbox_send', function ($row)  {
+                    $html = '<input type="checkbox" name="product_selected_send" class="product_selected_send" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+                    return $html;
+                })
+                ->addColumn('selection_checkbox_delete', function ($row)  {
+                    $html = '<input type="checkbox" name="product_selected_delete" class="product_selected_delete" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
 
                     return $html;
                 })
                 ->addColumn(
                     'action',
                     function ($row) {
+                        if($row->parent_branch_id != null ){
+                            return '';
+                        }
                         $html =
                             '<div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -405,6 +371,7 @@ class ProductController extends Controller
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.product.delete')) {
+
                             $html .=
                                 '<li>
                             <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
@@ -431,6 +398,8 @@ class ProductController extends Controller
                 ])
                 ->rawColumns([
                     'selection_checkbox',
+                    'selection_checkbox_send',
+                    'selection_checkbox_delete',
                     'image',
                     'variation_name',
                     'sku',
@@ -457,8 +426,6 @@ class ProductController extends Controller
                 ])
                 ->make(true);
         }
-
-
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
