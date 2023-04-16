@@ -84,12 +84,10 @@ $i = $index;
         ) --}}
     </td>
     <td> {!! Form::label('', __('lang.manufacturing_date'), []) !!}<br>
-        {!! Form::text('add_stock_lines['.$i.'][manufacturing_date]', null, ['class' => 'form-control datepicker',
-        'readonly']) !!}
+        {!! Form::text('add_stock_lines['.$i.'][manufacturing_date]', null, ['class' => 'form-control datepicker']) !!}
     </td>
     <td> {!! Form::label('', __('lang.expiry_date'), []) !!}<br>
-        {!! Form::text('add_stock_lines['.$i.'][expiry_date]', null, ['class' => 'form-control datepicker expiry_date',
-        'readonly']) !!}
+        {!! Form::text('add_stock_lines['.$i.'][expiry_date]', null, ['class' => 'form-control datepicker expiry_date']) !!}
     </td>
     <td> {!! Form::label('', __('lang.days_before_the_expiry_date'), []) !!}<br>
         {!! Form::text('add_stock_lines['.$i.'][expiry_warning]', null, ['class' => 'form-control days_before_the_expiry_date']) !!}
