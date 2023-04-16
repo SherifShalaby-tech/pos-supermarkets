@@ -917,21 +917,12 @@ class SellPosController extends Controller
                 'variations.sub_sku as sub_sku',
                 'product_stores.qty_available',
                 'product_stores.block_qty',
+                'add_stock_lines.batch_number',
+                'add_stock_lines.id'
             ];
-            $q=$query;
-            $productsWithoutBatchNumber=$q->select($selectRaws)->get();
-
-
-            array_push($selectRaws,'add_stock_lines.batch_number');
-            array_push($selectRaws,'add_stock_lines.id');
-            $productsWithBatchNumber=$query->leftjoin('add_stock_lines', 'variations.id','=','add_stock_lines.variation_id')
-            ->where('add_stock_lines.batch_number', '!=',null)
-            ->select($selectRaws)->get();
-            
-            foreach($productsWithoutBatchNumber as $product) {
-                $productsWithBatchNumber->add($product);
-            }
-            $products=$productsWithBatchNumber;
+            $products=$query->leftjoin('add_stock_lines', 'variations.id','=','add_stock_lines.variation_id')
+            ->select($selectRaws)->groupBy('variation_id','add_stock_lines.batch_number')->get();
+        
             $products_array = [];
             foreach ($products as $product) {
                 $products_array[$product->product_id]['name'] = $product->name;
