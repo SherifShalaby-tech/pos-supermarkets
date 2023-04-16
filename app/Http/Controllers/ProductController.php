@@ -266,8 +266,36 @@ class ProductController extends Controller
                 ->addColumn('tax', '{{$tax}}')
                 ->editColumn('brand', '{{$brand}}')
                 ->editColumn('unit', '{{$unit}}')
-                ->editColumn('color', '{{$color}}')
-                ->editColumn('size', '{{$size}}')
+                ->editColumn('color', function ($row){
+                    $color='';
+                    if($row->variation_name == "Default"){
+                        if(isset($row->multiple_colors)){
+                          $color_m=Color::whereId($row->multiple_colors)->first();
+                          if($color_m){
+                             $color= $color_m ->name;
+                          }
+                        }
+                    }else{
+                        $color = $row->color;
+                    }
+                    return $color;
+                })
+                ->editColumn('size', function ($row){
+                    $size='';
+                    if($row->variation_name == "Default"){
+
+                        if(isset($row->multiple_sizes)){
+                            $size_m=Size::whereId($row->multiple_sizes)->first();
+                            if($size_m){
+                                $size= $size_m ->name;
+                            }
+                        }
+
+                    }else{
+                        $size = $row->size;
+                    }
+                    return $size;
+                })
                 ->editColumn('grade', '{{$grade}}')
                 ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
                 ->addColumn('current_stock_value', function ($row) {
