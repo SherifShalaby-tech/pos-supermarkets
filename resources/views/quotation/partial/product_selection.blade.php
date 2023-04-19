@@ -195,7 +195,6 @@
                         </div>
                     </div>
 
-
                 </div>
                 <div class="table-responsive">
                     <table id="product_selection_table{{$index?? ''}}" class="table" style="width: auto">

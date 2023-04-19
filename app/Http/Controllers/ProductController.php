@@ -33,6 +33,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use Lang;
@@ -109,10 +110,9 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+       public function index(Request $request)
     {
         if (request()->ajax()) {
-
             $products = Product::leftjoin('variations', function ($join) {
                 $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
             })
@@ -357,19 +357,21 @@ class ProductController extends Controller
                     return $query->name;*/
                 })
                 ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
-                    if($row->is_service == 0 ){
-                        if ($is_add_stock == 1) {
-                            $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                    // if($row->is_service == 0){
+                        
+                        if ($is_add_stock == 1 && $row->is_service == 1) {
+                            $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
                         } else {
-                            if ($row->current_stock > 0 ) {
+                            if ($row->current_stock >= 0 ) {
                                 $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                             } else {
                                 $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                             }
                         }
-                    }else{
-                        $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
-                    }
+                    // }else{
+                    //     $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                    // }
 
                     return $html;
                 })
