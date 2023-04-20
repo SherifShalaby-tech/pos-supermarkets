@@ -88,7 +88,6 @@ class AddStockController extends Controller
             ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
             ->leftjoin('users', 'transactions.created_by', '=', 'users.id')
             ->leftjoin('currencies as paying_currency', 'transactions.paying_currency_id', 'paying_currency.id')
-            ->where('manufacturing_id','!=',null)
             ->whereIn('type',['material_manufactured','add_stock'])
            ->orWhere(function($query){
                 $manufacturingIds=Transaction::where('type','material_manufactured')->pluck('manufacturing_id');
