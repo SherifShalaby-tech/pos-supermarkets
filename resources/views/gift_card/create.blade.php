@@ -53,6 +53,7 @@
 <script>
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
+        todayHighlight: true,
     });
     $('.refresh_code').click()
     $(document).on('click', '.refresh_code', function(){
