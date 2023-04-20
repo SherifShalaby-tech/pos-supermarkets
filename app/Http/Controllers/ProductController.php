@@ -696,6 +696,7 @@ class ProductController extends Controller
             }
 
 
+
             if (!empty($request->supplier_id)) {
                 SupplierProduct::updateOrCreate(
                     ['product_id' => $product->id, 'supplier_id' => $request->supplier_id]

@@ -55,12 +55,6 @@ class AddStockController extends Controller
     protected $cashRegisterUtil;
     protected $moneysafeUtil;
 
-    /**
-     * Constructor
-     *
-     * @param ProductUtils $product
-     * @return void
-     */
     public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil, NotificationUtil $notificationUtil, CashRegisterUtil $cashRegisterUtil, MoneySafeUtil $moneysafeUtil)
     {
         $this->commonUtil = $commonUtil;
@@ -72,11 +66,6 @@ class AddStockController extends Controller
 
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         if (request()->ajax()) {
@@ -255,11 +244,6 @@ class AddStockController extends Controller
         ));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
@@ -320,16 +304,8 @@ class AddStockController extends Controller
             'users',
         ));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-
          try {
         $data = $request->except('_token');
 
@@ -381,7 +357,7 @@ class AddStockController extends Controller
             $payment_data = [
                 'transaction_id' => $transaction->id,
                 'amount' => $this->commonUtil->num_uf($request->amount),
-                'method' => $request->method,
+                'method' => $request["method"],
                 'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
                 'ref_number' => $request->ref_number,
                 'source_type' => $request->source_type,
@@ -455,12 +431,6 @@ class AddStockController extends Controller
         return redirect()->back()->with('status', $output);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $add_stock = Transaction::find($id);
@@ -479,12 +449,6 @@ class AddStockController extends Controller
         ));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $add_stock = Transaction::find($id);
@@ -540,13 +504,6 @@ class AddStockController extends Controller
         ));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
 
@@ -611,7 +568,7 @@ class AddStockController extends Controller
                 'transaction_payment_id' => !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
                 'transaction_id' => $transaction->id,
                 'amount' => $this->commonUtil->num_uf($request->amount),
-                'method' => $request->method,
+                'method' => $request["method"],
                 'paid_on' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['paid_on']) : null,
                 'ref_number' => $request->ref_number,
                 'source_type' => $request->source_type,
@@ -683,12 +640,6 @@ class AddStockController extends Controller
         return redirect()->back()->with('status', $output);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         try {
@@ -734,11 +685,6 @@ class AddStockController extends Controller
         return $output;
     }
 
-    /**
-     * Returns the html for product row
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function addProductRow(Request $request)
     {
         if ($request->ajax()) {
@@ -788,16 +734,10 @@ class AddStockController extends Controller
         ));
     }
 
-    /**
-     * Show the form for importing a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function getImport()
     {
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
         $stores = Store::getDropdown();
-
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
@@ -819,9 +759,9 @@ class AddStockController extends Controller
 
     public function saveImport(Request $request)
     {
+
         try {
             $data = $request->except('_token');
-
             if (!empty($data['po_no'])) {
                 $ref_transaction_po = Transaction::find($data['po_no']);
             }
@@ -857,7 +797,6 @@ class AddStockController extends Controller
             $transaction = Transaction::create($transaction_data);
 
             Excel::import(new AddStockLineImport($transaction->id), $request->file);
-
             foreach ($transaction->add_stock_lines as $line) {
                 $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $transaction->store_id,  $line->quantity, 0);
             }
@@ -877,7 +816,7 @@ class AddStockController extends Controller
                 $payment_data = [
                     'transaction_id' => $transaction->id,
                     'amount' => $this->commonUtil->num_uf($request->amount),
-                    'method' => $request->method,
+                    'method' => $request["method"],
                     'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
                     'ref_number' => $request->ref_number,
                     'source_type' => $request->source_type,
@@ -928,7 +867,6 @@ class AddStockController extends Controller
                 'msg' => __('lang.something_went_wrong')
             ];
         }
-
         return redirect()->back()->with('status', $output);
     }
 
