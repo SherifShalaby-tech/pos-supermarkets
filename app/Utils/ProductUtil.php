@@ -997,7 +997,7 @@ class ProductUtil extends Util
      * @param [mix] $transaction
      * @return void
      */
-     public function createOrUpdateAddStockLines($add_stocks, $transaction)
+    public function createOrUpdateAddStockLines($add_stocks, $transaction)
     {
 
         $keep_lines_ids = [];
@@ -1056,7 +1056,7 @@ class ProductUtil extends Util
                     'bounce_manufacturing_date' => $line['bounce_manufacturing_date'],
                     'bounce_batch_number' => $line['bounce_batch_number'],
                 ];
-
+              
                 $add_stock = AddStockLine::create($add_stock_data);
                 $qty =  $this->num_uf($line['quantity']);
                 if($add_stock){
@@ -1088,25 +1088,28 @@ class ProductUtil extends Util
                         $add_stock_batch = AddStockLine::create($add_stock_batch_data);
                         $batch_numbers[]=$add_stock_batch->batch_number;
                         $qty =  $this->num_uf($line['batch_quantity']);
-                    }
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $qty, 0);
+
                         // return $add_stock_batch;
                 }
+            }
                 if(isset($line['bounce_purchase_price'])){
                     $product = Product::where('id',$line['product_id'])->update(['purchase_price' =>$line['bounce_purchase_price'] ,'purchase_price_depends' => $line['bounce_purchase_price']]);
                 }
-                $qty =  $this->num_uf($line['quantity']);
                 $keep_lines_ids[] = $add_stock->id;
                 $batch_numbers[]=$add_stock->batch_number;
+                $qty =  $this->num_uf($line['quantity']);
+
                 $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $qty, 0);
             }
             if(!empty($line['stock_pricechange'])){
                 AddStockLine::where('variation_id',$line['variation_id'])
                     ->whereColumn('quantity',">",'quantity_sold')->update([
                         'sell_price' => $line['selling_price'],
-                ]);
+                    ]);
             }
         }
-
+        // return $keep_lines_ids;
         if (!empty($keep_lines_ids)) {
             $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)->whereNotIn('batch_number',$batch_numbers)->whereNotIn('id', $keep_lines_ids)->get();
             foreach ($deleted_lines as $deleted_line) {
