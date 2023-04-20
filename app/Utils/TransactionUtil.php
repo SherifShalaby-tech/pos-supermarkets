@@ -201,7 +201,8 @@ class TransactionUtil extends Util
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $transaction_sell_line->id;
             }
-            $this->updateSoldQuantityInAddStockLine($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $line['quantity'], $old_quantity);
+            $stock_id=$line['stock_id'];
+            $this->updateSoldQuantityInAddStockLine($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $line['quantity'], $old_quantity,$stock_id);
         }
 
         //delete sell lines remove by user

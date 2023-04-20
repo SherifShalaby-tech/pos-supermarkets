@@ -350,6 +350,7 @@
 <script>
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
+        todayHighlight: true,
     });
     $('#store_ids').selectpicker('selectAll');
 

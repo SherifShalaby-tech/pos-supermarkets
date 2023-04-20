@@ -177,6 +177,7 @@ $i = $index;
 <script>
     $('.datepicker').datepicker({
         language: "{{session('language')}}",
+        todayHighlight: true,
     })
     // let quantity = parseInt($(".quantity").val()),
     //     purchase_price = parseInt($(".purchase_price").val()),
