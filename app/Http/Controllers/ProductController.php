@@ -112,6 +112,7 @@ class ProductController extends Controller
      */
        public function index(Request $request)
     {
+        $process_type = $request->process_type??null;
         if (request()->ajax()) {
             $products = Product::leftjoin('variations', function ($join) {
                 $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
