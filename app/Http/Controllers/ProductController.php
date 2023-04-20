@@ -363,11 +363,11 @@ class ProductController extends Controller
                             $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
 
                         } else {
-                            if ($row->current_stock >= 0 ) {
+                            // if ($row->current_stock >= 0 ) {
                                 $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
-                            } else {
-                                $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
-                            }
+                            // } else {
+                                // $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                            // }
                         }
                     // }else{
                     //     $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
