@@ -574,6 +574,8 @@
 
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+
     <script>
         $("#submit-btn").on("click",function (e){
             e.preventDefault();
