@@ -137,13 +137,24 @@
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif ">
         <input type="hidden" value="{{$product->product_id}}" class="p-id"/>
+        @if(auth()->user()->can('sp_module.sales_promotion.view')
+                || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                || auth()->user()->can('sp_module.sales_promotion.delete'))
+                <select class="custom-select custom-select-sm discount_category discount_category{{$product->product_id}}" style="height:30% !important">
+                    <option selected>select</option>
+                    @foreach($product_discount_details as $discount)
+                            <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
+                    @endforeach
+                </select>
+        @else
             <select class="custom-select custom-select-sm discount_category discount_category{{$product->product_id}}" style="height:30% !important"
-                @if(!auth()->user()->can('product_discount_module.product_category.create_and_edit')) disabled="disabled" @endif>
+                 disabled="disabled">
                 <option selected>select</option>
                 @foreach($product_discount_details as $discount)
                         <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
                 @endforeach
             </select>
+        @endif
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 9% @else 15% @endif">
             <span class="sub_total_span" style="font-weight: bold;"></span>
