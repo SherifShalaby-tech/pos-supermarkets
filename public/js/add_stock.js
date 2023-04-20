@@ -73,38 +73,54 @@ $(document).on("click", ".add_bounce_btn", function () {
 });
 
 $(document).on("click", "#addBatch", function () {
-    $('#addNewBatch').modal('show');
+    var index=$(this).data('index');
+    $('#batch_number_row'+index).toggle();
+    if($('#batch_number_row'+index+' .batchNumber').prop('required')){
+        $('#batch_number_row'+index+' .batchNumber').prop('required', false);
+    } else {
+        $('#batch_number_row'+index+' .batchNumber').prop('required', true);
+    }
+    ///
+    if($('.stockId'+index).prop('checked')){
+        $('.stockId'+index).prop('checked', false);
+    } else {
+        $('.stockId'+index).prop('checked', true);
+    }
     
-    var store_id = $("#store_id").val();
-    let currency_id = $('#paying_currency_id').val()
-    $product=$(this).data("product");
-
-    $.ajax({
-        method: "GET",
-        url: "/add-stock/add-product-different-batch-row",
-        dataType: "html",
-        async: false,
-        data: {
-            product_id: $product.id,
-            variation_id: $product.variation_id,
-            currency_id: currency_id,
-            store_id:store_id
-        },
-        success: function (result) {
-            $("table#product_batch_table tbody").html(result);
-            $("input#search_product").val("");
-            $("input#search_product").focus();
-            calculate_sub_totals();
-            reset_row_numbering();
-        },
-    });
 });
-$(document).on("click", ".addProductBatchBtn", function () {
-    var productId=$('.productbatch_id').val();
-    var variationId=$('.variationbatch_id').val();
+// $(document).on("click", "#addBatch", function () {
+//     $('#addNewBatch').modal('show');
+    
+//     var store_id = $("#store_id").val();
+//     let currency_id = $('#paying_currency_id').val()
+//     $product=$(this).data("product");
 
-    get_label_product_row(productId,variationId,true);
-});
+//     $.ajax({
+//         method: "GET",
+//         url: "/add-stock/add-product-different-batch-row",
+//         dataType: "html",
+//         async: false,
+//         data: {
+//             product_id: $product.id,
+//             variation_id: $product.variation_id,
+//             currency_id: currency_id,
+//             store_id:store_id
+//         },
+//         success: function (result) {
+//             $("table#product_batch_table tbody").html(result);
+//             $("input#search_product").val("");
+//             $("input#search_product").focus();
+//             calculate_sub_totals();
+//             reset_row_numbering();
+//         },
+//     });
+// });
+// $(document).on("click", ".addProductBatchBtn", function () {
+//     var productId=$('.productbatch_id').val();
+//     var variationId=$('.variationbatch_id').val();
+
+//     get_label_product_row(productId,variationId,true);
+// });
 function getCurrencyDropDown() {
     let store_id = $("#store_id").val();
     let default_currency_id = $("#default_currency_id").val();
@@ -146,25 +162,12 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
     var store_id = $("#store_id").val();
     var is_added = false;
     var qty;
-    if(is_batch==true){
-        if ( product_id!=null && variation_id!=null) {
-            $('#addNewBatch').modal('hide');
-            qty_element = $('tr td').find(".batchquantity");
-            $('.stockId'+product_id).prop('checked', false);
-            qty = __read_number(qty_element);
-            calculate_sub_totals();
-            $("input#search_product").val("");
-            $("input#search_product").focus();
-        }
-    }else{
     //Search for variation id in each row of pos table
         $("#product_table tbody")
             .find("tr")
             .each(function () {
                 var row_v_id = $(this).find(".variation_id").val();
-                var is_row_batch;
-                is_row_batch = $(this).find(".is_batch_product").val();
-                if (row_v_id == variation_id && !is_added && is_row_batch=="false") {
+                if (row_v_id == variation_id && !is_added) {
                     add_via_ajax = false;
                     is_added = true;
                     //Increment product quantity
@@ -181,7 +184,7 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
                     $(this).closest("tr").remove();
                 }
             });
-    }
+    // }
     // if (add_via_ajax) {
         var row_count = parseInt($("#row_count").val());
         let currency_id = $('#paying_currency_id').val()
@@ -206,10 +209,6 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
                 $("input#search_product").focus();
                 calculate_sub_totals();
                 reset_row_numbering();
-                if(is_batch==true){
-                    
-                    $('#product_batch_table tbody').html('');
-                }
             },
         });
     // }
@@ -310,7 +309,7 @@ $(document).on("click", ".remove_row", function () {
     $(this).closest("tr").remove();
     $(".row_details_" + index).remove();
     $(".bounce_details_td_" + index).remove();
-
+    $(".row_batch_details_" + index).remove();
     calculate_sub_totals();
     reset_row_numbering();
 });

@@ -90,7 +90,7 @@
                             <br>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table class="table table-bordered table-striped table-condensed" id="product_table">
+                                    <table class="table table-bordered table-condensed" id="product_table">
                                         <thead>
                                             <tr>
                                                 <th>#</th>

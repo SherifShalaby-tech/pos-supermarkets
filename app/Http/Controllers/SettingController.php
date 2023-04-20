@@ -199,7 +199,10 @@ class SettingController extends Controller
                 ['key' => 'help_page_content'],
                 ['value' => $request->help_page_content, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
-
+            System::updateOrCreate(
+                ['key' => 'watsapp_numbers'],
+                ['value' => $request->watsapp_numbers, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
             if (!empty($request->language)) {
                 session()->put('language', $request->language);
             }

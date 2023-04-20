@@ -22,7 +22,13 @@ $i = $index;
             value="{{$product->variation_id}}">
     </td>
     <td>
-        {{$product->sub_sku}}
+        {{-- @if($sku_sub)
+            {{$sku_sub}}
+            <input type="hidden" name="add_stock_lines[{{$i}}][sku_sub]" value="{{$sku_sub}}">
+        @else --}}
+            {{$product->sub_sku}}
+        {{-- @endif --}}
+        
     </td>
     <td>
         @if($qty)
@@ -59,23 +65,24 @@ $i = $index;
             class="current_stock_text">@if($product->is_service) {{'-'}} @else @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif</span>
     </td>
     <td>
-        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class="stock_pricechange stockId{{$product->id}}" checked value="1"></div>
+        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class="stock_pricechange stockId{{$i}}" checked value="1"></div>
     </td>
     <td rowspan="2">
         <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$i}}"><i
                 class="fa fa-times"></i></button>
     </td>
 </tr>
-<tr class="row_details_{{$i}}">
+<tr class="row_details_{{$i}} row_details">
     <td> {!! Form::label('', __('lang.batch_number'), []) !!} <br> {!!
         Form::text('add_stock_lines['.$i.'][batch_number]', null, ['class' => 'form-control batchNumber']) !!}
-       <button type="button" class="btn btn-success add_new_batch mt-2" id="addBatch" data-product="{{$product}}" index_id="{{$i}}">
+       <button type="button" class="btn btn-success add_new_batch mt-2" id="addBatch" data-index="{{$i}}" data-product="{{$product}}" index_id="{{$i}}">
             <i class="fa fa-plus"></i>
         </button> 
         {{__('lang.add_a_new_batch')}}
-        @include(
+        {{-- @include(
             'quotation.partial.new_batch_modal'
-        )
+        ) --}}
+    </td>
     <td> {!! Form::label('', __('lang.manufacturing_date'), []) !!}<br>
         {!! Form::text('add_stock_lines['.$i.'][manufacturing_date]', null, ['class' => 'form-control datepicker']) !!}
     </td>
@@ -91,7 +98,7 @@ $i = $index;
     <td>
 
     </td>
-    <td class="td_add_qty_bounce" colspan="4" >
+    <td class="td_add_qty_bounce" colspan="5" >
         <button type="button" class="btn btn-success add_bounce_btn" index_id="{{$i}}">
             <i class="fa fa-plus"></i>
         </button>
@@ -126,9 +133,47 @@ $i = $index;
         {!! Form::text('add_stock_lines['.$i.'][bounce_convert_status_expire]', null, ['class' => 'form-control']) !!}
     </td>
 </tr>
+<tr class="row_batch_details_{{$i}} row_batch_details" id="batch_number_row{{$i}}" style="background-color:rgb(246, 248, 248);display:none;">
+    <td> {!! Form::label('', __('lang.new_batch'), []) !!} <br> {!!
+        Form::text('add_stock_lines['.$i.'][new_batch_number]', null, ['class' => 'form-control batchNumber']) !!}
+    </td>
+    <td colspan="1"><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+        alt="photo" width="50" height="50"></td>
+    <td colspan="1">
+        {!! Form::label('', __('lang.manufacturing_date'), []) !!}<br>
+        {!! Form::text('add_stock_lines['.$i.'][batch_manufacturing_date]', null, ['class' => 'form-control datepicker',
+        'readonly']) !!}
+    </td>
+    <td colspan="1"> 
+        {!! Form::label('', __('lang.expiry_date'), []) !!}<br>
+        {!! Form::text('add_stock_lines['.$i.'][batch_expiry_date]', null, ['class' => 'form-control datepicker expiry_date',
+        'readonly']) !!}
+    </td>
+    <td colspan="2">
+        {!! Form::label('', __('lang.quantity'), []) !!}<br>
+        <input type="text" class="form-control quantity quantity_{{$i}}" min=1 name="add_stock_lines[{{$i}}][batch_quantity]" required
+            value="1"  index_id="{{$i}}">
+         {{-- {!! Form::label('', __('lang.days_before_the_expiry_date'), []) !!}<br>
+        {!! Form::text('add_stock_lines['.$i.'][expiry_warning]', null, ['class' => 'form-control days_before_the_expiry_date']) !!} --}}
+    </td>
+    <td colspan="1">
+        <span class="text-secondary font-weight-bold">*</span>
+        <input type="text" class="form-control purchase_price purchase_price_{{$i}}" name="add_stock_lines[{{$i}}][batch_purchase_price]" required
+            value="@if($product->purchase_price_depends == null) {{@num_format($product->default_purchase_price / $exchange_rate)}} @else {{@num_format($product->purchase_price_depends / $exchange_rate)}} @endif" index_id="{{$i}}">
+            <input class="final_cost" type="hidden" name="add_stock_lines[{{$i}}][batch_final_cost]" value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price / $exchange_rate)}}@else{{0}}@endif"  >
+    </td>
+    <td colspan="1">
+        <span class="text-secondary font-weight-bold">*</span>
+        <input type="text" class="form-control selling_price selling_price_{{$i}}" name="add_stock_lines[{{$i}}][batch_selling_price]" required index_id="{{$i}}"
+               value="@if($product->selling_price_depends == null) {{@num_format($product->sell_price)}} @else {{@num_format($product->selling_price_depends)}} @endif"  >
+    </td>
+    <td colspan="3"></td>
+ 
+</tr>
 @empty
 
 @endforelse
+
 <script>
     $('.datepicker').datepicker({
         language: "{{session('language')}}",

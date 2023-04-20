@@ -1328,5 +1328,8 @@ return [
 
     'discount_category'=>'الاسم المختصر للخصم',
     'category_discount'=>'فئة',
+    'new_batch'=>'رقم التشغيلة الجديدة',
+    'watsapp_numbers'=>'رقم واتساب للتواصل',
+
 
 ];

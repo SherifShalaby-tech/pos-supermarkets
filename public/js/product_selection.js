@@ -89,7 +89,7 @@ $(document).ready(function () {
                 name: "default_purchase_price",
                 searchable: false,
             },
-            { data: "supplier", name: "supplier" },
+            { data: "supplier", name: "supplier_name" },
             { data: "created_by", name: "users.name" },
             { data: "edited_by_name", name: "edited.name" },
             { data: "action", name: "action" },

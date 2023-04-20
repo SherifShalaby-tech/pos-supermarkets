@@ -241,16 +241,16 @@ class TransactionUtil extends Util
 
                 if ($line->remaining_qty >= $qty_difference) {
                     $line->increment('quantity_sold', $qty_difference);
-                    if($stock_id){
-                        $line->decrement('quantity', $qty_difference);
-                    }
+                    // if($stock_id){
+                    //     $line->decrement('quantity', $qty_difference);
+                    // }
                     $qty_difference = 0;
                 }
                 if ($line->remaining_qty < $qty_difference) {
                     $line->increment('quantity_sold', $line->remaining_qty);
-                    if($stock_id){
-                        $line->decrement('quantity', $line->remaining_qty);
-                    }
+                    // if($stock_id){
+                    //     $line->decrement('quantity', $line->remaining_qty);
+                    // }
                     $qty_difference = $qty_difference - $line->remaining_qty;
                 }
             }
