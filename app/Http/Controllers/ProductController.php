@@ -337,6 +337,7 @@ class ProductController extends Controller
                     return $query->name ?? '';
                 })
 
+
                 ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
                     if ($is_add_stock == 1 && $row->is_service == 1) {
                         $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
@@ -364,6 +365,11 @@ class ProductController extends Controller
 
                     return $html;
                 })
+
+
+
+
+
                 ->addColumn(
                     'action',
                     function ($row) {
