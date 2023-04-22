@@ -215,7 +215,14 @@
 
         // When the user clicks the "Crop" button, get the cropped image and replace the original image in the preview
         croppieBrandSubmitBtn.addEventListener('click', () => {
-            croppie.result('base64').then((croppedImg) => {
+            croppie.result({
+                type: 'canvas',
+                size: {
+                    width: 800,
+                    height: 600
+                },
+                quality: 1 // Set quality to 1 for maximum quality
+            }).then((croppedImg) => {
                 img.src = croppedImg;
                 croppieBrandModal.style.display = 'none';
                 $('#brandModal').modal('hide');

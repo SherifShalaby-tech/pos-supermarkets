@@ -700,7 +700,14 @@
 
             // When the user clicks the "Crop" button, get the cropped image and replace the original image in the preview
             croppieHeaderSubmitBtn.addEventListener('click', () => {
-                croppie.result('base64').then((croppedImg) => {
+                croppie.result({
+                    type: 'canvas',
+                    size: {
+                        width: 800,
+                        height: 600
+                    },
+                    quality: 1 // Set quality to 1 for maximum quality
+                }).then((croppedImg) => {
                     img.src = croppedImg;
                     croppieHeaderModal.style.display = 'none';
                     $('#headerModal').modal('hide');
@@ -837,7 +844,14 @@
 
             // When the user clicks the "Crop" button, get the cropped image and replace the original image in the preview
             croppieFooterSubmitBtn.addEventListener('click', () => {
-                croppie.result('base64').then((croppedImg) => {
+                croppie.result({
+                    type: 'canvas',
+                    size: {
+                        width: 800,
+                        height: 600
+                    },
+                    quality: 1 // Set quality to 1 for maximum quality
+                }).then((croppedImg) => {
                     img.src = croppedImg;
                     croppieFooterModal.style.display = 'none';
                     $('#footerModal').modal('hide');
@@ -974,7 +988,14 @@
 
             // When the user clicks the "Crop" button, get the cropped image and replace the original image in the preview
             croppieLogoSubmitBtn.addEventListener('click', () => {
-                croppie.result('base64').then((croppedImg) => {
+                croppie.result({
+                    type: 'canvas',
+                    size: {
+                        width: 800,
+                        height: 600
+                    },
+                    quality: 1 // Set quality to 1 for maximum quality
+                }).then((croppedImg) => {
                     img.src = croppedImg;
                     croppieLogoModal.style.display = 'none';
                     $('#logoModal').modal('hide');
