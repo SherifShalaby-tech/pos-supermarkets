@@ -157,6 +157,7 @@ $("#submit-btn").on("click", function (e) {
             success: function (result) {
                 if (!result.success) {
                     swal("Error", result.msg, "error");
+                    $("#sku").val("");
                 }else if (result.success){
                     if ($("#product-form").valid()) {
                         tinyMCE.triggerSave();
@@ -722,7 +723,6 @@ $(document).on("change", "#purchase_price", function () {
 });
 $(document).on("change", "#sku", function () {
     let sku = $(this).val();
-
     $.ajax({
         method: "get",
         url: "/product/check-sku/" + sku,
@@ -730,6 +730,7 @@ $(document).on("change", "#sku", function () {
         success: function (result) {
             if (!result.success) {
                 swal("Error", result.msg, "error");
+                $("#sku").val("");
             }
         },
     });
