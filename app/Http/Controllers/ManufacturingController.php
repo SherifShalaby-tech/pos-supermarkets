@@ -52,7 +52,12 @@ class ManufacturingController extends Controller
     public function index()
     {
         $type = explode("?",\request()->getRequestUri())[1];
-        $manufacturings = Manufacturing::query()->whereHas( explode("?",\request()->getRequestUri())[1] == "process" ? "material_recived": "materials")->latest()->get();
+        if ($type == "process"){
+            $manufacturings = Manufacturing::query()->whereHas("material_recived")->latest()->get();
+        }else{
+            $manufacturing_ids = Manufacturing::query()->whereHas("material_recived")->pluck("id")->toArray();
+            $manufacturings = Manufacturing::query()->whereNotIn("id",$manufacturing_ids)->latest()->get();
+        }
         return view('manufacturings.index')->with(compact(
             'manufacturings',
                     'type'

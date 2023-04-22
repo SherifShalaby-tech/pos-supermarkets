@@ -206,30 +206,66 @@ class SettingController extends Controller
             if (!empty($request->language)) {
                 session()->put('language', $request->language);
             }
-
-            $data['letter_header'] = null;
-            if ($request->hasFile('letter_header')) {
-                $file = $request->file('letter_header');
-                $data['letter_header'] = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path() . '/uploads/', $data['letter_header']);
-            }
-            $data['letter_footer'] = null;
-            if ($request->hasFile('letter_footer')) {
-                $file = $request->file('letter_footer');
-                $data['letter_footer'] = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path() . '/uploads/', $data['letter_footer']);
-            }
             $data['login_screen'] = null;
             if ($request->hasFile('login_screen')) {
                 $file = $request->file('login_screen');
                 $data['login_screen'] = time() . '_' . $file->getClientOriginalName();
                 $file->move(public_path() . '/uploads/', $data['login_screen']);
             }
+//            $data['letter_header'] = null;
+//            if ($request->hasFile('letter_header')) {
+//                $file = $request->file('letter_header');
+//                $data['letter_header'] = time() . '_' . $file->getClientOriginalName();
+//                $file->move(public_path() . '/uploads/', $data['letter_header']);
+//            }
+//            $data['letter_footer'] = null;
+//            if ($request->hasFile('letter_footer')) {
+//                $file = $request->file('letter_footer');
+//                $data['letter_footer'] = time() . '_' . $file->getClientOriginalName();
+//                $file->move(public_path() . '/uploads/', $data['letter_footer']);
+//            }
+//            $data['logo'] = null;
+//            if ($request->hasFile('logo')) {
+//                $file = $request->file('logo');
+//                $data['logo'] = time() . '_' . $file->getClientOriginalName();
+//                $file->move(public_path() . '/uploads/', $data['logo']);
+//            }
+
+            $data['letter_header'] = null;
+            if ($request->has('letter_header') && !is_null('letter_header')) {
+//            $file = $request->file('letter_header');
+//            $data['letter_header'] = time() . '_' . $file->getClientOriginalName();
+//            $file->move(public_path() . '/uploads/', $data['letter_header']);
+                $imageData = $this->getCroppedImage($request->letter_header);
+                $extention = explode(";", explode("/", $imageData)[1])[0];
+                $image = rand(1, 1500) . "_image." . $extention;
+                $filePath = public_path('uploads/' . $image);
+                $data['letter_header'] = $image;
+                $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+            }
+            $data['letter_footer'] = null;
+            if ($request->has('letter_footer') && !is_null('letter_footer')) {
+//            $file = $request->file('letter_footer');
+//            $data['letter_footer'] = time() . '_' . $file->getClientOriginalName();
+//            $file->move(public_path() . '/uploads/', $data['letter_footer']);
+                $imageData = $this->getCroppedImage($request->letter_footer);
+                $extention = explode(";", explode("/", $imageData)[1])[0];
+                $image = rand(1, 1500) . "_image." . $extention;
+                $filePath = public_path('uploads/' . $image);
+                $data['letter_footer'] = $image;
+                $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+            }
             $data['logo'] = null;
-            if ($request->hasFile('logo')) {
-                $file = $request->file('logo');
-                $data['logo'] = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path() . '/uploads/', $data['logo']);
+            if ($request->has('logo') && !is_null('logo')) {
+//            $file = $request->file('logo');
+//            $data['logo'] = time() . '_' . $file->getClientOriginalName();
+//            $file->move(public_path() . '/uploads/', $data['logo']);
+                $imageData = $this->getCroppedImage($request->logo);
+                $extention = explode(";", explode("/", $imageData)[1])[0];
+                $image = rand(1, 1500) . "_image." . $extention;
+                $filePath = public_path('uploads/' . $image);
+                $data['logo'] = $image;
+                $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
             }
 
             foreach ($data as $key => $value) {
@@ -468,5 +504,27 @@ class SettingController extends Controller
         return response()->download( $pdf->download('Report.pdf') );
         // return $pdf->download('Admins.pdf') ;
 
+    }
+    function getBase64Image($Image)
+    {
+        $image_path = str_replace(env("APP_URL") . "/", "", $Image);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $image_path);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $image_content = curl_exec($ch);
+        curl_close($ch);
+//    $image_content = file_get_contents($image_path);
+        $base64_image = base64_encode($image_content);
+        $b64image = "data:image/jpeg;base64," . $base64_image;
+        return $b64image;
+    }
+
+    function getCroppedImage($img)
+    {
+        if (strlen($img) < 200) {
+            return $this->getBase64Image($img);
+        } else {
+            return $img;
+        }
     }
 }

@@ -1340,7 +1340,7 @@ return [
     'wrong_gift_card_amount'=>'The maximum amount of support for this card is :amount',
 
     'discount_category'=>'Brief Discount Name',
-    'category_discount'=>'Category',
+    'category_discount'=>'Discount Category',
     'new_batch'=>'New Batch Number',
     'watsapp_numbers'=>'Watsapp Numbers',
 ];

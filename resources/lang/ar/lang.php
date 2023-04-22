@@ -1327,7 +1327,7 @@ return [
     'wrong_gift_card_amount'=>'الحد القصي لمبلغ الدفع لهذة البطاقة هو :amount',
 
     'discount_category'=>'الاسم المختصر للخصم',
-    'category_discount'=>'فئة',
+    'category_discount'=>'فئة الخصم',
     'new_batch'=>'رقم التشغيلة الجديدة',
     'watsapp_numbers'=>'رقم واتساب للتواصل',
 

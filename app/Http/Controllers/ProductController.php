@@ -112,6 +112,7 @@ class ProductController extends Controller
      */
        public function index(Request $request)
     {
+        $process_type = $request->process_type??null;
         if (request()->ajax()) {
             $products = Product::leftjoin('variations', function ($join) {
                 $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
@@ -128,7 +129,6 @@ class ProductController extends Controller
                 ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'sub_categories.id')
                 ->leftjoin('brands', 'products.brand_id', 'brands.id')
                 ->leftjoin('supplier_products', 'products.id', 'supplier_products.product_id')
-                ->leftjoin('suppliers as suppliersf', 'supplier_products.supplier_id', 'suppliersf.id')
                 ->leftjoin('users', 'products.created_by', 'users.id')
                 ->leftjoin('users as edited', 'products.edited_by', 'users.id')
                 ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
@@ -138,14 +138,10 @@ class ProductController extends Controller
 
             $store_query = '';
             if (!empty($store_id)) {
-                 $products->where('product_stores.store_id', $store_id);
+                // $products->where('product_stores.store_id', $store_id);
                 $store_query = 'AND store_id=' . $store_id;
             }
-            if (!session('user.is_superadmin')) {
-                $employee = Employee::where('user_id', auth()->user()->id)->first();
-                $products->wherein('product_stores.store_id', (array) $employee->store_id);
-//                $store_query = 'AND store_id in (' . (array) $employee->store_id .')';
-            }
+
             if (!empty(request()->product_id)) {
                 $products->where('products.id', request()->product_id);
             }
@@ -220,11 +216,10 @@ class ProductController extends Controller
                 'grades.name as grade',
                 'units.name as unit',
                 'taxes.name as tax',
-                'suppliersf.name as supplier',
                 'variations.id as variation_id',
                 'variations.name as variation_name',
                 'variations.default_purchase_price',
-                'variations.default_sell_price',
+                'variations.default_sell_price as default_sell_price',
                 'add_stock_lines.expiry_date as exp_date',
                 'users.name as created_by_name',
                 'edited.name as edited_by_name',
@@ -243,9 +238,6 @@ class ProductController extends Controller
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
                 ->editColumn('sub_sku', '{{$sub_sku}}')
-                ->editColumn('is_service',function ($row) {
-                    return $row->is_service=='1'?'<span class="badge badge-danger">'.Lang::get('lang.is_have_service').'</span>':'';
-                })
                 ->addColumn('product_class', '{{$product_class}}')
                 ->addColumn('category', '{{$category}}')
                 ->addColumn('sub_category', '{{$sub_category}}')
@@ -254,10 +246,9 @@ class ProductController extends Controller
                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                     return $html;
                 })
-                // ->addColumn('supplier_name', function ($row) {
-                //     return $row->supplier ? $row->supplier->name : '';
-                // })
-
+                ->editColumn('supplier_name', function ($row) {
+                    return $row->supplier->name ?? '';
+                })
                 ->editColumn('batch_number', '{{$batch_number}}')
                 ->editColumn('default_sell_price', function ($row) {
                     $price= AddStockLine::where('variation_id',$row->variation_id)
@@ -271,7 +262,7 @@ class ProductController extends Controller
                     $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
 
                     return $this->productUtil->num_f($price);
-                })
+                })//, '{{@num_format($default_purchase_price)}}')
                 ->addColumn('tax', '{{$tax}}')
                 ->editColumn('brand', '{{$brand}}')
                 ->editColumn('unit', '{{$unit}}')
@@ -327,7 +318,6 @@ class ProductController extends Controller
                     return $discount_text;
                     //'{{@num_format($discount)}}'
                 })
-//                ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
                 ->editColumn('active', function ($row) {
                     if ($row->active) {
                         return __('lang.yes');
@@ -336,29 +326,18 @@ class ProductController extends Controller
                     }
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
-                ->addColumn('supplier_name', function ($row) {
-                    $addStocks =  AddStockLine::select('id','transaction_id')
-                        ->with(['transaction:id,supplier_id','transaction.supplier:id,name'])
-                        ->whereProductId($row->id)
-                        ->get();
-                    $supplierNames = array();
-                    foreach ($addStocks as $supplier)
-                    {
-                        array_push($supplierNames,$supplier->transaction->supplier->name);
-                    }
-                    return implode(' , ',array_unique($supplierNames));
-/*                    $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
+                ->addColumn('supplier', function ($row) {
+                    $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
                         ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
                         ->where('transactions.type', 'add_stock')
                         ->where('add_stock_lines.product_id', $row->id)
                         ->select('suppliers.name')
                         ->orderBy('transactions.id', 'desc')
                         ->first();
-                    return $query->name;*/
+                    return $query->name ?? '';
                 })
 
 
-                
                 ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
                     if ($is_add_stock == 1 && $row->is_service == 1) {
                         $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
@@ -370,6 +349,20 @@ class ProductController extends Controller
                             $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                         }
                     }
+                    
+                
+                    }
+
+                    return $html;
+                })->addColumn('selection_checkbox_send', function ($row)  {
+                    $html = '<input type="checkbox" name="product_selected_send" class="product_selected_send" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+                    return $html;
+                })
+                ->addColumn('selection_checkbox_delete', function ($row)  {
+                    $html = '<input type="checkbox" name="product_selected_delete" class="product_selected_delete" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+
                     return $html;
                 })
 
@@ -380,6 +373,9 @@ class ProductController extends Controller
                 ->addColumn(
                     'action',
                     function ($row) {
+                        if($row->parent_branch_id != null ){
+                            return '';
+                        }
                         $html =
                             '<div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -409,6 +405,7 @@ class ProductController extends Controller
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.product.delete')) {
+
                             $html .=
                                 '<li>
                             <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
@@ -435,6 +432,8 @@ class ProductController extends Controller
                 ])
                 ->rawColumns([
                     'selection_checkbox',
+                    'selection_checkbox_send',
+                    'selection_checkbox_delete',
                     'image',
                     'variation_name',
                     'sku',
@@ -461,8 +460,6 @@ class ProductController extends Controller
                 ])
                 ->make(true);
         }
-
-
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
@@ -696,6 +693,7 @@ class ProductController extends Controller
                     $product->addMedia($filePath)->toMediaCollection('product');
                 }
             }
+
 
 
             if (!empty($request->supplier_id)) {
@@ -938,10 +936,20 @@ class ProductController extends Controller
             }
 
 
-            if ($request->images) {
-                $product->clearMediaCollection('product');
-                foreach ($request->images as $image) {
-                    $product->addMedia($image)->toMediaCollection('product');
+//            if ($request->images) {
+//                $product->clearMediaCollection('product');
+//                foreach ($request->images as $image) {
+//                    $product->addMedia($image)->toMediaCollection('product');
+//                }
+//            }
+            if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
+                    $product->clearMediaCollection('product');
+                    $extention = explode(";",explode("/",$imageData)[1])[0];
+                    $image = rand(1,1500)."_image.".$extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+                    $product->addMedia($filePath)->toMediaCollection('product');
                 }
             }
 
@@ -1332,5 +1340,30 @@ class ProductController extends Controller
         $raw_material = Product::find($raw_material_id);
 
         return ['raw_material' => $raw_material];
+    }
+    public function getBase64Image($Image)
+    {
+
+        $image_path = str_replace(env("APP_URL") . "/", "", $Image);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $image_path);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $image_content = curl_exec($ch);
+        curl_close($ch);
+//    $image_content = file_get_contents($image_path);
+        $base64_image = base64_encode($image_content);
+        $b64image = "data:image/jpeg;base64," . $base64_image;
+        return  $b64image;
+    }
+    public function getCroppedImages($cropImages){
+        $dataNewImages = [];
+        foreach ($cropImages as $img) {
+            if (strlen($img) < 200){
+                $dataNewImages[] = $this->getBase64Image($img);
+            }else{
+                $dataNewImages[] = $img;
+            }
+        }
+        return $dataNewImages;
     }
 }

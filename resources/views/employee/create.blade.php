@@ -199,6 +199,7 @@
     <script>
         $('#date_of_start_working').datepicker({
             language: '{{ session('language') }}',
+            todayHighlight: true,
         });
         $('#date_of_birth').datepicker({
             language: '{{ session('language') }}',

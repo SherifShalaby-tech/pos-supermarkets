@@ -56,5 +56,6 @@ $i = 0;
 <script>
     $('.datepicker').datepicker({
         language: "{{session('language')}}",
+        todayHighlight: true,
     })
 </script>

@@ -150,6 +150,7 @@
 
         $('.datepicker').datepicker({
             language: '{{ session('language') }}',
+            todayHighlight: true,
         });
     </script>
 @endsection
