@@ -119,6 +119,7 @@
 <script>
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
+        todayHighlight: true,
     });
     $('.selectpicker').selectpicker('render');
     // $('.selectpicker').selectpicker('selectAll');

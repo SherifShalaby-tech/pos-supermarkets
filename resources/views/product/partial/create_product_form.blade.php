@@ -236,7 +236,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                                             <i class="fas fa-cloud-upload-alt"></i>Upload
                                         </label>
                                         <!-- <input  id="file-input" multiple type='file' /> -->
-                                        <input type="file" id="file-input" multiple>
+                                        <input type="file" id="file-input">
                                     </div>
                                 </div>
                             </div>

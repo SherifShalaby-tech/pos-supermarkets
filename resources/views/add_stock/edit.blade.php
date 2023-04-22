@@ -178,13 +178,13 @@
                                             <tr class="row_details_{{$loop->index}}">
                                                 <td> {!! Form::text('add_stock_lines[' . $loop->index . '][batch_number]', $product->batch_number, ['class' => 'form-control', 'placeholder' => __('lang.batch_number')]) !!}</td>
                                                     <td>
-                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][manufacturing_date]', !empty($product->manufacturing_date) ? @format_date($product->manufacturing_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.manufacturing_date'), 'readonly']) !!}
+                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][manufacturing_date]', !empty($product->manufacturing_date) ? @format_date($product->manufacturing_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.manufacturing_date')]) !!}
                                                     </td>
                                                     <td>
-                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][expiry_date]', !empty($product->expiry_date) ? @format_date($product->expiry_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.expiry_date'), 'readonly']) !!}
+                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][expiry_date]', !empty($product->expiry_date) ? @format_date($product->expiry_date) : null, ['class' => 'form-control datepicker expiry_date', 'placeholder' => __('lang.expiry_date')]) !!}
                                                     </td>
                                                     <td>
-                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][expiry_warning]', $product->expiry_warning, ['class' => 'form-control', 'placeholder' => __('lang.days_before_the_expiry_date')]) !!}
+                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][expiry_warning]', $product->expiry_warning, ['class' => 'form-control days_before_the_expiry_date', 'placeholder' => __('lang.days_before_the_expiry_date')]) !!}
                                                     </td>
                                                     <td>
                                                         {!! Form::text('add_stock_lines[' . $loop->index . '][convert_status_expire]', $product->convert_status_expire, ['class' => 'form-control', 'placeholder' => __('lang.convert_status_expire')]) !!}

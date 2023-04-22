@@ -87,6 +87,7 @@
                                                 <th style="width: 20%">{{__('lang.quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
                                                 <th style="width: 20%">{{__('lang.discount')}}</th>
+                                                <th style="width: 20%">{{__('lang.category_discount')}}</th>
                                                 <th style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 @if(session('system_mode') != 'restaurant')
                                                 <th style="width: 10%">{{__('lang.current_stock')}}</th>
