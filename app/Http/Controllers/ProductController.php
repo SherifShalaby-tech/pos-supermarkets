@@ -336,21 +336,20 @@ class ProductController extends Controller
                         ->first();
                     return $query->name ?? '';
                 })
-                ->addColumn('selection_checkbox', function ($row) use ($is_add_stock,$process_type) {
-                    if ($row->is_service == 1 || $is_add_stock == 1) {
-                        $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+                ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
+                    if ($is_add_stock == 1 && $row->is_service == 1) {
+                        $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
                     } else {
-                        if ($row->current_stock > 0) {
+                        if ($row->current_stock >= 0 ) {
                             $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                         } else {
-                            // if received_manufacturing_products open all products to add to stock
-                            if ($process_type == "received_manufacturing_products"){
-                                $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
-                            }else{
-                                $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
-
-                            }
+                            $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                         }
+                    }
+                    
+                
                     }
 
                     return $html;
@@ -361,6 +360,7 @@ class ProductController extends Controller
                 })
                 ->addColumn('selection_checkbox_delete', function ($row)  {
                     $html = '<input type="checkbox" name="product_selected_delete" class="product_selected_delete" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
 
                     return $html;
                 })
