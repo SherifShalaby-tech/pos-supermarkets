@@ -98,138 +98,139 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
     }
 });
 
-Dropzone.autoDiscover = false;
-myDropzone = new Dropzone("div#my-dropzone", {
-    addRemoveLinks: true,
-    autoProcessQueue: false,
-    uploadMultiple: true,
-    parallelUploads: 100,
-    maxFilesize: 12,
-    paramName: "images",
-    clickable: true,
-    method: "POST",
-    url: $("#product-edit-form").attr("action"),
-    headers: {
-        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-    },
-    renameFile: function (file) {
-        var dt = new Date();
-        var time = dt.getTime();
-        return time + file.name;
-    },
-    acceptedFiles: ".jpeg,.jpg,.png,.gif",
-    init: function () {
-        var myDropzone = this;
-        $("#submit-btn").on("click", function (e) {
-            e.preventDefault();
-            if ($("#product-edit-form").valid()) {
-                tinyMCE.triggerSave();
-                if (myDropzone.getAcceptedFiles().length) {
-                    myDropzone.processQueue();
-                } else {
-                    $.ajax({
-                        type: "POST",
-                        url: $("#product-edit-form").attr("action"),
-                        data: $("#product-edit-form").serialize(),
-                        success: function (response) {
-                            if (response.success) {
-                                swal("Success", response.msg, "success");
-                                setTimeout(() => {
-                                    window.close();
-                                }, 1000);
-                            }
-                        },
-                        error: function (response) {
-                            if (!response.success) {
-                                swal("Error", response.msg, "error");
-                            }
-                        },
-                    });
-                }
-            }
-        });
+// Dropzone.autoDiscover = false;
+// myDropzone = new Dropzone("div#my-dropzone", {
+//     addRemoveLinks: true,
+//     autoProcessQueue: false,
+//     uploadMultiple: true,
+//     parallelUploads: 100,
+//     maxFilesize: 12,
+//     paramName: "images",
+//     clickable: true,
+//     method: "POST",
+//     url: $("#product-edit-form").attr("action"),
+//     headers: {
+//         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+//     },
+//     renameFile: function (file) {
+//         var dt = new Date();
+//         var time = dt.getTime();
+//         return time + file.name;
+//     },
+//     acceptedFiles: ".jpeg,.jpg,.png,.gif",
+//     init: function () {
+//         var myDropzone = this;
+//         $("#submit-btn").on("click", function (e) {
+//             e.preventDefault();
+//             if ($("#product-edit-form").valid()) {
+//                 tinyMCE.triggerSave();
+//                 if (myDropzone.getAcceptedFiles().length) {
+//                     myDropzone.processQueue();
+//                 } else {
+//                     $.ajax({
+//                         type: "POST",
+//                         url: $("#product-edit-form").attr("action"),
+//                         data: $("#product-edit-form").serialize(),
+//                         success: function (response) {
+//                             if (response.success) {
+//                                 swal("Success", response.msg, "success");
+//                                 setTimeout(() => {
+//                                     window.close();
+//                                 }, 1000);
+//                             }
+//                         },
+//                         error: function (response) {
+//                             if (!response.success) {
+//                                 swal("Error", response.msg, "error");
+//                             }
+//                         },
+//                     });
+//                 }
+//             }
+//         });
+//
+//         this.on("sending", function (file, xhr, formData) {
+//             document.getElementById("loader").style.display = "block";
+//             document.getElementById("content").style.display = "none";
+//             var data = $("#product-edit-form").serializeArray();
+//             $.each(data, function (key, el) {
+//                 formData.append(el.name, el.value);
+//             });
+//         });
+//         this.on("complete", function (file) {
+//             this.removeAllFiles(true);
+//             myFunction();
+//         });
+//     },
+//     error: function (file, response) {
+//         console.log(response);
+//     },
+//     successmultiple: function (file, response) {
+//         if (response.success) {
+//             swal("Success", response.msg, "success");
+//             window.location.reload();
+//         }
+//         if (!response.success) {
+//             swal("Error", response.msg, "error");
+//         }
+//     },
+//     completemultiple: function (file, response) {},
+//     reset: function () {
+//         this.removeAllFiles(true);
+//     },
+// });
+//
+// var modalTemplate = $("#product_cropper_modal");
+//
+// myDropzone.on("thumbnail", function (file) {
+//     if (file.cropped) return;
+//
+//     var cachedFilename = file.name;
+//     myDropzone.removeFile(file);
+//
+//     var $cropperModal = $(modalTemplate);
+//     var $uploadCrop = $cropperModal.find("#product_crop");
+//
+//     $cropperModal.find(".product_preview_div").empty();
+//
+//     var $img = document.getElementById("product_sample_image");
+//
+//     var reader = new FileReader();
+//     reader.onloadend = function () {
+//         $($img).attr("src", reader.result);
+//         $cropperModal.modal("show");
+//         modalTemplate.on("shown.bs.modal", function () {
+//             cropper = new Cropper($img, {
+//                 initialAspectRatio: 1,
+//                 viewMode: 3,
+//                 preview: ".product_preview_div",
+//             });
+//         });
+//     };
+//     reader.readAsDataURL(file);
+//
+//     $uploadCrop.on("click", function () {
+//         var blob = cropper.getCroppedCanvas().toDataURL();
+//         var newFile = dataURItoBlob(blob);
+//         newFile.cropped = true;
+//         newFile.name = cachedFilename;
+//
+//         myDropzone.addFile(newFile);
+//         $cropperModal.modal("hide");
+//         cropper.destroy();
+//         cropper = null;
+//     });
+// });
 
-        this.on("sending", function (file, xhr, formData) {
-            document.getElementById("loader").style.display = "block";
-            document.getElementById("content").style.display = "none";
-            var data = $("#product-edit-form").serializeArray();
-            $.each(data, function (key, el) {
-                formData.append(el.name, el.value);
-            });
-        });
-        this.on("complete", function (file) {
-            this.removeAllFiles(true);
-            myFunction();
-        });
-    },
-    error: function (file, response) {
-        console.log(response);
-    },
-    successmultiple: function (file, response) {
-        if (response.success) {
-            swal("Success", response.msg, "success");
-            window.location.reload();
-        }
-        if (!response.success) {
-            swal("Error", response.msg, "error");
-        }
-    },
-    completemultiple: function (file, response) {},
-    reset: function () {
-        this.removeAllFiles(true);
-    },
-});
-
-var modalTemplate = $("#product_cropper_modal");
-
-myDropzone.on("thumbnail", function (file) {
-    if (file.cropped) return;
-
-    var cachedFilename = file.name;
-    myDropzone.removeFile(file);
-
-    var $cropperModal = $(modalTemplate);
-    var $uploadCrop = $cropperModal.find("#product_crop");
-
-    $cropperModal.find(".product_preview_div").empty();
-
-    var $img = document.getElementById("product_sample_image");
-
-    var reader = new FileReader();
-    reader.onloadend = function () {
-        $($img).attr("src", reader.result);
-        $cropperModal.modal("show");
-        modalTemplate.on("shown.bs.modal", function () {
-            cropper = new Cropper($img, {
-                initialAspectRatio: 1,
-                viewMode: 3,
-                preview: ".product_preview_div",
-            });
-        });
-    };
-    reader.readAsDataURL(file);
-
-    $uploadCrop.on("click", function () {
-        var blob = cropper.getCroppedCanvas().toDataURL();
-        var newFile = dataURItoBlob(blob);
-        newFile.cropped = true;
-        newFile.name = cachedFilename;
-
-        myDropzone.addFile(newFile);
-        $cropperModal.modal("hide");
-        cropper.destroy();
-        cropper = null;
-    });
-});
-modalTemplate.on("hidden.bs.modal", function () {
-    console.log(cropper);
-    if (typeof cropper !== "undefined") {
-        if (copper !== null) {
-            // cropper.destroy();
-            cropper = null;
-        }
-    }
-});
+// modalTemplate.on("hidden.bs.modal", function () {
+//     console.log(cropper);
+//     if (typeof cropper !== "undefined") {
+//         if (copper !== null) {
+//             // cropper.destroy();
+//             cropper = null;
+//         }
+//     }
+// });
 // transform cropper dataURI output to a Blob which Dropzone accepts
 function dataURItoBlob(dataURI) {
     var byteString = atob(dataURI.split(",")[1]);
