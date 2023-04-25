@@ -517,8 +517,9 @@
                                                 <th>@lang('lang.grade')</th>
                                                 <th>@lang('lang.unit')</th>
                                                 <th>@lang('lang.number_vs_base_unit')</th>
-                                                <th class="supplier_div @if (empty($product->is_service)) hide @endif">@lang('lang.purchase_price')</th>
-                                                <th class="supplier_div @if (empty($product->is_service)) hide @endif">@lang('lang.sell_price')</th>
+                                                {{-- @if (empty($product->is_service)) hide @endif --}}
+                                                <th class="supplier_div">@lang('lang.purchase_price')</th>
+                                                <th class="supplier_div">@lang('lang.sell_price')</th>
                                                 <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
                                                             class="dripicons-plus"></i></button></th>
                                             </tr>

@@ -238,6 +238,9 @@ class ProductController extends Controller
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
                 ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->editColumn('is_service',function ($row) {
+                    return $row->is_service=='1'?'<span class="badge badge-danger">'.Lang::get('lang.is_have_service').'</span>':'';
+                })
                 ->addColumn('product_class', '{{$product_class}}')
                 ->addColumn('category', '{{$category}}')
                 ->addColumn('sub_category', '{{$sub_category}}')
