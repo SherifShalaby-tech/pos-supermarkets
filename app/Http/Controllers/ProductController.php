@@ -349,10 +349,6 @@ class ProductController extends Controller
                             $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                         }
                     }
-                    
-                
-                    }
-
                     return $html;
                 })->addColumn('selection_checkbox_send', function ($row)  {
                     $html = '<input type="checkbox" name="product_selected_send" class="product_selected_send" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
