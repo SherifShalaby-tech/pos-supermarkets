@@ -24,7 +24,7 @@ $watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
                             style="background-image: url('{{asset('images/handshake.jpg')}}');" class="btn no-print">
                         </a> --}}
                         <a target="_blank" href="https://api.whatsapp.com/send?phone={{$watsapp_numbers}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
-                            style="background-image: url('{{asset('images/handshake.jpg')}}');" class="btn no-print">
+                            style="background-image: url('{{asset('images/watsapp.jpg')}}');background-size: 40px;" class="btn no-print">
                         </a>
                     </li>
                     <li class="nav-item"><button class="btn-danger btn-sm hide" id="power_off_btn"  data-toggle="tooltip" data-title="@lang('lang.shut_down')"><i
