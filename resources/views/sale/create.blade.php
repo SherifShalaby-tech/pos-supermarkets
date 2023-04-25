@@ -13,6 +13,7 @@
                 <div class="card-body">
                     {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' =>
                     true, 'class' => 'pos-form', 'id' => 'add_sale_form']) !!}
+                    <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
                     <input type="hidden" name="default_customer_id" id="default_customer_id"
                         value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
                     <input type="hidden" name="row_count" id="row_count" value="0">
@@ -83,16 +84,18 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th style="width: 30%">{{__('lang.product')}}</th>
-                                                <th style="width: 20%">{{__('lang.quantity')}}</th>
-                                                <th style="width: 20%">{{__('lang.price')}}</th>
-                                                <th style="width: 20%">{{__('lang.discount')}}</th>
-                                                <th style="width: 20%">{{__('lang.category_discount')}}</th>
+                                                <th style="width: 20%">{{__('lang.product')}}</th>
+                                                <th style="width: 15%">{{__('lang.quantity')}}</th>
+                                                <th style="width: 10%">{{__('lang.price')}}</th>
+                                                <th style="width: 10%">{{__('lang.discount')}}</th>
+                                                <th style="width: 15%">{{__('lang.category_discount')}}</th>
                                                 <th style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 @if(session('system_mode') != 'restaurant')
                                                 <th style="width: 10%">{{__('lang.current_stock')}}</th>
                                                 @endif
-                                                <th style="width: 20%"></th>
+                                                <th
+                                                style="width: 10%;">
+                                                @lang('lang.action')</th>
                                             </tr>
                                         </thead>
                                         <tbody>
