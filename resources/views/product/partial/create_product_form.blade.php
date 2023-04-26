@@ -385,7 +385,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             </tr>
             </thead>
             <tbody>
-            @include('product.partial.raw_discount', ['row_id' => 0])
+            {{-- @include('product.partial.raw_discount', ['row_id' => 0]) --}}
             </tbody>
         </table>
         <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
@@ -468,8 +468,9 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                     <th>@lang('lang.grade')</th>
                     <th>@lang('lang.unit')</th>
                     <th>@lang('lang.number_vs_base_unit')</th>
-                    <th class="@if(empty($is_service)) hide @endif default_purchase_price_th">@lang('lang.purchase_price')</th>
-                    <th class="@if(empty($is_service)) hide @endif default_sell_price_th">@lang('lang.sell_price')</th>
+                    {{-- @if(empty($is_service)) hide @endif --}}
+                    <th class="default_purchase_price_th">@lang('lang.purchase_price')</th>
+                    <th class="default_sell_price_th">@lang('lang.sell_price')</th>
                     <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
                                 class="dripicons-plus"></i></button></th>
                 </tr>

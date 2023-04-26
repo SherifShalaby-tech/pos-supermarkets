@@ -8,6 +8,7 @@
         <td>
             {!! Form::text('discount['.$row_id.']',  @num_format($discount->discount), ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.discount')]) !!}
         </td>
+        {{-- discount_category --}}
         <td>
             {!! Form::text('discount_category['.$row_id.']', $discount->discount_category, ['class' => 'clear_input_form form-control','maxlength'=>"2" , 'pattern'=>"\d{2}"]) !!}
         </td>
@@ -31,6 +32,7 @@
     <td>
         {!! Form::text('discount['.$row_id.']', @num_format($discount_product->discount) , ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.discount')]) !!}
     </td>
+    {{-- discount_category --}}
     <td>
         {!! Form::text('discount_category['.$row_id.']', $discount_product->discount_category , ['class' => 'clear_input_form form-control', 'maxlength'=>"2" , 'pattern'=>"\d{2}"]) !!}
     </td>
@@ -54,6 +56,8 @@
         <td>
             {!! Form::text('discount['.$row_id.']', !empty($recent_product) ? @num_format($recent_product->discount) : null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.discount')]) !!}
         </td>
+
+        {{-- discount_category --}}
         <td>
             {!! Form::text('discount_category['.$row_id.']', !empty($recent_product) ? $recent_product->discount_category : null, ['class' => 'clear_input_form form-control', 'maxlength'=>"2" , 'pattern'=>"\d{2}"]) !!}
         </td>

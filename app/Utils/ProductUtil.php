@@ -660,7 +660,7 @@ class ProductUtil extends Util
                         'discount_start_date',
                         'discount_end_date',
                     )
-                    ->get();
+                    ->first();
             }
 
             if (!empty($product)) {
@@ -675,6 +675,52 @@ class ProductUtil extends Util
                 return $product;
             }
         }
+        return null;
+    }
+
+    public function getProductAllDiscountCategories($product_id)
+    {
+        // $customer = Customer::find($customer_id);
+        // $customer_type_id = null;
+        // if (!empty($customer)) {
+            // $customer_type_id = (string) $customer->customer_type_id;
+        // }
+        // if (!empty($customer_type_id)) {
+
+            $product = Product::where('id', $product_id)
+                ->where('discount', '>',0)
+                ->select(
+                    'products.discount_type',
+                    'products.discount',
+                    'products.discount_start_date',
+                    'products.discount_end_date',
+                )
+                ->first();
+            if(!$product){
+                $product = ProductDiscount::where('product_id', $product_id)
+                    ->select(
+                        'id',
+                        'discount_type',
+                        'discount',
+                        'discount_category',
+                        'discount_start_date',
+                        'discount_end_date',
+                    )
+                    ->get();
+            }
+
+            if (!empty($product)) {
+                if (!empty($product->discount_start_date) && !empty($product->discount_end_date)) {
+                    //if end date set then check for expiry
+                    if ($product->discount_start_date <= date('Y-m-d') && $product->discount_end_date >= date('Y-m-d')) {
+                        return $product;
+                    } else {
+                        return false;
+                    }
+                }
+                return $product;
+            }
+        // }
         return null;
     }
     /**
