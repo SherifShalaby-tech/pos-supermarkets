@@ -385,7 +385,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             </tr>
             </thead>
             <tbody>
-            @include('product.partial.raw_discount', ['row_id' => 0])
+            {{-- @include('product.partial.raw_discount', ['row_id' => 0]) --}}
             </tbody>
         </table>
         <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
