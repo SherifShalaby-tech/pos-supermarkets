@@ -581,15 +581,6 @@ function check_for_sale_promotion() {
         },
     });
 }
-function hasManyDigits(num, digits) {
-    const str = num.toString();
-    const decimalIndex = str.indexOf('.');
-    if (decimalIndex !== -1) {
-        const numDigits = str.substr(decimalIndex + 1).length;
-        return numDigits >= digits;
-    }
-    return false;
-}
 
 function calculate_sub_totals() {
     var grand_total = 0; //without any discounts
@@ -624,6 +615,7 @@ function calculate_sub_totals() {
             sub_total = sell_price * quantity;
         } else if (sell_price < price_hidden) {
             let price_discount = (price_hidden - sell_price);
+
             $(tr).find(".product_discount_type").val("fixed");
             __write_number(
                 $(tr).find(".product_discount_value"),
@@ -797,6 +789,17 @@ function calculate_sub_totals() {
 
     $(".final_total_span").text(__currency_trans_from_en(total, false));
 }
+function hasManyDigits(num, digits) {
+    const str = num.toString();
+    const decimalIndex = str.indexOf('.');
+    if (decimalIndex !== -1) {
+        const numDigits = str.substr(decimalIndex + 1).length;
+        return numDigits >= digits;
+    }
+    return false;
+}
+
+
 
 function calculate_product_surplus(tr) {
     let surplus = 0;
