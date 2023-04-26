@@ -1063,11 +1063,13 @@ class SellPosController extends Controller
 
                 }
                 $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
+                $product_all_discounts_categories = $this->productUtil->getProductAllDiscountCategories($product_id);
                 // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
                 $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
                 $html_content =  view('sale_pos.partials.product_row')
                     ->with(compact('products', 'index',
                         'sale_promotion_details', 'product_discount_details',
+                        'product_all_discounts_categories',
                         'edit_quantity', 'is_direct_sale', 'dining_table_id',
                         'exchange_rate'))->render();
 
