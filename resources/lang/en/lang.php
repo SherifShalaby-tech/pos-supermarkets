@@ -30,6 +30,8 @@ return [
     'under_processing' => 'Under Processing',
     'path' => 'Path',
     'delete_all' => 'Delete All',
+    'numbers_length_after_dot' => 'Number Of Digits',
+
 
     'received' => 'Received',
     'underManufacturing' => 'Under Manufacturing',

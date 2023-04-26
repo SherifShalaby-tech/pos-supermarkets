@@ -398,7 +398,7 @@ function get_label_product_row(
                 is_direct_sale: $("#is_direct_sale").val(),
                 batch_number_id:add_stock_lines_id
             },
-            success: function (result) {         
+            success: function (result) {
                 if (!result.success) {
                     swal("Error", result.msg, "error");
                     return;
@@ -581,6 +581,16 @@ function check_for_sale_promotion() {
         },
     });
 }
+function hasManyDigits(num, digits) {
+    const str = num.toString();
+    const decimalIndex = str.indexOf('.');
+    if (decimalIndex !== -1) {
+        const numDigits = str.substr(decimalIndex + 1).length;
+        return numDigits >= digits;
+    }
+    return false;
+}
+
 function calculate_sub_totals() {
     var grand_total = 0; //without any discounts
     var total = 0;
@@ -648,11 +658,26 @@ function calculate_sub_totals() {
         }
 
         __write_number($(tr).find(".sub_total"), sub_total);
-        $(tr)
-            .find(".sub_total_span")
-            .text(__currency_trans_from_en(sub_total, false));
-
-        total += sub_total;
+        if (isNaN(sub_total)){
+            $(tr)
+                .find(".sub_total_span")
+                .text(__currency_trans_from_en(sub_total, false));
+            total += sub_total;
+        }else{
+            let new_sub_total;
+            let length =$(tr)
+                .find(".sub_total_span")
+                .data("length");
+            if (hasManyDigits(sub_total,5)){
+                new_sub_total=parseFloat(sub_total.toFixed(length));
+            }else{
+                new_sub_total = sub_total;
+            }
+            $(tr)
+                .find(".sub_total_span")
+                .text(new_sub_total);
+            total += new_sub_total;
+        }
 
         item_count++;
 
@@ -677,6 +702,8 @@ function calculate_sub_totals() {
             }
         }
     });
+    // $("#subtotal").text(total);
+    // $(".subtotal").text(total);
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $(".subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
@@ -2955,63 +2982,13 @@ $(document).on("change", "#upload_documents", function (event) {
     }
 });
 //show discount category
-// $(document).on("change", "#customer_id", function (e) {
-//     customer_id=$(this).val();
-//     $("#product_table tbody")
-//         .find("tr")
-//         .each(function () {
-//             var product_id = $(this).find(".p-id").val();
-//             var variation_id = $(this).find(".variation_id").val();
-//             var add_stock_lines_id = $(this).find(".batch_number_id").val();
-//             $.ajax({
-//                 method: "get",
-//                 url: "/pos/add-discounts",
-//                 data:{ 
-//                     customer_id: customer_id,
-//                     product_id: product_id,
-//                     add_stock_lines_id:add_stock_lines_id
-//                 },
-//                 success: function (response) {
-//                     if(response.result){
-//                         $(".discount_category"+product_id).show();
-//                         $(".discount_category"+product_id).html('');
-//                         $(".discount_type"+product_id).val('');
-//                             __write_number($(".discount_value"+product_id), 0);
-//                             __write_number($(".discount_amount"+product_id), 0);
-//                             response.result.forEach(prod => {
-//                                 if(prod){
-//                                     if(prod.discount_category!=null){
-//                                         $(".discount_category"+product_id).prepend('<option value="'+prod.id+'">'+prod.discount_category+'</option>');
-//                                     }else{
-//                                         $(".discount_category"+product_id).prepend('<option value="'+prod.id+'"></option>');
-//                                     }
-//                                 }
-//                             });
-//                         $(".discount_category"+product_id).prepend('<option selected>select</option>');
-//                         response.result.forEach(prod => {
-//                             qty=__read_number($(this).find('.quantity'))
-//                             $(".discount_type"+product_id).val(prod.discount_type);
-//                             __write_number($(".discount_value"+product_id), prod.discount);
-//                             __write_number($(".discount_amount"+product_id), prod.discount*qty);
-//                             console.log(prod.discount)
-//                             return;
-//                         });
-//                         check_for_sale_promotion();
-//                         calculate_sub_totals();
-//                     }
-//                 }
-
-//         });
-    
-//     });
-// });
 $(document).on("change", ".discount_category", function (e) {
     product_discount_id=$(this).val();
     product_id=$(this).parent('td').find('.p-id').val();
     $.ajax({
         method: "get",
         url: "/pos/get-product-discount",
-        data:{ 
+        data:{
             product_discount_id: product_discount_id,
             // product_id,product_id
         },
@@ -3022,14 +2999,14 @@ $(document).on("change", ".discount_category", function (e) {
                 $(".discount_type"+product_id).val(response.result.discount_type);
                 __write_number($(".discount_value"+product_id), response.result.discount);
                 __write_number($(".discount_amount"+product_id), response.result.discount*qty);
-                
+
             }else{
                 $(".discount_type"+product_id).val('');
                 __write_number($(".discount_value"+product_id), 0);
                 __write_number($(".discount_amount"+product_id), 0);
-            }  
+            }
             check_for_sale_promotion();
-            calculate_sub_totals();                  
+            calculate_sub_totals();
         },
     });
 });
