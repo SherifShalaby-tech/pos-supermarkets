@@ -147,7 +147,8 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
 $("#submit-btn").on("click", function (e) {
     e.preventDefault();
     let sku = $("#sku").val();
-    $.ajax({
+    if(sku !== null || sku !==""){
+        $.ajax({
             method: "get",
             url: "/product/check-sku/" + sku,
             data: {},
@@ -193,6 +194,43 @@ $("#submit-btn").on("click", function (e) {
                 }
             },
         });
+    }else{
+        if ($("#product-form").valid()) {
+            tinyMCE.triggerSave();
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            $.ajax({
+                type: "POST",
+                url: $("form#product-form").attr("action"),
+                data: $("#product-form").serialize(),
+                success: function (response) {
+                    myFunction();
+                    if (response.success) {
+                        swal("Success", response.msg, "success");
+                        $("#sku").val("").change();
+                        $("#name").val("").change();
+                        $(".translations").val("").change();
+
+                        if(!$('#clear_all_input_form').is(':checked')){
+                            $('.clear_input_form').val('');
+                            $('.clear_input_form').selectpicker('refresh');
+                        }
+                        const previewContainer = document.querySelector('.preview-container');
+                        previewContainer.innerHTML = '';
+                    } else {
+                        swal("Error", response.msg, "error");
+                    }
+                },
+                error: function (response) {
+                    myFunction();
+                    if (!response.success) {
+                        swal("Error", response.msg, "error");
+                    }
+                },
+            });
+        }
+    }
+
 });
 //
 //         this.on("sending", function (file, xhr, formData) {
