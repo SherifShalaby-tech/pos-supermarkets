@@ -147,10 +147,7 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
 $("#submit-btn").on("click", function (e) {
     e.preventDefault();
     let sku = $("#sku").val();
-    if(sku == null || sku ==""){
-        swal("Error", "sku cant null", "error");
-    }else{
-        $.ajax({
+    $.ajax({
             method: "get",
             url: "/product/check-sku/" + sku,
             data: {},
@@ -196,8 +193,6 @@ $("#submit-btn").on("click", function (e) {
                 }
             },
         });
-    }
-
 });
 //
 //         this.on("sending", function (file, xhr, formData) {
