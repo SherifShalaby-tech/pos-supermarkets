@@ -680,13 +680,6 @@ class ProductUtil extends Util
 
     public function getProductAllDiscountCategories($product_id)
     {
-        // $customer = Customer::find($customer_id);
-        // $customer_type_id = null;
-        // if (!empty($customer)) {
-            // $customer_type_id = (string) $customer->customer_type_id;
-        // }
-        // if (!empty($customer_type_id)) {
-
             $product = Product::where('id', $product_id)
                 ->where('discount', '>',0)
                 ->select(

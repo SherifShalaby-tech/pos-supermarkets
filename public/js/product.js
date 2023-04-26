@@ -789,7 +789,6 @@ $(document).on("click", ".add_raw_material_row", function () {
 $(document).on("click", ".add_discount_row", function () {
     let row_id = parseInt($("#raw_discount_index").val());
     $("#raw_discount_index").val(row_id + 1);
-
     $.ajax({
         method: "get",
         url: "/product/get-raw-discount",
@@ -797,7 +796,7 @@ $(document).on("click", ".add_discount_row", function () {
         success: function (result) {
             $("#consumption_table_discount > tbody").prepend(result);
             $(".selectpicker").selectpicker("refresh");
-            $(".datepicker").datepicker("refresh");
+            $(".datepicker").datepicker({refresh:"refresh",todayHighlight: true});
 
             // $(".raw_material_unit_id").selectpicker("refresh");
         },
