@@ -30,6 +30,9 @@ return [
     'under_processing' => 'تحت التصنيع',
     'path' => 'مسار القسم الفرعي',
     'delete_all' => 'حذف جماعي',
+    'numbers_length_after_dot' => 'الكسور',
+
+
 
     'received' => 'استلام',
     'underManufacturing' => 'تحت التصنيع',
