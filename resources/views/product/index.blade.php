@@ -504,7 +504,7 @@
                     @endcan
                     {
                         data: 'supplier_name',
-                        name: 'supplier_name',
+                        name: 'supplier',
                         searchable: false
                     },
                     {
