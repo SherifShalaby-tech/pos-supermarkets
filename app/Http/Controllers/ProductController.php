@@ -641,7 +641,7 @@ class ProductController extends Controller
                 }
             }
 
-            if (count($index_discounts) > 0){
+
                 foreach ($index_discounts as $index_discount){
                     $discount_customers = $this->getDiscountCustomerFromType($request->get('discount_customer_types_'.$index_discount));
                     $data_des=[
@@ -657,7 +657,7 @@ class ProductController extends Controller
 
                     ProductDiscount::create($data_des);
                 }
-            }
+
 
             if($request->printers){
                 // loop printers
