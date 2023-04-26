@@ -147,7 +147,6 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
 $("#submit-btn").on("click", function (e) {
     e.preventDefault();
     let sku = $("#sku").val();
-
     $.ajax({
             method: "get",
             url: "/product/check-sku/" + sku,
@@ -194,8 +193,6 @@ $("#submit-btn").on("click", function (e) {
                 }
             },
         });
-
-
 });
 //
 //         this.on("sending", function (file, xhr, formData) {
