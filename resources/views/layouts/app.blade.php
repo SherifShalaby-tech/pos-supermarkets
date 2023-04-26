@@ -10,12 +10,11 @@
     <meta name="robots" content="noindex, nofollow" />
 
     <title>@yield('title') - {{ config('app.name', 'POS') }}</title>
-
+    @yield('styles')
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     @include('layouts.partials.css')
-    @yield('styles')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('style')
     <style>
