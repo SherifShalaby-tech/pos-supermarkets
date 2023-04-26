@@ -13,7 +13,7 @@
                         {!! Form::open(['url' => action('SupplierServiceController@update', $add_stock->id), 'method' => 'put', 'id' => 'edit_supplier_service_form', 'enctype' => 'multipart/form-data']) !!}
                         <input type="hidden" name="row_count" id="row_count"
                             value="{{ $add_stock->add_stock_lines->count() }}">
-                        <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
+                        {{-- <input type="hidden" name="is_add_stock" id="is_add_stock" value="1"> --}}
                         <input type="hidden" name="is_raw_material" id="is_raw_material"
                             value="{{ $add_stock->is_raw_material }}">
                         <div class="card-body">
