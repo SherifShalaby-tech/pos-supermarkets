@@ -71,7 +71,6 @@
             color: #007bff;
         }
     </style>
-
     <style>
         .variants {
             display: flex;
@@ -295,6 +294,11 @@
                             </div>
                         </div>
                     @endif
+
+                    <div class="col-md-3">
+                        {!! Form::label('numbers_length_after_dot', __('lang.numbers_length_after_dot'), []) !!}
+                        {!! Form::select('numbers_length_after_dot', ['1' => '0.0', '2' => '0.00', '3' => '0.000','4' => '0.0000', '5' => '0.00000', '6' => '0.000000', '7' => '0.0000000'],  !empty($settings['numbers_length_after_dot']) ? $settings['numbers_length_after_dot'] : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
+                    </div>
                 </div>
                 <br>
                 <hr>

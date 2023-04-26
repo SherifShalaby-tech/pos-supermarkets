@@ -167,6 +167,10 @@ class SettingController extends Controller
                 ['value' => $request->enable_the_table_reservation ?? 0, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
             System::updateOrCreate(
+                ['key' => 'numbers_length_after_dot'],
+                ['value' => $request->numbers_length_after_dot ?? 0, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
+            System::updateOrCreate(
                 ['key' => 'currency'],
                 ['value' => $request->currency, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
