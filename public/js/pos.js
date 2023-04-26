@@ -332,7 +332,6 @@ function get_label_product_row(
         .each(function () {
             var row_v_id = $(this).find(".variation_id").val();
             var row_batch_number = $(this).find(".batch_number_id").val();
-            console.log(add_stock_lines_id)
             if(add_stock_lines_id!=null){
                 if (row_v_id == variation_id && row_batch_number ==add_stock_lines_id && !is_added) {
                     add_via_ajax = false;
@@ -631,7 +630,6 @@ function calculate_sub_totals() {
 
         __write_number($(tr).find(".sub_total"), sub_total);
         let product_discount = calculate_product_discount(tr);
-
         product_discount_total += product_discount;
         sub_total -= product_discount;
         grand_total += sub_total;
@@ -795,11 +793,15 @@ function calculate_product_discount(tr) {
     if (type == "percentage") {
         discount = __get_percent_value(sub_total, value);
     }
+    if(exchange_rate==0){
+        exchange_rate=1;
+    }
     discount = discount / exchange_rate;
     __write_number($(tr).find(".product_discount_amount"), discount);
     if (type == "surplus") {
         discount = 0;
     }
+    console.log(discount)
     return discount;
 }
 function calculate_promotion_discount(tr) {
@@ -972,7 +974,6 @@ $(document).on("click", ".plus", function () {
     let qty = parseFloat($(tr).find(".quantity").val());
     let max = parseFloat($(tr).find(".quantity").attr("max"));
     let is_service = parseInt($(tr).find(".is_service").val());
-
     let new_qty = qty + 1;
     if (!is_service) {
         if (new_qty < 0.1 || new_qty > max) {
@@ -2954,57 +2955,6 @@ $(document).on("change", "#upload_documents", function (event) {
         console.log("nada");
     }
 });
-//show discount category
-// $(document).on("change", "#customer_id", function (e) {
-//     customer_id=$(this).val();
-//     $("#product_table tbody")
-//         .find("tr")
-//         .each(function () {
-//             var product_id = $(this).find(".p-id").val();
-//             var variation_id = $(this).find(".variation_id").val();
-//             var add_stock_lines_id = $(this).find(".batch_number_id").val();
-//             $.ajax({
-//                 method: "get",
-//                 url: "/pos/add-discounts",
-//                 data:{ 
-//                     customer_id: customer_id,
-//                     product_id: product_id,
-//                     add_stock_lines_id:add_stock_lines_id
-//                 },
-//                 success: function (response) {
-//                     if(response.result){
-//                         $(".discount_category"+product_id).show();
-//                         $(".discount_category"+product_id).html('');
-//                         $(".discount_type"+product_id).val('');
-//                             __write_number($(".discount_value"+product_id), 0);
-//                             __write_number($(".discount_amount"+product_id), 0);
-//                             response.result.forEach(prod => {
-//                                 if(prod){
-//                                     if(prod.discount_category!=null){
-//                                         $(".discount_category"+product_id).prepend('<option value="'+prod.id+'">'+prod.discount_category+'</option>');
-//                                     }else{
-//                                         $(".discount_category"+product_id).prepend('<option value="'+prod.id+'"></option>');
-//                                     }
-//                                 }
-//                             });
-//                         $(".discount_category"+product_id).prepend('<option selected>select</option>');
-//                         response.result.forEach(prod => {
-//                             qty=__read_number($(this).find('.quantity'))
-//                             $(".discount_type"+product_id).val(prod.discount_type);
-//                             __write_number($(".discount_value"+product_id), prod.discount);
-//                             __write_number($(".discount_amount"+product_id), prod.discount*qty);
-//                             console.log(prod.discount)
-//                             return;
-//                         });
-//                         check_for_sale_promotion();
-//                         calculate_sub_totals();
-//                     }
-//                 }
-
-//         });
-    
-//     });
-// });
 $(document).on("change", ".discount_category", function (e) {
     product_discount_id=$(this).val();
     product_id=$(this).parent('td').find('.p-id').val();
@@ -3021,8 +2971,7 @@ $(document).on("change", ".discount_category", function (e) {
                 qty=__read_number($(this).find('.quantity'))
                 $(".discount_type"+product_id).val(response.result.discount_type);
                 __write_number($(".discount_value"+product_id), response.result.discount);
-                __write_number($(".discount_amount"+product_id), response.result.discount*qty);
-                
+                __write_number($(".discount_amount"+product_id), response.result.discount*qty);                
             }else{
                 $(".discount_type"+product_id).val('');
                 __write_number($(".discount_value"+product_id), 0);

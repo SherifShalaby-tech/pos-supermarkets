@@ -362,7 +362,8 @@ $(document).on("click", ".add_discount_row", function () {
         success: function (result) {
             $("#consumption_table_discount > tbody").prepend(result);
             $(".selectpicker").selectpicker("refresh");
-            $(".datepicker").datepicker("refresh");
+            // $(".datepicker").datepicker("refresh");
+            $(".datepicker").datepicker({refresh:"refresh",todayHighlight: true});
 
             // $(".raw_material_unit_id").selectpicker("refresh");
         },
