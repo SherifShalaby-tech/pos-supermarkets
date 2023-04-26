@@ -82,7 +82,7 @@
                     <span class="dripicons-minus"></span>
                 </button>
             </span>
-                <input type="number" class="form-control quantity  qty numkey input-number" min="0.01" step="any"
+                <input type="number" class="form-control quantity  qty numkey input-number" step="any"
                        autocomplete="off" style="width: 50px;"
                        @if(!$product->is_service)max="{{$product->qty_available}}"@endif
                        name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
@@ -103,6 +103,7 @@
                    value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif">
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif">
+
             <div class="input-group">
                 <input type="hidden" class="form-control product_discount_type  discount_type{{$product->product_id}}"
                    name="transaction_sell_line[{{$loop->index + $index}}][product_discount_type]"
@@ -139,7 +140,7 @@
         @endif
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 9% @else 15% @endif">
-            <span class="sub_total_span" style="font-weight: bold;"></span>
+            <span data-length="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}" class="sub_total_span" style="font-weight: bold;"></span>
             <input type="hidden" class="form-control sub_total"
                    name="transaction_sell_line[{{$loop->index + $index}}][sub_total]" value="">
         </td>

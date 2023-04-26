@@ -37,12 +37,10 @@
                                         </span>
                                     </div>
                                 </div>
-
                                 <div class="col-md-3">
                                     {!! Form::label('transaction_date', __('lang.date_and_time'), []) !!}
                                     <input type="datetime-local" id="transaction_date" name="transaction_date"
                                         value="{{date('Y-m-d\TH:i')}}" class="form-control">
-
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
