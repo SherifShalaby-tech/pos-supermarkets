@@ -154,7 +154,42 @@ $(document).on("change", "select#paying_currency_id", function () {
         },
     });
 });
-
+// function get_label_multipe_product_row(product_selected) {
+//     //Get item addition method
+//     var add_via_ajax = true;
+//     var store_id = $("#store_id").val();
+//     // var is_added = false;
+//     var qty;
+//     //Search for variation id in each row of pos table
+//         $("#product_table tbody")
+//             .find("tr")
+//             .each(function () {
+//                 var row_v_id = $(this).find(".variation_id").val();
+//                 var row_p_id = $(this).find(".product_id").val();
+//                 console.log(row_p_id)
+//                 console.log(product_selected)
+//                 const isFound = product_selected.some(element => {
+//                 if (element.product_id == row_p_id && element.variation_id==row_v_id) {
+//                     // return true;
+//                     qty_element = $(this).find(".quantity");
+//                     qty = __read_number(qty_element);
+//                     qty+=1;
+//                     calculate_sub_totals();
+//                     $("input#search_product").val("");
+//                     $("input#search_product").focus();
+//                     //remove if exist
+//                     $(this).closest("tr").next().remove();
+//                     $(this).closest("tr").next().next().remove();
+//                     $(this).closest("tr").remove();
+//                 }
+                
+//                 return false;
+//                 });
+                
+//                 console.log(qty);
+        
+//             });
+// }
 
 function get_label_product_row(product_id, variation_id,is_batch=false) {
     //Get item addition method
