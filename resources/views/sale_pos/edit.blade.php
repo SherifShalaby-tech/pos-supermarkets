@@ -233,6 +233,9 @@
                                                         @endif
                                                         <th
                                                             style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                            @lang('lang.category')</th>
+                                                        <th
+                                                            style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
                                                             @lang('lang.action')</th>
                                                     </tr>
                                                 </thead>
@@ -759,7 +762,9 @@
     <script>
         $(document).ready(function() {
             @foreach ($transaction->transaction_sell_lines as $line)
-                get_label_product_row({{ $line->product_id }}, {{ $line->variation_id }},
+            
+
+                get_label_product_row({{ $line->product_id }}, {{ $line->variation_id }},null,
                     {{ $line->quantity }},
                     {{ $loop->index }})
             @endforeach

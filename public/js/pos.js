@@ -315,7 +315,7 @@ $(document).ready(function () {
 function get_label_product_row(
     product_id = null,
     variation_id = null,
-    add_stock_lines_id,
+    add_stock_lines_id=null,
     edit_quantity = 1,
     edit_row_count = 0,
     weighing_scale_barcode = null

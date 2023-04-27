@@ -236,6 +236,7 @@
             $.each(product_selected, function(index, value) {
                 get_label_product_row(value.product_id, value.variation_id);
             });
+            // get_label_multipe_product_row(product_selected);
             product_selected = [];
             product_table.ajax.reload();
         })
