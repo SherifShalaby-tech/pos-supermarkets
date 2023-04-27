@@ -705,6 +705,27 @@ class AddStockController extends Controller
             }
         }
     }
+    public function addMultipleProductRow(Request $request)
+    {
+        if ($request->ajax()) {
+            $currency_id = $request->currency_id;
+            $currency = Currency::find($currency_id);
+            $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
+
+            $product_id = $request->input('product_id');
+            $variation_id = $request->input('variation_id');
+            $store_id = $request->input('store_id');
+            $qty = $request->qty?$request->qty:0;
+            $is_batch = $request->is_batch;
+            if (!empty($product_id)) {
+                $index = $request->input('row_count');
+                $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
+
+                return view('add_stock.partials.product_row')
+                    ->with(compact('products', 'index', 'currency', 'exchange_rate','qty','is_batch'));
+            }
+        }
+    }
     public function addProductBatchRow(Request $request)
     {
         if ($request->ajax()) {
