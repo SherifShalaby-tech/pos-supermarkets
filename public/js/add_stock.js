@@ -186,7 +186,7 @@ $(document).on("change", "select#paying_currency_id", function () {
 //                 return false;
 //                 });
                 
-//                 console.log(isFound);
+//                 console.log(qty);
         
 //             });
 // }
