@@ -246,6 +246,21 @@ class ProductUtil extends Util
         $purchase_price=!empty($request->is_service) ? $this->num_uf($product->purchase_price):0;
         $sell_price= !empty($request->is_service) ? $this->num_uf($product->sell_price):0;
         if (!empty($variations)) {
+            $variation_data['name'] = 'Default';
+            $variation_data['product_id'] = $product->id;
+            $variation_data['sub_sku'] = $product->sku;
+            $variation_data['color_id'] = !empty($request->multiple_colors) ? $request->multiple_colors[0] : null;
+            $variation_data['size_id'] = !empty($request->multiple_sizes) ? $request->multiple_sizes[0] : null;
+            $variation_data['grade_id'] = !empty($request->multiple_grades) ? $request->multiple_grades[0] : null;
+            $variation_data['unit_id'] = !empty($request->multiple_units) ? $request->multiple_units[0] : null;
+
+            $variation_data['is_dummy'] = 1;
+            $variation_data['default_purchase_price'] = $purchase_price;
+            $variation_data['default_sell_price'] = $sell_price;
+
+            $variation = Variation::create($variation_data);
+            $variation_array[] = ['variation' => $variation, 'variant_stores' =>  []];
+            $keey_variations[] = $variation->id;
             foreach ($variations as $v) {
 
                 $c = Variation::where('product_id', $product->id)
