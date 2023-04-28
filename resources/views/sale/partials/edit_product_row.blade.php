@@ -43,9 +43,9 @@ $exchange_rate = !empty($sale->exchange_rate) ? $sale->exchange_rate : 1;
                         <span class="dripicons-minus"></span>
                     </button>
                 </span>
-                <input type="text" class="form-control quantity  qty numkey input-number" min=1 step="any"
+                <input type="text" class="form-control quantity  qty numkey input-number" step="any"
                     name="transaction_sell_line[{{ $loop->index }}][quantity]" required
-                    value="@if (isset($product->quantity)) {{ @num_format($product->quantity) }}@else{{ 1 }} @endif">
+                    value="@if (isset($product->quantity)) {{ $product->quantity }}@else{{ 1 }} @endif">
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-success plus">
                         <span class="dripicons-plus"></span>
@@ -65,16 +65,16 @@ $exchange_rate = !empty($sale->exchange_rate) ? $sale->exchange_rate : 1;
                 value="@if (!empty($product->product_discount_type)){{ $product->product_discount_type }}@else{{ 0 }} @endif">
             <input type="hidden" class="form-control product_discount_value"
                 name="transaction_sell_line[{{ $loop->index }}][product_discount_value]"
-                value="@if (!empty($product->product_discount_value)){{ @num_format($product->product_discount_value) }}@else{{ 0 }} @endif">
+                value="@if (!empty($product->product_discount_value)){{ ($product->product_discount_value) }}@else{{ 0 }} @endif">
             <input type="text" class="form-control product_discount_amount"
                 name="transaction_sell_line[{{ $loop->index }}][product_discount_amount]" readonly
-                value="@if (!empty($product->product_discount_amount)){{ @num_format($product->product_discount_amount) }}@else{{ 0 }} @endif">
+                value="@if (!empty($product->product_discount_amount)){{ ($product->product_discount_amount) }}@else{{ 0 }} @endif">
         </td>
         <td style="width: 15%">
-            <span class="sub_total_span">{{ @num_format($product->sub_total) }}</span>
+            <span class="sub_total_span">{{ ($product->sub_total) }}</span>
             <input type="hidden" class="form-control sub_total"
                 name="transaction_sell_line[{{ $loop->index }}][sub_total]"
-                value="{{ @num_format($product->sub_total) }}">
+                value="{{ ($product->sub_total) }}">
         </td>
         <td style="width: 15%">
             <button type="button" class="btn btn-danger btn-sx remove_row"><i class="fa fa-times"></i></button>

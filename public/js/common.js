@@ -68,8 +68,15 @@ function __currency_trans_from_en(
     if (is_quantity) {
         precision = __quantity_precision;
     }
+    var new_input = input;
+    if (!isNaN(input) && input > 0) {
+        new_input = Math.round(input * Math.pow(10, __quantity_precision)) / Math.pow(10, __quantity_precision);
+        precision = (new_input % 1 !== 0) ? new_input.toString().split('.')[1].length : 2;
+    }else{
+        precision = 2;
+    }
     return accounting.formatMoney(
-        input,
+        new_input,
         symbol,
         precision,
         thousand,
@@ -77,6 +84,7 @@ function __currency_trans_from_en(
         format
     );
 }
+
 function __currency_convert_recursively(element, use_page_currency = false) {
     element.find(".display_currency").each(function () {
         var value = $(this).text();
@@ -106,16 +114,19 @@ function __currency_convert_recursively(element, use_page_currency = false) {
         );
     });
 }
+
 function __add_percent(amount, percentage = 0) {
     var amount = parseFloat(amount);
     var percentage = isNaN(percentage) ? 0 : parseFloat(percentage);
     return amount + (percentage / 100) * amount;
 }
+
 function __substract_percent(amount, percentage = 0) {
     var amount = parseFloat(amount);
     var percentage = isNaN(percentage) ? 0 : parseFloat(percentage);
     return amount - (percentage / 100) * amount;
 }
+
 function __get_principle(amount, percentage = 0, minus = false) {
     var amount = parseFloat(amount);
     var percentage = isNaN(percentage) ? 0 : parseFloat(percentage);
@@ -125,10 +136,12 @@ function __get_principle(amount, percentage = 0, minus = false) {
         return (100 * amount) / (100 + percentage);
     }
 }
+
 function __get_percent_value(amount, percentage = 0) {
     var percentage = isNaN(percentage) ? 0 : parseFloat(percentage);
     return (percentage / 100) * amount;
 }
+
 function __number_uf(input, use_page_currency = false) {
     if (use_page_currency && __currency_decimal_separator) {
         var decimal = __p_currency_decimal_separator;
@@ -137,6 +150,7 @@ function __number_uf(input, use_page_currency = false) {
     }
     return accounting.unformat(input, decimal);
 }
+
 function __number_f(
     input,
     show_symbol = false,
@@ -150,9 +164,11 @@ function __number_f(
         precision
     );
 }
+
 function __read_number(input_element, use_page_currency = false) {
     return __number_uf(input_element.val(), use_page_currency);
 }
+
 function __write_number(
     input_element,
     value,
@@ -164,6 +180,7 @@ function __write_number(
     }
     input_element.val(__number_f(value, false, use_page_currency, precision));
 }
+
 function __write_number_without_decimal_format(
     input_element,
     value,
@@ -186,6 +203,7 @@ function __print_receipt(section_id = null) {
         }
     }, 1000);
 }
+
 function incrementImageCounter() {
     img_counter++;
     if (img_counter === img_len) {
@@ -270,23 +288,24 @@ var buttons = [
 
         },
     },
-    { text: 'pdf' , action: function () {
+    {
+        text: 'pdf', action: function () {
 
             // var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 
             // data = document.getElementById("sales_table").innerHTML;
             data = document.getElementsByClassName("dataTable")[0].innerHTML;
             // Done but error 414 request url is too larg solved by changing get to post
-            let title= $('title').text()
-            $.ajaxSetup({ headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} });
+            let title = $('title').text()
+            $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
             // var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
                 url: "/pdf",
                 type: 'post',
                 // dataType: "json",
-                data: { 'data':data ,'title': title},
-                xhrFields: { responseType: 'blob' },
-                success: function(response, status, xhr) {
+                data: {'data': data, 'title': title},
+                xhrFields: {responseType: 'blob'},
+                success: function (response, status, xhr) {
 
                     var filename = "";
                     var disposition = xhr.getResponseHeader('Content-Disposition');
@@ -298,7 +317,7 @@ var buttons = [
                     }
                     var linkelem = document.createElement('a');
                     try {
-                        var blob = new Blob([response], { type: 'application/octet-stream' });
+                        var blob = new Blob([response], {type: 'application/octet-stream'});
 
                         if (typeof window.navigator.msSaveBlob !== 'undefined') {
                             //   IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
@@ -330,13 +349,15 @@ var buttons = [
                         console.log(ex);
                     }
 
-                },error: function (xhr, status, error)
-                { console.log(xhr.responseText); },
+                }, error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                },
             });
         }
-        ,exportOptions: {
+        , exportOptions: {
             columns: ":visible:not(.notexport)",
-        } },
+        }
+    },
     // {
     //     extend: "pdfHtml5",
     //     footer: true,
@@ -351,7 +372,7 @@ var buttons = [
         footer: true,
         charset: 'UTF-8',
         bom: true,
-        title:$('title').text(),
+        title: $('title').text(),
         exportOptions: {
             columns: ":visible:not(.notexport)",
         },
@@ -397,12 +418,12 @@ var datatable_params = {
             return typeof i === "string"
                 ? i.replace(/[\$,]/g, "") * 1
                 : typeof i === "number"
-                ? i
-                : 0;
+                    ? i
+                    : 0;
         };
 
         this.api()
-            .columns(".sum", { page: "current" })
+            .columns(".sum", {page: "current"})
             .every(function () {
                 var column = this;
                 if (column.data().count()) {
@@ -428,6 +449,7 @@ var datatable_params = {
 };
 var table = $(".dataTable").DataTable(datatable_params);
 table.columns(".hidden").visible(false);
+
 function sum_table_col(table, class_name) {
     var sum = 0;
     table
@@ -483,6 +505,7 @@ $(document).on("click", ".print-btn", function () {
         },
     });
 });
+
 function print_section(receipt) {
     $("#print_section").html(receipt);
     $("#print_section").printThis({

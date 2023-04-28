@@ -32,7 +32,7 @@
         <td style="width: 20%">
             {{$product->variation->sub_sku}}
         </td>
-        <td>@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif</td>
+        <td>@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif</td>
         <td style="width: 15%">
             <div class="input-group">
                 <input type="text" class="form-control quantity" min=0 max="{{$product->quantity}}"
