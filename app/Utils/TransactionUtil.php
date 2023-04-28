@@ -221,7 +221,7 @@ class TransactionUtil extends Util
      * @param float $old_quantity
      * @return void
      */
-    public function updateSoldQuantityInAddStockLine($product_id, $variation_id, $store_id, $new_quantity, $old_quantity,$stock_id)
+    public function updateSoldQuantityInAddStockLine($product_id, $variation_id, $store_id, $new_quantity, $old_quantity,$stock_id=null)
     {
 
         $qty_difference =$new_quantity - $old_quantity;
