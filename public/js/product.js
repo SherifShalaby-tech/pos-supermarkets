@@ -531,6 +531,7 @@ $(document).on("submit", "form#quick_add_unit_form", function (e) {
                         $("select.unit_id").empty().append(data_html);
                         $("select.unit_id").selectpicker("refresh");
                         $("select#multiple_units").change();
+                        
                     },
                 });
             } else {

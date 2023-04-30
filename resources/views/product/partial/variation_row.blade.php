@@ -19,7 +19,8 @@
     $product_purchase_price = $purchase_price;
     }
     @endphp
-    <td>{!! Form::hidden('name_hidden', $product_name,
+    <td>
+        {!! Form::hidden('name_hidden', $product_name,
         ['class' =>
         'form-control name_hidden'])
         !!}
@@ -43,7 +44,8 @@
         => 'form-control selectpicker v_grade', 'data-live-search'=>"true", 'placeholder' => ''])
         !!}
     </td>
-    <td>{!! Form::select('variations['.$row_id.'][unit_id]', $units, !empty($item) ? $item->unit_id: false, ['class'
+    <td>
+        {!! Form::select('variations['.$row_id.'][unit_id]', $units, !empty($item) ? $item->unit_id: false, ['class'
         =>
         'form-control selectpicker v_unit', 'data-live-search'=>"true", 'placeholder' => '','onchange'=>"get_unit($units_js,$row_id)" , 'id'=>'select_unit_id_'.$row_id]) !!}
     </td>

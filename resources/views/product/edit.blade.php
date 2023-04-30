@@ -372,7 +372,7 @@
                                     <div class="col-md-4">
                                         {!! Form::label('multiple_colors', __('lang.color'), []) !!}
                                         <div class="input-group my-group">
-                                            {!! Form::select('multiple_colors[]', $colors, $product->multiple_colors, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => $product->type == 'variable' ? true : false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_colors']) !!}
+                                            {!! Form::select('multiple_colors[]', $colors, $product->multiple_colors, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_colors']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.color.create_and_edit')
                                                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
