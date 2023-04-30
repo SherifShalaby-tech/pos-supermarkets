@@ -3,7 +3,7 @@
         @if(!empty($is_direct_sale))
             <td class="row_number"></td>
         @endif
-        <td style="width: @if(session('system_mode')  != 'restaurant') 18%; @else 20%; @endif font-size: 13px;">
+        <td style="width: @if(session('system_mode')  != 'restaurant') 17%; @else 20%; @endif font-size: 13px;">
             @php
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
@@ -26,6 +26,7 @@
                     <input type="hidden" id="{{$ex}}" name="old_ex" value="1">
                 </p>
             @endif
+            <small>@if($product->batch_number){{$product->batch_number}}@endif </small>
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][is_service]" class="is_service"
                    value="{{$product->is_service}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][have_weight]" class="have_weight"
@@ -34,6 +35,8 @@
                    value="{{$product->product_id}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]" class="variation_id"
                    value="{{$product->variation_id}}">
+            <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][stock_id]" class="batch_number_id"
+                    value="@if($product->stock_id){{$product->stock_id}}@else {{false}} @endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][price_hidden]" class="price_hidden"
                    value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][purchase_price]" class="purchase_price"
@@ -73,13 +76,13 @@
 
 
         </td>
-        <td style="width: @if(session('system_mode')  != 'restaurant') 18% @else 20% @endif">
+        <td style="width: @if(session('system_mode')  != 'restaurant') 17% @else 20% @endif">
             <div class="input-group"><span class="input-group-btn">
                 <button type="button" class="btn btn-danger btn-xs minus">
                     <span class="dripicons-minus"></span>
                 </button>
             </span>
-                <input type="number" class="form-control quantity  qty numkey input-number" min="0.01" step="any"
+                <input type="number" class="form-control quantity  qty numkey input-number" step="any"
                        autocomplete="off" style="width: 50px;"
                        @if(!$product->is_service)max="{{$product->qty_available}}"@endif
                        name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
@@ -93,28 +96,51 @@
             </div>
 
         </td>
-        <td style="width: @if(session('system_mode')  != 'restaurant') 16% @else 15% @endif">
+        <td style="width: @if(session('system_mode')  != 'restaurant') 14% @else 15% @endif">
             <input type="text" class="form-control sell_price"
                    name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
                    @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @elseif(env('IS_SUB_BRANCH',false)) readonly @endif
                    value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif">
         </td>
-        <td style="width: @if(session('system_mode')  != 'restaurant') 13% @else 15% @endif">
-            <input type="hidden" class="form-control product_discount_type"
+        <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif">
+
+            <div class="input-group">
+                <input type="hidden" class="form-control product_discount_type  discount_type{{$product->product_id}}"
                    name="transaction_sell_line[{{$loop->index + $index}}][product_discount_type]"
                    value="@if(!empty($product_discount_details->discount_type)){{$product_discount_details->discount_type}}@else{{0}}@endif">
-            <input type="hidden" class="form-control product_discount_value"
+                    <input type="hidden" class="form-control product_discount_value  discount_value{{$product->product_id}}"
                    name="transaction_sell_line[{{$loop->index + $index}}][product_discount_value]"
                    value="@if(!empty($product_discount_details->discount)){{@num_format($product_discount_details->discount)}}@else{{0}}@endif">
-            <div class="input-group">
-                <button type="button" class="btn btn-lg" id="search_button"><span class="plus_sign_text"></span></button>
-                <input type="text" class="form-control product_discount_amount"
-                       name="transaction_sell_line[{{$loop->index + $index}}][product_discount_amount]" readonly
-                       value="@if(!empty($product_discount_details->discount)){{@num_format($product_discount_details->discount)}}@else{{0}}@endif">
-            </div>
+                    <button type="button" class="btn btn-lg" id="search_button"><span class="plus_sign_text"></span></button>
+                    <input type="text" class="form-control product_discount_amount  discount_amount{{$product->product_id}}"
+                        name="transaction_sell_line[{{$loop->index + $index}}][product_discount_amount]" readonly
+                        value="@if(!empty($product_discount_details->discount)){{@num_format($product_discount_details->discount)}}@else{{0}}@endif">
+                        </div>
+        </div>
         </td>
-        <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
-            <span class="sub_total_span" style="font-weight: bold;"></span>
+        <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif ">
+        <input type="hidden" value="{{$product->product_id}}" class="p-id"/>
+        @if(auth()->user()->can('sp_module.sales_promotion.view')
+                || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                || auth()->user()->can('sp_module.sales_promotion.delete'))
+                <select class="custom-select custom-select-sm discount_category discount_category{{$product->product_id}}" style="height:30% !important">
+                    <option selected>select</option>
+                    @foreach($product_all_discounts_categories as $discount)
+                            <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
+                    @endforeach
+                </select>
+        @else
+            <select class="custom-select custom-select-sm discount_category discount_category{{$product->product_id}}" style="height:30% !important"
+                 disabled="disabled">
+                <option selected>select</option>
+                @foreach($product_all_discounts_categories as $discount)
+                        <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
+                @endforeach
+            </select>
+        @endif
+        </td>
+        <td style="width: @if(session('system_mode')  != 'restaurant') 9% @else 15% @endif">
+            <span data-length="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}" class="sub_total_span" style="font-weight: bold;"></span>
             <input type="hidden" class="form-control sub_total"
                    name="transaction_sell_line[{{$loop->index + $index}}][sub_total]" value="">
         </td>
@@ -124,7 +150,7 @@
                     @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif
             </td>
         @endif
-        <td style="width: @if(session('system_mode')  != 'restaurant') 10%; @else 15%; @endif padding: 0px;">
+        <td style="width: @if(session('system_mode')  != 'restaurant') 9%; @else 15%; @endif padding: 0px;">
             @if(!empty($dining_table_id))
                 @if(auth()->user()->can('superadmin') || auth()->user()->is_admin == 1)
                     <button type="button" class="btn btn-danger btn-xs remove_row" style="margin-top: 15px;"><i class="fa fa-times"></i></button>

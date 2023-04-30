@@ -12,6 +12,43 @@ return [
     | these language lines according to your application's requirements.
     |
     */
+    'manufacturers' => 'المصنعين',
+    'add_manufacturer' => 'اضافة مصنع جديد',
+    'edit_manufacturer' => 'تعديل مصنع',
+    'manufacturings' => 'التصنيع الخارجي',
+    'view_all_manufacturings' => 'عمليات التصنيع',
+    'view_all_processes' => 'عمليات المعالجة',
+    'manufacturing' => 'تصنيع',
+    'manufacturer' => 'المصنع',
+    'manufacturing_status' => 'حالة التصنيع',
+    'edit_manufacturing_status' => 'تعديل حالة التصنيع ',
+    'manufacturing_material' => 'مادة التصنيع ',
+    'product_received' => 'المنتجات المستلمة',
+    'product_received_quantity' => 'الكميه المستلمه',
+    'product_received_date' => 'تاريخ الاستلام',
+    'processed' => 'العمليات المستلمة',
+    'under_processing' => 'تحت التصنيع',
+    'path' => 'مسار القسم الفرعي',
+    'delete_all' => 'حذف جماعي',
+    'numbers_length_after_dot' => 'الكسور',
+
+
+
+    'received' => 'استلام',
+    'underManufacturing' => 'تحت التصنيع',
+    'manufactured' => 'تم تصنيعها',
+    'add_new_manufacturing' => 'اضافه عملية تصنيع جديدة',
+    'add_new_production' => 'اضافه عملية تصنيع جديدة',
+
+    'manufactured_cost'=>'التكلفة',
+    'manufactured_unit_cost_sell'=>'تكلفة الوحده للبيع ',
+    'manufactured_unit_cost_purchase'=>'تكلفة الوحده للشراء ',
+
+
+
+
+
+
     'have_weight'=>'يعتمد علي الميزان',
     'type_Debt' => 'سداد دين',
     'change_current_stock' => 'تغيير سعر البيع للمخزون الحالى ',
@@ -57,7 +94,7 @@ return [
     'December' => 'ديسمبر',
     'site_title' => 'عنوان الموقع',
     'help' => 'مساعدة',
-
+    'required_field'=>'يجب الادخال',
     'required_fields_info' => 'الحقول المميزة بعلامة * هي حقول إدخال مطلوبة.',
     'product' => 'منتج',
     'add_new_product' => 'اضافة منتج جديد',
@@ -235,7 +272,8 @@ return [
     'bank_name' => 'اسم البنك',
     'amount' => 'المبلغ',
     'notes' => 'ملاحظات',
-    'is_service' => 'هي خدمة',
+    'is_service' => ' خدمة',
+    'is_have_service'=>'خدمة',
     'paid_amount' => 'المبلغ المدفوع',
     'pending_amount' => 'المبلغ المتبقي',
     'invoice_date' => 'تاريخ الفاتورة',
@@ -1057,7 +1095,7 @@ return [
     'customer_size_details' => 'تفاصيل مقاسات العميل',
     'crop' => 'اقتصاص',
     'crop_image_before_upload' => 'صورة المحاصيل قبل التحميل',
-
+    'add_a_new_batch'=>'تشغيلة جديدة',
     'add_new_raw_material' => 'إضافة مادة أولية جديدة',
     'raw_materials' => 'مادة أولية',
     'raw_material' => 'مادة أولية',
@@ -1290,5 +1328,11 @@ return [
 
     'wrong_gift_card'=>'هذة البطاقة لم تعد متاحة حاليا تاكد من رقم بطاقة الهدايا',
     'wrong_gift_card_amount'=>'الحد القصي لمبلغ الدفع لهذة البطاقة هو :amount',
+
+    'discount_category'=>'الاسم المختصر للخصم',
+    'category_discount'=>'فئة الخصم',
+    'new_batch'=>'رقم التشغيلة الجديدة',
+    'watsapp_numbers'=>'رقم واتساب للتواصل',
+
 
 ];

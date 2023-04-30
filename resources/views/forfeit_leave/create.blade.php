@@ -80,6 +80,7 @@
         viewMode: "years",
         minViewMode: "years",
         language: '{{session('language')}}',
+        todayHighlight: true,
     });
     $('#employee_id').change(function(){
         employee_id = $(this).val();

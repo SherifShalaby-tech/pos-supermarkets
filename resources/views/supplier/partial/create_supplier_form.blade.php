@@ -28,12 +28,7 @@
             {!! Form::select('products[]', $products, old('products'), ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'data-actions-box' => 'true', 'id' => 'products', 'multiple']) !!}
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('photo', __('lang.photo') . ':') !!} <br>
-            {!! Form::file('image', ['class']) !!}
-        </div>
-    </div>
+
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('company_name', __('lang.company_name') . ':') !!}
@@ -88,5 +83,61 @@
             {!! Form::text('country', old('country'), ['class' => 'form-control', 'placeholder' => __('lang.country')]) !!}
         </div>
     </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            {!! Form::label('photo', __('lang.photo') . ':') !!} <br>
+            <div class="container mt-3">
+                <div class="row mx-0" style="border: 1px solid #ddd;padding: 30px 0px;">
+                    <div class="col-12">
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-10 offset-1">
+                                    <div class="variants">
+                                        <div class='file file--upload w-100'>
+                                            <label for='file-input' class="w-100">
+                                                <i class="fas fa-cloud-upload-alt"></i>Upload
+                                            </label>
+                                            <!-- <input  id="file-input" multiple type='file' /> -->
+                                            <input type="file" id="file-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-10 offset-1">
+                        <div class="preview-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <input type="hidden" name="quick_add" value="{{ $quick_add }}">
+<div id="cropped_images"></div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="croppie-modal" style="display:none">
+                    <div id="croppie-container"></div>
+                    <button data-dismiss="modal" id="croppie-cancel-btn" type="button" class="btn btn-secondary"><i
+                            class="fas fa-times"></i></button>
+                    <button id="croppie-submit-btn" type="button" class="btn btn-primary"><i
+                            class="fas fa-crop"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

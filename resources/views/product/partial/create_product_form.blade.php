@@ -224,9 +224,33 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
         </div>
     </div>
     <div class="col-md-12 " style="margin-top: 10px;">
-        <div class="dropzone" id="my-dropzone">
-            <div class="dz-message" data-dz-message><span>@lang('lang.drop_file_here_to_upload')</span></div>
+        <div class="container mt-3">
+            <div class="row mx-0" style="border: 1px solid #ddd;padding: 30px 0px;">
+                <div class="col-12">
+                    <div class="mt-3">
+                        <div class="row">
+                            <div class="col-10 offset-1">
+                                <div class="variants">
+                                    <div class='file file--upload w-100'>
+                                        <label for='file-input' class="w-100">
+                                            <i class="fas fa-cloud-upload-alt"></i>Upload
+                                        </label>
+                                        <!-- <input  id="file-input" multiple type='file' /> -->
+                                        <input type="file" id="file-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-10 offset-1">
+                    <div class="preview-container"></div>
+                </div>
+            </div>
         </div>
+{{--        <div style="display: none" class="dropzone" id="my-dropzone">--}}
+{{--            <div style="display: none" class="dz-message" data-dz-message><span>@lang('lang.drop_file_here_to_upload')</span></div>--}}
+{{--        </div>--}}
     </div>
 
     <div class="col-md-12">
@@ -351,6 +375,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             <tr>
                 <th style="width: 20%;">@lang('lang.discount_type')</th>
                 <th style="width: 15%;">@lang('lang.discount')</th>
+                <th style="width: 10%;">@lang('lang.discount_category')</th>
                 <th style="width: 20%;">@lang('lang.discount_start_date')</th>
                 <th style="width: 20%;">@lang('lang.discount_end_date')</th>
                 <th style="width: 20%;">@lang('lang.customer_type') <i class="dripicons-question" data-toggle="tooltip"
@@ -360,7 +385,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             </tr>
             </thead>
             <tbody>
-            @include('product.partial.raw_discount', ['row_id' => 0])
+            {{-- @include('product.partial.raw_discount', ['row_id' => 0]) --}}
             </tbody>
         </table>
         <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
@@ -443,8 +468,9 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                     <th>@lang('lang.grade')</th>
                     <th>@lang('lang.unit')</th>
                     <th>@lang('lang.number_vs_base_unit')</th>
-                    <th class="@if(empty($is_service)) hide @endif default_purchase_price_th">@lang('lang.purchase_price')</th>
-                    <th class="@if(empty($is_service)) hide @endif default_sell_price_th">@lang('lang.sell_price')</th>
+                    {{-- @if(empty($is_service)) hide @endif --}}
+                    <th class="default_purchase_price_th supplier_div">@lang('lang.purchase_price')</th>
+                    <th class="default_sell_price_th supplier_div">@lang('lang.sell_price')</th>
                     <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
                                 class="dripicons-plus"></i></button></th>
                 </tr>

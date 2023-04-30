@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\MoneySafe;
 use App\Models\Product;
 use App\Models\StorePos;
@@ -90,7 +91,7 @@ class SupplierController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $supplier_categories = SupplierCategory::pluck('name', 'id');
+        $supplier_categories = Category::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
 
         if ($quick_add) {
@@ -150,9 +151,17 @@ class SupplierController extends Controller
             DB::beginTransaction();
             $supplier = Supplier::create($data);
 
-            if ($request->has('image')) {
-                $supplier->addMedia($request->image)->toMediaCollection('supplier_photo');
+
+            if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                foreach ($request->cropImages as $imageData) {
+                    $extention = explode(";",explode("/",$imageData)[1])[0];
+                    $image = rand(1,1500)."_image.".$extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+                    $supplier->addMedia($filePath)->toMediaCollection('supplier_photo');
+                }
             }
+
 
             if (!empty($request->products)) {
                 foreach ($request->products as $product) {

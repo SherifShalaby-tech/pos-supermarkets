@@ -135,6 +135,7 @@
     $('.selectpicker').selectpicker('refresh');
     $('.datepicker').datepicker({
         language: '{{ session('language') }}',
+        todayHighlight: true,
     });
     $('#add_payment_form #method').change(function() {
         var method = $(this).val();

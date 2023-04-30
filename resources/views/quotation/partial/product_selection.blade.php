@@ -195,7 +195,6 @@
                         </div>
                     </div>
 
-
                 </div>
                 <div class="table-responsive">
                     <table id="product_selection_table{{$index?? ''}}" class="table" style="width: auto">
@@ -205,6 +204,7 @@
                                 <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.product_code')</th>
+                                <th>@lang('lang.is_service')</th>
                                 <th>@lang('lang.class')</th>
                                 <th>@lang('lang.category')</th>
                                 <th>@lang('lang.sub_category')</th>

@@ -28,7 +28,7 @@
                 'rows' => 3 ]);
                 !!}
             </div>
-            {{-- <div class="form-group">
+            <div class="form-group">
                 {!! Form::label('base_unit_multiplier', __( 'lang.times_of' ). ':') !!}
                 {!! Form::text('base_unit_multiplier', null, ['class' => 'form-control', 'placeholder' => __(
                 'lang.times_of' ) ]);
@@ -38,7 +38,7 @@
                 {!! Form::label('base_unit_id', __( 'lang.base_unit' ). ':') !!}
                 {!! Form::select('base_unit_id', $units, false, ['class' => 'form-control selectpicker', 'placeholder'
                 => __('lang.select_base_unit'), 'data-live-search' => 'true']) !!}
-            </div> --}}
+            </div>
             {{-- @endif --}}
 
         </div>

@@ -50,7 +50,26 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 </li>
                 @endif
                 @endif
-
+                    {{--                TODO permissions--}}
+                    <li><a href="#manufacturings" aria-expanded="false" data-toggle="collapse"> <i
+                                    class="fa fa-retweet "></i><span>{{__('lang.manufacturings')}}</span><span></a>
+                        <ul id="manufacturings"  class="collapse list-unstyled @if(in_array(request()->segment(1), ['manufacturings'])) show @endif">
+                            <li
+                                    class="@if(request()->segment(1) == 'manufacturers' && empty(request()->segment(2))) active @endif">
+                                <a href="{{action('ManufacturerController@index')}}">{{__('lang.manufacturers')}}</a>
+                            </li>
+                            <li
+                                    class="@if(request()->segment(1) == 'manufacturers' && empty(request()->segment(2))) active @endif">
+                                <a href="{{action('ManufacturingController@create')}}">{{__('lang.add_new_manufacturing')}}</a>
+                            </li>
+                            <li class="@if(request()->segment(1) == 'email' && empty(request()->segment(2))) active @endif">
+                                <a href="{{action('ManufacturingController@index',['manufacture'])}}">{{__('lang.under_processing')}}</a>
+                            </li>
+                            <li class="@if(request()->segment(1) == 'email' && empty(request()->segment(2))) active @endif">
+                                <a href="{{action('ManufacturingController@index',["process"])}}">{{__('lang.processed')}}</a>
+                            </li>
+                        </ul>
+                    </li>
 
                 @if(session('system_mode') == 'restaurant' || session('system_mode') == 'garments' || session('system_mode') == 'pos')
                 @if( !empty($module_settings['raw_material_module']) )

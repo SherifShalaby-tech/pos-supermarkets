@@ -236,6 +236,7 @@
                     { data: "image", name: "image" },
                     { data: "variation_name", name: "products.name" },
                     { data: "sub_sku", name: "variations.sub_sku" },
+                    { data: "is_service", name: "products.is_service" },
                     { data: "product_class", name: "product_classes.name" },
                     { data: "category", name: "categories.name" },
                     { data: "sub_category", name: "categories.name" },
