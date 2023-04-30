@@ -22,6 +22,11 @@ class Unit extends Model
         return $this->hasMany(\App\Unit::class, 'base_unit_id');
     }
 
+    public function variations()
+    {
+        return $this->hasMany(Variation::class);
+    }
+
     public function base_unit()
     {
         return $this->belongsTo(\App\Unit::class, 'base_unit_id');

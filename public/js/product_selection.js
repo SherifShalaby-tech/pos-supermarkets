@@ -162,6 +162,7 @@ $(document).on("change", ".product_selected", function () {
         var obj = {};
         obj["product_id"] = this_product_id;
         obj["variation_id"] = this_variation_id;
+        obj["qty"] = 1;
         product_selected.push(obj);
     } else {
         product_selected = product_selected.filter(function (item) {
