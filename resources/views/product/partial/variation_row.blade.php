@@ -50,14 +50,14 @@
         @if(session('system_mode') != 'garments')
             <td>{!! Form::number('variations['.$row_id.'][number_vs_base_unit]', $number_vs_base_unit , ['class' =>
                 'form-control
-                number_vs_base_unit', 'required','id'=>'number_vs_base_unit_'.$row_id]) !!}</td>
+                number_vs_base_unit','id'=>'number_vs_base_unit_'.$row_id]) !!}</td>
         @endif
         {{-- @if(empty($is_service)) hide @endif --}}
-    <td class=" default_purchase_price_td">{!! Form::text('variations['.$row_id.'][default_purchase_price]', $product_purchase_price , ['class' =>
+    <td class=" default_purchase_price_td @if(empty($is_service)) hide @endif">{!! Form::text('variations['.$row_id.'][default_purchase_price]', $product_purchase_price , ['class' =>
         'form-control
-        default_purchase_price', 'required']) !!}</td>
-    <td class=" default_sell_price_td">{!! Form::text('variations['.$row_id.'][default_sell_price]', $product_sale_price,
-        ['class' => 'form-control default_sell_price', 'required']) !!}</td>
+        default_purchase_price']) !!}</td>
+    <td class=" default_sell_price_td @if(empty($is_service)) hide @endif">{!! Form::text('variations['.$row_id.'][default_sell_price]', $product_sale_price,
+        ['class' => 'form-control default_sell_price']) !!}</td>
     <td> <button type="button" class="btn btn-danger btn-xs remove_row mt-2"><i class="dripicons-cross"></i></button>
     </td>
 </tr>
