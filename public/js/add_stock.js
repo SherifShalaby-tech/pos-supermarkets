@@ -71,21 +71,59 @@ $(document).on("click", ".add_bounce_btn", function () {
     }
 
 });
-
+$(document).on("click", ".remove_batch_row", function () {
+    $(this).closest("tr").remove();
+});
 $(document).on("click", "#addBatch", function () {
+    $product=$(this).data("product");
     var index=$(this).data('index');
-    $('#batch_number_row'+index).toggle();
-    if($('#batch_number_row'+index+' .batchNumber').prop('required')){
-        $('#batch_number_row'+index+' .batchNumber').prop('required', false);
-    } else {
-        $('#batch_number_row'+index+' .batchNumber').prop('required', true);
-    }
-    ///
+    var store_id = $("#store_id").val();
+    let currency_id = $('#paying_currency_id').val();
+    var batch_count = parseInt($("#batch_count").val());
+    $("#batch_count").val(batch_count + 1);
     if($('.stockId'+index).prop('checked')){
         $('.stockId'+index).prop('checked', false);
-    } else {
-        $('.stockId'+index).prop('checked', true);
     }
+    $.ajax({
+        method: "GET",
+        url: "/add-stock/add-product-batch-row",
+        dataType: "html",
+        data: {
+            product_id: $product.id,
+            variation_id: $product.variation_id,
+            store_id:store_id,
+            index:index,
+            currency_id:currency_id,
+            batch_count:batch_count
+        },
+        success: function (result) {
+            // console.log(result);
+            $('.bounce_details_td_'+index).after(result);
+            
+            if($('.stockId'+index).prop('checked')){
+                $('.stockId'+index).prop('checked', false);
+            }
+        },
+    });
+    
+
+
+
+
+
+    // var index=$(this).data('index');
+    // $('#batch_number_row'+index).show();
+    // if($('#batch_number_row'+index+' .batchNumber').prop('required')){
+    //     $('#batch_number_row'+index+' .batchNumber').prop('required', false);
+    // } else {
+    //     $('#batch_number_row'+index+' .batchNumber').prop('required', true);
+    // }
+    // ///
+    // if($('.stockId'+index).prop('checked')){
+    //     $('.stockId'+index).prop('checked', false);
+    // } else {
+    //     $('.stockId'+index).prop('checked', true);
+    // }
     
 });
 // $(document).on("click", "#addBatch", function () {
@@ -156,63 +194,61 @@ $(document).on("change", "select#paying_currency_id", function () {
 });
 function get_label_multipe_product_row(product_selected) {
     //Get item addition method
-    var add_via_ajax = true;
     var store_id = $("#store_id").val();
-    // var is_added = false;
     var qty;
+    var all_row_count=[0];
     //Search for variation id in each row of pos table
         $("#product_table tbody")
-            .find("tr")
+            .find(".product_row")
             .each(function () {
                 var row_v_id = $(this).find(".variation_id").val();
                 var row_p_id = $(this).find(".product_id").val();
-                console.log(row_p_id)
-                console.log(product_selected)
-                // const isFound = product_selected.some(element => {
-                // if (element.product_id == row_p_id && element.variation_id==row_v_id) {
-                //     // return true;
-                //     qty_element = $(this).find(".quantity");
-                //     qty = __read_number(qty_element);
-                //     qty+=1;
-                //     calculate_sub_totals();
-                //     $("input#search_product").val("");
-                //     $("input#search_product").focus();
-                //     //remove if exist
-                //     $(this).closest("tr").next().remove();
-                //     $(this).closest("tr").next().next().remove();
-                //     $(this).closest("tr").remove();
-                // }
-                
-                // return false;
-                // });
-                // console.log(qty);
-                var row_count = parseInt($("#row_count").val());
-                let currency_id = $('#paying_currency_id').val()
-                $("#row_count").val(row_count + 1);
-                $.ajax({
-                    method: "GET",
-                    url: "/add-stock/add-multiple-product-row",
-                    dataType: "html",
-                    async: false,
-                    data: {
-                        product_id: product_id,
-                        row_count: row_count,
-                        variation_id: variation_id,
-                        store_id: store_id,
-                        currency_id: currency_id,
-                        qty:qty,
-                        is_batch:is_batch,
-                    },
-                    success: function (result) {
-                        $("#product_table tbody").prepend(result);
-                        $("input#search_product").val("");
-                        $("input#search_product").focus();
-                        calculate_sub_totals();
-                        reset_row_numbering();
-                    },
-                });
-        
+                const isFound = product_selected.some(element => {
+                all_row_count.push( __read_number($(this).find(".row_count")));
+                if (element.product_id == row_p_id && element.variation_id==row_v_id) {
+                    // return true;
+                    var index=$(this).find(".row_count").val()
+                    qty_element = $(this).find(".quantity");
+                    qty = __read_number(qty_element);
+                    qty+=1;
+                    element.qty=qty;
+                    calculate_sub_totals();
+                    $("input#search_product").val("");
+                    $("input#search_product").focus();
+                    //remove if exist
+                    $(this).closest("tr").remove();
+                    $('.row_details_'+index).remove();
+                    $('.bounce_details_td_'+index).remove();
+                    // $(this).closest("tr").next().next().show();
+                    // $(this).closest("tr").next().next().remove();
+                }
+                return false;
             });
+        });
+        row_count=Math.max(...all_row_count)
+        console.log(row_count)
+        // var row_count = parseInt($("#row_count").val());
+        let currency_id = $('#paying_currency_id').val()
+        // $("#row_count").val(row_count + 1);
+        $.ajax({
+            method: "GET",
+            url: "/add-stock/add-multiple-product-row",
+            dataType: "html",
+            async: false,
+            data: {
+                row_count: row_count==null||row_count==0?0:row_count,
+                store_id: store_id,
+                currency_id: currency_id,
+                product_selected:product_selected
+            },
+            success: function (result) {
+                $("#product_table tbody").prepend(result);
+                $("input#search_product").val("");
+                $("input#search_product").focus();
+                calculate_sub_totals();
+                reset_row_numbering();
+            },
+        });
 }
 
 function get_label_product_row(product_id, variation_id,is_batch=false) {
@@ -368,7 +404,7 @@ $(document).on("click", ".remove_row", function () {
     $(this).closest("tr").remove();
     $(".row_details_" + index).remove();
     $(".bounce_details_td_" + index).remove();
-    $(".row_batch_details_" + index).remove();
+    $(".row_batch_details_"+index).remove();
     calculate_sub_totals();
     reset_row_numbering();
 });

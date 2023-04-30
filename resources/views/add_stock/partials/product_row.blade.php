@@ -1,6 +1,9 @@
-@forelse ($products as $product)
 @php
 $i = $index;
+@endphp
+@forelse ($products as $product)
+@php
+$i=$i+1;
 @endphp
 <tr class="product_row">
     <td class="row_number"></td>
@@ -13,7 +16,8 @@ $i = $index;
         {{$product->product_name}}
         @endif
         <input type="hidden" name="is_batch_product" class="is_batch_product"
-            value="{{$is_batch}}">
+            value="{{isset($is_batch)?$iS_batch:null}}">
+        <input type="hidden" name="row_count" class="row_count" value="{{$i}}">
         <input type="hidden" name="add_stock_lines[{{$i}}][is_service]" class="is_service"
             value="{{$product->is_service}}">
         <input type="hidden" name="add_stock_lines[{{$i}}][product_id]" class="product_id"
@@ -31,9 +35,9 @@ $i = $index;
         
     </td>
     <td>
-        @if($qty)
+        @if($product->qty || $qty)
         <input type="text" class="form-control quantity quantity_{{$i}}" min=1 name="add_stock_lines[{{$i}}][quantity]" required
-        value="{{$qty}}"  index_id="{{$i}}">
+        value="{{$product->qty ?? $qty}}"  index_id="{{$i}}">
         @else
         <input type="text" class="form-control quantity quantity_{{$i}}" min=1 name="add_stock_lines[{{$i}}][quantity]" required
             value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif"  index_id="{{$i}}">
@@ -113,7 +117,7 @@ $i = $index;
         </div>
     </td>
 </tr>
-<tr class="hide bounce_details_td_{{$i}}">
+<tr class="hide bounce_details_td_{{$i}} trdata">
     <td>
         {!! Form::label('', __('lang.batch_number'), []) !!} <br>
         {!!Form::text('add_stock_lines['.$i.'][bounce_batch_number]', null, ['class' => 'form-control']) !!}
@@ -133,43 +137,7 @@ $i = $index;
         {!! Form::text('add_stock_lines['.$i.'][bounce_convert_status_expire]', null, ['class' => 'form-control']) !!}
     </td>
 </tr>
-<tr class="row_batch_details_{{$i}} row_batch_details" id="batch_number_row{{$i}}" style="background-color:rgb(246, 248, 248);display:none;">
-    <td> {!! Form::label('', __('lang.new_batch'), []) !!} <br> {!!
-        Form::text('add_stock_lines['.$i.'][new_batch_number]', null, ['class' => 'form-control batchNumber']) !!}
-    </td>
-    <td colspan="1"><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-        alt="photo" width="50" height="50"></td>
-    <td colspan="1">
-        {!! Form::label('', __('lang.manufacturing_date'), []) !!}<br>
-        {!! Form::text('add_stock_lines['.$i.'][batch_manufacturing_date]', null, ['class' => 'form-control datepicker',
-        'readonly']) !!}
-    </td>
-    <td colspan="1"> 
-        {!! Form::label('', __('lang.expiry_date'), []) !!}<br>
-        {!! Form::text('add_stock_lines['.$i.'][batch_expiry_date]', null, ['class' => 'form-control datepicker expiry_date',
-        'readonly']) !!}
-    </td>
-    <td colspan="2">
-        {!! Form::label('', __('lang.quantity'), []) !!}<br>
-        <input type="text" class="form-control quantity quantity_{{$i}}" min=1 name="add_stock_lines[{{$i}}][batch_quantity]" required
-            value="1"  index_id="{{$i}}">
-         {{-- {!! Form::label('', __('lang.days_before_the_expiry_date'), []) !!}<br>
-        {!! Form::text('add_stock_lines['.$i.'][expiry_warning]', null, ['class' => 'form-control days_before_the_expiry_date']) !!} --}}
-    </td>
-    <td colspan="1">
-        <span class="text-secondary font-weight-bold">*</span>
-        <input type="text" class="form-control purchase_price purchase_price_{{$i}}" name="add_stock_lines[{{$i}}][batch_purchase_price]" required
-            value="@if($product->purchase_price_depends == null) {{@num_format($product->default_purchase_price / $exchange_rate)}} @else {{@num_format($product->purchase_price_depends / $exchange_rate)}} @endif" index_id="{{$i}}">
-            <input class="final_cost" type="hidden" name="add_stock_lines[{{$i}}][batch_final_cost]" value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price / $exchange_rate)}}@else{{0}}@endif"  >
-    </td>
-    <td colspan="1">
-        <span class="text-secondary font-weight-bold">*</span>
-        <input type="text" class="form-control selling_price selling_price_{{$i}}" name="add_stock_lines[{{$i}}][batch_selling_price]" required index_id="{{$i}}"
-               value="@if($product->selling_price_depends == null) {{@num_format($product->sell_price)}} @else {{@num_format($product->selling_price_depends)}} @endif"  >
-    </td>
-    <td colspan="3"></td>
- 
-</tr>
+
 @empty
 
 @endforelse
