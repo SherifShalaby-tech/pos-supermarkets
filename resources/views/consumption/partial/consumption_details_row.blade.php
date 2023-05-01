@@ -1,8 +1,8 @@
 <td colspan="3">
     <table style="border: 0px; width: 100%;">
         <tr>
-            <input type="hidden" name="consumption_raw_materials[current_stock]" value="{{$current_stock}}">
-            <td colspan="2"><label for="">@lang('lang.current_stock'): {{@num_format($current_stock)}}</label></td>
+            <input type="hidden" name="consumption_raw_materials[current_stock]" value="{{ preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock) }}">
+            <td colspan="2"><label for="">@lang('lang.current_stock'): {{preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock)}}</label></td>
         </tr>
         @foreach ($raw_material_details as $raw_material_detail)
         <tr>
@@ -33,13 +33,13 @@
             <td style="width: 33%;">
                 {!! Form::text('consumption_details['.$loop->index.'][quantity]',
                 !empty($consumption_product) ?
-                @num_format($consumption_product->quantity) : 0, ['class' => 'form-control']) !!}
+                ($consumption_product->quantity) : 0, ['class' => 'form-control']) !!}
             </td>
             @else
             <td style="width: 33%;">
                 {!! Form::text('consumption_details['.$loop->index.'][quantity]',
                 !empty($consumption_product) ?
-                @num_format($consumption_product->amount_used) : 0, ['class' => 'form-control']) !!}
+                ($consumption_product->amount_used) : 0, ['class' => 'form-control']) !!}
             </td>
             @endif
             <td style="width: 33%;">

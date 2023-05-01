@@ -61,7 +61,7 @@
                                                     <td></td>
                                                     <td></td>
                                                     <th style="text-align: right">@lang('lang.total')</th>
-                                                    <th><span class="grand_total_span">{{ @num_format(0) }}</span>
+                                                    <th><span class="grand_total_span">{{ (0) }}</span>
                                                     </th>
                                                 </tr>
                                             </tfoot>

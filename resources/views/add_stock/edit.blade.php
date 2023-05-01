@@ -123,7 +123,7 @@
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control quantity  quantity_{{$loop->index}}" min=1 name="add_stock_lines[{{$loop->index}}][quantity]" required
-                                                        value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif" index_id="{{$loop->index}}">
+                                                        value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif" index_id="{{$loop->index}}">
                                                 </td>
                                                 <td>
                                                     {{$product->product->units->pluck('name')[0]??''}}
@@ -147,10 +147,10 @@
                                                 </td>
                                                 <td>
                                                     <span
-                                                            class="sub_total_span">{{ @num_format($product->sub_total) }}</span>
+                                                            class="sub_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}</span>
                                                         <input type="hidden" class="form-control sub_total"
                                                             name="add_stock_lines[{{ $loop->index }}][sub_total]"
-                                                            value="{{ $product->sub_total }}">
+                                                            value="{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}">
 
                                                 </td>
                                                  @php
@@ -160,10 +160,10 @@
                                                     @endphp
                                                     <td>
                                                         <input type="hidden" name="current_stock" class="current_stock"
-                                                            value="@if (isset($current_stock)) {{ $current_stock }}@else{{ 0 }} @endif">
+                                                            value="@if (isset($current_stock)) {{ preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock) }}@else{{ 0 }} @endif">
                                                         <span class="current_stock_text">
                                                             @if (isset($current_stock))
-                                                                {{ @num_format($current_stock) }}@else{{ 0 }}
+                                                                {{ preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock) }}@else{{ 0 }}
                                                             @endif
                                                         </span>
                                                     </td>

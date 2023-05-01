@@ -207,16 +207,16 @@ if (empty($invoice_lang)) {
                             </td>
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center !important;vertical-align:bottom; width: 20%;">
-                                    {{ @num_format($line->sell_price) }}</td>
+                                    {{ @num_format($line->sell_price)  }}</td>
                             @endif
                             <td style="text-align:center;vertical-align:bottom; width: 20%;">
-                                {{ @num_format($line->quantity) }}</td>
+                                {{ preg_match('/\.\d*[1-9]+/', (string)$line->quantity) ? $line->quantity : @num_format($line->quantity)  }}</td>
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center;vertical-align:bottom; width: 30%;">
                                     @if ($line->product_discount_type != 'surplus')
-                                        {{ @num_format($line->sub_total + $line->product_discount_amount) }}
+                                        {{@num_format(($line->sub_total + $line->product_discount_amount))  }}
                                     @else
-                                        {{ @num_format($line->sub_total) }}
+                                        {{ @num_format($line->sub_total)}}
                                     @endif
                                 </td>
                             @endif

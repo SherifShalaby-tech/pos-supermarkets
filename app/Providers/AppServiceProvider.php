@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Currency;
 use App\Models\System;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //Blade directive to format number into required format.
         Blade::directive('num_format', function ($expression) {
-            $currency_precision =  2;
+            $currency_precision =2;
             return "number_format($expression,  $currency_precision, '.', ',')";
         });
 

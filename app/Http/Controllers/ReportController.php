@@ -496,9 +496,9 @@ class ReportController extends Controller
                     } else {
                         $final_total = $this->commonUtil->num_f($row->final_total);
                     }
-
+//                    $final_total = preg_match('/\.\d*[1-9]+/', (string)$final_total) ? $final_total : number_format($final_total,  2, '.', ',');
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
                 })
                 ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
                     $amount_paid = 0;
@@ -789,6 +789,7 @@ class ReportController extends Controller
                 ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     $final_total =  $row->final_total;
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+//                    $final_total = preg_match('/\.\d*[1-9]+/', (string)$final_total) ? $final_total : number_format($final_total,  2, '.', ',');
                     return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
                 })
                 ->addColumn('paid_amount', function ($row) use ($default_currency_id) {

@@ -46,9 +46,9 @@
     </td>
     <td>
         <input type="text" class="form-control quantity" min=1 name="remove_stock_lines[{{$loop->index}}][quantity]"
-            required value="{{$product->quantity}}">
+            required value="{{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}">
         <input type="hidden" class="form-control sub_total" min=1 name="remove_stock_lines[{{$loop->index}}][sub_total]"
-            required value="{{$product->sub_total}}">
+            required value="{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total)}}">
         <input type="hidden" class="form-control purchase_price" min=1 name="remove_stock_lines[{{$loop->index}}][purchase_price]"
             required value="@if(isset($product->purchase_price)){{@num_format($product->purchase_price)}}@else{{0}}@endif">
     </td>

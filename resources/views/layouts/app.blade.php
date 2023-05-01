@@ -10,12 +10,11 @@
     <meta name="robots" content="noindex, nofollow" />
 
     <title>@yield('title') - {{ config('app.name', 'POS') }}</title>
-
+    @yield('styles')
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     @include('layouts.partials.css')
-    @yield('styles')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('style')
     <style>
@@ -276,12 +275,12 @@
             @endforeach
             <input type="hidden" id="__language" value="{{ session('language') }}">
             <input type="hidden" id="__decimal" value=".">
-            <input type="hidden" id="__currency_precision" value="2">
+            <input type="hidden" id="__currency_precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
             <input type="hidden" id="__currency_symbol" value="$">
             <input type="hidden" id="__currency_thousand_separator" value=",">
             <input type="hidden" id="__currency_symbol_placement" value="before">
-            <input type="hidden" id="__precision" value="3">
-            <input type="hidden" id="__quantity_precision" value="3">
+            <input type="hidden" id="__precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__quantity_precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
             <input type="hidden" id="system_mode" value="{{ env('SYSTEM_MODE') }}">
             @yield('content')
         </div>

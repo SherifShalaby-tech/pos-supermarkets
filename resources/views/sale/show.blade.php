@@ -92,7 +92,7 @@
                                     </td>
                                     <td>
                                         @if (isset($line->quantity))
-                                            {{ @num_format($line->quantity) }}@else{{ 1 }}
+                                            {{ ($line->quantity) }}@else{{ 1 }}
                                         @endif
                                     </td>
                                     <td>
@@ -110,7 +110,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ @num_format($line->sub_total) }}
+                                        {{ preg_match('/\.\d*[1-9]+/', (string)$line->sub_total) ? $line->sub_total : @num_format($line->sub_total)}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -123,9 +123,9 @@
                                 <td></td>
                                 <td></td>
                                 <th style="text-align: right"> @lang('lang.total')</th>
-                                <td>{{ @num_format($sale->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
+                                <td>{{ ($sale->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
                                 </td>
-                                <td>{{ @num_format($sale->grand_total) }}</td>
+                                <td>{{ ($sale->grand_total) }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -181,10 +181,10 @@
                                             <label for="">{{ $value }}</label>
                                         </td>
                                         <td>
-                                            {{ @num_format($customer_size->$key['cm']) }}
+                                            {{ ($customer_size->$key['cm']) }}
                                         </td>
                                         <td>
-                                            {{ @num_format($customer_size->$key['inches']) }}
+                                            {{ ($customer_size->$key['inches']) }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -263,15 +263,15 @@
                         @endif
                         <tr>
                             <th>@lang('lang.grand_total'):</th>
-                            <td>{{ @num_format($sale->final_total) }}</td>
+                            <td>{{ ($sale->final_total) }}</td>
                         </tr>
                         <tr>
                             <th>@lang('lang.paid_amount'):</th>
-                            <td>{{ @num_format($sale->transaction_payments->sum('amount')) }}</td>
+                            <td>{{ ($sale->transaction_payments->sum('amount')) }}</td>
                         </tr>
                         <tr>
                             <th>@lang('lang.due'):</th>
-                            <td> {{ @num_format($sale->final_total - $sale->transaction_payments->sum('amount')) }}
+                            <td> {{ ($sale->final_total - $sale->transaction_payments->sum('amount')) }}
                             </td>
                         </tr>
                     </table>

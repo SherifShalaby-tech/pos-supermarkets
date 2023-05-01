@@ -32,12 +32,12 @@
         <td style="width: 20%">
             {{$product->variation->sub_sku}}
         </td>
-        <td>@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif</td>
+        <td>@if(isset($product->quantity)){{ preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif</td>
         <td style="width: 15%">
             <div class="input-group">
-                <input type="text" class="form-control quantity" min=0 max="{{$product->quantity}}"
+                <input type="text" class="form-control quantity" min=0 max="{{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}"
                        name="transaction_sell_line[{{$loop->index}}][quantity]" required
-                       value="@if(isset($product->quantity_returned)){{@num_format($product->quantity_returned)}}@else{{0}}@endif">
+                       value="@if(isset($product->quantity_returned)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity_returned) ? $product->quantity_returned : @num_format($product->quantity_returned) }}@else{{0}}@endif">
             </div>
 
         </td>

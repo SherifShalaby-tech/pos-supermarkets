@@ -15,9 +15,9 @@
         {{implode(', ', $product->variations->pluck('sub_sku')->toArray())}} @else {{$product->sku}} @endif
     </td>
     <td>{{$product->store_name}}</td>
-    <td>@if($product->is_service){{'-'}}@else{{@num_format($product->current_stock)}}@endif <input type="hidden"
+    <td>@if($product->is_service){{'-'}}@else{{preg_match('/\.\d*[1-9]+/', (string)$product->current_stock) ? $product->current_stock : @num_format($product->current_stock)}}@endif <input type="hidden"
             class="current_stock" name="current_stock"
-            value="@if($product->is_service){{0}}@else{{$product->current_stock}}@endif"></td>
+            value="@if($product->is_service){{0}}@else{{preg_match('/\.\d*[1-9]+/', (string)$product->current_stock) ? $product->current_stock : @num_format($product->current_stock)}}@endif"></td>
     <td style="width: 100px;">{!! Form::text('qty['.$loop->index.']', 0, ['class' => 'form-control qty', 'style' =>
         'width: 100px !important; border: 1px solid #999', 'placeholder' => __('lang.qty')]) !!}
         <span class="error stock_error hide">@lang('lang.request_stock_should_not_greater_than_current_stock')</span>
