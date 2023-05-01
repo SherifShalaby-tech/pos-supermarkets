@@ -1479,6 +1479,7 @@ class ProductController extends Controller
 
     public function getVariationRow()
     {
+        
         $row_id = request()->row_id;
         //'base_unit_multiplier'
         $units = Unit::orderBy('name', 'asc');

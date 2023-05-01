@@ -394,7 +394,25 @@ $(document).on("change", ".quantity, .purchase_price", function () {
         new_qty = 0;
     }
     $(tr)
+    .find(".current_stock")
+    .val(__currency_trans_from_en(new_qty, false));
+    $(tr)
         .find("span.current_stock_text")
+        .text(__currency_trans_from_en(new_qty, false));
+    calculate_sub_totals();
+});
+$(document).on("change", ".batch_quantity", function () {
+    let tr = $(this).closest("tr");
+    let productId=$(this).data('id');
+    
+    let current_stock = parseInt($(".current_stock"+productId).val());
+    let qty = parseInt($(this).val());
+    let new_qty = current_stock + qty;
+    console.log(new_qty)
+
+    $(".current_stock"+productId)
+    .val(__currency_trans_from_en(new_qty, false));
+    $("span.current_stock_text"+productId)
         .text(__currency_trans_from_en(new_qty, false));
     calculate_sub_totals();
 });
