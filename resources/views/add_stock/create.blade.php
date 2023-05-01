@@ -20,6 +20,7 @@
                         </div>
                         <p class="italic pt-3 pl-3"><small>@lang('lang.required_fields_info')</small></p>
                         {!! Form::open(['url' => action('AddStockController@store'), 'method' => 'post', 'id' => 'add_stock_form', 'enctype' => 'multipart/form-data']) !!}
+                        <input type="hidden" name="batch_count" id="batch_count" value="0">
                         <input type="hidden" name="row_count" id="row_count" value="0">
                         <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{ $is_raw_material }}">
                         <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
@@ -233,10 +234,10 @@
     <script type="text/javascript">
         $(document).on('click', '#add-selected-btn', function() {
             $('#select_products_modal').modal('hide');
-            $.each(product_selected, function(index, value) {
-                get_label_product_row(value.product_id, value.variation_id);
-            });
-            get_label_multipe_product_row(product_selected);
+            // $.each(product_selected, function(index, value) {
+            //     get_label_product_row(value.product_id, value.variation_id);
+            // });
+            get_label_multipe_product_row(product_selected)
             product_selected = [];
             product_table.ajax.reload();
         })
