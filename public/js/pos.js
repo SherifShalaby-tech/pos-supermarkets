@@ -628,8 +628,12 @@ function calculate_sub_totals() {
             sub_total = price_hidden * quantity;
         } else {
             sub_total = price_hidden * quantity;
+            console.log("quantity "+ quantity)
+            console.log("price_hidden "+ price_hidden)
+            console.log("sub_total "+ sub_total)
         }
-
+        // console.log(quantity)
+        // console.log(quantity)
         __write_number($(tr).find(".sub_total"), sub_total);
         let product_discount = calculate_product_discount(tr);
         product_discount_total += product_discount;

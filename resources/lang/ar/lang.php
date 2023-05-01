@@ -844,6 +844,10 @@ return [
     'cash_in_adjustment' => 'تسوية النقدية',
     'view_cash_in_adjustment' => 'عرض تسوية النقدية',
     'add_cash_in_adjustment' => 'إضافة تسوية النقدية',
+
+    'view_product_in_adjustment' => 'عرض تسوية المنتج',
+    'add_product_in_adjustment' => 'إضافة تسوية المنتج',
+    'product_in_adjustment' => 'تسوية المنتج',
     'adjustment_value' => 'قيمة التعديل',
     'title_of_creator' => 'لقب الخالق',
     'receiver_title' => 'عنوان المتلقي',
@@ -1333,6 +1337,13 @@ return [
     'category_discount'=>'فئة الخصم',
     'new_batch'=>'رقم التشغيلة الجديدة',
     'watsapp_numbers'=>'رقم واتساب للتواصل',
+
+    'actual_stock' => 'المخزون الفعلي',
+    'shortage' => 'النقص',
+    'value_of_shortage' => 'قيمة النقص',
+    'total_shortage_value' => 'اجمالي قيمة النقص',
+
+    'adjustment_save' =>'سيؤدي هذا إلى تغيير مخزون المنتج ، يرجى إدخال كلمة مرور المسؤول للتأكيد',
 
 
 ];

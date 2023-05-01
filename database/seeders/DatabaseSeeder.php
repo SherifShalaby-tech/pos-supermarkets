@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Employee;
+use App\Models\ExpenseBeneficiary;
+use App\Models\ExpenseCategory;
 use App\Models\JobType;
 use App\Models\MoneySafe;
 use App\Models\ProductClass;
@@ -154,6 +156,16 @@ class DatabaseSeeder extends Seeder
             'created_by' => 1,
         ]);
 
+        $expenses_category = ExpenseCategory::create([
+            'name' => 'adjustment',
+            'created_by' => 1
+        ]);
+
+        $expenses_beneficiary = ExpenseBeneficiary::create([
+            'name' => 'الجرد',
+            'expense_category_id' => $expenses_category->id,
+            'created_by' => 1,
+        ]);
         JobType::insert(
             [
                 ['job_title' => 'Cashier', 'date_of_creation' => Carbon::now(), 'created_by' => 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
