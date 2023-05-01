@@ -90,7 +90,7 @@
                                 <td>{{$value}}</td>
                                 <td> {{@num_format($transactions[$key]->total_purchase)}}</td>
                                 <td> {{@num_format($transactions[$key]->total_qty)}}</td>
-                                <td> {{@num_format($transactions[$key]->in_stock)}}</td>
+                                <td> {{preg_match('/\.\d*[1-9]+/', (string)$transactions[$key]->in_stock) ? $transactions[$key]->in_stock : @num_format($transactions[$key]->in_stock) }}</td>
                                 <td>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"

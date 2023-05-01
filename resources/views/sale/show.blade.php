@@ -110,7 +110,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ ($line->sub_total) }}
+                                        {{ preg_match('/\.\d*[1-9]+/', (string)$line->sub_total) ? $line->sub_total : @num_format($line->sub_total)}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -265,7 +265,7 @@
                             <th>@lang('lang.grand_total'):</th>
                             <td>{{ ($sale->final_total) }}</td>
                         </tr>
-                        <tr>s
+                        <tr>
                             <th>@lang('lang.paid_amount'):</th>
                             <td>{{ ($sale->transaction_payments->sum('amount')) }}</td>
                         </tr>

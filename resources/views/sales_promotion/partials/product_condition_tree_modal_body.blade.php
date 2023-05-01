@@ -274,7 +274,7 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                                             <label
                                                                 style="color: #222;">@lang('lang.stock'):
                                                                 @if (!empty($current_stock))
-                                                                    {{ @num_format($current_stock->current_stock) }}
+                                                                    {{preg_match('/\.\d*[1-9]+/', (string)$current_stock->current_stock) ? $current_stock->current_stock : @num_format($current_stock->current_stock)  }}
                                                                 @endif
                                                             </label>
                                                         </div>

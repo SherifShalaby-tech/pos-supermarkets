@@ -33,7 +33,7 @@ class SetSessionData
                     'symbol' => 'QR',
                     'decimal_separator' => '.',
                     'thousand_separator' => ',',
-                    'currency_precision' => 2,
+                    'currency_precision' => !empty(System::getProperty('numbers_length_after_dot')) ? System::getProperty('numbers_length_after_dot') : 5,
                     'currency_symbol_placement' => 'before',
                 ];
             } else {
@@ -45,7 +45,7 @@ class SetSessionData
                     'symbol' => $currency->symbol,
                     'decimal_separator' => '.',
                     'thousand_separator' => ',',
-                    'currency_precision' => 2,
+                    'currency_precision' => !empty(System::getProperty('numbers_length_after_dot')) ? System::getProperty('numbers_length_after_dot') : 5,
                     'currency_symbol_placement' => 'before',
                 ];
             }

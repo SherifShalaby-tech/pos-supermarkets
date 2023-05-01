@@ -16,7 +16,7 @@ $i = $index;
         <td>
             <input type="hidden" id="product_id" name="product_id[]" value="{{ $product->id }}">
             <input type="text" class="form-control quantity product_{{$product->id}}" id="input_product_{{$product->id}}" name="product_quentity[{{$product->id}}][quantity]" required
-                   value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif"  index_id="{{$i}}">
+                   value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif"  index_id="{{$i}}">
         </td>
         <td>
             {{$product->units->pluck('name')[0]??''}}

@@ -16,9 +16,9 @@
     </td>
     <td style="width: 20%">
         <div class="input-group">
-            <input type="text" class="form-control quantity" min=1 max="{{$product->quantity}}"
+            <input type="text" class="form-control quantity" min=1 max="{{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}"
                 name="purchase_return_lines[{{$loop->index}}][quantity]" required
-                value="@if(isset($product->quantity)){{$product->quantity}}@else{{0}}@endif">
+                value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{0}}@endif">
         </div>
 
     </td>
@@ -34,8 +34,8 @@
             }
             $current_stock = $query->sum('qty_available');
         @endphp
-        <input type="hidden" name="current_stock" class="current_stock" value="{{$current_stock}}">
-        <span class="current_stock_span">{{@num_format($current_stock)}}</span>
+        <input type="hidden" name="current_stock" class="current_stock" value="{{preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock)}}">
+        <span class="current_stock_span">{{ preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock)}}</span>
     </td>
     <td style="width: 10%">
         <span class="sub_total_span">{{@num_format(0)}}</span>

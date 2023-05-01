@@ -284,7 +284,7 @@ class SettingController extends Controller
                     }
                 }
             }
-
+            Artisan::call("optimize:clear");
 
             $output = [
                 'success' => true,

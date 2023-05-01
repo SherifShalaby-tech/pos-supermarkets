@@ -73,7 +73,7 @@
                                                     </td>
                                                     <td>
                                                         @if (isset($line->quantity))
-                                                            {{ @num_format($line->quantity) }}@else{{ 1 }}
+                                                            {{ ($line->quantity) }}@else{{ 1 }}
                                                         @endif
                                                     </td>
                                                     <td>
@@ -87,7 +87,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        {{ @num_format($line->sub_total) }}
+                                                        {{ preg_match('/\.\d*[1-9]+/', (string)$line->sub_total) ? $line->sub_total : @num_format($line->sub_total) }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -99,7 +99,7 @@
                             <div class="col-md-12">
                                 <div class="col-md-3 offset-md-8 text-right">
                                     <h3> @lang('lang.total'): <span
-                                            class="final_total_span">{{ @num_format($supplier_service->add_stock_lines->sum('sub_total')) }}</span>
+                                            class="final_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$line->sub_total) ? $line->sub_total : @num_format($line->sub_total) @num_format($supplier_service->add_stock_lines->sum('sub_total')) }}</span>
                                     </h3>
 
                                 </div>

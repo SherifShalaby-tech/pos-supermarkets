@@ -156,7 +156,7 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {{ @num_format($line->sub_total) }}
+                                                    {{@num_format($line->sub_total) }}
                                                 </td>
                                             </tr>
                                         @endforeach

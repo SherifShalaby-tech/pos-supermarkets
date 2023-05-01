@@ -23,11 +23,12 @@
                     <br> <span style="color: black; font-weight: bold;">{{ $product->sub_sku }}</span> <br>
                     @if (!empty($currency))
                         <span
-                            style="font-size:12px !important; font-weight: bold; color: black;">{{ @num_format($default_sell_price / $exchange_rate) . ' ' . $currency->symbol }}
+{{--                            style="font-size:12px !important; font-weight: bold; color: black;">{{ @num_format($default_sell_price / $exchange_rate) . ' ' . $currency->symbol }}--}}
+                            style="font-size:12px !important; font-weight: bold; color: black;">{{@num_format(($default_sell_price / $exchange_rate)) }} {{  ' ' . $currency->symbol  }}
                         </span>
                     @else
                         <span
-                            style="font-size:12px !important; font-weight: bold; color: black;">{{ @num_format($default_sell_price / $exchange_rate) . ' ' . session('currency.symbol') }}
+                            style="font-size:12px !important; font-weight: bold; color: black;">{{  @num_format(($default_sell_price / $exchange_rate))  }} {{  ' ' .  session('currency.symbol')  }}
                         </span>
                     @endif
                 </p>

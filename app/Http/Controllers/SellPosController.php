@@ -1392,9 +1392,8 @@ class SellPosController extends Controller
                     } else {
                         $final_total = $this->commonUtil->num_f($row->final_total);
                     }
-
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' .   $this->commonUtil->num_f($final_total) . '</span>';
                 })
                 ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);

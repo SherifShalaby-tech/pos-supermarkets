@@ -99,7 +99,8 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        {{ @num_format($line->sub_total) }}
+
+                                                        {{preg_match('/\.\d*[1-9]+/', (string)$line->sub_total) ? $line->sub_total : @num_format($line->sub_total)}}
                                                     </td>
                                                 </tr>
                                             @endforeach

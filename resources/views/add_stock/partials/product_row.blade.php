@@ -28,7 +28,7 @@ $i = $index;
         @else --}}
             {{$product->sub_sku}}
         {{-- @endif --}}
-        
+
     </td>
     <td>
         @if($qty)
@@ -36,7 +36,7 @@ $i = $index;
         value="{{$qty}}"  index_id="{{$i}}">
         @else
         <input type="text" class="form-control quantity quantity_{{$i}}" min=1 name="add_stock_lines[{{$i}}][quantity]" required
-            value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif"  index_id="{{$i}}">
+            value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif"  index_id="{{$i}}">
         @endif
     </td>
     <td>
@@ -77,7 +77,7 @@ $i = $index;
         Form::text('add_stock_lines['.$i.'][batch_number]', null, ['class' => 'form-control batchNumber']) !!}
        <button type="button" class="btn btn-success add_new_batch mt-2" id="addBatch" data-index="{{$i}}" data-product="{{$product}}" index_id="{{$i}}">
             <i class="fa fa-plus"></i>
-        </button> 
+        </button>
         {{__('lang.add_a_new_batch')}}
         {{-- @include(
             'quotation.partial.new_batch_modal'
@@ -144,7 +144,7 @@ $i = $index;
         {!! Form::text('add_stock_lines['.$i.'][batch_manufacturing_date]', null, ['class' => 'form-control datepicker',
         'readonly']) !!}
     </td>
-    <td colspan="1"> 
+    <td colspan="1">
         {!! Form::label('', __('lang.expiry_date'), []) !!}<br>
         {!! Form::text('add_stock_lines['.$i.'][batch_expiry_date]', null, ['class' => 'form-control datepicker expiry_date',
         'readonly']) !!}
@@ -168,7 +168,7 @@ $i = $index;
                value="@if($product->selling_price_depends == null) {{@num_format($product->sell_price)}} @else {{@num_format($product->selling_price_depends)}} @endif"  >
     </td>
     <td colspan="3"></td>
- 
+
 </tr>
 @empty
 

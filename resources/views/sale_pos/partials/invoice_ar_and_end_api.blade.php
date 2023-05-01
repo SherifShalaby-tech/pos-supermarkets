@@ -229,7 +229,7 @@
                                     @if ($line->product_discount_type != 'surplus')
                                         {{ @num_format($line->sub_total + $line->product_discount_amount) }}
                                     @else
-                                        {{ @num_format($line->sub_total) }}
+                                        {{  @num_format($line->sub_total) }}
                                     @endif
                                 </td>
                             @endif
