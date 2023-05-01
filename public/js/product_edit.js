@@ -58,7 +58,12 @@ $(document).on("click", ".remove_row", function () {
 
 $(document).on("click", ".add_row", function () {
     var row_id = parseInt($("#row_id").val());
-    console.log(row_id, "row_id");
+    // console.log(row_id, "row_id");
+    var is_service_checked=document.querySelector('#is_service')
+    // let is_service=0;
+    if(is_service_checked.checked == true){
+        is_service=1;
+    }
     $.ajax({
         method: "get",
         url: "/product/get-variation-row?row_id=" + row_id,
@@ -66,6 +71,7 @@ $(document).on("click", ".add_row", function () {
             name: $("#name").val(),
             purchase_price: $("#purchase_price").val(),
             sell_price: $("#sell_price").val(),
+            is_service: is_service
         },
         contentType: "html",
         success: function (result) {

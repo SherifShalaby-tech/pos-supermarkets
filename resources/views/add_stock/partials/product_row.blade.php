@@ -4,6 +4,7 @@ $i = $index;
 @forelse ($products as $product)
 @php
 $i=$i+1;
+$current_stock = \App\Models\ProductStore::where('product_id', $product->id)->first();
 @endphp
 <tr class="product_row">
     <td class="row_number"></td>
@@ -16,7 +17,7 @@ $i=$i+1;
         {{$product->product_name}}
         @endif
         <input type="hidden" name="is_batch_product" class="is_batch_product"
-            value="{{isset($is_batch)?$iS_batch:null}}">
+            value="{{isset($is_batch)?$is_batch:null}}">
         <input type="hidden" name="row_count" class="row_count" value="{{$i}}">
         <input type="hidden" name="add_stock_lines[{{$i}}][is_service]" class="is_service"
             value="{{$product->is_service}}">
@@ -63,10 +64,10 @@ $i=$i+1;
         <input type="hidden" class="form-control sub_total" name="add_stock_lines[{{$i}}][sub_total]" value="">
     </td>
     <td>
-        <input type="hidden" name="current_stock" class="current_stock"
-            value="@if($product->is_service) {{0}} @else @if(isset($product->qty_available)){{$product->qty_available}}@else{{0}}@endif @endif">
+        <input type="hidden" name="current_stock" class="current_stock current_stock{{$product->id}}"
+            value="@if($product->is_service) {{0}} @else @if(isset($current_stock->qty_available)){{$current_stock->qty_available}}@else{{0}}@endif @endif">
         <span
-            class="current_stock_text">@if($product->is_service) {{'-'}} @else @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif</span>
+            class="current_stock_text current_stock_text{{$product->id}}">@if($current_stock->is_service) {{'-'}} @else @if(isset($current_stock->qty_available)){{@num_format($current_stock->qty_available)}}@else{{0}}@endif @endif</span>
     </td>
     <td>
         <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class="stock_pricechange stockId{{$i}}" checked value="1"></div>
