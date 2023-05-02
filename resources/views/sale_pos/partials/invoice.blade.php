@@ -214,8 +214,10 @@ if (empty($invoice_lang)) {
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center;vertical-align:bottom; width: 30%;">
                                     @if ($line->product_discount_type != 'surplus')
+{{--                                        {{ round( @num_format(($line->sub_total + $line->product_discount_amount)), 1, PHP_ROUND_HALF_UP)  }}--}}
                                         {{@num_format(($line->sub_total + $line->product_discount_amount))  }}
                                     @else
+{{--                                        {{  round(@num_format($line->sub_total), 1, PHP_ROUND_HALF_UP)  }}--}}
                                         {{ @num_format($line->sub_total)}}
                                     @endif
                                 </td>

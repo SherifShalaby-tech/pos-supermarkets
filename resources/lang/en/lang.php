@@ -32,6 +32,17 @@ return [
     'delete_all' => 'Delete All',
     'numbers_length_after_dot' => 'Number Of Digits',
 
+    'salary' => 'Salary',
+    'paid_leave' => 'Paid Leave',
+    'paid_annual_leave' => 'Paid Annual Leave',
+    'payment_type' => 'Payment Type',
+    'wages_and_compensations' => 'Wages & Compensations',
+    'commission' => 'Commission',
+    'annual_bonus' => 'Annual Bonus',
+    'annual_incentive' => 'Annual Incentive',
+    'recognition' => 'Recognition',
+    'other_reward' => 'Other Reward',
+
 
     'received' => 'Received',
     'underManufacturing' => 'Under Manufacturing',
@@ -263,7 +274,7 @@ return [
     'due_date' => 'Due Date',
     'notify_me' => 'Notify Me',
     'payment_date' => 'Payment Date',
-    'payment_type' => 'Payment Type',
+
     'upload_documents' => 'Upload Documents',
     'ref_number' => 'Ref Number',
     'bank_deposit_date' => 'Bank Deposit Date',
@@ -403,7 +414,7 @@ return [
     'draft_transactions' => 'Draft Transactions',
 
 
-    'hrm' => 'HRM',
+    'hrm' => 'HR',
     'all_employees' => 'All Employees',
     'new_employee' => 'New Employee',
     'add_new_employee' => 'Add New Employee',
@@ -535,7 +546,7 @@ return [
     'leave_details' => 'Leave Details',
     'number_of_days' => 'Number of Days',
     'on_duty' => 'On Duty',
-    'wages_and_compensations' => 'Wages & Compensations',
+
     'list_of_wages_and_compensations' => 'List of Wages & Compensations',
     'type_of_payment' => 'Type of Payment',
     'acount_period_start_date' => 'Account Period Start Date',
@@ -545,7 +556,6 @@ return [
     'other_payment' => 'Other Amount',
     'notes' => 'Notes',
     'account_period' => 'Account Period',
-    'payment_type' => 'Payment Type',
     'reasons_of_deductibles' => 'Reasons of deductibles',
     'paid' => 'Paid',
     'list_of_wages_and_compensations' => 'List of Wages and Compensations',
@@ -1296,7 +1306,7 @@ return [
     'all_supplier_service' => 'All Supplier Services',
     'service_provider' => 'Service Provider',
     'commissions' => 'Commissions',
-    'commission' => 'Commission',
+
     'sales_per_employee' => 'Sales per Employee',
     'employee_commission' => 'Employee Commission',
     'cancel_service' => 'Cancel Service',
@@ -1357,4 +1367,7 @@ return [
     'total_shortage_value' => 'Total shortage value',
 
     'adjustment_save' =>'This will change the product stock , please enter admin password to confirm',
+
+    'permenant'=>'Permenant',
+
 ];

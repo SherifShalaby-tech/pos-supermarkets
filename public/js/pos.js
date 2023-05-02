@@ -455,15 +455,12 @@ function check_for_sale_promotion() {
                     if (
                         data.type === "package_promotion"
                     ) {
-
+                        console.log("dis", data.actual_sell_price, data.discount_value)
                         if (
                             data.discount_type === "fixed"
                         ) {
                             sum_discount =
-                                ( parseFloat(
-                                    data.actual_sell_price
-                                ) -
-                                parseFloat(
+                                (parseFloat(
                                     data.discount_value
                                 ) ) *  parseFloat(data.count_discount_number);
 
@@ -481,11 +478,10 @@ function check_for_sale_promotion() {
                                     )) /
                                 100;
                             sum_discount =
-                                (parseFloat(
-                                    data.actual_sell_price
-                                ) - discount_value ) *  parseFloat(data.count_discount_number);;
+                                ( discount_value ) *  parseFloat(data.count_discount_number);;
 
                         }
+                        console.log("sum_discount",sum_discount)
                         if (data.purchase_condition) {
                             let purchase_condition_amount =
                                 data
@@ -565,7 +561,7 @@ function check_for_sale_promotion() {
                 });
                 console.log('sales_promotion-cost_span=>',sum_item_discount,discount)
                 $("span#sales_promotion-cost_span").text(
-                    __currency_trans_from_en(sum_item_discount+discount, false)
+                    __currency_trans_from_en(discount, false)
                 );
                 __write_number($("#total_pp_discount"), discount);
 

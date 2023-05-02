@@ -147,16 +147,26 @@
                                         class="new_price @if ($sales_promotion->discount_type == 'package_promotion') hide @endif">@lang('lang.new_price'):
                                         <span class="new_price_span">{{ @num_format(0) }}</span></label>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-1">
+                                    <br>
+                                    <span class="i-checks">
+                                        <input id="is_discount_permenant" name="is_discount_permenant" type="checkbox" @if($sales_promotion->is_discount_permenant) checked @endif class="form-control-custom">
+                                        <label for="is_discount_permenant"><strong>
+                                                    @lang('lang.permenant')
+                            
+                                            </strong></label>
+                                    </span>
+                                </div>
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('start_date', __('lang.start_date') . ':') !!}
-                                        {!! Form::text('start_date', $sales_promotion->start_date, ['class' => 'form-control datepicker']) !!}
+                                        {!! Form::text('start_date',!empty($sales_promotion->start_date)? $sales_promotion->start_date:null, ['class' => 'form-control datepicker start_date',$sales_promotion->is_discount_permenant?'disabled':'']) !!}
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('end_date', __('lang.end_date') . ':') !!}
-                                        {!! Form::text('end_date', $sales_promotion->end_date, ['class' => 'form-control datepicker']) !!}
+                                        {!! Form::text('end_date',!empty($sales_promotion->end_date)? $sales_promotion->end_date:null, ['class' => 'form-control datepicker end_date',$sales_promotion->is_discount_permenant?'disabled':'']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-4 mt-5">
@@ -685,18 +695,34 @@
             let discount_value = __read_number($('#discount_value'))
 
             let new_price = 0;
+
+
+            var total_sell_price = 0;
+            $("#sale_promotion_table > tbody > tr").each((ele, tr) => {
+                let purchase_price = __read_number($(tr).find(".purchase_price"));
+                let sell_price = __read_number($(tr).find(".sell_price"));
+                let qty = __read_number($(tr).find(".qty"));
+                total_sell_price += sell_price * qty;
+            });
             if (type == 'package_promotion') {
                 if (discount_type == 'fixed') {
-                    new_price = discount_value;
+                    new_price = total_sell_price-discount_value;
                 }
                 if (discount_type == 'percentage') {
-                    let actual_sell_price = __read_number($('#actual_sell_price'))
-                    new_price = (actual_sell_price * discount_value) / 100;
+                    // let actual_sell_price = __read_number($('#actual_sell_price'))
+                    new_price =total_sell_price-((total_sell_price * discount_value) / 100);
                 }
             }
             $('.new_price_span').text(__currency_trans_from_en(new_price, false))
 
         })
+
+        $(document).on("change","#is_discount_permenant",function () {
+            $(".start_date").prop('disabled', (i, v) => !v);
+            $(".start_date").val(null);
+            $(".end_date").prop('disabled', (i, v) => !v);
+            $(".end_date").val(null);
+        });
     </script>
 
 @endsection

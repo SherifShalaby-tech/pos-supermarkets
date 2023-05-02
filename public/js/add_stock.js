@@ -72,7 +72,14 @@ $(document).on("click", ".add_bounce_btn", function () {
 
 });
 $(document).on("click", ".remove_batch_row", function () {
+    old_qty= parseInt($(".current_stock"+$(this).data('id')).val());
+    new_qty= old_qty-parseInt($(".batch_quantity"+$(this).data('id')).val());
+    $(".current_stock"+$(this).data('id'))
+    .val(__currency_trans_from_en(new_qty, false));
+    $("span.current_stock_text"+$(this).data('id'))
+        .text(__currency_trans_from_en(new_qty, false));
     $(this).closest("tr").remove();
+    calculate_sub_totals();
 });
 $(document).on("click", "#addBatch", function () {
     $product=$(this).data("product");
@@ -103,6 +110,7 @@ $(document).on("click", "#addBatch", function () {
             if($('.stockId'+index).prop('checked')){
                 $('.stockId'+index).prop('checked', false);
             }
+            calculate_sub_totals();
         },
     });
     
@@ -310,10 +318,18 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
 }
 function calculate_sub_totals() {
     var total = 0;
-    $("#product_table > tbody  > tr").each((ele, tr) => {
+    $("#product_table > tbody  > .product_row").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
+        let productId=$(".product_id").val();
         let purchase_price = __read_number($(tr).find(".purchase_price"));
         let sub_total = purchase_price * quantity;
+        $("#product_table > tbody  > .row_batch_details").each((ele, td) => {
+            let batch_quantity =__read_number($(td).find(".batch_quantity"+productId));
+            let batch_purchase_price = __read_number($(td).find(".batch_purchase_price"+productId));
+            if(batch_quantity){
+                sub_total=(batch_quantity*batch_purchase_price)+sub_total;
+            }
+        });
         __write_number($(tr).find(".sub_total"), sub_total);
         $(tr)
             .find(".sub_total_span")
@@ -384,12 +400,21 @@ $(document).on(
         calculate_sub_totals();
     }
 );
-$(document).on("change", ".quantity, .purchase_price", function () {
+$(document).on('focus','.quantity', function(){
+    asd=$(this).data('val', $(this).val());
+}).on("change", ".quantity",".purchase_price", function () {
     let tr = $(this).closest("tr");
+    let old_qty=parseInt($(this).data('val'));
     let current_stock = __read_number($(tr).find(".current_stock"));
     let qty = __read_number($(tr).find(".quantity"));
     let is_service = parseInt($(tr).find(".is_service").val());
-    let new_qty = current_stock + qty;
+    let new_qty =0;
+    if(current_stock==0){
+        new_qty=current_stock + qty;
+        alert(current_stock)
+    }else{
+        new_qty=current_stock + qty-old_qty;
+    }
     if (is_service) {
         new_qty = 0;
     }
@@ -401,13 +426,19 @@ $(document).on("change", ".quantity, .purchase_price", function () {
         .text(__currency_trans_from_en(new_qty, false));
     calculate_sub_totals();
 });
-$(document).on("change", ".batch_quantity", function () {
+$(document).on("change",".batch_purchase_price", function () {
+    calculate_sub_totals();
+});
+$(document).on('focus','.batch_quantity', function(){
+    $(this).data('val', $(this).val());
+});
+$(document).on("change", ".batch_quantity",".batch_purchase_price", function () {
     let tr = $(this).closest("tr");
     let productId=$(this).data('id');
-    
     let current_stock = parseInt($(".current_stock"+productId).val());
     let qty = parseInt($(this).val());
-    let new_qty = current_stock + qty;
+    let old_qty=parseInt($(this).data('val'));
+    let new_qty = current_stock + qty-old_qty;
     console.log(new_qty)
 
     $(".current_stock"+productId)

@@ -716,7 +716,7 @@ class ProductUtil extends Util
             if (!empty($product)) {
                 if (!empty($product->discount_start_date) && !empty($product->discount_end_date)) {
                     //if end date set then check for expiry
-                    if ($product->discount_start_date <= date('Y-m-d') && $product->discount_end_date >= date('Y-m-d')) {
+                    if (($product->discount_start_date <= date('Y-m-d') && $product->discount_end_date >= date('Y-m-d'))||$product->is_discount_permenant=='1') {
                         return $product;
                     } else {
                         return false;
@@ -788,6 +788,7 @@ class ProductUtil extends Util
                 ->whereJsonContains('product_ids', $product_id)
                 ->whereDate('start_date', '<=', date('Y-m-d'))
                 ->whereDate('end_date', '>=', date('Y-m-d'))
+                ->orWhere('is_discount_permenant','1')
                 ->get();
             foreach ($sales_promotions as $sales_promotion) {
                 if ($sales_promotion->type == 'item_discount') {
@@ -1293,7 +1294,7 @@ class ProductUtil extends Util
                                     'batch_number' => $batch['new_batch_number'],
                                     'manufacturing_date' => !empty($batch['batch_manufacturing_date']) ? $this->uf_date($line['manufacturing_date']) : null,
                                     'expiry_date' => !empty($batch['batch_expiry_date']) ? $this->uf_date($line['batch_expiry_date']) : null,
-                                    'expiry_warning' => $line['expiry_warning'],
+                                    'expiry_warning' => $batch['batch_expiry_warning'],
                                     'convert_status_expire' => $line['convert_status_expire'],
                                     'sell_price' => $batch['batch_selling_price'],
                                     'bounce_qty' => $line['bounce_qty'],
