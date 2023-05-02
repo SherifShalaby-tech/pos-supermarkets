@@ -1355,4 +1355,5 @@ return [
     'category_discount'=>'Discount Category',
     'new_batch'=>'New Batch Number',
     'watsapp_numbers'=>'Watsapp Numbers',
+    'permenant'=>'Permenant',
 ];
