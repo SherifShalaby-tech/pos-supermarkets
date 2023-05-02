@@ -142,8 +142,8 @@ class SellReturnController extends Controller
                 })
                 ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
                     $amount_paid = 0;
-                    if (!empty($request->method)) {
-                        $payments = $row->transaction_payments->where('method', $request->method);
+                    if (!empty($request["method"])) {
+                        $payments = $row->transaction_payments->where('method', $request["method"]);
                     } else {
                         $payments = $row->transaction_payments;
                     }
@@ -183,8 +183,8 @@ class SellReturnController extends Controller
                 ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
                 ->addColumn('method', function ($row) use ($payment_types, $request) {
                     $methods = '';
-                    if (!empty($request->method)) {
-                        $payments = $row->transaction_payments->where('method', $request->method);
+                    if (!empty($request["method"])) {
+                        $payments = $row->transaction_payments->where('method', $request["method"]);
                     } else {
                         $payments = $row->transaction_payments;
                     }
@@ -204,8 +204,8 @@ class SellReturnController extends Controller
                 })
                 ->addColumn('ref_number', function ($row) use ($request) {
                     $ref_numbers = '';
-                    if (!empty($request->method)) {
-                        $payments = $row->transaction_payments->where('method', $request->method);
+                    if (!empty($request["method"])) {
+                        $payments = $row->transaction_payments->where('method', $request["method"]);
                     } else {
                         $payments = $row->transaction_payments;
                     }
@@ -386,7 +386,7 @@ class SellReturnController extends Controller
             ->first();
 
         $stores = Store::getDropdown();
-
+//        dd($store_pos);
         return view('sell_return.create')->with(compact(
             'sell_return',
             'sale',
@@ -485,7 +485,7 @@ class SellReturnController extends Controller
                         'transaction_payment_id' => $request->transaction_payment_id,
                         'transaction_id' => $sell_return->id,
                         'amount' => $this->commonUtil->num_uf($request->amount),
-                        'method' => $request->method,
+                        'method' => $request["method"],
                         'paid_on' => $this->commonUtil->uf_date($request->paid_on) . ' ' . date('H:i:s'),
                         'ref_number' => $request->ref_number,
                         'bank_deposit_date' => !empty($request->bank_deposit_date) ? $request->bank_deposit_date : null,

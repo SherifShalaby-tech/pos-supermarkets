@@ -644,26 +644,10 @@ function calculate_sub_totals() {
         }
 
         __write_number($(tr).find(".sub_total"), sub_total);
-        if (isNaN(sub_total)){
-            $(tr)
-                .find(".sub_total_span")
-                .text(__currency_trans_from_en(sub_total, false));
-            total += sub_total;
-        }else{
-            let new_sub_total;
-            let length =$(tr)
-                .find(".sub_total_span")
-                .data("length");
-            if (hasManyDigits(sub_total,5)){
-                new_sub_total=parseFloat(sub_total.toFixed(length));
-            }else{
-                new_sub_total = sub_total;
-            }
-            $(tr)
-                .find(".sub_total_span")
-                .text(new_sub_total);
-            total += new_sub_total;
-        }
+        $(tr)
+            .find(".sub_total_span")
+            .text(__currency_trans_from_en(sub_total, false));
+        total += sub_total;
 
         item_count++;
 
@@ -823,11 +807,10 @@ function calculate_product_discount(tr) {
         exchange_rate=1;
     }
     discount = discount / exchange_rate;
-    __write_number($(tr).find(".product_discount_amount"), discount);
     if (type == "surplus") {
         discount = 0;
     }
-    console.log(discount)
+     __write_number($(tr).find(".product_discount_amount"), discount);
     return discount;
 }
 function calculate_promotion_discount(tr) {
@@ -2999,7 +2982,7 @@ $(document).on("change", ".discount_category", function (e) {
                 $(".discount_type"+product_id).val(response.result.discount_type);
                 __write_number($(".discount_value"+product_id), response.result.discount);
 
-                __write_number($(".discount_amount"+product_id), response.result.discount*qty);                
+                __write_number($(".discount_amount"+product_id), response.result.discount*qty);
 
                 __write_number($(".discount_amount"+product_id), response.result.discount*qty);
 

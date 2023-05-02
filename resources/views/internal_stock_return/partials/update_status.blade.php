@@ -64,9 +64,9 @@
                                     {{$product->variation->sub_sku}}
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control quantity" min=1 max="{{$product->quantity}}"
+                                    <input type="text" class="form-control quantity" min=1 max="{{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}"
                                         name="transfer_lines[{{$loop->index}}][quantity]" required
-                                        value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
+                                        value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif">
                                 </td>
                                 <td>
                                     <input type="text" class="form-control purchase_price"
@@ -74,10 +74,10 @@
                                         value="@if(isset($product->purchase_price)){{@num_format($product->purchase_price)}}@else{{0}}@endif">
                                 </td>
                                 <td>
-                                    <span class="sub_total_span">{{@num_format($product->sub_total)}}</span>
+                                    <span class="sub_total_span">{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total)}}</span>
                                     <input type="hidden" class="form-control sub_total"
                                         name="transfer_lines[{{$loop->index}}][sub_total]"
-                                        value="{{$product->sub_total}}">
+                                        value="{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total)}}">
                                 </td>
                             </tr>
                             @endforeach

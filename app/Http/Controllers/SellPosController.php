@@ -261,7 +261,7 @@ class SellPosController extends Controller
                 if ($transaction->status == 'final') {
                     $product = Product::find($sell_line['product_id']);
                     if (!$product->is_service) {
-                        $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity']);
+                        $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, (float) $sell_line['quantity']);
                     }
                 }
             }
@@ -272,7 +272,7 @@ class SellPosController extends Controller
             foreach ($request->transaction_sell_line as $sell_line) {
                 $product = Product::find($sell_line['product_id']);
                 if (!$product->is_service) {
-                    $this->productUtil->updateBlockQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity'], 'add');
+                    $this->productUtil->updateBlockQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id,(float) $sell_line['quantity'], 'add');
                 }
             }
         }
@@ -922,7 +922,7 @@ class SellPosController extends Controller
             ];
             $products=$query->leftjoin('add_stock_lines', 'variations.id','=','add_stock_lines.variation_id')
             ->select($selectRaws)->groupBy('variation_id','add_stock_lines.batch_number')->get();
-        
+
             $products_array = [];
             foreach ($products as $product) {
                 $products_array[$product->product_id]['name'] = $product->name;
@@ -967,7 +967,7 @@ class SellPosController extends Controller
                             'add_stock_lines_id'=>$variation['add_stock_lines.id'],
                             'qty_available' => $variation['qty'],
                             'is_service' => $value['is_service']
-                        ];    
+                        ];
                     }
                     $i++;
                 }
@@ -1392,9 +1392,8 @@ class SellPosController extends Controller
                     } else {
                         $final_total = $this->commonUtil->num_f($row->final_total);
                     }
-
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' .   $this->commonUtil->num_f($final_total) . '</span>';
                 })
                 ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);

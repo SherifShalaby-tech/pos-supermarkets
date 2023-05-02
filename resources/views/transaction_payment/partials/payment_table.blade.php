@@ -28,7 +28,7 @@
 
             @foreach ($payments as $payment)
             <tr>
-                <td>{{@num_format($payment->amount)}}</td>
+                <td>{{($payment->amount)}}</td>
                 <td>{{@format_date($payment->paid_on)}}</td>
                 <td>{{$payment_type_array[$payment->method]}}</td>
                 <td>{{$payment->bank_name}}</td>

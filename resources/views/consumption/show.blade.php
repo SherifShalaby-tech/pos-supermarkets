@@ -49,7 +49,7 @@
                                 <table style="border: 0px; width: 100%;">
                                     <tr>
                                         <td colspan="2"><label for="">@lang('lang.current_stock'):
-                                                {{@num_format($current_stock)}}</label></td>
+                                                {{preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock)}}</label></td>
                                     </tr>
                                     @foreach ($raw_material_details as $raw_material_detail)
                                     <tr>

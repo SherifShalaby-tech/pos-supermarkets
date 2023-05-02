@@ -342,7 +342,7 @@
                                     @endif
                                 </td>
                                 <td style="width: 15% !important;">
-                                    {{ @num_format($line->sub_total) }}
+                                    {{ preg_match('/\.\d*[1-9]+/', (string)$line->sub_total) ? $line->sub_total : @num_format($line->sub_total) }}
                                 </td>
                             </tr>
                             @if ($i == 20)

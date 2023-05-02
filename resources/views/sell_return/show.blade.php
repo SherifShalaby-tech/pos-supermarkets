@@ -83,13 +83,13 @@
                                     {{$line->variation->sub_sku}}
                                 </td>
                                 <td>
-                                    @if(isset($line->quantity_returned)){{@num_format($line->quantity_returned)}}@else{{0}}@endif
+                                    @if(isset($line->quantity_returned)){{($line->quantity_returned)}}@else{{0}}@endif
                                 </td>
                                 <td>
                                     @if(isset($line->sell_price)){{@num_format($line->sell_price)}}@else{{0}}@endif
                                 </td>
                                 <td>
-                                    {{@num_format($line->sell_price * $line->quantity_returned)}}
+                                    {{($line->sell_price * $line->quantity_returned)}}
                                 </td>
                             </tr>
                             @php
@@ -103,7 +103,7 @@
                                 <td></td>
                                 <td></td>
                                 <th style="text-align: right"> @lang('lang.total')</th>
-                                <td>{{@num_format($total)}}</td>
+                                <td>{{($total)}}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -123,15 +123,15 @@
                     <table class="table table-bordered">
                         <tr>
                             <th>@lang('lang.grand_total'):</th>
-                            <td>{{@num_format($sale->return_parent->final_total)}}</td>
+                            <td>{{($sale->return_parent->final_total)}}</td>
                         </tr>
                         <tr>
                             <th>@lang('lang.paid_amount'):</th>
-                            <td>{{@num_format($sale->return_parent->transaction_payments->sum('amount'))}}</td>
+                            <td>{{($sale->return_parent->transaction_payments->sum('amount'))}}</td>
                         </tr>
                         <tr>
                             <th>@lang('lang.due'):</th>
-                            <td> {{@num_format($sale->return_parent->final_total - $sale->return_parent->transaction_payments->sum('amount'))}}
+                            <td> {{($sale->return_parent->final_total - $sale->return_parent->transaction_payments->sum('amount'))}}
                             </td>
                         </tr>
                     </table>

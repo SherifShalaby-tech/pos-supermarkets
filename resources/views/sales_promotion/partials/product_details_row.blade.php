@@ -29,7 +29,7 @@
     <td>{{$product->variations_sku}}</td>
     <td>{{@num_format($default_purchase_price)}}</td>
     <td>{{@num_format($default_sell_price)}}</td>
-    <td>@if($product->is_service){{'-'}}@else{{@num_format($product->current_stock)}}@endif</td>
+    <td>@if($product->is_service){{'-'}}@else{{preg_match('/\.\d*[1-9]+/', (string)$product->current_stock) ? $product->current_stock : @num_format($product->current_stock)}}@endif</td>
     <td>@if(!empty($product->expiry_date)){{@format_date($product->expiry_date)}}@endif</td>
     <td> @if(!empty($product->date_of_purchase)){{@format_date($product->date_of_purchase)}}@endif</td>
     <td class="qty_hide @if ($type != 'package_promotion') hide @endif">

@@ -182,7 +182,7 @@ class SettingController extends Controller
                     'symbol' => $currency->symbol,
                     'decimal_separator' => '.',
                     'thousand_separator' => ',',
-                    'currency_precision' => 2,
+                    'currency_precision' => !empty(System::getProperty('numbers_length_after_dot')) ? System::getProperty('numbers_length_after_dot') : 5,
                     'currency_symbol_placement' => 'before',
                 ];
                 $request->session()->put('currency', $currency_data);
@@ -284,7 +284,7 @@ class SettingController extends Controller
                     }
                 }
             }
-
+            Artisan::call("optimize:clear");
 
             $output = [
                 'success' => true,

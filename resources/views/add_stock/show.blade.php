@@ -87,7 +87,7 @@
                                                 @if(isset($line->final_cost)){{@num_format($line->final_cost)}}@else{{0}}@endif
                                             </td>
                                             <td>
-                                                {{@num_format($line->sub_total)}}
+                                                {{preg_match('/\.\d*[1-9]+/', (string)$line->sub_total) ? $line->sub_total : @num_format($line->sub_total)}}
                                             </td>
                                             <td>{{$line->batch_number}}</td>
                                             <td>@if(!empty($line->manufacturing_date)){{@format_date($line->manufacturing_date)}}@endif
