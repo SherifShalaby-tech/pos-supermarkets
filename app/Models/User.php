@@ -237,6 +237,7 @@ class User extends Authenticatable
                 'cash_out_adjustment' => __('lang.cash_out_adjustment'),
                 'customer_balance_adjustment' => __('lang.customer_balance_adjustment'),
                 'customer_point_adjustment' => __('lang.customer_point_adjustment'),
+                'product_in_adjustment' => __('lang.customer_point_adjustment'),
             ],
             'sp_module' => [
                 'sales_promotion' => __('lang.sales_promotion'),

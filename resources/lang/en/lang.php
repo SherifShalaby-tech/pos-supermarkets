@@ -851,6 +851,11 @@ return [
     'cash_in_adjustment' => 'Cash In Adjustment',
     'view_cash_in_adjustment' => 'View Cash In Adjustment',
     'add_cash_in_adjustment' => 'Add Cash In Adjustment',
+
+    'product_in_adjustment' => 'Product In Adjustment',
+    'view_product_in_adjustment' => 'View Product In Adjustment',
+    'add_product_in_adjustment' => 'Add Product In Adjustment',
+
     'adjustment_value' => 'Adjustment Value',
     'title_of_creator' => 'Title of creator',
     'receiver_title' => 'Receiver Title',
@@ -1355,5 +1360,14 @@ return [
     'category_discount'=>'Discount Category',
     'new_batch'=>'New Batch Number',
     'watsapp_numbers'=>'Watsapp Numbers',
+
+    'actual_stock' => 'Actual Stock',
+    'shortage' => 'Shortage',
+    'value_of_shortage' => 'Value of Shortage',
+    'total_shortage_value' => 'Total shortage value',
+
+    'adjustment_save' =>'This will change the product stock , please enter admin password to confirm',
+
     'permenant'=>'Permenant',
+
 ];
