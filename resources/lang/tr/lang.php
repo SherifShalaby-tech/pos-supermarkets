@@ -12,8 +12,19 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-    'number_vs_base_unit'=>'Birim denklemi',
+    'salary' => 'Maaş',
+    'paid_leave' => 'Ücretli izin',
+    'paid_annual_leave' => 'Ücretli yıllık izin',
+    'payment_type' => 'Ödeme şekli',
+    'wages_and_compensations' => 'Ücretler ve Tazminatlar',
+    'commission' => 'Ücretler ve Tazminatlar',
+    'annual_bonus' => 'Yıllık Bonus',
+    'annual_incentive' => 'Yıllık teşvik',
+    'recognition' => 'Tanınma',
+    'other_reward' => 'Diğer ödül',
 
+
+    'number_vs_base_unit'=>'Birim denklemi',
     'dashboard' => 'Gösterge Paneli',
     'username' => 'Kullanıcı adı',
     'password' => 'Parola',
@@ -221,7 +232,7 @@ return [
     'due_date' => 'Bitiş tarihi',
     'notify_me' => 'Bana bildir',
     'payment_date' => 'Ödeme tarihi',
-    'payment_type' => 'Ödeme şekli',
+
     'upload_documents' => 'Belgeleri Yükle',
     'ref_number' => 'Referans numarası',
     'bank_deposit_date' => 'Banka Yatırma Tarihi',
@@ -492,7 +503,7 @@ return [
     'leave_details' => 'Ayrıntıları Bırak',
     'number_of_days' => 'Gün sayısı',
     'on_duty' => 'Görevde',
-    'wages_and_compensations' => 'Ücretler ve Tazminatlar',
+
     'list_of_wages_and_compensations' => 'Ücret ve Tazminat Listesi',
     'type_of_payment' => 'Ödeme türü',
     'acount_period_start_date' => 'Hesap Dönemi Başlangıç Tarihi',
@@ -502,7 +513,8 @@ return [
     'other_payment' => 'Diğer miktar',
     'notes' => 'Notlar',
     'account_period' => 'Hesap Dönemi',
-    'payment_type' => 'Ödeme şekli',
+
+
     'reasons_of_deductibles' => 'Kesintilerin nedenleri',
     'paid' => 'Paralı',
     'list_of_wages_and_compensations' => 'Ücret ve Tazminat Listesi',

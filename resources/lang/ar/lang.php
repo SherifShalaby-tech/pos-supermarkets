@@ -32,8 +32,6 @@ return [
     'delete_all' => 'حذف جماعي',
     'numbers_length_after_dot' => 'الكسور',
 
-
-
     'received' => 'استلام',
     'underManufacturing' => 'تحت التصنيع',
     'manufactured' => 'تم تصنيعها',
@@ -43,11 +41,6 @@ return [
     'manufactured_cost'=>'التكلفة',
     'manufactured_unit_cost_sell'=>'تكلفة الوحده للبيع ',
     'manufactured_unit_cost_purchase'=>'تكلفة الوحده للشراء ',
-
-
-
-
-
 
     'have_weight'=>'يعتمد علي الميزان',
     'type_Debt' => 'سداد دين',
@@ -232,6 +225,17 @@ return [
     'paper_size' => 'حجم الورق',
     'variations' => 'الاختلافات',
 
+    'salary' => 'الراتب',
+    'paid_leave' => 'إجازة مدفوعة',
+    'paid_annual_leave' => 'إجازة سنوية مدفوعة',
+    'payment_type' => 'طريقة الدفع',
+    'wages_and_compensations' => 'الأجور ',
+    'commission_%' => 'عمولة٪',
+    'commission' => 'عمولة',
+    'annual_bonus' => 'مكافأة سنوية',
+    'annual_incentive' => 'حوافز سنوية',
+    'recognition' => 'مكافأة تقديرية',
+    'other_reward' => 'مكافآت أخرى',
 
     'create_new_purchase_order' => 'إنشاء أمر شراء جديد',
     'purchase_order' => 'أمر شراء',
@@ -265,7 +269,6 @@ return [
     'due_date' => 'تاريخ الاستحقاق',
     'notify_me' => 'أعلمني، بلغني',
     'payment_date' => 'فترة الحساب',
-    'payment_type' => 'طريقة الدفع',
     'upload_documents' => 'تحميل المستندات',
     'ref_number' => 'رقم المرجع',
     'bank_deposit_date' => 'تاريخ الإيداع المصرفي',
@@ -536,7 +539,7 @@ return [
     'leave_details' => 'تفاصيل الإجازة',
     'number_of_days' => 'عدد الأيام',
     'on_duty' => 'في الخدمة',
-    'wages_and_compensations' => 'الأجور ',
+
     'list_of_wages_and_compensations' => 'قائمة الأجور',
     'type_of_payment' => 'طريقة الدفع',
     'acount_period_start_date' => 'تاريخ بدء فترة الحساب',
@@ -546,7 +549,7 @@ return [
     'other_payment' => 'مدفوعات أخرى',
     'notes' => 'ملاحظات',
     'account_period' => 'فترة الحساب',
-    'payment_type' => 'طريقة الدفع',
+
     'reasons_of_deductibles' => 'أسباب الخصومات',
     'paid' => 'دُفعت',
     'list_of_wages_and_compensations' => 'قائمة الأجور ',
@@ -942,7 +945,7 @@ return [
     'commission_customer_types' => 'أنواع العملاء العمولة',
     'commission_stores' => 'مخازن Comission',
     'commission_cashiers' => 'أمين الصندوق',
-    'commission_%' => 'عمولة٪',
+
     'send_credentials' => 'إرسال أوراق الاعتماد',
     'pay_now' => 'ادفع الآن',
     'pending' => 'قيد الانتظار',
@@ -1289,7 +1292,6 @@ return [
     'all_supplier_service' => 'جميع خدمات الموردين',
     'service_provider' => 'مقدم الخدمة',
     'commissions' => 'اللجان',
-    'commission' => 'عمولة',
     'sales_per_employee' => 'المبيعات لكل موظف',
     'employee_commission' => 'عمولة الموظف',
     'cancel_service' => 'إلغاء الخدمة',
