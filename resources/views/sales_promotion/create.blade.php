@@ -664,6 +664,13 @@
                 $('.qty').val(1);
             }
         })
+        $(document).on('change','.qty',function(){
+            let tr = $(this).closest("tr");
+            let qty=parseInt($(this).val());
+            let sell_price = __read_number($(tr).find(".sell_price"));
+            let newsellprice=qty*sell_price;
+            $(tr).find('td:eq(4)').text(newsellprice);
+        });
         $(document).on('change', '#discount_type, #discount_value', function() {
             let type = $('#type').val()
             let discount_type = $('#discount_type').val();
