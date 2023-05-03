@@ -25,7 +25,7 @@
         <div class="col-md-3 payment_fields hide">
             <div class="form-group">
                 {!! Form::label('paid_on', __('lang.payment_date'). ':', []) !!} <br>
-                {!! Form::text('paid_on', !empty($transaction_payment)&&!empty($transaction_payment->paid_on)?$transaction_payment->paid_on:(!empty($payment) ? @format_date($payment->paid_on) :
+                {!! Form::text('paid_on', !empty($transaction_payment)&&!empty($transaction_payment->paid_on)?@format_date($transaction_payment->paid_on):(!empty($payment) ? @format_date($payment->paid_on) :
                 @format_date(date('Y-m-d'))), ['class' => 'form-control datepicker',
                 'placeholder' => __('lang.payment_date')]) !!}
             </div>
@@ -48,7 +48,7 @@
         <div class="col-md-3 not_cash_fields hide">
             <div class="form-group">
                 {!! Form::label('bank_deposit_date', __('lang.bank_deposit_date'). ':*', []) !!} <br>
-                {!! Form::text('bank_deposit_date', !empty($transaction_payment)&&!empty($transaction_payment->bank_deposit_date)?$transaction_payment->bank_deposit_date:(!empty($payment) ? @format_date($payment->bank_deposit_date) : null),
+                {!! Form::text('bank_deposit_date', !empty($transaction_payment)&&!empty($transaction_payment->bank_deposit_date)?@format_date($transaction_payment->bank_deposit_date):(!empty($payment) ? @format_date($payment->bank_deposit_date) : null),
                 ['class' => 'form-control not_cash datepicker',
                 'placeholder' => __('lang.bank_deposit_date')]) !!}
             </div>

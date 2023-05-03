@@ -101,7 +101,7 @@
             <input type="text" class="form-control sell_price"
                    name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
                    @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @elseif(env('IS_SUB_BRANCH',false)) readonly @endif
-                   value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif">
+                   value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif ">
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif">
 
