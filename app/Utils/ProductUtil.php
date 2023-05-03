@@ -826,6 +826,7 @@ class ProductUtil extends Util
                 ->whereJsonContains('store_ids', $store_id)
                 ->whereDate('start_date', '<=', date('Y-m-d'))
                 ->whereDate('end_date', '>=', date('Y-m-d'))
+                ->orWhere('is_discount_permenant','1')
                 ->get();
             foreach ($sales_promotions as $sales_promotion) {
                 $v_sales_promotion = $this->getSalePromotionDetailsIfValidForThisSaleArray($sales_promotion, $added_products, $qty_array);
