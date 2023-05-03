@@ -57,7 +57,8 @@ class ProductUtil extends Util
         $sub_sku = $sku . $c;
 
         if (in_array($barcode_type, ['C128', 'C39'])) {
-            $sub_sku = $sku . '-' . $c;
+            $sub_sku = $sku . $c;
+            // $sub_sku = $sku . '-' . $c;
         }
 
         return $sub_sku;
@@ -162,7 +163,8 @@ class ProductUtil extends Util
                 }
             }
         }
-        $sku = $sku . '-' . $number;
+        // $sku = $sku . '-' . $number;
+        $sku = $sku . $number;
         $sku_exist = Product::where('sku', $sku)->exists();
 
         if ($sku_exist) {
@@ -258,9 +260,9 @@ class ProductUtil extends Util
             $variation_data['default_purchase_price'] = $purchase_price;
             $variation_data['default_sell_price'] = $sell_price;
 
-            $variation = Variation::create($variation_data);
-            $variation_array[] = ['variation' => $variation, 'variant_stores' =>  []];
-            $keey_variations[] = $variation->id;
+            // $variation = Variation::create($variation_data);
+            // $variation_array[] = ['variation' => $variation_data, 'variant_stores' =>  []];
+            // $keey_variations[] = $variation->id;
             foreach ($variations as $v) {
 
                 $c = Variation::where('product_id', $product->id)
