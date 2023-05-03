@@ -682,8 +682,6 @@
                 newprice-=discount;
             }else if(discount_type=='percentage'){
                 newprice-= (newprice*discount)/100;
-            }else{
-                
             }
             
             $('.new_price_span').text(__currency_trans_from_en(newprice, false))
