@@ -126,17 +126,21 @@
                 || auth()->user()->can('sp_module.sales_promotion.delete'))
                 <select class="custom-select custom-select-sm discount_category discount_category{{$product->product_id}}" style="height:30% !important">
                     <option selected>select</option>
-                    @foreach($product_all_discounts_categories as $discount)
-                            <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
-                    @endforeach
+                    @if(!empty($product_all_discounts_categories))
+                        @foreach($product_all_discounts_categories as $discount)
+                                <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
+                        @endforeach
+                    @endif
                 </select>
         @else
             <select class="custom-select custom-select-sm discount_category discount_category{{$product->product_id}}" style="height:30% !important"
                  disabled="disabled">
                 <option selected>select</option>
-                @foreach($product_all_discounts_categories as $discount)
-                        <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
-                @endforeach
+                @if(!empty($product_all_discounts_categories))
+                    @foreach($product_all_discounts_categories as $discount)
+                            <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
+                    @endforeach
+                @endif
             </select>
         @endif
         </td>

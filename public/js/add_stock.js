@@ -411,7 +411,6 @@ $(document).on('focus','.quantity', function(){
     let new_qty =0;
     if(current_stock==0){
         new_qty=current_stock + qty;
-        alert(current_stock)
     }else{
         new_qty=current_stock + qty-old_qty;
     }
@@ -481,5 +480,18 @@ $(document).on("change", ".bounce_qty,.quantity ,.purchase_price ,.selling_price
             $(".bounce_profit_"+index_id).val( bounce_profit_val.toFixed(2));
         }
 
+});
+$(document).on("click", "#clear_all_input_form", function () {
+    var value = $('#clear_all_input_form').is(':checked')?1:0;
+    $.ajax({
+        method: "get",
+        url: "/create-or-update-system-property/clear_all_input_stock_form/"+value,
+        contentType: "html",
+        success: function (result) {
+            if (result.success) {
+                swal("Success", response.msg, "success");
+            }
+        },
+    });
 });
 
