@@ -402,12 +402,15 @@ $(document).on(
 );
 $(document).on('focus','.quantity', function(){
     asd=$(this).data('val', $(this).val());
-}).on("change", ".quantity",".purchase_price", function () {
+})
+$(document).on("change", ".quantity,.purchase_price", function () {
     let tr = $(this).closest("tr");
     let old_qty=parseInt($(this).data('val'));
     let current_stock = __read_number($(tr).find(".current_stock"));
     let qty = __read_number($(tr).find(".quantity"));
     let is_service = parseInt($(tr).find(".is_service").val());
+    let purchase_price = __read_number($(tr).find(".purchase_price"));
+    // alert(22)
     let new_qty =0;
     if(current_stock==0){
         new_qty=current_stock + qty;
