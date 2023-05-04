@@ -8,6 +8,8 @@ use App\Models\Category;
 use App\Models\Color;
 use App\Models\Customer;
 use App\Models\CustomerType;
+use App\Models\ExpenseBeneficiary;
+use App\Models\ExpenseCategory;
 use App\Models\Grade;
 use App\Models\Product;
 use App\Models\ProductClass;
@@ -475,16 +477,32 @@ class ProductInAdjustmentsController extends Controller
                 'created_by'=> $user_id,
                 'store_id'=> !empty($store_pos) ? $store_pos->store_id : null,
             ]);
+            $expenses_category = ExpenseCategory::where('name','Adjustment')->orWhere('name','adjustment')->first();
+            if(!$expenses_category){
+                $expenses_category = ExpenseCategory::create([
+                    'name' => 'Adjustment',
+                    'created_by' => 1
+                ]);
+            }
+            $expenses_beneficiary = ExpenseBeneficiary::where('name','الجرد')->first();
+            if(!$expenses_beneficiary){
+                $expenses_beneficiary = ExpenseBeneficiary::create([
+                    'name' => 'الجرد',
+                    'expense_category_id' => $expenses_category->id,
+                    'created_by' => 1,
+                ]);
+            }
+            
             Transaction::create([
                 'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
                 'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
-                'store_id' => 1,
+                'store_id' => $store_pos->store_id,
                 'type' => 'expense',
                 'status' => 'final',
                 'invoice_no' => $this->productUtil->getNumberByType('expense'),
                 'transaction_date' => $ProductInAdjustment->created_at,
-                'expense_category_id' => 1,
-                'expense_beneficiary_id' => 1,
+                'expense_category_id' => $expenses_category->id,
+                'expense_beneficiary_id' => $expenses_beneficiary->id,
                 'source_id' => 1,
                 'source_type' => 'store',
                 'created_by' => $user_id,
