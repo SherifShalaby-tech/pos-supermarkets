@@ -234,6 +234,9 @@ class ProductController extends Controller
             if (request()->active == '1' || request()->active == '0') {
                 $products->where('products.active', request()->active);
             }
+            if (request()->show_zero_stocks == '0') {
+                $products->where('is_service', 0)->havingRaw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') > ?', [0]);
+            }
 
             if (!empty(request()->is_raw_material)) {
                 $products->where('is_raw_material', 1);

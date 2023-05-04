@@ -543,14 +543,14 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 href="{{action('CashInAdjustmentController@index')}}">{{__('lang.view_cash_in_adjustment')}}</a>
                         </li>
                         @endcan
-                        @can('adjustment.product_in_adjustment.create_and_edit')
+                        @can('adjustment.cash_in_adjustment.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'product-in-adjustment-create' && request()->segment(2) == 'create') active @endif">
                             <a
                                 href="{{action('ProductInAdjustmentsController@create')}}">{{__('lang.add_product_in_adjustment')}}</a>
                         </li>
                         @endcan
-                        @can('adjustment.product_in_adjustment.view')
+                        @can('adjustment.cash_in_adjustment.view')
                         <li
                             class="@if(request()->segment(1) == 'product-in-adjustment-index' && empty(request()->segment(2))) active @endif">
                             <a
