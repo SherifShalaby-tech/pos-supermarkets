@@ -401,9 +401,12 @@ $(document).on(
     }
 );
 $(document).on('focus','.quantity', function(){
-    asd=$(this).data('val', $(this).val());
+    $(this).data('val', $(this).val());
 })
-$(document).on("change", ".quantity,.purchase_price", function () {
+$(document).on("change", ".purchase_price", function () {
+    calculate_sub_totals();
+});
+$(document).on("change", ".quantity", function () {
     let tr = $(this).closest("tr");
     let old_qty=parseInt($(this).data('val'));
     let current_stock = __read_number($(tr).find(".current_stock"));
@@ -415,7 +418,11 @@ $(document).on("change", ".quantity,.purchase_price", function () {
     if(current_stock==0){
         new_qty=current_stock + qty;
     }else{
-        new_qty=current_stock + qty-old_qty;
+        if(old_qty){
+            new_qty=current_stock + qty-old_qty;
+        }else{
+            new_qty=current_stock + qty;
+        }
     }
     if (is_service) {
         new_qty = 0;
@@ -427,6 +434,7 @@ $(document).on("change", ".quantity,.purchase_price", function () {
         .find("span.current_stock_text")
         .text(__currency_trans_from_en(new_qty, false));
     calculate_sub_totals();
+
 });
 $(document).on("change",".batch_purchase_price", function () {
     calculate_sub_totals();
@@ -434,7 +442,7 @@ $(document).on("change",".batch_purchase_price", function () {
 $(document).on('focus','.batch_quantity', function(){
     $(this).data('val', $(this).val());
 });
-$(document).on("change", ".batch_quantity",".batch_purchase_price", function () {
+$(document).on("change", ".batch_quantity", function () {
     let tr = $(this).closest("tr");
     let productId=$(this).data('id');
     let current_stock = parseInt($(".current_stock"+productId).val());

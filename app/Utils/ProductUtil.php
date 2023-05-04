@@ -1224,6 +1224,7 @@ class ProductUtil extends Util
         $qty=0;
         // return $add_stocks;
         foreach ($add_stocks as $line) {
+            if(isset($line['product_id'] ) && isset($line['variation_id']) ){
             if (!empty($line['add_stock_line_id'])) {
                 $add_stock = AddStockLine::find($line['add_stock_line_id']);
                 $add_stock->product_id = $line['product_id'];
@@ -1337,6 +1338,7 @@ class ProductUtil extends Util
                     ->whereColumn('quantity',">",'quantity_sold')->update([
                         'sell_price' => $line['selling_price'],
                     ]);
+            }
             }
         }
         // return $keep_lines_ids;

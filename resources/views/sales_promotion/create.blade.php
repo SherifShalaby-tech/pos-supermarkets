@@ -675,7 +675,7 @@
             $(tr).find('td:eq(4)').text(newsellprice);
             $(tr).find('td:eq(3)').text(newpurchaseprice);
             calculate_total_prices();
-            let footer_sell_price_total=parseInt($('.footer_sell_price_total').text())
+            let footer_sell_price_total=parseFloat($('.footer_sell_price_total').text())
             let discount=parseInt($('#discount_value').val());
             let newprice=footer_sell_price_total;
             if(discount_type=='fixed'){
