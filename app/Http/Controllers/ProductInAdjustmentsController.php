@@ -58,7 +58,7 @@ class ProductInAdjustmentsController extends Controller
         $this->transactionUtil = $transactionUtil;
     }
     public function index(){
-        $product_adjustment = ProductInAdjustment::get();
+        $product_adjustment = ProductInAdjustment::orderBy('created_at', 'desc')->get();
         return view('product_in_adjustment.index')->with(compact(
             'product_adjustment'
         ));
@@ -508,6 +508,10 @@ class ProductInAdjustmentsController extends Controller
             }
 
         }
+    }
+    public function getDetails($id){
+         $adjustment_details = ProductInAdjustmentDetails::where('product_adjustments_id',$id)->with('product')->get();
+        return view('product_in_adjustment.details')->with(compact('adjustment_details'));
     }
     /**
      * Remove the specified resource from storage.

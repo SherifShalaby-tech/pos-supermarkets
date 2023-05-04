@@ -386,7 +386,7 @@
                 dom: "lBfrtip",
                 // stateSave: true,
                 buttons:buttons,
-                // processing: true,
+                processing: true,
                 serverSide: true,
                 aaSorting: [
                     [2, 'asc']

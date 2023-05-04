@@ -323,7 +323,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('product-in-adjustment-create', 'ProductInAdjustmentsController@create');
     Route::post('product-in-adjustment-store', 'ProductInAdjustmentsController@store')->name('add_product_adjustment');
     Route::delete('product-in-adjustment-delete/{id}', 'ProductInAdjustmentsController@delete')->name('delete_product_adjustment');
-    
+    Route::get('product-in-adjustment/get-details/{id}', 'ProductInAdjustmentsController@getDetails');
+
     Route::get('report/get-profit-loss', 'ReportController@getProfitLoss');
     Route::get('report/daily-sales-summary', 'ReportController@getDailySalesSummary');
     Route::get('report/get-receivable-report', 'ReportController@getReceivableReport');
