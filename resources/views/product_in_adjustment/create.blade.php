@@ -5,6 +5,186 @@
 {{-- <form  id="product_form" method="POST" action="{{route('add_product_adjustment')}}"> --}}
     {{-- @csrf --}}
     <div class="container-fluid">
+        <div class="card mt-3">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('product_class_id', session('system_mode') == 'restaurant' ? __('lang.category') : __('lang.product_class') . ':', []) !!}
+                            {!! Form::select('product_class_id', $product_classes, request()->product_class_id, [
+    'class' => 'form-control filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    @if (session('system_mode') != 'restaurant')
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('category_id', __('lang.category') . ':', []) !!}
+                                {!! Form::select('category_id', $categories, request()->category_id, [
+    'class' => 'form-control filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('sub_category_id', __('lang.sub_category') . ':', []) !!}
+                                {!! Form::select('sub_category_id', $sub_categories, request()->sub_category_id, [
+    'class' => 'form-control filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('brand_id', __('lang.brand') . ':', []) !!}
+                                {!! Form::select('brand_id', $brands, request()->brand_id, [
+    'class' => 'form-control
+                        filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                            </div>
+                        </div>
+                    @endif
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('supplier_id', __('lang.supplier') . ':', []) !!}
+                            {!! Form::select('supplier_id', $suppliers, request()->supplier_id, [
+    'class' => 'form-control
+                        filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('unit_id', __('lang.unit') . ':', []) !!}
+                            {!! Form::select('unit_id', $units, request()->unit_id, [
+    'class' => 'form-control
+                        filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('color_id', __('lang.color') . ':', []) !!}
+                            {!! Form::select('color_id', $colors, request()->color_id, [
+    'class' => 'form-control
+                        filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('size_id', __('lang.size') . ':', []) !!}
+                            {!! Form::select('size_id', $sizes, request()->size_id, [
+    'class' => 'form-control
+                        filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('grade_id', __('lang.grade') . ':', []) !!}
+                            {!! Form::select('grade_id', $grades, request()->grade_id, [
+    'class' => 'form-control
+                        filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('tax_id', __('lang.tax') . ':', []) !!}
+                            {!! Form::select('tax_id', $taxes, request()->tax_id, [
+    'class' => 'form-control
+                        filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('store_id', __('lang.store'), []) !!}
+                            {!! Form::select('store_id', $stores, request()->store_id, ['class' => 'form-control filter_product', 'data-live-search' => 'true']) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('customer_type_id', __('lang.customer_type') . ':', []) !!}
+                            {!! Form::select('customer_type_id', $customer_types, request()->customer_type_id, [
+    'class' => 'form-control filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('created_by', __('lang.created_by') . ':', []) !!}
+                            {!! Form::select('created_by', $users, request()->created_by, [
+    'class' => 'form-control filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('active', __('lang.active') . ':', []) !!}
+                            {!! Form::select('active', [0 => __('lang.no'), 1 => __('lang.yes')], request()->active, [
+    'class' => 'form-control filter_product
+                        selectpicker',
+    'data-live-search' => 'true',
+    'placeholder' => __('lang.all'),
+]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {{-- <label>
+                                Don't show zero stocks
+                            </label> --}}
+                            {!! Form::label('show_zero_stocks',"Don't show zero stocks" . ':') !!}
+                            {!! Form::checkbox('show_zero_stocks', 1, false, ['class' => ' form-control  show_zero_stocks','data-live-search' => 'true',
+                            ], request()->show_zero_stocks ? true : false) !!}
+                            
+                            
+                        </div>
+                    </div>
+                    <input type="hidden" name="product_id" id="product_id" value="">
+                    <div class="col-md-3">
+                        <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 
@@ -229,12 +409,13 @@
                         d.customer_type_id = $('#customer_type_id').val();
                         d.active = $('#active').val();
                         d.created_by = $('#created_by').val();
+                        d.show_zero_stocks = $('#show_zero_stocks').val();
                         // d.shortage = true;
                         // d.shortage_value = true;
                     },
                 },
                 columnDefs: [{
-                    "targets": [0, 3],
+                    "targets": [2, 10],  
                     "orderable": false,
                     "searchable": false
                 }],
@@ -245,6 +426,7 @@
                             return '<span hidden type="text" readonly="readonly" class="pro_id" name="product_id" />'+data+'</span>';
                         },
                         // visible: false
+                        sortable: false,
                     },
                     {
                         data: 'variation_id', 
@@ -252,6 +434,8 @@
                             return '<span hidden type="text" readonly="readonly" class="variation_id" name="variation_id" />'+data+'</span>';
                         },
                         // visible: false
+                        searchable: false,
+                        sortable: false
                     },
                     {
                         data: 'image',
@@ -280,25 +464,28 @@
                         'render': function (data, type, val, meta){
                             return '<input type="text" class="actual_stock" name="actual_stock"  value="">';
                         },
-                        searchable: false
+                        searchable: false,
+                        sortable: false
                     },
                     {
                         name: 'shortage',
                         'render': function (data, type, val, meta){
                             return '<span type="text" readonly="readonly" class="shortage" name="shortage"  /></span>';
                         },
-                        searchable: false
+                        searchable: false,
+                        sortable: false
                     },
                     {
                         name: 'shortage_value',
                         'render': function (data, type, val, meta){
                             return '<span type="text" readonly="readonly" class="shortage_value" name="shortage_value"  /></span>';
                         },
-                        searchable: false
+                        searchable: false,
+                        sortable: false
                     },
                     @can('product_module.purchase_price.view')
                         {
-                            data: 'default_purchase_price',
+                            data: 'avg_purchase_price',
                             name: 'default_purchase_price',
                             className: "default_purchase_price",
                             searchable: false
@@ -496,6 +683,15 @@
             $('.filter_product').val('');
             $('.filter_product').selectpicker('refresh');
             $('#product_id').val('');
+            $('.show_zero_stocks').val(1);
+            product_table.ajax.reload();
+        });
+        $(document).on('change', '.show_zero_stocks', function() {
+            if(this.checked) {
+                $('.show_zero_stocks').val(0);
+            }else{
+                $('.show_zero_stocks').val(1);
+            }
             product_table.ajax.reload();
         });
 

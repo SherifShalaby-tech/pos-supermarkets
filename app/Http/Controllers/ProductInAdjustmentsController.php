@@ -3,21 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\AddStockLine;
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Color;
+use App\Models\Customer;
+use App\Models\CustomerType;
+use App\Models\Grade;
 use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\ProductDiscount;
 use App\Models\ProductInAdjustment;
 use App\Models\ProductInAdjustmentDetails;
 use App\Models\ProductStore;
 use App\Models\Size;
+use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\Supplier;
+use App\Models\Tax;
 use App\Models\Transaction;
+use App\Models\Unit;
+use App\Models\User;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -58,6 +70,7 @@ class ProductInAdjustmentsController extends Controller
      */
     public function create(Request $request)
     {
+        $process_type = $request->process_type??null;
         if (request()->ajax()) {
             $products = Product::leftjoin('variations', function ($join) {
                 $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
@@ -78,13 +91,78 @@ class ProductInAdjustmentsController extends Controller
                 ->leftjoin('users as edited', 'products.edited_by', 'users.id')
                 ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
                 ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
-                $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
 
-                $store_query = '';
-                if (!empty($store_id)) {
-                    // $products->where('product_stores.store_id', $store_id);
-                    $store_query = 'AND store_id=' . $store_id;
-                }
+            $store_query = '';
+            if (!empty($store_id)) {
+                // $products->where('product_stores.store_id', $store_id);
+                $store_query = 'AND store_id=' . $store_id;
+            }
+
+            if (!empty(request()->product_id)) {
+                $products->where('products.id', request()->product_id);
+            }
+
+            if (!empty(request()->product_class_id)) {
+                $products->where('products.product_class_id', request()->product_class_id);
+            }
+
+            if (!empty(request()->category_id)) {
+                $products->where('products.category_id', request()->category_id);
+            }
+
+            if (!empty(request()->sub_category_id)) {
+                $products->where('products.sub_category_id', request()->sub_category_id);
+            }
+
+            if (!empty(request()->tax_id)) {
+                $products->where('tax_id', request()->tax_id);
+            }
+
+            if (!empty(request()->brand_id)) {
+                $products->where('products.brand_id', request()->brand_id);
+            }
+
+            if (!empty(request()->supplier_id)) {
+                $products->where('supplier_products.supplier_id', request()->supplier_id);
+            }
+
+            if (!empty(request()->unit_id)) {
+                $products->where('variations.unit_id', request()->unit_id);
+            }
+
+            if (!empty(request()->color_id)) {
+                $products->where('variations.color_id', request()->color_id);
+            }
+
+            if (!empty(request()->size_id)) {
+                $products->where('variations.size_id', request()->size_id);
+            }
+
+            if (!empty(request()->grade_id)) {
+                $products->where('variations.grade_id', request()->grade_id);
+            }
+
+            if (!empty(request()->customer_type_id)) {
+                $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
+            }
+
+            if (!empty(request()->created_by)) {
+                $products->where('products.created_by', request()->created_by);
+            }
+            if (request()->active == '1' || request()->active == '0') {
+                $products->where('products.active', request()->active);
+            }
+            if (request()->show_zero_stocks == '0') {
+                $products->where('is_service', 0)->havingRaw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') > ?', [0]);
+            }
+            if (!empty(request()->is_raw_material)) {
+                $products->where('is_raw_material', 1);
+            } else {
+                $products->where('is_raw_material', 0);
+            }
+            $is_add_stock = request()->is_add_stock;
             $products = $products->select(
                 'products.*',
                 'add_stock_lines.batch_number',
@@ -106,8 +184,12 @@ class ProductInAdjustmentsController extends Controller
                 'users.name as created_by_name',
                 'edited.name as edited_by_name',
                 DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as current_stock'),
+                DB::raw('(SELECT AVG(add_stock_lines.purchase_price) FROM add_stock_lines JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as avg_purchase_price'),
             )->with(['supplier'])
                 ->groupBy('variations.id');
+            
+            
+            // return $products;
             return DataTables::of($products)
                 ->addColumn('image', function ($row) {
                     $image = $row->getFirstMediaUrl('product');
@@ -120,6 +202,9 @@ class ProductInAdjustmentsController extends Controller
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
                 ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->editColumn('is_service',function ($row) {
+                    return $row->is_service=='1'?'<span class="badge badge-danger">'.Lang::get('lang.is_have_service').'</span>':'';
+                })
                 ->addColumn('product_class', '{{$product_class}}')
                 ->addColumn('category', '{{$category}}')
                 ->addColumn('sub_category', '{{$sub_category}}')
@@ -144,7 +229,9 @@ class ProductInAdjustmentsController extends Controller
                     $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
 
                     return $this->productUtil->num_f($price);
-                })//, '{{@num_format($default_purchase_price)}}')
+                })
+                ->editColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                //, '{{@num_format($default_purchase_price)}}')
                 ->addColumn('tax', '{{$tax}}')
                 ->editColumn('brand', '{{$brand}}')
                 ->editColumn('unit', '{{$unit}}')
@@ -208,6 +295,106 @@ class ProductInAdjustmentsController extends Controller
                     }
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
+                ->addColumn('supplier', function ($row) {
+                    $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
+                        ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
+                        ->where('transactions.type', 'add_stock')
+                        ->where('add_stock_lines.product_id', $row->id)
+                        ->select('suppliers.name')
+                        ->orderBy('transactions.id', 'desc')
+                        ->first();
+                    return $query->name ?? '';
+                })
+
+
+                ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
+                    if ($is_add_stock == 1 && $row->is_service == 1) {
+                        $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+                    } else {
+                        if ($row->current_stock >= 0 ) {
+                            $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                        } else {
+                            $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                        }
+                    }
+                    return $html;
+                })->addColumn('selection_checkbox_send', function ($row)  {
+                    $html = '<input type="checkbox" name="product_selected_send" class="product_selected_send" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+                    return $html;
+                })
+                ->addColumn('selection_checkbox_delete', function ($row)  {
+                    $html = '<input type="checkbox" name="product_selected_delete" class="product_selected_delete" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+
+                    return $html;
+                })
+
+
+
+
+
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        if($row->parent_branch_id != null ){
+                            return '';
+                        }
+                        $html =
+                            '<div class="btn-group">
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">' . __('lang.action') .
+                            '<span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
+
+                        if (auth()->user()->can('product_module.product.view')) {
+                            $html .=
+                                '<li><a data-href="' . action('ProductController@show', $row->id) . '"
+                                data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                                ' . __('lang.view') . '</a></li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('product_module.product.create_and_edit')) {
+                            $html .=
+                                '<li><a href="' . action('ProductController@edit', $row->id) . '" class="btn"
+                            target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a></li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('stock.add_stock.create_and_edit')) {
+                            $html .=
+                                '<li><a target="_blank" href="' . action('AddStockController@create', ['variation_id' => $row->variation_id, 'product_id' => $row->id]) . '" class="btn"
+                            target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('product_module.product.delete')) {
+
+                            $html .=
+                                '<li>
+                            <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                class="btn text-red delete_product"><i class="fa fa-trash"></i>
+                                ' . __('lang.delete') . '</a>
+                        </li>';
+                        }
+
+                        $html .= '</ul></div>';
+
+                        return $html;
+                    }
+                )
+
+                ->setRowAttr([
+                    'data-href' => function ($row) {
+                        if (auth()->user()->can("product.view")) {
+                            return  action('ProductController@show', [$row->id]);
+                        } else {
+                            return '';
+                        }
+                    }
+                ])
                 ->rawColumns([
                     'selection_checkbox',
                     'selection_checkbox_send',
@@ -238,9 +425,41 @@ class ProductInAdjustmentsController extends Controller
                 ])
                 ->make(true);
         }
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes = Tax::where('type', 'product_tax')->orderBy('name', 'asc')->pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $discount_customer_types = Customer::getCustomerTreeArray();
+        $suppliers = Supplier::pluck('name', 'id');
+
+        $stores  = Store::getDropdown();
+        $users = User::Notview()->pluck('name', 'id');
 
 
-        return view('product_in_adjustment.create');
+        return view('product_in_adjustment.create')->with(compact(
+            'product_classes',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes',
+            'customers',
+            'customer_types',
+            'discount_customer_types',
+            'users',
+            'stores',
+            'suppliers'
+        ));
     }
     public function store(Request $request){
         // return Auth::user()->id;
