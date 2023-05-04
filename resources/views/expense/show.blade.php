@@ -45,12 +45,15 @@
                                             {!! Form::label('amount', __('lang.amount'), []) !!}: {{ @num_format($expense->final_total) }}
                                         </div>
                                     </div>
+                                    @if (isset($expense->transaction_payments->first()->method))
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             {!! Form::label('payment_method', __('lang.payment_method'), []) !!}:
                                             {{ ucfirst($expense->transaction_payments->first()->method) }}
                                         </div>
                                     </div>
+                                    @endif
+                                    
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="details">@lang('lang.details'):</label>
