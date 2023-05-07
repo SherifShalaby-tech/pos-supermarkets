@@ -2695,6 +2695,7 @@ $(document).on("click", "#non_identifiable_submit", function () {
             row_count: row_count,
             store_id: store_id,
             customer_id: customer_id,
+            is_unidentifable_product:1
         },
         success: function (result) {
             if (!result.success) {

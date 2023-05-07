@@ -38,6 +38,8 @@
                    value="{{$product->variation_id}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][stock_id]" class="batch_number_id"
                     value="@if($product->stock_id){{$product->stock_id}}@else {{false}} @endif">
+            <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][batch_number]" class="batch_number"
+            value="@if($product->batch_number){{$product->batch_number}}@else {{false}} @endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][price_hidden]" class="price_hidden"
                    value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][purchase_price]" class="purchase_price"
@@ -101,7 +103,7 @@
             <input type="text" class="form-control sell_price"
                    name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
                    @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @elseif(env('IS_SUB_BRANCH',false)) readonly @endif
-                   value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif">
+                   value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif ">
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif">
 

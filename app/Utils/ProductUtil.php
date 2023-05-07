@@ -57,7 +57,8 @@ class ProductUtil extends Util
         $sub_sku = $sku . $c;
 
         if (in_array($barcode_type, ['C128', 'C39'])) {
-            $sub_sku = $sku . '-' . $c;
+            $sub_sku = $sku . $c;
+            // $sub_sku = $sku . '-' . $c;
         }
 
         return $sub_sku;
@@ -162,7 +163,8 @@ class ProductUtil extends Util
                 }
             }
         }
-        $sku = $sku . '-' . $number;
+        // $sku = $sku . '-' . $number;
+        $sku = $sku . $number;
         $sku_exist = Product::where('sku', $sku)->exists();
 
         if ($sku_exist) {
@@ -258,9 +260,9 @@ class ProductUtil extends Util
             $variation_data['default_purchase_price'] = $purchase_price;
             $variation_data['default_sell_price'] = $sell_price;
 
-            $variation = Variation::create($variation_data);
-            $variation_array[] = ['variation' => $variation, 'variant_stores' =>  []];
-            $keey_variations[] = $variation->id;
+            // $variation = Variation::create($variation_data);
+            // $variation_array[] = ['variation' => $variation_data, 'variant_stores' =>  []];
+            // $keey_variations[] = $variation->id;
             foreach ($variations as $v) {
 
                 $c = Variation::where('product_id', $product->id)
@@ -526,7 +528,7 @@ class ProductUtil extends Util
         if (!is_null($variation_id) && $variation_id !== '0') {
             $product->where('v.id', $variation_id);
         }
-        if (is_null($store_id) && $store_id == '0') {
+        if (!is_null($store_id) && $store_id !== '0') {
             $product->where('product_stores.store_id', $store_id);
         }
         $product->where('products.id', $product_id)->groupBy('v.id');
@@ -557,7 +559,7 @@ class ProductUtil extends Util
             if (!is_null($p_selected['variation_id']) && $p_selected['variation_id'] !== '0') {
                 $query->where('v.id', $p_selected['variation_id']);
             }
-            if (is_null($store_id) && $store_id == '0') {
+            if (!is_null($store_id) && $store_id !== '0') {
                 $query->where('product_stores.store_id', $store_id);
             }
             $query->where('products.id', $p_selected['product_id'])->groupBy('v.id');
@@ -1222,6 +1224,7 @@ class ProductUtil extends Util
         $qty=0;
         // return $add_stocks;
         foreach ($add_stocks as $line) {
+            if(isset($line['product_id'] ) && isset($line['variation_id']) ){
             if (!empty($line['add_stock_line_id'])) {
                 $add_stock = AddStockLine::find($line['add_stock_line_id']);
                 $add_stock->product_id = $line['product_id'];
@@ -1335,6 +1338,7 @@ class ProductUtil extends Util
                     ->whereColumn('quantity',">",'quantity_sold')->update([
                         'sell_price' => $line['selling_price'],
                     ]);
+            }
             }
         }
         // return $keep_lines_ids;
