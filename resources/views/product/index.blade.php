@@ -178,6 +178,18 @@
 ]) !!}
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {{-- <label>
+                                Don't show zero stocks
+                            </label> --}}
+                            {!! Form::label('show_zero_stocks',"Don't show zero stocks" . ':') !!}
+                            {!! Form::checkbox('show_zero_stocks', 1, false, ['class' => ' form-control  show_zero_stocks','data-live-search' => 'true',
+                            ], request()->show_zero_stocks ? true : false) !!}
+                            
+                            
+                        </div>
+                    </div>
                     <input type="hidden" name="product_id" id="product_id" value="">
                     <div class="col-md-3">
                         <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
@@ -398,6 +410,8 @@
                         d.customer_type_id = $('#customer_type_id').val();
                         d.active = $('#active').val();
                         d.created_by = $('#created_by').val();
+                        d.show_zero_stocks = $('#show_zero_stocks').val();
+                        
                     }
                 },
                 columnDefs: [{
@@ -619,6 +633,15 @@
             $('.filter_product').val('');
             $('.filter_product').selectpicker('refresh');
             $('#product_id').val('');
+            $('.show_zero_stocks').val(1);
+            product_table.ajax.reload();
+        });
+        $(document).on('change', '.show_zero_stocks', function() {
+            if(this.checked) {
+                $('.show_zero_stocks').val(0);
+            }else{
+                $('.show_zero_stocks').val(1);
+            }
             product_table.ajax.reload();
         });
 
