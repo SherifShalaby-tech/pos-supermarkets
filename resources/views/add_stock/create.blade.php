@@ -34,7 +34,7 @@
                             <div class="col-md-3">
                                 <div class="i-checks">
                                     <input id="clear_all_input_form" name="clear_all_input_form"
-                                        type="checkbox" @if (isset($clear_all_input_stock_form) || $clear_all_input_stock_form == '1') checked @endif 
+                                        type="checkbox" @if (isset($clear_all_input_stock_form) && $clear_all_input_stock_form == '1') checked @endif 
                                         class="form-control-custom">
                                     <label for="clear_all_input_form">
                                         <strong>
