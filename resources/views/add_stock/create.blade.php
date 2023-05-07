@@ -386,7 +386,7 @@
                     data: {},
                     success: function(result) {
                         $("#source_id").empty().append(result);
-                        $('#source_id').val({{$recent_stock->source_id}});
+                        $('#source_id').val({{$recent_stock->source_id ??null}});
                         $("#source_id").selectpicker("refresh");
                     },
                 });
