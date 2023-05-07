@@ -46,7 +46,7 @@
                         </div>
                         {!! Form::open(['url' => action('AddStockController@store'), 'method' => 'post', 'id' => 'add_stock_form', 'enctype' => 'multipart/form-data']) !!}
                         <input type="hidden" name="batch_count" id="batch_count" value="0">
-                        <input type="text" name="row_count" id="row_count" value="0">
+                        <input type="hidden" name="row_count" id="row_count" value="0">
                         <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{ $is_raw_material }}">
                         <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
                         <div class="card-body">
