@@ -265,7 +265,7 @@ class ProductController extends Controller
             )->with(['supplier'])
                 ->groupBy('variations.id');
 
-            // return $products;
+            //  return $products;
             return DataTables::of($products)
                 ->addColumn('image', function ($row) {
                     $image = $row->getFirstMediaUrl('product');
@@ -442,17 +442,17 @@ class ProductController extends Controller
                                 '<li><a target="_blank" href="' . action('AddStockController@create', ['variation_id' => $row->variation_id, 'product_id' => $row->id]) . '" class="btn"
                             target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
                         }
-                        $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.product.delete')) {
+                        // $html .= '<li class="divider"></li>';
+                        // if (auth()->user()->can('product_module.product.delete')) {
 
-                            $html .=
-                                '<li>
-                            <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
-                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
-                                class="btn text-red delete_product"><i class="fa fa-trash"></i>
-                                ' . __('lang.delete') . '</a>
-                        </li>';
-                        }
+                        //     $html .=
+                        //         '<li>
+                        //     <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+                        //         data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                        //         class="btn text-red delete_product"><i class="fa fa-trash"></i>
+                        //         ' . __('lang.delete') . '</a>
+                        // </li>';
+                        // }
 
                         $html .= '</ul></div>';
 

@@ -321,7 +321,7 @@
                                     @endif
                                 </td>
                                 <td style="width: 10% !important;">
-                                    {{ $line->product->batch_number ?? '' }}
+                                    {{ $line->batch_number ?? '' }}
                                 </td>
                                 <td style="width: 10% !important;">
                                     @if (isset($line->quantity))

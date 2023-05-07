@@ -113,26 +113,6 @@ $(document).on("click", "#addBatch", function () {
             calculate_sub_totals();
         },
     });
-    
-
-
-
-
-
-    // var index=$(this).data('index');
-    // $('#batch_number_row'+index).show();
-    // if($('#batch_number_row'+index+' .batchNumber').prop('required')){
-    //     $('#batch_number_row'+index+' .batchNumber').prop('required', false);
-    // } else {
-    //     $('#batch_number_row'+index+' .batchNumber').prop('required', true);
-    // }
-    // ///
-    // if($('.stockId'+index).prop('checked')){
-    //     $('.stockId'+index).prop('checked', false);
-    // } else {
-    //     $('.stockId'+index).prop('checked', true);
-    // }
-    
 });
 // $(document).on("click", "#addBatch", function () {
 //     $('#addNewBatch').modal('show');
@@ -233,11 +213,9 @@ function get_label_multipe_product_row(product_selected) {
                 return false;
             });
         });
-        row_count=Math.max(...all_row_count)
-        console.log(row_count)
-        // var row_count = parseInt($("#row_count").val());
+        row_count=Math.max(...all_row_count);
         let currency_id = $('#paying_currency_id').val()
-        // $("#row_count").val(row_count + 1);
+        $("#row_count").val(row_count + product_selected.length);
         $.ajax({
             method: "GET",
             url: "/add-stock/add-multiple-product-row",
@@ -275,6 +253,7 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
                     is_added = true;
                     //Increment product quantity
                     //get product qty
+                    var index=$(this).find(".row_count").val()
                     qty_element = $(this).find(".quantity");
                     qty = __read_number(qty_element);
                     qty+=1;
@@ -282,9 +261,9 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
                     $("input#search_product").val("");
                     $("input#search_product").focus();
                     //remove if exist
-                    $(this).closest("tr").next().remove();
-                    $(this).closest("tr").next().next().remove();
                     $(this).closest("tr").remove();
+                    $('.row_details_'+index).remove();
+                    $('.bounce_details_td_'+index).remove();
                 }
             });
     // }
