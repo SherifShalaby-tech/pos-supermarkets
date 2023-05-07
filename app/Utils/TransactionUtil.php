@@ -236,7 +236,6 @@ class TransactionUtil extends Util
                 ->select('add_stock_lines.id', DB::raw('SUM(quantity - quantity_sold) as remaining_qty'))
                 ->having('remaining_qty', '>', 0)
                 ->groupBy('add_stock_lines.id')
-                ->orderBy('add_stock_lines.created_at','desc')
                 ->get();
             foreach ($add_stock_lines as $line) {
                 if ($qty_difference == 0) {

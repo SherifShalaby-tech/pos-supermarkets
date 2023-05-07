@@ -13,7 +13,6 @@
                         $default_purchase_price=$stockLines?$stockLines->purchase_price : $Variation->default_purchase_price;
 
                     }
-
             @endphp
             @if($product->variation_name != "Default")
 

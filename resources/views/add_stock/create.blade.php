@@ -192,7 +192,6 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {{$recent_stock->source_id}}
                                         {!! Form::label('source_of_payment', __('lang.source_of_payment'). ':*', []) !!} <br>
                                         {!! Form::select('source_id', $users,!empty($recent_stock)&&!empty($recent_stock->source_id)?$recent_stock->source_id:null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
                                     </div>
