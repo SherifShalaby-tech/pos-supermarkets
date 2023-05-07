@@ -113,26 +113,6 @@ $(document).on("click", "#addBatch", function () {
             calculate_sub_totals();
         },
     });
-    
-
-
-
-
-
-    // var index=$(this).data('index');
-    // $('#batch_number_row'+index).show();
-    // if($('#batch_number_row'+index+' .batchNumber').prop('required')){
-    //     $('#batch_number_row'+index+' .batchNumber').prop('required', false);
-    // } else {
-    //     $('#batch_number_row'+index+' .batchNumber').prop('required', true);
-    // }
-    // ///
-    // if($('.stockId'+index).prop('checked')){
-    //     $('.stockId'+index).prop('checked', false);
-    // } else {
-    //     $('.stockId'+index).prop('checked', true);
-    // }
-    
 });
 // $(document).on("click", "#addBatch", function () {
 //     $('#addNewBatch').modal('show');
@@ -233,11 +213,9 @@ function get_label_multipe_product_row(product_selected) {
                 return false;
             });
         });
-        row_count=Math.max(...all_row_count)
-        console.log(row_count)
-        // var row_count = parseInt($("#row_count").val());
+        row_count=Math.max(...all_row_count);
         let currency_id = $('#paying_currency_id').val()
-        // $("#row_count").val(row_count + 1);
+        $("#row_count").val(row_count + product_selected.length);
         $.ajax({
             method: "GET",
             url: "/add-stock/add-multiple-product-row",
@@ -275,6 +253,7 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
                     is_added = true;
                     //Increment product quantity
                     //get product qty
+                    var index=$(this).find(".row_count").val()
                     qty_element = $(this).find(".quantity");
                     qty = __read_number(qty_element);
                     qty+=1;
@@ -282,9 +261,9 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
                     $("input#search_product").val("");
                     $("input#search_product").focus();
                     //remove if exist
-                    $(this).closest("tr").next().remove();
-                    $(this).closest("tr").next().next().remove();
                     $(this).closest("tr").remove();
+                    $('.row_details_'+index).remove();
+                    $('.bounce_details_td_'+index).remove();
                 }
             });
     // }
@@ -401,18 +380,28 @@ $(document).on(
     }
 );
 $(document).on('focus','.quantity', function(){
-    asd=$(this).data('val', $(this).val());
-}).on("change", ".quantity",".purchase_price", function () {
+    $(this).data('val', $(this).val());
+})
+$(document).on("change", ".purchase_price", function () {
+    calculate_sub_totals();
+});
+$(document).on("change", ".quantity", function () {
     let tr = $(this).closest("tr");
     let old_qty=parseInt($(this).data('val'));
     let current_stock = __read_number($(tr).find(".current_stock"));
     let qty = __read_number($(tr).find(".quantity"));
     let is_service = parseInt($(tr).find(".is_service").val());
+    let purchase_price = __read_number($(tr).find(".purchase_price"));
+    // alert(22)
     let new_qty =0;
     if(current_stock==0){
         new_qty=current_stock + qty;
     }else{
-        new_qty=current_stock + qty-old_qty;
+        if(old_qty){
+            new_qty=current_stock + qty-old_qty;
+        }else{
+            new_qty=current_stock + qty;
+        }
     }
     if (is_service) {
         new_qty = 0;
@@ -424,6 +413,7 @@ $(document).on('focus','.quantity', function(){
         .find("span.current_stock_text")
         .text(__currency_trans_from_en(new_qty, false));
     calculate_sub_totals();
+
 });
 $(document).on("change",".batch_purchase_price", function () {
     calculate_sub_totals();
@@ -431,7 +421,7 @@ $(document).on("change",".batch_purchase_price", function () {
 $(document).on('focus','.batch_quantity', function(){
     $(this).data('val', $(this).val());
 });
-$(document).on("change", ".batch_quantity",".batch_purchase_price", function () {
+$(document).on("change", ".batch_quantity", function () {
     let tr = $(this).closest("tr");
     let productId=$(this).data('id');
     let current_stock = parseInt($(".current_stock"+productId).val());

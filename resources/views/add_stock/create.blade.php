@@ -4,7 +4,6 @@
 @else
     @section('title', __('lang.add_stock'))
 @endif
-
 @section('content')
 @php
     $clear_all_input_stock_form = App\Models\System::getProperty('clear_all_input_stock_form');
@@ -12,7 +11,7 @@
         $transaction_payment=[];
         $recent_stock=[];
     }else{
-        $recent_stock = \App\Models\Transaction::orderBy('created_at', 'desc')->first();
+        $recent_stock = \App\Models\Transaction::where('type','add_stock')->orderBy('created_at', 'desc')->first();
         $transaction_payment = $recent_stock->transaction_payments->first();
     }
 @endphp
@@ -35,7 +34,7 @@
                             <div class="col-md-3">
                                 <div class="i-checks">
                                     <input id="clear_all_input_form" name="clear_all_input_form"
-                                        type="checkbox" @if ($clear_all_input_stock_form == null || $clear_all_input_stock_form == '1') checked @endif 
+                                        type="checkbox" @if (isset($clear_all_input_stock_form) || $clear_all_input_stock_form == '1') checked @endif 
                                         class="form-control-custom">
                                     <label for="clear_all_input_form">
                                         <strong>
@@ -47,15 +46,15 @@
                         </div>
                         {!! Form::open(['url' => action('AddStockController@store'), 'method' => 'post', 'id' => 'add_stock_form', 'enctype' => 'multipart/form-data']) !!}
                         <input type="hidden" name="batch_count" id="batch_count" value="0">
-                        <input type="hidden" name="row_count" id="row_count" value="0">
+                        <input type="text" name="row_count" id="row_count" value="0">
                         <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{ $is_raw_material }}">
                         <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
                         <div class="card-body">
-                            <div class="row">
+                           <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('store_id', __('lang.store') . ':*', []) !!}
-                                        {!! Form::select('store_id', $stores, !empty($recent_stock)&&!empty($recent_stock->store_id)?$recent_stock->store_id:"Please Select", ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('store_id', $stores, !empty($recent_stock)&&!empty($recent_stock->store_id)?$recent_stock->store_id:"Please Select", ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}                                        
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -68,14 +67,14 @@
                                     <div class="form-group">
                                         {!! Form::label('po_no', __('lang.po_no'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
                                             title="@lang('lang.po_no_add_stock_info')"></i>
-                                        {!! Form::select('po_no', $po_nos, !empty($recent_stock)&&!empty($recent_stock->purchase_order_id)?$recent_stock->purchase_order_id:null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('po_no', $po_nos,!empty($recent_stock)&&!empty($recent_stock->purchase_order_id)?$recent_stock->purchase_order_id: null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
 
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('status', __('lang.status') . ':*', []) !!}
-                                        {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], !empty($recent_stock)&&!empty($recent_stock->status)?$recent_stock->status: 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'],!empty($recent_stock)&&!empty($recent_stock->status)?$recent_stock->status: 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -188,7 +187,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('source_type', __('lang.source_type'). ':*', []) !!} <br>
-                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], 'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'),'required']) !!}
+                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], !empty($recent_stock)&&!empty($recent_stock->source_type)?$recent_stock->source_type:'Please Select', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'),'required']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -215,7 +214,7 @@
                                 <div class="col-md-3 due_fields hide">
                                     <div class="form-group">
                                         {!! Form::label('due_date', __('lang.due_date') . ':', []) !!} <br>
-                                        {!! Form::text('due_date',!empty($transaction_payment)&&!empty($transaction_payment->due_date)?$transaction_payment->due_date:(!empty($payment) ? $payment->due_date : null), ['class' => 'form-control datepicker', 'placeholder' => __('lang.due_date')]) !!}
+                                        {!! Form::text('due_date',!empty($transaction_payment)&&!empty($transaction_payment->due_date)?@format_date($transaction_payment->due_date):(!empty($payment) ? $payment->due_date : null), ['class' => 'form-control datepicker', 'placeholder' => __('lang.due_date')]) !!}
                                     </div>
                                 </div>
 
@@ -385,8 +384,8 @@
                     url: '/add-stock/get-source-by-type-dropdown/' + $(this).val(),
                     data: {},
                     success: function(result) {
-                        $("#source_id").empty().append(result);
                         $("#source_id").selectpicker("refresh");
+                        $("#source_id").empty().append(result);
                     },
                 });
             }
