@@ -152,8 +152,8 @@ class TransactionUtil extends Util
 
         foreach ($transaction_sell_lines as $line) {
             $old_quantity = 0;
-            if (!empty($transaction_sell_line['transaction_sell_line_id'])) {
-                $transaction_sell_line = TransactionSellLine::find($line['transaction_sell_line_id']);
+            if (!empty($transaction_sell_lines['transaction_sell_line_id'])) {
+                $transaction_sell_line = TransactionSellLine::find($transaction_sell_lines['transaction_sell_line_id']);
                 $transaction_sell_line->product_id = $line['product_id'];
                 $transaction_sell_line->variation_id = $line['variation_id'];
                 $transaction_sell_line->coupon_discount = !empty($line['coupon_discount']) ? $this->num_uf($line['coupon_discount']) : 0;
@@ -177,7 +177,8 @@ class TransactionUtil extends Util
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
-            } else {
+            } 
+            else {
                 $transaction_sell_line = new TransactionSellLine();
                 $transaction_sell_line->transaction_id = $transaction->id;
                 $transaction_sell_line->product_id = $line['product_id'];
@@ -232,7 +233,6 @@ class TransactionUtil extends Util
                 ->where('transactions.store_id', $store_id)
                 ->where('product_id', $product_id)
                 ->where('variation_id', $variation_id)
-                ->orWhere('add_stock_lines.id',$stock_id)
                 ->select('add_stock_lines.id', DB::raw('SUM(quantity - quantity_sold) as remaining_qty'))
                 ->having('remaining_qty', '>', 0)
                 ->groupBy('add_stock_lines.id')
@@ -244,16 +244,10 @@ class TransactionUtil extends Util
 
                 if ($line->remaining_qty >= $qty_difference) {
                     $line->increment('quantity_sold', $qty_difference);
-                    // if($stock_id){
-                    //     $line->decrement('quantity', $qty_difference);
-                    // }
                     $qty_difference = 0;
                 }
                 if ($line->remaining_qty < $qty_difference) {
                     $line->increment('quantity_sold', $line->remaining_qty);
-                    // if($stock_id){
-                    //     $line->decrement('quantity', $line->remaining_qty);
-                    // }
                     $qty_difference = $qty_difference - $line->remaining_qty;
                 }
             }

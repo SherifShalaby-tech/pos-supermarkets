@@ -7,12 +7,12 @@
             @php
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
-                        $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)->whereColumn('quantity',">",'quantity_sold')->first();
+                        $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)->whereColumn('quantity',">",'quantity_sold')
+                        ->first();
                         $default_sell_price=$stockLines?$stockLines->sell_price : $Variation->default_sell_price;
                         $default_purchase_price=$stockLines?$stockLines->purchase_price : $Variation->default_purchase_price;
 
                     }
-
             @endphp
             @if($product->variation_name != "Default")
 
