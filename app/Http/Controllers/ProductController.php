@@ -408,17 +408,17 @@ class ProductController extends Controller
                                 '<li><a target="_blank" href="' . action('AddStockController@create', ['variation_id' => $row->variation_id, 'product_id' => $row->id]) . '" class="btn"
                             target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
                         }
-                        // $html .= '<li class="divider"></li>';
-                        // if (auth()->user()->can('product_module.product.delete')) {
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('product_module.product.delete')) {
 
-                        //     $html .=
-                        //         '<li>
-                        //     <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
-                        //         data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
-                        //         class="btn text-red delete_product"><i class="fa fa-trash"></i>
-                        //         ' . __('lang.delete') . '</a>
-                        // </li>';
-                        // }
+                            $html .=
+                                '<li>
+                            <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                class="btn text-red delete_product"><i class="fa fa-trash"></i>
+                                ' . __('lang.delete') . '</a>
+                        </li>';
+                        }
 
                         $html .= '</ul></div>';
 
@@ -846,7 +846,7 @@ class ProductController extends Controller
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
 
-        try {
+        // try {
             $product_data = [
                 'name' => $request->name,
                 'translations' => !empty($request->translations) ? $request->translations : [],
@@ -951,6 +951,20 @@ class ProductController extends Controller
 //                    $product->addMedia($image)->toMediaCollection('product');
 //                }
 //            }
+            // return $request->cropImages;
+            // if ($request->has("cropImages") && count($request->cropImages) > 0) {
+            //     foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
+            //         $product->clearMediaCollection('product');
+            //         $extention = explode(";",explode("/",$imageData)[1])[0];
+            //         $image = rand(1,1500)."_image.".$extention;
+            //         $filePath = public_path('uploads/' . $image);
+            //         $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+            //         $product->addMedia($filePath)->toMediaCollection('product');
+            //     }
+            // }
+
+
+
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
                     $product->clearMediaCollection('product');
@@ -977,13 +991,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         if ($request->ajax()) {
             return $output;

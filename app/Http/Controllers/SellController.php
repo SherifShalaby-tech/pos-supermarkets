@@ -746,7 +746,6 @@ class SellController extends Controller
      */
     public function print($id)
     {
-        return $id;
         try {
             $transaction = Transaction::find($id);
 

@@ -102,6 +102,7 @@ return [
     'image' => 'صورة',
     'parent_category' => 'القسم الرئيسي',
     'sub_category' => 'قسم فرعي',
+    'add_sub_category' => 'اضافة قسم فرعى',
     'brand' => 'علامة تجارية',
     'add_brand' => 'أضف علامة التجارية',
     'add_unit' => 'أضف وحدة',
