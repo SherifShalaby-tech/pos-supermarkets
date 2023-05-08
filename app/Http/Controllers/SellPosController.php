@@ -1025,7 +1025,10 @@ class SellPosController extends Controller
             $currency_id = $request->currency_id;
             $currency = Currency::find($currency_id);
             $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
-
+            $store_pos = StorePos::where('user_id', auth()->id())->first();
+            if($store_pos && $store_pos_id == null ){
+               $store_pos_id = $store_pos->id; 
+            }
             //Check for weighing scale barcode
             $weighing_barcode = request()->get('weighing_scale_barcode');
 

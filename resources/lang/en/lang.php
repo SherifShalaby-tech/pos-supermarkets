@@ -1366,7 +1366,8 @@ return [
     'shortage' => 'Shortage',
     'value_of_shortage' => 'Value of Shortage',
     'total_shortage_value' => 'Total shortage value',
-
+    'old_stock' => 'Old Stock',
+    'new_stock' => 'New Stock',
     'adjustment_save' =>'This will change the product stock , please enter admin password to confirm',
 
     'permenant'=>'Permenant',

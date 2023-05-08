@@ -17,4 +17,10 @@ class ProductInAdjustmentDetails extends Model
         "shortage",
         "shortage_value"
     ];
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
+    public function productAjustment(){
+        return $this->belongsTo(ProductInAdjustment::class,'product_adjustments_id');
+    }
 }
