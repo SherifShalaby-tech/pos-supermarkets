@@ -394,18 +394,18 @@ class ProductController extends Controller
                                 data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
                                 ' . __('lang.view') . '</a></li>';
                         }
-                        if (auth()->user()->can('product_module.product.remove_expiry')) {
+//                        if (auth()->user()->can('product_module.product.remove_expiry')) {
                             $html .=
                                 '<li><a target="_blank" href="' . action('ProductController@get_remove_expiry', $row->id) . '"
                                  class="btn"><i class="fa fa-hourglass-half"></i>
                                 ' . __('lang.remove_expiry') . '</a></li>';
-                        }
-                        if (auth()->user()->can('product_module.product.remove_damage')) {
+//                        }
+//                        if (auth()->user()->can('product_module.product.remove_damage')) {
                             $html .=
                                 '<li><a target="_blank" href="' . action('ProductController@get_remove_damage', $row->id) . '"
                                  class="btn"><i class="fa fa-filter"></i>
                                 ' . __('lang.remove_damage') . '</a></li>';
-                        }
+//                        }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.product.create_and_edit')) {
                             $html .=
