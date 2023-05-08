@@ -385,7 +385,6 @@
                     url: '/add-stock/get-source-by-type-dropdown/' + $(this).val(),
                     data: {},
                     success: function(result) {
-                        alert(12);
                         $("#source_id").empty().append(result);
                         $('#source_id').val({{$recent_stock->source_id ??null}});
                         $("#source_id").selectpicker("refresh");

@@ -348,7 +348,7 @@ $(document).on("change", "#product_class_id", function () {
         method: "get",
         url:
             "/category/get-dropdown?product_class_id=" +
-            $("#product_class_id").val(),
+            $("#product_class_id").val()+"&type=category",
         data: {},
         contentType: "html",
         success: function (result) {
