@@ -525,7 +525,6 @@ class ProductController extends Controller
         if (request()->ajax()) {
             $addStockLines = AddStockLine::
             where("add_stock_lines.product_id",$id)
-                ->where("add_stock_lines.expiry_date",">",date('Y-m-d'))
                 ->where("add_stock_lines.quantity",">",0 )
                 ->leftjoin('variations', function ($join) {
                     $join->on('add_stock_lines.variation_id', 'variations.id')->whereNull('variations.deleted_at');
@@ -1652,7 +1651,7 @@ class ProductController extends Controller
 
     public function getVariationRow()
     {
-        
+
         $row_id = request()->row_id;
         //'base_unit_multiplier'
         $units = Unit::orderBy('name', 'asc');
