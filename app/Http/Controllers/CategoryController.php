@@ -62,11 +62,10 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $quick_add = request()->quick_add ?? null;
-        $type = request()->type ?? null;
-
+        $quick_add = $request->quick_add ?? null;
+        $type = $request->type ?? null;
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
 
@@ -278,12 +277,13 @@ class CategoryController extends Controller
 
     public function getDropdown()
     {
-        if (!empty(request()->product_class_id)) {
+        // return request()->product_class_id;
+        if (!empty(request()->product_class_id)&& request()->type=="category") {
             $categories = Category::where('product_class_id', request()->product_class_id)->orderBy('name', 'asc')->pluck('name', 'id');
         } else {
             $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         }
-        $categories_dp = $this->commonUtil->createDropdownHtml($categories, 'Please Select');
+        $categories_dp = $this->commonUtil->createDropdownHtml($categories, __('lang.please_select'));
 
         return $categories_dp;
     }

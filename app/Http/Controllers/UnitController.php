@@ -69,12 +69,12 @@ class UnitController extends Controller
     public function store(Request $request)
     {
 
-        $this->validate(
-            $request,
-            ['name' => ['required', 'max:255']]
-        );
+        // $this->validate(
+        //     $request,
+        //     ['name' => ['required', 'max:255']]
+        // );
 
-        try {
+        // try {
             $data = $request->except('_token', 'quick_add');
             $data['base_unit_multiplier'] = !empty($data['base_unit_multiplier']) ? $this->commonUtil->num_uf($data['base_unit_multiplier']) : 1;
 
@@ -89,13 +89,13 @@ class UnitController extends Controller
                 'unit_id' => $unit_id,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
 
         if ($request->quick_add) {

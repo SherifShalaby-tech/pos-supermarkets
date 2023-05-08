@@ -182,7 +182,28 @@ class UserController extends Controller
 
         return ['success' => false];
     }
+    /**
+     * check admin password
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function checkAdminPassword($id)
+    {
+        $user = User::where('id', $id)->first();
+        if($user){
+            if (Hash::check(request()->value, $user->password)) {
+                return ['success' => true];
+            }
+        }else{
+            $user = User::where('id', 1)->first();
+            if (Hash::check(request()->value, $user->password)) {
+                return ['success' => true];
+            }
+        }
 
+        return ['success' => false];
+    }
     public function getDropdown()
     {
         $user = User::orderBy('name', 'asc')->pluck('name', 'id');

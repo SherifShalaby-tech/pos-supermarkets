@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductInAdjustmentsController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,8 +42,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
 
     Route::get('product/get-raw-material-details/{raw_material_id}', 'ProductController@getRawMaterialDetail');
-    Route::get('product/show-pr', 'ProductController@showPr');
-    Route::get('product/show-pr-data', 'ProductController@showPrData');
+    // Route::get('product/show-pr', 'ProductController@showPr');
+    // Route::get('product/show-pr-data', 'ProductController@showPrData');
     Route::get('product/get-raw-material-row', 'ProductController@getRawMaterialRow');
     Route::get('product/get-raw-discount', 'ProductController@getRawDiscount');
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
@@ -326,6 +327,12 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::resource('customer-balance-adjustment', CustomerBalanceAdjustmentController::class);
     Route::resource('customer-point-adjustment', CustomerPointAdjustmentController::class);
 
+    Route::resource('product-in-adjustment', ProductInAdjustmentsController::class);
+    Route::get('product-in-adjustment-index', 'ProductInAdjustmentsController@index');
+    Route::get('product-in-adjustment-create', 'ProductInAdjustmentsController@create');
+    Route::post('product-in-adjustment-store', 'ProductInAdjustmentsController@store')->name('add_product_adjustment');
+    Route::delete('product-in-adjustment-delete/{id}', 'ProductInAdjustmentsController@delete')->name('delete_product_adjustment');
+    Route::get('product-in-adjustment/get-details/{id}', 'ProductInAdjustmentsController@getDetails');
 
     Route::get('report/get-profit-loss', 'ReportController@getProfitLoss');
     Route::get('report/daily-sales-summary', 'ReportController@getDailySalesSummary');

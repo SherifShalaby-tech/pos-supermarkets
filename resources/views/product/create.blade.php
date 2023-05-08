@@ -249,6 +249,7 @@
             $v=document.getElementById('select_unit_id_'+row_id).value;
 
             $.each(units, function(key, value) {
+                
                 if($v == key){
                     $('#number_vs_base_unit_'+row_id).val(value);
                     if(value == 1){
@@ -257,7 +258,7 @@
                         $('#number_vs_base_unit_'+row_id).attr("disabled", false);
                     }
 
-                    // console.log(value);
+                    console.log(value);
                 }
             });
         }

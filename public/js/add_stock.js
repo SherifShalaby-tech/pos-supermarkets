@@ -72,7 +72,14 @@ $(document).on("click", ".add_bounce_btn", function () {
 
 });
 $(document).on("click", ".remove_batch_row", function () {
+    old_qty= parseInt($(".current_stock"+$(this).data('id')).val());
+    new_qty= old_qty-parseInt($(".batch_quantity"+$(this).data('id')).val());
+    $(".current_stock"+$(this).data('id'))
+    .val(__currency_trans_from_en(new_qty, false));
+    $("span.current_stock_text"+$(this).data('id'))
+        .text(__currency_trans_from_en(new_qty, false));
     $(this).closest("tr").remove();
+    calculate_sub_totals();
 });
 $(document).on("click", "#addBatch", function () {
     $product=$(this).data("product");
@@ -103,28 +110,9 @@ $(document).on("click", "#addBatch", function () {
             if($('.stockId'+index).prop('checked')){
                 $('.stockId'+index).prop('checked', false);
             }
+            calculate_sub_totals();
         },
     });
-    
-
-
-
-
-
-    // var index=$(this).data('index');
-    // $('#batch_number_row'+index).show();
-    // if($('#batch_number_row'+index+' .batchNumber').prop('required')){
-    //     $('#batch_number_row'+index+' .batchNumber').prop('required', false);
-    // } else {
-    //     $('#batch_number_row'+index+' .batchNumber').prop('required', true);
-    // }
-    // ///
-    // if($('.stockId'+index).prop('checked')){
-    //     $('.stockId'+index).prop('checked', false);
-    // } else {
-    //     $('.stockId'+index).prop('checked', true);
-    // }
-    
 });
 // $(document).on("click", "#addBatch", function () {
 //     $('#addNewBatch').modal('show');
@@ -225,11 +213,9 @@ function get_label_multipe_product_row(product_selected) {
                 return false;
             });
         });
-        row_count=Math.max(...all_row_count)
-        console.log(row_count)
-        // var row_count = parseInt($("#row_count").val());
+        row_count=Math.max(...all_row_count);
         let currency_id = $('#paying_currency_id').val()
-        // $("#row_count").val(row_count + 1);
+        $("#row_count").val(row_count + product_selected.length);
         $.ajax({
             method: "GET",
             url: "/add-stock/add-multiple-product-row",
@@ -267,6 +253,7 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
                     is_added = true;
                     //Increment product quantity
                     //get product qty
+                    var index=$(this).find(".row_count").val()
                     qty_element = $(this).find(".quantity");
                     qty = __read_number(qty_element);
                     qty+=1;
@@ -274,9 +261,9 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
                     $("input#search_product").val("");
                     $("input#search_product").focus();
                     //remove if exist
-                    $(this).closest("tr").next().remove();
-                    $(this).closest("tr").next().next().remove();
                     $(this).closest("tr").remove();
+                    $('.row_details_'+index).remove();
+                    $('.bounce_details_td_'+index).remove();
                 }
             });
     // }
@@ -310,10 +297,18 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
 }
 function calculate_sub_totals() {
     var total = 0;
-    $("#product_table > tbody  > tr").each((ele, tr) => {
+    $("#product_table > tbody  > .product_row").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
+        let productId=$(".product_id").val();
         let purchase_price = __read_number($(tr).find(".purchase_price"));
         let sub_total = purchase_price * quantity;
+        $("#product_table > tbody  > .row_batch_details").each((ele, td) => {
+            let batch_quantity =__read_number($(td).find(".batch_quantity"+productId));
+            let batch_purchase_price = __read_number($(td).find(".batch_purchase_price"+productId));
+            if(batch_quantity){
+                sub_total=(batch_quantity*batch_purchase_price)+sub_total;
+            }
+        });
         __write_number($(tr).find(".sub_total"), sub_total);
         $(tr)
             .find(".sub_total_span")
@@ -384,17 +379,60 @@ $(document).on(
         calculate_sub_totals();
     }
 );
-$(document).on("change", ".quantity, .purchase_price", function () {
+$(document).on('focus','.quantity', function(){
+    $(this).data('val', $(this).val());
+})
+$(document).on("change", ".purchase_price", function () {
+    calculate_sub_totals();
+});
+$(document).on("change", ".quantity", function () {
     let tr = $(this).closest("tr");
+    let old_qty=parseInt($(this).data('val'));
     let current_stock = __read_number($(tr).find(".current_stock"));
     let qty = __read_number($(tr).find(".quantity"));
     let is_service = parseInt($(tr).find(".is_service").val());
-    let new_qty = current_stock + qty;
+    let purchase_price = __read_number($(tr).find(".purchase_price"));
+    // alert(22)
+    let new_qty =0;
+    if(current_stock==0){
+        new_qty=current_stock + qty;
+    }else{
+        if(old_qty){
+            new_qty=current_stock + qty-old_qty;
+        }else{
+            new_qty=current_stock + qty;
+        }
+    }
     if (is_service) {
         new_qty = 0;
     }
     $(tr)
+    .find(".current_stock")
+    .val(__currency_trans_from_en(new_qty, false));
+    $(tr)
         .find("span.current_stock_text")
+        .text(__currency_trans_from_en(new_qty, false));
+    calculate_sub_totals();
+
+});
+$(document).on("change",".batch_purchase_price", function () {
+    calculate_sub_totals();
+});
+$(document).on('focus','.batch_quantity', function(){
+    $(this).data('val', $(this).val());
+});
+$(document).on("change", ".batch_quantity", function () {
+    let tr = $(this).closest("tr");
+    let productId=$(this).data('id');
+    let current_stock = parseInt($(".current_stock"+productId).val());
+    let qty = parseInt($(this).val());
+    let old_qty=parseInt($(this).data('val'));
+    let new_qty = current_stock + qty-old_qty;
+    console.log(new_qty)
+
+    $(".current_stock"+productId)
+    .val(__currency_trans_from_en(new_qty, false));
+    $("span.current_stock_text"+productId)
         .text(__currency_trans_from_en(new_qty, false));
     calculate_sub_totals();
 });
@@ -432,5 +470,18 @@ $(document).on("change", ".bounce_qty,.quantity ,.purchase_price ,.selling_price
             $(".bounce_profit_"+index_id).val( bounce_profit_val.toFixed(2));
         }
 
+});
+$(document).on("click", "#clear_all_input_form", function () {
+    var value = $('#clear_all_input_form').is(':checked')?1:0;
+    $.ajax({
+        method: "get",
+        url: "/create-or-update-system-property/clear_all_input_stock_form/"+value,
+        contentType: "html",
+        success: function (result) {
+            if (result.success) {
+                swal("Success", response.msg, "success");
+            }
+        },
+    });
 });
 
