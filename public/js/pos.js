@@ -371,7 +371,7 @@ function get_label_product_row(
         var store_id = $("#store_id").val();
         var customer_id = $("#customer_id").val();
         let currency_id = $("#received_currency_id").val();
-            
+        var store_pos_id = $("#store_pos_id").val();
         if (edit_row_count !== 0) {
             row_count = edit_row_count;
         } else {
