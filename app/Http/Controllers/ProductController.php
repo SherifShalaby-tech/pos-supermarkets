@@ -15,6 +15,7 @@ use App\Models\Grade;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\ProductDiscount;
+use App\Models\ProductExpiryDamage;
 use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
@@ -28,6 +29,7 @@ use App\Models\Variation;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -359,6 +361,7 @@ class ProductController extends Controller
                         }
                     }
                     return $html;
+
                 })->addColumn('selection_checkbox_send', function ($row)  {
                     $html = '<input type="checkbox" name="product_selected_send" class="product_selected_send" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
 
@@ -370,11 +373,6 @@ class ProductController extends Controller
 
                     return $html;
                 })
-
-
-
-
-
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -395,6 +393,18 @@ class ProductController extends Controller
                                 '<li><a data-href="' . action('ProductController@show', $row->id) . '"
                                 data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
                                 ' . __('lang.view') . '</a></li>';
+                        }
+                        if (auth()->user()->can('product_module.product.remove_expiry')) {
+                            $html .=
+                                '<li><a target="_blank" href="' . action('ProductController@get_remove_expiry', $row->id) . '"
+                                 class="btn"><i class="fa fa-hourglass-half"></i>
+                                ' . __('lang.remove_expiry') . '</a></li>';
+                        }
+                        if (auth()->user()->can('product_module.product.remove_damage')) {
+                            $html .=
+                                '<li><a target="_blank" href="' . action('ProductController@get_remove_damage', $row->id) . '"
+                                 class="btn"><i class="fa fa-filter"></i>
+                                ' . __('lang.remove_damage') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.product.create_and_edit')) {
@@ -500,6 +510,591 @@ class ProductController extends Controller
             'suppliers'
         ));
     }
+
+    public function get_remove_damage(Request $request,$id){
+        $product_damages = ProductExpiryDamage::where("product_id",$id)->where("status","damage")->get();
+        $status = "damage";
+        return view('product_expiry_damage.product_damage_index')->with(compact( 'product_damages', 'status' ,'id' ));
+    }
+    public function get_remove_expiry(Request $request,$id){
+        $product_expires = ProductExpiryDamage::where("product_id",$id)->where("status","expiry")->get();
+        $status = "expiry";
+        return view('product_expiry_damage.product_expiry_index')->with(compact('product_expires','status','id'));
+    }
+    public function getDamageProduct(Request $request,$id){
+        if (request()->ajax()) {
+            $addStockLines = AddStockLine::
+            where("add_stock_lines.product_id",$id)
+                ->where("add_stock_lines.expiry_date",">",date('Y-m-d'))
+                ->where("add_stock_lines.quantity",">",0 )
+                ->leftjoin('variations', function ($join) {
+                    $join->on('add_stock_lines.variation_id', 'variations.id')->whereNull('variations.deleted_at');
+                });
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $store_query = '';
+            if (!empty($store_id)) {
+                // $products->where('product_stores.store_id', $store_id);
+                $store_query = 'AND store_id=' . $store_id;
+            }
+            $addStockLines = $addStockLines->select(
+                'add_stock_lines.*',
+                'add_stock_lines.expiry_date as exp_date',
+                'add_stock_lines.created_at as date_of_purchase_of_the_expired_stock_removed',
+                'add_stock_lines.purchase_price as add_stock_line_purchase_price',
+                'add_stock_lines.purchase_price as add_stock_line_avg_purchase_price',
+                'variations.sub_sku',
+                'variations.name as variation_name',
+                DB::raw('(SELECT SUM(add_stock_lines.quantity)  FROM add_stock_lines  JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . '  ) as avail_current_stock'),
+                DB::raw('(SELECT AVG(add_stock_lines.purchase_price) FROM add_stock_lines JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as avg_purchase_price'),
+                DB::raw('(add_stock_lines.quantity - add_stock_lines.quantity_sold) as expired_current_stock'),
+            )->groupBy('add_stock_lines.id');
+
+            return DataTables::of($addStockLines)
+                ->addColumn('image', function ($row) {
+                    $image = $row->product->getFirstMediaUrl('product');
+                    if (!empty($image)) {
+                        return '<img src="' . $image . '" height="50px" width="50px">';
+                    } else {
+                        return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
+                    }
+                })
+                ->editColumn('variation_name' , function ($row) {
+                    if ($row->variation->name != "Default"){
+                        return  $row->variation->name;
+                    }else{
+                        return  "Default";
+                    }
+                })
+                ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->editColumn('avail_current_stock', '{{@num_format($avail_current_stock - $expired_current_stock)  }}')
+                ->editColumn('expired_current_stock', '{{$expired_current_stock}}')
+                ->editColumn('exp_date', '{{$exp_date}}')
+                ->editColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                ->editColumn('date_of_purchase_of_the_expired_stock_removed', '{{$date_of_purchase_of_the_expired_stock_removed}}')
+                ->editColumn('quantity_of_expired_stock_removed', '@if(isset($quantity_of_expired_stock_removed)){{$quantity_of_expired_stock_removed}} @else {{0}}@endif')
+                ->editColumn('value_of_removed_stocks', '@if(isset($value_of_removed_stocks)){{$value_of_removed_stocks}} @else {{0}}@endif')
+                ->addColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                ->addColumn('value_of_removed_stock', '{{0}}')
+                ->rawColumns([
+                    'image'
+                ])->make(true);
+        }
+        return view("product_expiry_damage.add_damage_product");
+    }
+    public function storeStockDamaged(Request $request){
+        foreach ($request->selected_data as $data){
+            $stockRow = AddStockLine::find($data["id"]);
+            $variation = Variation::find($data["variation_id"]);
+            $stockRow->decrement("quantity",$data["quantity_to_be_removed"]);
+            $store = ProductStore::where("variation_id",$variation->id)->where("product_id",$variation->product_id)->first();
+            $this->productUtil->decreaseProductQuantity($variation->product_id,$variation->id,$store->store_id,$data["quantity_to_be_removed"]);
+            $stockRow->increment("quantity_damaged",$data["quantity_to_be_removed"]);
+            if ($data["quantity_to_be_removed"] > 0){
+                $productExpiry = ProductExpiryDamage::query()->create([
+                    "status" => $data["status"],
+                    "product_id" =>$variation->product_id,
+                    "variation_id" =>$variation->id,
+                    "quantity_of_expired_stock_removed" =>$data["quantity_to_be_removed"],
+                    "date_of_purchase_of_expired_stock_removed" => Carbon::parse($data["date_of_purchase_of_expired_stock_removed"])->toDateTimeString(),
+                    "value_of_removed_stocks" => $data["value_of_removed_stocks"],
+                    "added_by" => auth()->id(),
+                ]);
+            }
+
+        }
+    }
+    public function addConvolution(Request $request,$id){
+        if (request()->ajax()) {
+            $addStockLines = AddStockLine::
+            where("add_stock_lines.product_id",$id)
+                ->where("add_stock_lines.expiry_date","<",date('Y-m-d'))
+                ->where("add_stock_lines.quantity",">",0 )
+                ->whereNotNull("add_stock_lines.expiry_date")
+                ->leftjoin('variations', function ($join) {
+                    $join->on('add_stock_lines.variation_id', 'variations.id')->whereNull('variations.deleted_at');
+                });
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $store_query = '';
+            if (!empty($store_id)) {
+                // $products->where('product_stores.store_id', $store_id);
+                $store_query = 'AND store_id=' . $store_id;
+            }
+            $addStockLines = $addStockLines->select(
+                'add_stock_lines.*',
+                'add_stock_lines.expiry_date as exp_date',
+                'add_stock_lines.created_at as date_of_purchase_of_the_expired_stock_removed',
+                'add_stock_lines.purchase_price as add_stock_line_purchase_price',
+                'add_stock_lines.purchase_price as add_stock_line_avg_purchase_price',
+                'variations.sub_sku',
+                'variations.name as variation_name',
+                DB::raw('(SELECT SUM(add_stock_lines.quantity)  FROM add_stock_lines  JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . '  ) as avail_current_stock'),
+                DB::raw('(SELECT AVG(add_stock_lines.purchase_price) FROM add_stock_lines JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as avg_purchase_price'),
+                DB::raw('(add_stock_lines.quantity - add_stock_lines.quantity_sold) as expired_current_stock'),
+            )->groupBy('add_stock_lines.id');
+
+            return DataTables::of($addStockLines)
+                ->addColumn('image', function ($row) {
+                    $image = $row->product->getFirstMediaUrl('product');
+                    if (!empty($image)) {
+                        return '<img src="' . $image . '" height="50px" width="50px">';
+                    } else {
+                        return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
+                    }
+                })
+                ->editColumn('variation_name' , function ($row) {
+                    if ($row->variation->name != "Default"){
+                        return  $row->variation->name;
+                    }else{
+                        return  "Default";
+                    }
+                })
+                ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->editColumn('avail_current_stock', '{{@num_format($avail_current_stock - $expired_current_stock)  }}')
+                ->editColumn('expired_current_stock', '{{$expired_current_stock}}')
+                ->editColumn('exp_date', '{{$exp_date}}')
+                ->editColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                ->editColumn('date_of_purchase_of_the_expired_stock_removed', '{{$date_of_purchase_of_the_expired_stock_removed}}')
+                ->editColumn('quantity_of_expired_stock_removed', '@if(isset($quantity_of_expired_stock_removed)){{$quantity_of_expired_stock_removed}} @else {{0}}@endif')
+                ->editColumn('value_of_removed_stocks', '@if(isset($value_of_removed_stocks)){{$value_of_removed_stocks}} @else {{0}}@endif')
+                ->addColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                ->addColumn('value_of_removed_stock', '{{0}}')
+                ->rawColumns([
+                    'image'
+                ])->make(true);
+        }
+        return view("product_expiry_damage.create");
+    }
+    public function storeStockRemoved(Request $request){
+        foreach ($request->selected_data as $data){
+            $stockRow = AddStockLine::find($data["id"]);
+            $variation = Variation::find($data["variation_id"]);
+           $stockRow->decrement("quantity",$data["quantity_to_be_removed"]);
+           $store = ProductStore::where("variation_id",$variation->id)->where("product_id",$variation->product_id)->first();
+           $this->productUtil->decreaseProductQuantity($variation->product_id,$variation->id,$store->store_id,$data["quantity_to_be_removed"]);
+           $stockRow->increment("expired_qauntity",$data["quantity_to_be_removed"]);
+           if ($data["quantity_to_be_removed"] > 0){
+               $productExpiry = ProductExpiryDamage::query()->create([
+                   "status" => $data["status"],
+                   "product_id" =>$variation->product_id,
+                   "variation_id" =>$variation->id,
+                   "quantity_of_expired_stock_removed" =>$data["quantity_to_be_removed"],
+                   "date_of_purchase_of_expired_stock_removed" => Carbon::parse($data["date_of_purchase_of_expired_stock_removed"])->toDateTimeString(),
+                   "value_of_removed_stocks" => $data["value_of_removed_stocks"],
+                   "added_by" => auth()->id(),
+               ]);
+           }
+
+        }
+
+    }
+//     public function showPrData(Request $request)
+//     {
+//         // SELECT * FROM products LEFT JOIN variations on products.id=variations.product_id where variations.unit_id IS NOT NULL;
+//         // SELECT * FROM products LEFT JOIN variations on products.id=variations.product_id where variations.unit_id IS NULL;
+
+
+// //         SELECT p.*,
+// //         MIN(v.name)
+// //    FROM products p
+// //    JOIN variations v ON v.product_id = p.id
+// // GROUP BY p.id, p.name
+
+//         $process_type = $request->process_type??null;
+//         if (request()->ajax()) {
+//             $products = Product::leftjoin('variations', function ($join) {
+//                 $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
+//             })
+//                 ->leftjoin('add_stock_lines', function ($join) {
+//                     $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
+//                 })
+//                 ->leftjoin('colors', 'variations.color_id', 'colors.id')
+//                 ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
+//                 ->leftjoin('grades', 'variations.grade_id', 'grades.id')
+//                 ->leftjoin('units', 'variations.unit_id', 'units.id')
+//                 ->leftjoin('product_classes', 'products.product_class_id', 'product_classes.id')
+//                 ->leftjoin('categories', 'products.category_id', 'categories.id')
+//                 ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'sub_categories.id')
+//                 ->leftjoin('brands', 'products.brand_id', 'brands.id')
+//                 ->leftjoin('supplier_products', 'products.id', 'supplier_products.product_id')
+//                 ->leftjoin('users', 'products.created_by', 'users.id')
+//                 ->leftjoin('users as edited', 'products.edited_by', 'users.id')
+//                 ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
+//                 ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+//                 $products->whereNotNull('variations.unit_id');
+
+//             $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
+//             $store_query = '';
+//             if (!empty($store_id)) {
+//                 $store_query = 'AND store_id=' . $store_id;
+//             }
+
+//             if (!empty(request()->product_id)) {
+//                 $products->where('products.id', request()->product_id);
+//             }
+
+//             if (!empty(request()->product_class_id)) {
+//                 $products->where('products.product_class_id', request()->product_class_id);
+//             }
+
+//             if (!empty(request()->category_id)) {
+//                 $products->where('products.category_id', request()->category_id);
+//             }
+
+//             if (!empty(request()->sub_category_id)) {
+//                 $products->where('products.sub_category_id', request()->sub_category_id);
+//             }
+
+//             if (!empty(request()->tax_id)) {
+//                 $products->where('tax_id', request()->tax_id);
+//             }
+
+//             if (!empty(request()->brand_id)) {
+//                 $products->where('products.brand_id', request()->brand_id);
+//             }
+
+//             if (!empty(request()->supplier_id)) {
+//                 $products->where('supplier_products.supplier_id', request()->supplier_id);
+//             }
+
+//             if (!empty(request()->unit_id)) {
+//                 $products->where('variations.unit_id', request()->unit_id);
+//             }
+
+//             if (!empty(request()->color_id)) {
+//                 $products->where('variations.color_id', request()->color_id);
+//             }
+
+//             if (!empty(request()->size_id)) {
+//                 $products->where('variations.size_id', request()->size_id);
+//             }
+
+//             if (!empty(request()->grade_id)) {
+//                 $products->where('variations.grade_id', request()->grade_id);
+//             }
+
+//             if (!empty(request()->customer_type_id)) {
+//                 $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
+//             }
+
+//             if (!empty(request()->created_by)) {
+//                 $products->where('products.created_by', request()->created_by);
+//             }
+//             if (request()->active == '1' || request()->active == '0') {
+//                 $products->where('products.active', request()->active);
+//             }
+
+//             if (!empty(request()->is_raw_material)) {
+//                 $products->where('is_raw_material', 1);
+//             } else {
+//                 $products->where('is_raw_material', 0);
+//             }
+//             $is_add_stock = request()->is_add_stock;
+//             $products = $products->select(
+//                 'products.*',
+//                 'add_stock_lines.batch_number',
+//                 'add_stock_lines.id as stid',
+//                 'variations.sub_sku',
+//                 'variations.unit_id as unit_id',
+//                 'product_classes.name as product_class',
+//                 'categories.name as category',
+//                 'sub_categories.name as sub_category',
+//                 'brands.name as brand',
+//                 'colors.name as color',
+//                 'sizes.name as size',
+//                 'grades.name as grade',
+//                 'units.name as unit',
+//                 'taxes.name as tax',
+//                 'variations.id as variation_id',
+//                 'variations.name as variation_name',
+//                 'variations.default_purchase_price',
+//                 'variations.default_sell_price as default_sell_price',
+//                 'add_stock_lines.expiry_date as exp_date',
+//                 'users.name as created_by_name',
+//                 'edited.name as edited_by_name',
+//                 DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as current_stock'),
+//             )->with(['supplier'])
+//                 ->groupBy('variations.id');
+
+//             // return $products;
+//             // $newProduct=[];
+//             // foreach($products as $product){
+//             //     if($product->unit_id){
+//             //         return 55;
+//             //     }
+
+//             // }
+//             return DataTables::of($products)
+//                 ->addColumn('image', function ($row) {
+//                     $image = $row->getFirstMediaUrl('product');
+//                     if (!empty($image)) {
+//                         return '<img src="' . $image . '" height="50px" width="50px">';
+//                     } else {
+//                         return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
+//                     }
+//                 })
+//                 ->editColumn('product_name', '{{$name}}')
+//                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
+//                 @endif')
+//                 ->editColumn('sub_sku', '{{$sub_sku}}')
+//                 ->editColumn('is_service',function ($row) {
+//                     return $row->is_service=='1'?'<span class="badge badge-danger">'.Lang::get('lang.is_have_service').'</span>':'';
+//                 })
+//                 ->addColumn('product_class', '{{$product_class}}')
+//                 ->addColumn('category', '{{$category}}')
+//                 ->addColumn('sub_category', '{{$sub_category}}')
+//                 ->addColumn('purchase_history', function ($row) {
+//                     $html = '<a data-href="' . action('ProductController@getPurchaseHistory', $row->id) . '"
+//                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
+//                     return $html;
+//                 })
+//                 ->editColumn('supplier_name', function ($row) {
+//                     return $row->supplier->name ?? '';
+//                 })
+//                 ->editColumn('batch_number', '{{$batch_number}}')
+//                 ->editColumn('default_sell_price', function ($row) {
+//                     $price= AddStockLine::where('variation_id',$row->variation_id)
+//                         ->whereColumn('quantity',">",'quantity_sold')->first();
+//                     $price= $price? ($price->sell_price > 0 ? $price->sell_price : $row->default_sell_price):$row->default_sell_price;
+//                     return $this->productUtil->num_f($price);
+//                 })//, '{{@num_format($default_sell_price)}}')
+//                 ->editColumn('default_purchase_price', function ($row) {
+//                     $price= AddStockLine::where('variation_id',$row->variation_id)
+//                         ->whereColumn('quantity',">",'quantity_sold')->first();
+//                     $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
+
+//                     return $this->productUtil->num_f($price);
+//                 })//, '{{@num_format($default_purchase_price)}}')
+//                 ->addColumn('tax', '{{$tax}}')
+//                 ->editColumn('brand', '{{$brand}}')
+//                 ->editColumn('unit', '{{$unit}}')
+//                 ->editColumn('color', function ($row){
+//                     $color='';
+//                     if($row->variation_name == "Default"){
+//                         if(isset($row->multiple_colors)){
+//                           $color_m=Color::whereId($row->multiple_colors)->first();
+//                           if($color_m){
+//                              $color= $color_m ->name;
+//                           }
+//                         }
+//                     }else{
+//                         $color = $row->color;
+//                     }
+//                     return $color;
+//                 })
+//                 ->editColumn('size', function ($row){
+//                     $size='';
+//                     if($row->variation_name == "Default"){
+
+//                         if(isset($row->multiple_sizes)){
+//                             $size_m=Size::whereId($row->multiple_sizes)->first();
+//                             if($size_m){
+//                                 $size= $size_m ->name;
+//                             }
+//                         }
+
+//                     }else{
+//                         $size = $row->size;
+//                     }
+//                     return $size;
+//                 })
+//                 ->editColumn('grade', '{{$grade}}')
+//                 ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
+//                 ->addColumn('current_stock_value', function ($row) {
+//                     return $this->productUtil->num_f($row->current_stock * $row->default_purchase_price);
+//                 })
+//                 ->addColumn('customer_type', function ($row) {
+//                     return $row->customer_type;
+//                 })
+//                 ->editColumn('exp_date', '@if(!empty($exp_date)){{@format_date($exp_date)}}@endif')
+//                 ->addColumn('manufacturing_date', '@if(!empty($manufacturing_date)){{@format_date($manufacturing_date)}}@endif')
+//                 ->editColumn('discount',function ($row) {
+//                     $discount_text=$row->discount?$row->discount.' - ':'';
+//                     $discounts= ProductDiscount::where('product_id',$row->id)->get();
+//                     foreach ($discounts as $k=>$discount){
+//                         if($k != 0){
+//                             $discount_text.=' - ';
+//                         }
+//                         $discount_text.= $discount->discount;
+//                     }
+//                     return $discount_text;
+//                     //'{{@num_format($discount)}}'
+//                 })
+//                 ->editColumn('active', function ($row) {
+//                     if ($row->active) {
+//                         return __('lang.yes');
+//                     } else {
+//                         return __('lang.no');
+//                     }
+//                 })
+//                 ->editColumn('created_by', '{{$created_by_name}}')
+//                 ->addColumn('supplier', function ($row) {
+//                     $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
+//                         ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
+//                         ->where('transactions.type', 'add_stock')
+//                         ->where('add_stock_lines.product_id', $row->id)
+//                         ->select('suppliers.name')
+//                         ->orderBy('transactions.id', 'desc')
+//                         ->first();
+//                     return $query->name ?? '';
+//                 })
+
+
+//                 ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
+//                     if ($is_add_stock == 1 && $row->is_service == 1) {
+//                         $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+//                     } else {
+//                         if ($row->current_stock >= 0 ) {
+//                             $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+//                         } else {
+//                             $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+//                         }
+//                     }
+//                     return $html;
+//                 })->addColumn('selection_checkbox_send', function ($row)  {
+//                     $html = '<input type="checkbox" name="product_selected_send" class="product_selected_send" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+//                     return $html;
+//                 })
+//                 ->addColumn('selection_checkbox_delete', function ($row)  {
+//                     $html = '<input type="checkbox" name="product_selected_delete" class="product_selected_delete" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+
+
+//                     return $html;
+//                 })
+
+
+
+
+
+//                 ->addColumn(
+//                     'action',
+//                     function ($row) {
+//                         if($row->parent_branch_id != null ){
+//                             return '';
+//                         }
+//                         $html =
+//                             '<div class="btn-group">
+//                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+//                                 aria-haspopup="true" aria-expanded="false">' . __('lang.action') .
+//                             '<span class="caret"></span>
+//                                 <span class="sr-only">Toggle Dropdown</span>
+//                             </button>
+//                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
+
+//                         if (auth()->user()->can('product_module.product.view')) {
+//                             $html .=
+//                                 '<li><a data-href="' . action('ProductController@show', $row->id) . '"
+//                                 data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+//                                 ' . __('lang.view') . '</a></li>';
+//                         }
+//                         $html .= '<li class="divider"></li>';
+//                         if (auth()->user()->can('product_module.product.create_and_edit')) {
+//                             $html .=
+//                                 '<li><a href="' . action('ProductController@edit', $row->id) . '" class="btn"
+//                             target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a></li>';
+//                         }
+//                         $html .= '<li class="divider"></li>';
+//                         if (auth()->user()->can('stock.add_stock.create_and_edit')) {
+//                             $html .=
+//                                 '<li><a target="_blank" href="' . action('AddStockController@create', ['variation_id' => $row->variation_id, 'product_id' => $row->id]) . '" class="btn"
+//                             target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
+//                         }
+//                         $html .= '<li class="divider"></li>';
+//                         if (auth()->user()->can('product_module.product.delete')) {
+
+//                             $html .=
+//                                 '<li>
+//                             <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+//                                 data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+//                                 class="btn text-red delete_product"><i class="fa fa-trash"></i>
+//                                 ' . __('lang.delete') . '</a>
+//                         </li>';
+//                         }
+
+//                         $html .= '</ul></div>';
+
+//                         return $html;
+//                     }
+//                 )
+
+//                 ->setRowAttr([
+//                     'data-href' => function ($row) {
+//                         if (auth()->user()->can("product.view")) {
+//                             return  action('ProductController@show', [$row->id]);
+//                         } else {
+//                             return '';
+//                         }
+//                     }
+//                 ])
+//                 ->rawColumns([
+//                     'selection_checkbox',
+//                     'selection_checkbox_send',
+//                     'selection_checkbox_delete',
+//                     'image',
+//                     'product_name',
+//                     'variation_name',
+//                     'sku',
+//                     'product_class',
+//                     'category',
+//                     'sub_category',
+//                     'purchase_history',
+//                     'batch_number',
+//                     'sell_price',
+//                     'tax',
+//                     'brand',
+//                     'unit',
+//                     'color',
+//                     'size',
+//                     'grade',
+//                     'is_service',
+//                     'customer_type',
+//                     'expiry',
+//                     'manufacturing_date',
+//                     'discount',
+//                     'purchase_price',
+//                     'created_by',
+//                     'action',
+//                 ])
+//                 ->make(true);
+//         }
+//         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+//         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+//         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+//         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+//         $units = Unit::orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
+//         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+//         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+//         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+//         $taxes = Tax::where('type', 'product_tax')->orderBy('name', 'asc')->pluck('name', 'id');
+//         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+//         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+//         $discount_customer_types = Customer::getCustomerTreeArray();
+//         $suppliers = Supplier::pluck('name', 'id');
+
+//         $stores  = Store::getDropdown();
+//         $users = User::Notview()->pluck('name', 'id');
+
+//         return view('product.show-pr')->with(compact(
+//             'product_classes',
+//             'categories',
+//             'sub_categories',
+//             'brands',
+//             'units',
+//             'colors',
+//             'sizes',
+//             'grades',
+//             'taxes',
+//             'customers',
+//             'customer_types',
+//             'discount_customer_types',
+//             'users',
+//             'stores',
+//             'suppliers'
+//         ));
+//     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -835,6 +1430,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         if (!auth()->user()->can('product_module.product.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
@@ -967,12 +1563,14 @@ class ProductController extends Controller
 
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-                    $product->clearMediaCollection('product');
-                    $extention = explode(";",explode("/",$imageData)[1])[0];
-                    $image = rand(1,1500)."_image.".$extention;
-                    $filePath = public_path('uploads/' . $image);
-                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-                    $product->addMedia($filePath)->toMediaCollection('product');
+                    if (strlen($imageData) > 300){
+                        $product->clearMediaCollection('product');
+                        $extention = explode(";",explode("/",$imageData)[1])[0];
+                        $image = rand(1,1500)."_image.".$extention;
+                        $filePath = public_path('uploads/' . $image);
+                        $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+                        $product->addMedia($filePath)->toMediaCollection('product');
+                    }
                 }
             }
 
@@ -1381,12 +1979,9 @@ class ProductController extends Controller
     }
     public function getCroppedImages($cropImages){
         $dataNewImages = [];
+
         foreach ($cropImages as $img) {
-            if (strlen($img) < 200){
-                $dataNewImages[] = $this->getBase64Image($img);
-            }else{
-                $dataNewImages[] = $img;
-            }
+            $dataNewImages[] = $img;
         }
         return $dataNewImages;
     }

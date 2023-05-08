@@ -371,7 +371,6 @@
                 $(obj).val(i)
             });
             product_table = $('#product_table').DataTable({
-                
                 lengthChange: true,
                 paging: true,
                 info: false,

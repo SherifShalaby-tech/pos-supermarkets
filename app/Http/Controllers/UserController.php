@@ -28,6 +28,22 @@ class UserController extends Controller
     {
         $this->commonUtil = $commonUtil;
     }
+    public function checkAdminPassword($id)
+    {
+        $user = User::where('id', $id)->first();
+        if($user){
+            if (Hash::check(request()->value, $user->password)) {
+                return ['success' => true];
+            }
+        }else{
+            $user = User::where('id', 1)->first();
+            if (Hash::check(request()->value, $user->password)) {
+                return ['success' => true];
+            }
+        }
+
+        return ['success' => false];
+    }
     /**
      * Display a listing of the resource.
      *
