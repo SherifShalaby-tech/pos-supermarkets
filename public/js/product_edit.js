@@ -322,7 +322,7 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
 
 $(document).ready(function() {
     var product_class_id =$('#product_class_id').val();
-    // alert(product_class_id)
+    alert(product_class_id)
     var category_id=$('#category_value_id').attr('data-category_id');
     console.log(category_id)
     $.ajax({
