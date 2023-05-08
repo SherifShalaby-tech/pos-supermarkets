@@ -15,6 +15,7 @@ use App\Models\Grade;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\ProductDiscount;
+use App\Models\ProductExpiryDamage;
 use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
@@ -28,6 +29,7 @@ use App\Models\Variation;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -393,6 +395,7 @@ class ProductController extends Controller
                         }
                     }
                     return $html;
+
                 })->addColumn('selection_checkbox_send', function ($row)  {
                     $html = '<input type="checkbox" name="product_selected_send" class="product_selected_send" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
 
@@ -404,11 +407,6 @@ class ProductController extends Controller
 
                     return $html;
                 })
-
-
-
-
-
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -429,6 +427,18 @@ class ProductController extends Controller
                                 '<li><a data-href="' . action('ProductController@show', $row->id) . '"
                                 data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
                                 ' . __('lang.view') . '</a></li>';
+                        }
+                        if (auth()->user()->can('product_module.product.remove_expiry')) {
+                            $html .=
+                                '<li><a target="_blank" href="' . action('ProductController@get_remove_expiry', $row->id) . '"
+                                 class="btn"><i class="fa fa-hourglass-half"></i>
+                                ' . __('lang.remove_expiry') . '</a></li>';
+                        }
+                        if (auth()->user()->can('product_module.product.remove_damage')) {
+                            $html .=
+                                '<li><a target="_blank" href="' . action('ProductController@get_remove_damage', $row->id) . '"
+                                 class="btn"><i class="fa fa-filter"></i>
+                                ' . __('lang.remove_damage') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.product.create_and_edit')) {
@@ -534,11 +544,187 @@ class ProductController extends Controller
             'suppliers'
         ));
     }
+    public function get_remove_damage(Request $request,$id){
+        $product_damages = ProductExpiryDamage::where("product_id",$id)->where("status","damage")->get();
+        $status = "damage";
+        return view('product_expiry_damage.product_damage_index')->with(compact( 'product_damages', 'status' ,'id' ));
+    }
+    public function get_remove_expiry(Request $request,$id){
+        $product_expires = ProductExpiryDamage::where("product_id",$id)->where("status","expiry")->get();
+        $status = "expiry";
+        return view('product_expiry_damage.product_expiry_index')->with(compact('product_expires','status','id'));
+    }
+    public function getDamageProduct(Request $request,$id){
+        if (request()->ajax()) {
+            $addStockLines = AddStockLine::
+            where("add_stock_lines.product_id",$id)
+                ->where("add_stock_lines.expiry_date",">",date('Y-m-d'))
+                ->where("add_stock_lines.quantity",">",0 )
+                ->leftjoin('variations', function ($join) {
+                    $join->on('add_stock_lines.variation_id', 'variations.id')->whereNull('variations.deleted_at');
+                });
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $store_query = '';
+            if (!empty($store_id)) {
+                // $products->where('product_stores.store_id', $store_id);
+                $store_query = 'AND store_id=' . $store_id;
+            }
+            $addStockLines = $addStockLines->select(
+                'add_stock_lines.*',
+                'add_stock_lines.expiry_date as exp_date',
+                'add_stock_lines.created_at as date_of_purchase_of_the_expired_stock_removed',
+                'add_stock_lines.purchase_price as add_stock_line_purchase_price',
+                'add_stock_lines.purchase_price as add_stock_line_avg_purchase_price',
+                'variations.sub_sku',
+                'variations.name as variation_name',
+                DB::raw('(SELECT SUM(add_stock_lines.quantity)  FROM add_stock_lines  JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . '  ) as avail_current_stock'),
+                DB::raw('(SELECT AVG(add_stock_lines.purchase_price) FROM add_stock_lines JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as avg_purchase_price'),
+                DB::raw('(add_stock_lines.quantity - add_stock_lines.quantity_sold) as expired_current_stock'),
+            )->groupBy('add_stock_lines.id');
+
+            return DataTables::of($addStockLines)
+                ->addColumn('image', function ($row) {
+                    $image = $row->product->getFirstMediaUrl('product');
+                    if (!empty($image)) {
+                        return '<img src="' . $image . '" height="50px" width="50px">';
+                    } else {
+                        return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
+                    }
+                })
+                ->editColumn('variation_name' , function ($row) {
+                    if ($row->variation->name != "Default"){
+                        return  $row->variation->name;
+                    }else{
+                        return  "Default";
+                    }
+                })
+                ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->editColumn('avail_current_stock', '{{@num_format($avail_current_stock - $expired_current_stock)  }}')
+                ->editColumn('expired_current_stock', '{{$expired_current_stock}}')
+                ->editColumn('exp_date', '{{$exp_date}}')
+                ->editColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                ->editColumn('date_of_purchase_of_the_expired_stock_removed', '{{$date_of_purchase_of_the_expired_stock_removed}}')
+                ->editColumn('quantity_of_expired_stock_removed', '@if(isset($quantity_of_expired_stock_removed)){{$quantity_of_expired_stock_removed}} @else {{0}}@endif')
+                ->editColumn('value_of_removed_stocks', '@if(isset($value_of_removed_stocks)){{$value_of_removed_stocks}} @else {{0}}@endif')
+                ->addColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                ->addColumn('value_of_removed_stock', '{{0}}')
+                ->rawColumns([
+                    'image'
+                ])->make(true);
+        }
+        return view("product_expiry_damage.add_damage_product");
+    }
+    public function storeStockDamaged(Request $request){
+        foreach ($request->selected_data as $data){
+            $stockRow = AddStockLine::find($data["id"]);
+            $variation = Variation::find($data["variation_id"]);
+            $stockRow->decrement("quantity",$data["quantity_to_be_removed"]);
+            $store = ProductStore::where("variation_id",$variation->id)->where("product_id",$variation->product_id)->first();
+            $this->productUtil->decreaseProductQuantity($variation->product_id,$variation->id,$store->store_id,$data["quantity_to_be_removed"]);
+            $stockRow->increment("quantity_damaged",$data["quantity_to_be_removed"]);
+            if ($data["quantity_to_be_removed"] > 0){
+                $productExpiry = ProductExpiryDamage::query()->create([
+                    "status" => $data["status"],
+                    "product_id" =>$variation->product_id,
+                    "variation_id" =>$variation->id,
+                    "quantity_of_expired_stock_removed" =>$data["quantity_to_be_removed"],
+                    "date_of_purchase_of_expired_stock_removed" => Carbon::parse($data["date_of_purchase_of_expired_stock_removed"])->toDateTimeString(),
+                    "value_of_removed_stocks" => $data["value_of_removed_stocks"],
+                    "added_by" => auth()->id(),
+                ]);
+            }
+
+        }
+    }
+    public function addConvolution(Request $request,$id){
+        if (request()->ajax()) {
+            $addStockLines = AddStockLine::
+            where("add_stock_lines.product_id",$id)
+                ->where("add_stock_lines.expiry_date","<",date('Y-m-d'))
+                ->where("add_stock_lines.quantity",">",0 )
+                ->whereNotNull("add_stock_lines.expiry_date")
+                ->leftjoin('variations', function ($join) {
+                    $join->on('add_stock_lines.variation_id', 'variations.id')->whereNull('variations.deleted_at');
+                });
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $store_query = '';
+            if (!empty($store_id)) {
+                // $products->where('product_stores.store_id', $store_id);
+                $store_query = 'AND store_id=' . $store_id;
+            }
+            $addStockLines = $addStockLines->select(
+                'add_stock_lines.*',
+                'add_stock_lines.expiry_date as exp_date',
+                'add_stock_lines.created_at as date_of_purchase_of_the_expired_stock_removed',
+                'add_stock_lines.purchase_price as add_stock_line_purchase_price',
+                'add_stock_lines.purchase_price as add_stock_line_avg_purchase_price',
+                'variations.sub_sku',
+                'variations.name as variation_name',
+                DB::raw('(SELECT SUM(add_stock_lines.quantity)  FROM add_stock_lines  JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . '  ) as avail_current_stock'),
+                DB::raw('(SELECT AVG(add_stock_lines.purchase_price) FROM add_stock_lines JOIN variations as v ON add_stock_lines.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as avg_purchase_price'),
+                DB::raw('(add_stock_lines.quantity - add_stock_lines.quantity_sold) as expired_current_stock'),
+            )->groupBy('add_stock_lines.id');
+
+            return DataTables::of($addStockLines)
+                ->addColumn('image', function ($row) {
+                    $image = $row->product->getFirstMediaUrl('product');
+                    if (!empty($image)) {
+                        return '<img src="' . $image . '" height="50px" width="50px">';
+                    } else {
+                        return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
+                    }
+                })
+                ->editColumn('variation_name' , function ($row) {
+                    if ($row->variation->name != "Default"){
+                        return  $row->variation->name;
+                    }else{
+                        return  "Default";
+                    }
+                })
+                ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->editColumn('avail_current_stock', '{{@num_format($avail_current_stock - $expired_current_stock)  }}')
+                ->editColumn('expired_current_stock', '{{$expired_current_stock}}')
+                ->editColumn('exp_date', '{{$exp_date}}')
+                ->editColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                ->editColumn('date_of_purchase_of_the_expired_stock_removed', '{{$date_of_purchase_of_the_expired_stock_removed}}')
+                ->editColumn('quantity_of_expired_stock_removed', '@if(isset($quantity_of_expired_stock_removed)){{$quantity_of_expired_stock_removed}} @else {{0}}@endif')
+                ->editColumn('value_of_removed_stocks', '@if(isset($value_of_removed_stocks)){{$value_of_removed_stocks}} @else {{0}}@endif')
+                ->addColumn('avg_purchase_price', '{{@num_format($avg_purchase_price)}}')
+                ->addColumn('value_of_removed_stock', '{{0}}')
+                ->rawColumns([
+                    'image'
+                ])->make(true);
+        }
+        return view("product_expiry_damage.create");
+    }
+    public function storeStockRemoved(Request $request){
+        foreach ($request->selected_data as $data){
+            $stockRow = AddStockLine::find($data["id"]);
+            $variation = Variation::find($data["variation_id"]);
+           $stockRow->decrement("quantity",$data["quantity_to_be_removed"]);
+           $store = ProductStore::where("variation_id",$variation->id)->where("product_id",$variation->product_id)->first();
+           $this->productUtil->decreaseProductQuantity($variation->product_id,$variation->id,$store->store_id,$data["quantity_to_be_removed"]);
+           $stockRow->increment("expired_qauntity",$data["quantity_to_be_removed"]);
+           if ($data["quantity_to_be_removed"] > 0){
+               $productExpiry = ProductExpiryDamage::query()->create([
+                   "status" => $data["status"],
+                   "product_id" =>$variation->product_id,
+                   "variation_id" =>$variation->id,
+                   "quantity_of_expired_stock_removed" =>$data["quantity_to_be_removed"],
+                   "date_of_purchase_of_expired_stock_removed" => Carbon::parse($data["date_of_purchase_of_expired_stock_removed"])->toDateTimeString(),
+                   "value_of_removed_stocks" => $data["value_of_removed_stocks"],
+                   "added_by" => auth()->id(),
+               ]);
+           }
+
+        }
+
+    }
 //     public function showPrData(Request $request)
 //     {
 //         // SELECT * FROM products LEFT JOIN variations on products.id=variations.product_id where variations.unit_id IS NOT NULL;
 //         // SELECT * FROM products LEFT JOIN variations on products.id=variations.product_id where variations.unit_id IS NULL;
-        
+
 
 // //         SELECT p.*,
 // //         MIN(v.name)
@@ -568,7 +754,7 @@ class ProductController extends Controller
 //                 ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
 //                 ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 //                 $products->whereNotNull('variations.unit_id');
-               
+
 //             $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
 
 //             $store_query = '';
@@ -1275,6 +1461,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         if (!auth()->user()->can('product_module.product.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
@@ -1392,12 +1579,14 @@ class ProductController extends Controller
 //            }
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-                    $product->clearMediaCollection('product');
-                    $extention = explode(";",explode("/",$imageData)[1])[0];
-                    $image = rand(1,1500)."_image.".$extention;
-                    $filePath = public_path('uploads/' . $image);
-                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-                    $product->addMedia($filePath)->toMediaCollection('product');
+                    if (strlen($imageData) > 300){
+                        $product->clearMediaCollection('product');
+                        $extention = explode(";",explode("/",$imageData)[1])[0];
+                        $image = rand(1,1500)."_image.".$extention;
+                        $filePath = public_path('uploads/' . $image);
+                        $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+                        $product->addMedia($filePath)->toMediaCollection('product');
+                    }
                 }
             }
 
@@ -1805,12 +1994,9 @@ class ProductController extends Controller
     }
     public function getCroppedImages($cropImages){
         $dataNewImages = [];
+
         foreach ($cropImages as $img) {
-            if (strlen($img) < 200){
-                $dataNewImages[] = $this->getBase64Image($img);
-            }else{
-                $dataNewImages[] = $img;
-            }
+            $dataNewImages[] = $img;
         }
         return $dataNewImages;
     }

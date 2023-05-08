@@ -214,7 +214,11 @@ return [
     'edit_supplier' => 'تعديل المورد',
     'postal_code' => 'رمز بريدي',
     'state' => 'الحالة',
+    'deleted_by' => 'حذف بواسطة',
     'country' => 'دولة',
+    'avg_purchase_price' => 'متوسط سعر الشراء',
+    'date_of_expired_stock' => 'تاريخ انتهاء صلاحية المخزون',
+    'current_stock_expired' => 'المخزون المنتهي الصلاحية',
     'view_all_supplier' => 'عرض كل الموردين',
     'product_classification_tree' => 'شجرة تصنيف المنتج',
     'print_barcode' => 'طباعة الباركود',
@@ -224,6 +228,24 @@ return [
     'product_name' => 'اسم المنتج',
     'paper_size' => 'حجم الورق',
     'variations' => 'الاختلافات',
+    'remove_damage' => 'ازالة منتج تالف',
+    'product_damage' => 'توالف المنتج المزالة',
+    'product_expiry' => 'المنتجات منتهية الصلاحية المزالة',
+    'quantity_of_expired_stock_removed' => 'كميه المخزون التالف المحذوف',
+    'value_of_the_removed_stocks' => 'قيمه المخزون التالف ',
+    'removed_expiry' => 'ازالة منتج منتهي الصلاحية',
+
+    'date_of_the_removal' => 'تاريخ الحذف',
+    'add_new_convolutions' => 'اضافه تلافيات جديده',
+    'expired_stock' => 'المخزون المنتهي الصلاحيه',
+
+    'date_of_the_expiry_of_the_expired_stock' => ' تاريخ انتهاء المخزون المنتهي',
+    'date_of_purchase_of_the_expired_stock' => 'تاريخ شراء المخزون المنتهي',
+    'quantity_to_be_removed' => 'الكميه المراد حذفها',
+    'value_of_removed_stock' => 'قيمه المخزون المحذوف',
+
+    'date_of_purchase_of_the_expired_stock_removed' => 'تاريخ شراء المخزون التالف المحذوف',
+
 
     'salary' => 'الراتب',
     'paid_leave' => 'إجازة مدفوعة',

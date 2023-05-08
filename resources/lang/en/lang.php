@@ -42,6 +42,26 @@ return [
     'annual_incentive' => 'Annual Incentive',
     'recognition' => 'Recognition',
     'other_reward' => 'Other Reward',
+    'add_new_convolutions' => 'Add New Convolutions',
+    'deleted_by' => 'Deleted By',
+
+    'date_of_the_expiry_of_the_expired_stock' => 'Date Of Expiry Of The Expired Stock',
+    'date_of_purchase_of_the_expired_stock' => 'Date Of Purchase Of The Expired Stock',
+    'quantity_to_be_removed' => 'Quantity To Be Removed',
+    'value_of_removed_stock' => 'Removed Stock',
+    'date_of_expired_stock' => 'Date Of Expired Stock',
+    'current_stock_expired' => 'Current Stock Expired',
+    'remove_expiry' => 'Remove Expiry',
+    'remove_damage' => 'Remove Damage',
+    'product_damage' => 'Product Damage',
+    'avg_purchase_price' => 'Avg Purchase Price',
+    'product_expiry' => 'Product Damage',
+    'quantity_of_expired_stock_removed' => 'quantity_of_expired_stock_removed',
+    'value_of_the_removed_stocks' => 'value_of_the_removed_stocks',
+    'date_of_the_removal' => 'date_of_the_removal',
+    'date_of_purchase_of_the_expired_stock_removed' => 'date_of_purchase_of_the_expired_stock_removed',
+
+
 
 
     'received' => 'Received',
