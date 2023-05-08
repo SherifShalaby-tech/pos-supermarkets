@@ -320,6 +320,29 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
     });
 });
 
+$(document).ready(function() {
+    var product_class_id =$('#product_class_id').val();
+    // alert(product_class_id)
+    var category_id=$('#category_value_id').attr('data-category_id');
+    console.log(category_id)
+    $.ajax({
+        method: "get",
+        url:
+            "/category/get-dropdown?product_class_id=" +product_class_id+"&type=category",
+        data: {},
+        contentType: "html",
+        success: function (result) {
+            console.log(result)
+            $("#category_id").empty().append(result).change();
+            $("#category_id").selectpicker("refresh");
+            // $("#category_id").val(category_id);
+
+            if (category_id) {
+                $("#category_id").selectpicker("val", category_id);
+            }
+        },
+    });
+})
 $(document).on("change", "#product_class_id", function () {
     $.ajax({
         method: "get",

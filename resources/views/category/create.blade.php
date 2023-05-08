@@ -32,13 +32,13 @@
             </div>
             <input type="hidden" name="quick_add" value="{{ $quick_add }}">
             @if ($type == 'category')
-                <div class="form-group hide">
+                <div class="form-group">
                     {!! Form::label('product_class_id', __('lang.class') . ':') !!}
                     {!! Form::select('product_class_id', $product_classes, false, ['class' => 'form-control', 'data-live-search' => 'true', 'style' => 'width: 100%', 'placeholder' => __('lang.please_select'), 'required', 'id' => 'cat_product_class_id']) !!}
                 </div>
             @endif
             @if ($type == 'sub_category')
-                <div class="form-group hide">
+                <div class="form-group ">
                     {!! Form::label('parent_id', __('lang.parent_category') . ':') !!}
                     {!! Form::select('parent_id', $categories, false, ['class' => 'form-control', 'data-live-search' => 'true', 'style' => 'width: 100%', 'placeholder' => __('lang.please_select'), 'id' => 'parent_id']) !!}
                 </div>
@@ -48,7 +48,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="file-input-category"> {{ __('categories.image') }}</label>
+                        <label for="file-input-category"> {{ __('lang.image') }}</label>
                         <div class="container mt-3">
                             <div class="row mx-0" style="border: 1px solid #ddd;padding: 30px 0px;">
                                 <div class="col-12">

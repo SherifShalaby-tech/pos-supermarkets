@@ -6,6 +6,13 @@
 
     <div class="col-md-12  no-print">
         <div class="card">
+            <div class="card-header d-flex align-items-center">
+                @can('product_module.product_class.create_and_edit')
+                <a style="color: white" data-href="{{ action('CategoryController@create') }}?type=sub_category"
+                    data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
+                    @lang('lang.add_sub_category')</a>
+                @endcan
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="category_table" class="table dataTable">

@@ -118,6 +118,7 @@ return [
     'image' => 'Image',
     'parent_category' => 'Parent Category',
     'sub_category' => 'Sub Category',
+    'add_sub_category' =>'Add Sub Category',
     'brand' => 'Brand',
     'add_brand' => 'Add Brand',
     'add_unit' => 'Add Unit',
