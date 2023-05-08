@@ -281,7 +281,7 @@ class CategoryController extends Controller
         if (!empty(request()->product_class_id)&& request()->type=="category") {
             $categories = Category::where('product_class_id', request()->product_class_id)->orderBy('name', 'asc')->pluck('name', 'id');
         } else {
-            $categories = Category::whereNull('parent_id')->where('id',10)->orderBy('name', 'asc')->pluck('name', 'id');
+            $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         }
         $categories_dp = $this->commonUtil->createDropdownHtml($categories, __('lang.please_select'));
 
