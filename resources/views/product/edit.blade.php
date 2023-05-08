@@ -286,6 +286,7 @@
                                     <div class="col-md-4">
                                         {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
                                         <div class="input-group my-group">
+                                            <input type="hidden" data-category_id="{{$product->category_id }}" id="category_value_id"/>
                                             {!! Form::select('category_id', $categories, $product->category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.category.create_and_edit')
@@ -372,7 +373,7 @@
                                     <div class="col-md-4">
                                         {!! Form::label('multiple_colors', __('lang.color'), []) !!}
                                         <div class="input-group my-group">
-                                            {!! Form::select('multiple_colors[]', $colors, $product->multiple_colors, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => $product->type == 'variable' ? true : false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_colors']) !!}
+                                            {!! Form::select('multiple_colors[]', $colors, $product->multiple_colors, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_colors']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.color.create_and_edit')
                                                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
@@ -434,6 +435,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            {{-- {{  $product->getFirstMediaUrl('product')}} --}}
                                             <div class="col-10 offset-1">
                                                 <div class="preview-edit-product-container">
                                                     @if(!empty($product->getFirstMediaUrl('product')))
@@ -600,6 +602,7 @@
                                             <th style="width: 20%;">@lang('lang.discount_type')</th>
                                             <th style="width: 15%;">@lang('lang.discount')</th>
                                             <th style="width: 7%;">@lang('lang.discount_category')</th>
+                                            <th style="width: 5%;"></th>
                                             <th style="width: 20%;">@lang('lang.discount_start_date')</th>
                                             <th style="width: 20%;">@lang('lang.discount_end_date')</th>
                                             <th style="width: 20%;">@lang('lang.customer_type') <i class="dripicons-question" data-toggle="tooltip"
@@ -803,7 +806,7 @@
                             if (response.success) {
                                 swal("Success", response.msg, "success");
                                 setTimeout(() => {
-                                    window.reload();
+                                    window.load();
                                 }, 1000);
                             }
                         },
@@ -940,6 +943,7 @@
             });
         }
         function getEditProductImages() {
+             $("#cropped_images").empty();
             setTimeout(() => {
                 const container = document.querySelectorAll('.preview-edit-product-container');
                 let images = [];
@@ -954,11 +958,7 @@
             }, 300);
         }
         @if($product)
-        {{--document.getElementById("cropBtn{{ $product->id }}").addEventListener('click', () => {--}}
-        {{--    setTimeout(() => {--}}
-        {{--        launchEditProductCropTool(document.getElementById("img{{ $product->id }}"));--}}
-        {{--    }, 500);--}}
-        {{--});--}}
+
         document.getElementById("deleteBtn{{ $product->id }}").addEventListener('click', () => {
             Swal.fire({
                 title: '{{ __("site.Are you sure?") }}',

@@ -160,6 +160,7 @@
                                                                         @lang('lang.view')</a>
                                                                 </li>
                                                             @endcan
+                                                            {{-- new edit --}}
                                                             @can('expense.expenses.create_and_edit')
                                                                 <li>
                                                                     <a href="{{ action('ExpenseController@edit', $expense->id) }}"
@@ -176,6 +177,7 @@
                                                                             class="fa fa-trash"></i> @lang('lang.delete')</a>
                                                                 </li>
                                                             @endcan
+                                                            {{-- new edit  --}}
                                                         </ul>
                                                     </div>
                                                 </td>

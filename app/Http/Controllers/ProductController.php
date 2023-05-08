@@ -107,49 +107,12 @@ class ProductController extends Controller
             'page'
         ));
     }
-//     public function showPr(Request $request)
-//     {
-//         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
-//         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
-//         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
-//         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-//         $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
-//         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
-//         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
-//         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
-//         $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
-//         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
-//         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
-//         $discount_customer_types = Customer::getCustomerTreeArray();
-//         $stores  = Store::getDropdown();
-//         $users  = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
-//         $suppliers = Supplier::pluck('name', 'id');
-//         $page = 'product_stock';
 
-//         return view('product.show-pr')->with(compact(
-//             'users',
-//             'product_classes',
-//             'categories',
-//             'sub_categories',
-//             'brands',
-//             'units',
-//             'colors',
-//             'sizes',
-//             'grades',
-//             'taxes',
-//             'customers',
-//             'customer_types',
-//             'discount_customer_types',
-//             'stores',
-//             'suppliers',
-//             'page'
-//         ));
-//     }
-//     /**
-//      * Display a listing of the resource.
-//      *
-//      * @return \Illuminate\Http\Response
-//      */
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $process_type = $request->process_type??null;
@@ -236,6 +199,9 @@ class ProductController extends Controller
             if (request()->active == '1' || request()->active == '0') {
                 $products->where('products.active', request()->active);
             }
+            if (request()->show_zero_stocks == '0') {
+                $products->where('is_service', 0)->havingRaw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') > ?', [0]);
+            }
 
             if (!empty(request()->is_raw_material)) {
                 $products->where('is_raw_material', 1);
@@ -267,7 +233,7 @@ class ProductController extends Controller
             )->with(['supplier'])
                 ->groupBy('variations.id');
 
-            // return $products;
+            //  return $products;
             return DataTables::of($products)
                 ->addColumn('image', function ($row) {
                     $image = $row->getFirstMediaUrl('product');
@@ -544,6 +510,7 @@ class ProductController extends Controller
             'suppliers'
         ));
     }
+
     public function get_remove_damage(Request $request,$id){
         $product_damages = ProductExpiryDamage::where("product_id",$id)->where("status","damage")->get();
         $status = "damage";
@@ -1127,6 +1094,7 @@ class ProductController extends Controller
 //             'suppliers'
 //         ));
 //     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -1280,6 +1248,7 @@ class ProductController extends Controller
                         'product_id' => $product->id,
                         'discount_type' => $request->discount_type[$index_discount],
                         'discount_category' => $request->discount_category[$index_discount],
+                        'is_discount_permenant'=>!empty($request->is_discount_permenant[$index_discount])? 1 : 0,
                         'discount_customer_types' => $request->get('discount_customer_types_'.$index_discount),
                         'discount_customers' => $discount_customers,
                         'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),
@@ -1473,7 +1442,7 @@ class ProductController extends Controller
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
 
-        try {
+        // try {
             $product_data = [
                 'name' => $request->name,
                 'translations' => !empty($request->translations) ? $request->translations : [],
@@ -1540,6 +1509,7 @@ class ProductController extends Controller
                         'product_id' => $product->id,
                         'discount_type' => $request->discount_type[$index_discount],
                         'discount_category' => $request->discount_category[$index_discount],
+                        'is_discount_permenant'=>!empty($request->is_discount_permenant[$index_discount])? 1 : 0,
                         'discount_customer_types' => $request->get('discount_customer_types_'.$index_discount),
                         'discount_customers' => $discount_customers,
                         'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),
@@ -1577,6 +1547,20 @@ class ProductController extends Controller
 //                    $product->addMedia($image)->toMediaCollection('product');
 //                }
 //            }
+            // return $request->cropImages;
+            // if ($request->has("cropImages") && count($request->cropImages) > 0) {
+            //     foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
+            //         $product->clearMediaCollection('product');
+            //         $extention = explode(";",explode("/",$imageData)[1])[0];
+            //         $image = rand(1,1500)."_image.".$extention;
+            //         $filePath = public_path('uploads/' . $image);
+            //         $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+            //         $product->addMedia($filePath)->toMediaCollection('product');
+            //     }
+            // }
+
+
+
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
                     if (strlen($imageData) > 300){
@@ -1605,13 +1589,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         if ($request->ajax()) {
             return $output;
@@ -1668,6 +1652,7 @@ class ProductController extends Controller
 
     public function getVariationRow()
     {
+        
         $row_id = request()->row_id;
         //'base_unit_multiplier'
         $units = Unit::orderBy('name', 'asc');

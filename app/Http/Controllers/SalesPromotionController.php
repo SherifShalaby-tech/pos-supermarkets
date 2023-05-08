@@ -154,8 +154,8 @@ class SalesPromotionController extends Controller
             ['customer_type_ids' => ['required', 'max:255']],
             ['discount_type' => ['required', 'max:255']],
             ['discount_value' => ['required', 'max:255']],
-            ['start_date' => ['required', 'max:255']],
-            ['end_date' => ['required', 'max:255']],
+            ['start_date' => ['max:255']],
+            ['end_date' => ['max:255']],
         );
 
         try {
@@ -174,6 +174,7 @@ class SalesPromotionController extends Controller
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
             $data['generate_barcode'] = !empty($request->generate_barcode) ? 1 : 0;
+            $data['is_discount_permenant'] = !empty($request->is_discount_permenant) ? 1 : 0;
             $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
             $data['discount_type'] = !empty($request->discount_type) ? $request->discount_type : 'fixed';
             $data['actual_sell_price'] = !empty($request->actual_sell_price) ? $this->productUtil->num_uf($request->actual_sell_price) : 0;
@@ -315,8 +316,8 @@ class SalesPromotionController extends Controller
             ['customer_type_ids' => ['required', 'max:255']],
             ['discount_type' => ['required', 'max:255']],
             ['discount_value' => ['required', 'max:255']],
-            ['start_date' => ['required', 'max:255']],
-            ['end_date' => ['required', 'max:255']],
+            ['start_date' => [ 'max:255']],
+            ['end_date' => [ 'max:255']],
         );
 //        dd($request->all());
 
@@ -336,6 +337,7 @@ class SalesPromotionController extends Controller
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
             $data['generate_barcode'] = !empty($request->generate_barcode) ? 1 : 0;
+            $data['is_discount_permenant'] = !empty($request->is_discount_permenant) ? 1 : 0;
             $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
             $data['discount_type'] = !empty($request->discount_type) ? $request->discount_type : 'fixed';
             $data['actual_sell_price'] = !empty($request->actual_sell_price) ? $this->productUtil->num_uf($request->actual_sell_price) : 0;

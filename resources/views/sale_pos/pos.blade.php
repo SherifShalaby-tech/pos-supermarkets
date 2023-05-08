@@ -251,6 +251,10 @@
                                             <div class="col-sm-4">
                                                 <span class="totals-title">{{ __('lang.items') }}</span><span
                                                     id="item">0</span>
+                                                <br>
+                                                <span class="totals-title  text-dark" style="font-weight:1000">{{ __('lang.quantity') }}</span><span
+                                                id="item-quantity">0</span>
+
                                             </div>
                                             <div class="col-sm-4">
                                                 <span class="totals-title">{{ __('lang.total') }}</span><span

@@ -69,7 +69,7 @@ function __currency_trans_from_en(
         precision = __quantity_precision;
     }
     var new_input = input;
-    console.log("input" + input);
+    // console.log("input" + input);
     if (!isNaN(input) && input > 0) {
         new_input = Math.round(input * Math.pow(10, __quantity_precision)) / Math.pow(10, __quantity_precision);
         precision = (new_input % 1 !== 0) ? new_input.toString().split('.')[1].length : 2;

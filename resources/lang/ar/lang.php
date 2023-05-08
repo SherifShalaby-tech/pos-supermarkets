@@ -102,6 +102,7 @@ return [
     'image' => 'صورة',
     'parent_category' => 'القسم الرئيسي',
     'sub_category' => 'قسم فرعي',
+    'add_sub_category' => 'اضافة قسم فرعى',
     'brand' => 'علامة تجارية',
     'add_brand' => 'أضف علامة التجارية',
     'add_unit' => 'أضف وحدة',
@@ -869,6 +870,10 @@ return [
     'cash_in_adjustment' => 'تسوية النقدية',
     'view_cash_in_adjustment' => 'عرض تسوية النقدية',
     'add_cash_in_adjustment' => 'إضافة تسوية النقدية',
+
+    'view_product_in_adjustment' => 'عرض تسوية المنتج',
+    'add_product_in_adjustment' => 'إضافة تسوية المنتج',
+    'product_in_adjustment' => 'تسوية المنتج',
     'adjustment_value' => 'قيمة التعديل',
     'title_of_creator' => 'لقب الخالق',
     'receiver_title' => 'عنوان المتلقي',
@@ -1358,5 +1363,16 @@ return [
     'new_batch'=>'رقم التشغيلة الجديدة',
     'watsapp_numbers'=>'رقم واتساب للتواصل',
 
+    'actual_stock' => 'المخزون الفعلي',
+    'shortage' => 'النقص',
+    'value_of_shortage' => 'قيمة النقص',
+    'total_shortage_value' => 'اجمالي قيمة النقص',
+
+    'adjustment_save' =>'سيؤدي هذا إلى تغيير مخزون المنتج ، يرجى إدخال كلمة مرور المسؤول للتأكيد',
+
+
+    'permenant'=>'دائم',
+    'old_stock' => 'المخون القديم',
+    'new_stock' => 'المخزون الجديد',
 
 ];

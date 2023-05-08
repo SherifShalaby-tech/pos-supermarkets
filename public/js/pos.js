@@ -371,7 +371,7 @@ function get_label_product_row(
         var store_id = $("#store_id").val();
         var customer_id = $("#customer_id").val();
         let currency_id = $("#received_currency_id").val();
-
+        var store_pos_id = $("#store_pos_id").val();
         if (edit_row_count !== 0) {
             row_count = edit_row_count;
         } else {
@@ -389,6 +389,7 @@ function get_label_product_row(
                 row_count: row_count,
                 variation_id: variation_id,
                 store_id: store_id,
+                store_pos_id : store_pos_id,
                 customer_id: customer_id,
                 currency_id: currency_id,
                 edit_quantity: edit_quantity,
@@ -455,15 +456,12 @@ function check_for_sale_promotion() {
                     if (
                         data.type === "package_promotion"
                     ) {
-
+                        console.log("dis", data.actual_sell_price, data.discount_value)
                         if (
                             data.discount_type === "fixed"
                         ) {
                             sum_discount =
-                                ( parseFloat(
-                                    data.actual_sell_price
-                                ) -
-                                parseFloat(
+                                (parseFloat(
                                     data.discount_value
                                 ) ) *  parseFloat(data.count_discount_number);
 
@@ -481,11 +479,10 @@ function check_for_sale_promotion() {
                                     )) /
                                 100;
                             sum_discount =
-                                (parseFloat(
-                                    data.actual_sell_price
-                                ) - discount_value ) *  parseFloat(data.count_discount_number);;
+                                ( discount_value ) *  parseFloat(data.count_discount_number);;
 
                         }
+                        console.log("sum_discount",sum_discount)
                         if (data.purchase_condition) {
                             let purchase_condition_amount =
                                 data
@@ -565,7 +562,7 @@ function check_for_sale_promotion() {
                 });
                 console.log('sales_promotion-cost_span=>',sum_item_discount,discount)
                 $("span#sales_promotion-cost_span").text(
-                    __currency_trans_from_en(sum_item_discount+discount, false)
+                    __currency_trans_from_en(discount, false)
                 );
                 __write_number($("#total_pp_discount"), discount);
 
@@ -591,10 +588,11 @@ function calculate_sub_totals() {
     var total_tax_payable = 0;
     var total_coupon_discount = 0;
     var sales_promotion_cost = __read_number($("#sales_promotion-cost"));
-
+    let item_quantity=0;
     var exchange_rate = __read_number($("#exchange_rate"));
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
+        item_quantity+=quantity;
         let sell_price = __read_number($(tr).find(".sell_price"));
         let price_hidden = __read_number($(tr).find(".price_hidden"));
         let sub_total = 0;
@@ -628,8 +626,12 @@ function calculate_sub_totals() {
             sub_total = price_hidden * quantity;
         } else {
             sub_total = price_hidden * quantity;
+            console.log("quantity "+ quantity)
+            console.log("price_hidden "+ price_hidden)
+            console.log("sub_total "+ sub_total)
         }
-
+        // console.log(quantity)
+        // console.log(quantity)
         __write_number($(tr).find(".sub_total"), sub_total);
         let product_discount = calculate_product_discount(tr);
         product_discount_total += product_discount;
@@ -681,6 +683,7 @@ function calculate_sub_totals() {
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $(".subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
+    $("#item-quantity").text(item_quantity);
     $(".payment_modal_discount_text").text(
         __currency_trans_from_en(product_discount_total, false)
     );
@@ -2693,6 +2696,7 @@ $(document).on("click", "#non_identifiable_submit", function () {
             row_count: row_count,
             store_id: store_id,
             customer_id: customer_id,
+            is_unidentifable_product:1
         },
         success: function (result) {
             if (!result.success) {

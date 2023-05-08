@@ -58,7 +58,12 @@ $(document).on("click", ".remove_row", function () {
 
 $(document).on("click", ".add_row", function () {
     var row_id = parseInt($("#row_id").val());
-    console.log(row_id, "row_id");
+    // console.log(row_id, "row_id");
+    var is_service_checked=document.querySelector('#is_service')
+    // let is_service=0;
+    if(is_service_checked.checked == true){
+        is_service=1;
+    }
     $.ajax({
         method: "get",
         url: "/product/get-variation-row?row_id=" + row_id,
@@ -66,6 +71,7 @@ $(document).on("click", ".add_row", function () {
             name: $("#name").val(),
             purchase_price: $("#purchase_price").val(),
             sell_price: $("#sell_price").val(),
+            is_service: is_service
         },
         contentType: "html",
         success: function (result) {
@@ -314,12 +320,35 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
     });
 });
 
+$(document).ready(function() {
+    var product_class_id =$('#product_class_id').val();
+    // alert(product_class_id)
+    var category_id=$('#category_value_id').attr('data-category_id');
+    console.log(category_id)
+    $.ajax({
+        method: "get",
+        url:
+            "/category/get-dropdown?product_class_id=" +product_class_id+"&type=category",
+        data: {},
+        contentType: "html",
+        success: function (result) {
+            console.log(result)
+            $("#category_id").empty().append(result).change();
+            $("#category_id").selectpicker("refresh");
+            // $("#category_id").val(category_id);
+
+            if (category_id) {
+                $("#category_id").selectpicker("val", category_id);
+            }
+        },
+    });
+})
 $(document).on("change", "#product_class_id", function () {
     $.ajax({
         method: "get",
         url:
             "/category/get-dropdown?product_class_id=" +
-            $("#product_class_id").val(),
+            $("#product_class_id").val()+"&type=category",
         data: {},
         contentType: "html",
         success: function (result) {
@@ -830,4 +859,10 @@ $(document).on("change", "#sell_price", function () {
         swal(LANG.warning, LANG.sell_price_less_than_purchase_price, "warning");
         return;
     }
+});
+$(document).on("change","#is_discount_permenant",function () {
+    $(".discount_start_date").prop('disabled', (i, v) => !v);
+    $(".discount_start_date").val(null);
+    $(".discount_end_date").prop('disabled', (i, v) => !v);
+    $(".discount_end_date").val(null);
 });
