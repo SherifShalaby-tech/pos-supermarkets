@@ -262,8 +262,12 @@
                     <th>@lang('lang.shortage')</th>
                     <th>@lang('lang.value_of_shortage')</th>
                     @can('product_module.purchase_price.view')
-                        <th>@lang('lang.purchase_price')</th>
+                        <th>@lang('lang.avg_purchase_price')</th>
+                        <th>@lang('lang.purchase_price')</th>  
+                        <th></th>
                     @endcan
+                    <th>@lang('lang.selling_price')</th>
+                    <th></th> 
                     <th>
                         @if (session('system_mode') == 'restaurant')
                             @lang('lang.category')
@@ -277,7 +281,7 @@
                     @endif
                     <th>@lang('lang.purchase_history')</th>
                     <th>@lang('lang.batch_number')</th>
-                    <th>@lang('lang.selling_price')</th>
+                    
                     <th>@lang('lang.tax')</th>
                     @if (session('system_mode') != 'restaurant')
                         <th>@lang('lang.brand')</th>
@@ -486,11 +490,50 @@
                     @can('product_module.purchase_price.view')
                         {
                             data: 'avg_purchase_price',
-                            name: 'default_purchase_price',
-                            className: "default_purchase_price",
+                            name: 'avg_purchase_price',
+                            'render': function (data, type, val, meta){
+                            return '<span type="text" readonly="readonly" class="avg_purchase_price" name="avg_purchase_price" />'+data+'</span>';
+                            },
+                            className: "avg_purchase_price",
                             searchable: false
                         },
+                        {
+                            data: 'default_purchase_price',
+                            name: 'default_purchase_price',
+                            // className: "default_purchase_price",
+                            'render': function (data, type, val, meta){
+                                return '<input type="text" class="default_purchase_price" name="default_purchase_price"  value="'+data+'">';
+                            },
+                            searchable: false
+                        },
+                        {
+                            data: 'default_purchase_price',
+                            name: 'default_purchase_price',
+                            // className: "default_purchase_price",
+                            'render': function (data, type, val, meta){
+                                return '<input hidden type="text" class="hidden_default_purchase_price"  value="'+data+'">';
+                            },
+                            searchable: false,
+                            // visible : false,
+                        },
                     @endcan
+                    {
+                        data: 'default_sell_price',
+                        name: 'variations.default_sell_price',
+                        'render': function (data, type, val, meta){
+                                return '<input type="text" class="default_sell_price" name="default_sell_price"  value="'+data+'">';
+                        },
+                    },
+                    {
+                            data: 'default_sell_price',
+                            name: 'default_sell_price',
+                            // className: "default_purchase_price",
+                            'render': function (data, type, val, meta){
+                                return '<input hidden type="text" class="hidden_default_sell_price"  value="'+data+'">';
+                            },
+                            searchable: false,
+                            // visible : false,
+                        },
                     {
                         data: 'product_class',
                         name: 'product_classes.name'
@@ -511,10 +554,7 @@
                         data: 'batch_number',
                         name: 'add_stock_lines.batch_number'
                     },
-                    {
-                        data: 'default_sell_price',
-                        name: 'variations.default_sell_price'
-                    },
+                    
                     {
                         data: 'tax',
                         name: 'taxes.name'
@@ -794,7 +834,7 @@
                 $("#product_table tbody tr").each(function() {
                 var current_stock = parseFloat($(this).find(".current_stock").text().replace(",", ""));
                 var actual_stock = parseFloat($(this).find(".actual_stock").val());
-                var purchase_price = parseFloat($(this).find(".default_purchase_price").text().replace(",", ""));
+                var purchase_price = parseFloat($(this).find(".avg_purchase_price").text().replace(",", ""));
                 var shortage = (current_stock - actual_stock).toFixed(2);
                 // var shortage = format_current_stock - actual_stock;
                 var shortage_val =( shortage * purchase_price).toFixed(2);
@@ -844,20 +884,41 @@
                 var id = $('span[name="product_id"]', this.node()).text();
                 var variation_id = $('span[name="variation_id"]', this.node()).text();
                 console.log(variation_id);
-
                 // Check if actualStock has a value
                 if (actualStock != '') {
-                // Add the required data to the selectedData array
-                var dataObj = {
-                    id: id,
-                    variation_id : variation_id,
-                    current_stock: current_stock,
-                    actual_stock: actualStock,
-                    shortage: shortage,
-                    shortage_value: shortage_value
-                };
-                selectedData.push(dataObj);
+                    // Add the required data to the selectedData array
+                    var dataObj = {
+                        id: id,
+                        variation_id : variation_id,
+                        current_stock: current_stock,
+                        actual_stock: actualStock,
+                        shortage: shortage,
+                        shortage_value: shortage_value
+                    };
+                    selectedData.push(dataObj);
                 }
+                var data = this.data();
+                var purchasePrice = parseFloat($(this.node()).find('.default_purchase_price').val());
+                var sellPrice = parseFloat($(this.node()).find('.default_sell_price').val());
+                var purchasePriceHidden = parseFloat($(this.node()).find('.hidden_default_purchase_price').val());
+                var sellPriceHidden = parseFloat($(this.node()).find('.hidden_default_sell_price').val());
+                console.log("purchasePrice :" + purchasePrice)
+                console.log("purchasePriceHidden :" + purchasePriceHidden)
+                console.log("sellPrice :" + sellPrice)
+                console.log("sellPriceHidden :" + sellPriceHidden)
+                    // Check if either the purchase price or sell price has changed
+                    if (purchasePrice !== purchasePriceHidden || sellPrice !== sellPriceHidden) {
+                        // Create an object with the updated values
+                        var updatedData = {
+                            id: id,
+                            variation_id : variation_id,
+                            default_purchase_price: purchasePrice,
+                            default_sell_price: sellPrice
+                        };
+                        // Add the updated data to the selectedData array
+                        selectedData.push(updatedData);
+                    }
+
             });
 
             // Send the data to the server

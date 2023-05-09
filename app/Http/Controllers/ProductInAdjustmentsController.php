@@ -471,59 +471,80 @@ class ProductInAdjustmentsController extends Controller
         // }
         $user_id =Auth::user()->id;
         $store_pos = StorePos::where('user_id', $user_id)->first();
-        if($request->total_shortage_value > 0 ){
-            $ProductInAdjustment = ProductInAdjustment::create([
-                'total_shortage_value'=>$request->total_shortage_value,
-                'created_by'=> $user_id,
-                'store_id'=> !empty($store_pos) ? $store_pos->store_id : null,
-            ]);
-            $expenses_category = ExpenseCategory::where('name','Adjustment')->orWhere('name','adjustment')->first();
-            if(!$expenses_category){
-                $expenses_category = ExpenseCategory::create([
-                    'name' => 'Adjustment',
-                    'created_by' => 1
+       
+        foreach ($request->selected_data as $data){
+            if($request->total_shortage_value > 0 ){
+                $ProductInAdjustment = ProductInAdjustment::create([
+                    'total_shortage_value'=>$request->total_shortage_value,
+                    'created_by'=> $user_id,
+                    'store_id'=> !empty($store_pos) ? $store_pos->store_id : null,
                 ]);
-            }
-            $expenses_beneficiary = ExpenseBeneficiary::where('name','الجرد')->first();
-            if(!$expenses_beneficiary){
-                $expenses_beneficiary = ExpenseBeneficiary::create([
-                    'name' => 'الجرد',
+                $expenses_category = ExpenseCategory::where('name','Adjustment')->orWhere('name','adjustment')->first();
+                if(!$expenses_category){
+                    $expenses_category = ExpenseCategory::create([
+                        'name' => 'Adjustment',
+                        'created_by' => 1
+                    ]);
+                }
+                $expenses_beneficiary = ExpenseBeneficiary::where('name','الجرد')->first();
+                if(!$expenses_beneficiary){
+                    $expenses_beneficiary = ExpenseBeneficiary::create([
+                        'name' => 'الجرد',
+                        'expense_category_id' => $expenses_category->id,
+                        'created_by' => 1,
+                    ]);
+                }
+                if(isset($data['actual_stock'])){
+                    ProductStore::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])
+                    ->where('store_id',$store_pos->store_id)
+                    ->update([
+                        'qty_available' => $data['actual_stock'],
+                    ]);
+                    ProductInAdjustmentDetails::create([
+                        'product_id'=>$data['id'],
+                        'variation_id'=>$data['variation_id'],
+                        'product_adjustments_id'=>$ProductInAdjustment->id,
+                        'old_stock'=>$data['current_stock'],
+                        'new_stock'=>$data['actual_stock'],
+                        'shortage'=>$data['shortage'],
+                        'shortage_value'=>$data['shortage_value'],
+                    ]);
+                }
+                   
+                Transaction::create([
+                    'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'store_id' => $store_pos->store_id,
+                    'type' => 'expense',
+                    'status' => 'final',
+                    'invoice_no' => $this->productUtil->getNumberByType('expense'),
+                    'transaction_date' => $ProductInAdjustment->created_at,
                     'expense_category_id' => $expenses_category->id,
-                    'created_by' => 1,
+                    'expense_beneficiary_id' => $expenses_beneficiary->id,
+                    'source_id' => 1,
+                    'source_type' => 'store',
+                    'created_by' => $user_id,
                 ]);
+    
             }
-            
-            Transaction::create([
-                'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
-                'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
-                'store_id' => $store_pos->store_id,
-                'type' => 'expense',
-                'status' => 'final',
-                'invoice_no' => $this->productUtil->getNumberByType('expense'),
-                'transaction_date' => $ProductInAdjustment->created_at,
-                'expense_category_id' => $expenses_category->id,
-                'expense_beneficiary_id' => $expenses_beneficiary->id,
-                'source_id' => 1,
-                'source_type' => 'store',
-                'created_by' => $user_id,
-            ]);
-            foreach ($request->selected_data as $data){
-                ProductStore::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])
-                ->where('store_id',$store_pos->store_id)
-                ->update([
-                    'qty_available' => $data['actual_stock'],
-                ]);
-                ProductInAdjustmentDetails::create([
-                    'product_id'=>$data['id'],
-                    'variation_id'=>$data['variation_id'],
-                    'product_adjustments_id'=>$ProductInAdjustment->id,
-                    'old_stock'=>$data['current_stock'],
-                    'new_stock'=>$data['actual_stock'],
-                    'shortage'=>$data['shortage'],
-                    'shortage_value'=>$data['shortage_value'],
-                ]);
+           
 
+            if(isset($data['default_purchase_price']) || isset($data['default_sell_price'])){
+               $stocks = AddStockLine::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])->get();
+                foreach($stocks as $stock){
+                    if(isset($data['default_purchase_price'])){
+                        $stock->update([
+                            'purchase_price' => $data['default_purchase_price'],
+                        ]);
+                    }
+                    if(isset($data['default_sell_price'])){
+                        $stock->update([
+                            'sell_price' => $data['default_sell_price'],
+                        ]);
+                    }     
+               }
             }
+          
 
         }
     }
