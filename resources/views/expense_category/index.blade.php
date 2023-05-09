@@ -78,7 +78,7 @@
                                                     <li style="color: rgb(74, 74, 253)">{{$item->name}} </li>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    @can('account_management.expense_beneficiaries.delete')
+                                                    @can('expense.expense_beneficiaries.delete')
                                                     <a data-href="{{action('ExpenseBeneficiaryController@destroy', $item->id)}}"
                                                         data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                                         class="delete_item close" class=" close">x</a>
@@ -90,13 +90,13 @@
                                         </td>
                                         <td>{{@num_format($expense_category->expenses->sum('final_total'))}}</td>
                                         <td>
-                                            @can('account_management.expense_categories.create_and_edit')
+                                            @can('expense.expense_categories.create_and_edit')
                                             <a data-href="{{action('ExpenseCategoryController@edit', $expense_category->id)}}"
                                                 data-container=".view_modal"
                                                 class="btn btn-danger btn-modal text-white edit_job"><i
                                                     class="fa fa-pencil-square-o"></i></a>
                                             @endcan
-                                            @can('account_management.expense_categories.delete')
+                                            @can('expense.expense_categories.delete')
                                             <a data-href="{{action('ExpenseCategoryController@destroy', $expense_category->id)}}"
                                                 data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                                 class="btn btn-danger text-white delete_item"><i

@@ -286,7 +286,7 @@
                                     <div class="col-md-4">
                                         {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
                                         <div class="input-group my-group">
-                                            <input type="hidden" data-category_id="{{$product->category_id }}" id="category_value_id"/>
+                                            <input type="hidden" data-category_id="{{$product->category_id}}" id="category_value_id"/>
                                             {!! Form::select('category_id', $categories, $product->category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.category.create_and_edit')
@@ -435,7 +435,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            {{-- {{  $product->getFirstMediaUrl('product')}} --}}
                                             <div class="col-10 offset-1">
                                                 <div class="preview-edit-product-container">
                                                     @if(!empty($product->getFirstMediaUrl('product')))
@@ -790,11 +789,10 @@
             $('#this_product_have_variant').change();
         })
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <script>
         $("#submit-btn").on("click", function (e) {
+            getEditProductImages()
             e.preventDefault();
-            getEditProductImages();
             setTimeout(() => {
                 if ($("#product-edit-form").valid()) {
                     tinyMCE.triggerSave();
@@ -806,7 +804,7 @@
                             if (response.success) {
                                 swal("Success", response.msg, "success");
                                 setTimeout(() => {
-                                    window.load();
+                                    window.reload();
                                 }, 1000);
                             }
                         },
@@ -817,14 +815,45 @@
                         },
                     });
                 }
-            }, 500);
+            });
         });
-        const fileEditProductInput = document.querySelector('#file-product-edit-product');
-        const previewEditProductContainer = document.querySelector('.preview-edit-product-container');
-        const croppieEditProductModal = document.querySelector('#croppie-edit-product-modal');
-        const croppieEditProductContainer = document.querySelector('#croppie-edit-product-container');
-        const croppieEditProductCancelBtn = document.querySelector('#croppie-edit-product-cancel-btn');
-        const croppieEditProductSubmitBtn = document.querySelector('#croppie-edit-product-submit-btn');
+        @if($product)
+        {{--document.getElementById("cropBtn{{ $product->id }}").addEventListener('click', () => {--}}
+        {{--    setTimeout(() => {--}}
+        {{--        launchEditProductCropTool(document.getElementById("img{{ $product->id }}"));--}}
+        {{--    }, 500);--}}
+        {{--});--}}
+        document.getElementById("deleteBtn{{ $product->id }}").addEventListener('click', () => {
+            Swal.fire({
+                title: '{{ __("site.Are you sure?") }}',
+                text: "{{ __("site.You won't be able to delete!") }}",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Deleted!',
+                        '{{ __("site.Your Image has been deleted.") }}',
+                        'success'
+                    )
+                    $("#preview{{ $product->id }}").remove();
+                }
+            });
+        });
+
+        @endif
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+    <script>
+        var fileEditProductInput = document.querySelector('#file-product-edit-product');
+        var previewEditProductContainer = document.querySelector('.preview-edit-product-container');
+        var croppieEditProductModal = document.querySelector('#croppie-edit-product-modal');
+        var croppieEditProductContainer = document.querySelector('#croppie-edit-product-container');
+        var croppieEditProductCancelBtn = document.querySelector('#croppie-edit-product-cancel-btn');
+        var croppieEditProductSubmitBtn = document.querySelector('#croppie-edit-product-submit-btn');
 
         // let currentFiles = [];
         fileEditProductInput.addEventListener('change', () => {
@@ -943,7 +972,6 @@
             });
         }
         function getEditProductImages() {
-             $("#cropped_images").empty();
             setTimeout(() => {
                 const container = document.querySelectorAll('.preview-edit-product-container');
                 let images = [];
@@ -957,29 +985,6 @@
                 return images
             }, 300);
         }
-        @if($product)
-
-        document.getElementById("deleteBtn{{ $product->id }}").addEventListener('click', () => {
-            Swal.fire({
-                title: '{{ __("site.Are you sure?") }}',
-                text: "{{ __("site.You won't be able to delete!") }}",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Deleted!',
-                        '{{ __("site.Your Image has been deleted.") }}',
-                        'success'
-                    )
-                    $("#preview{{ $product->id }}").remove();
-                }
-            });
-        });
-
-        @endif
+  
     </script>
 @endsection

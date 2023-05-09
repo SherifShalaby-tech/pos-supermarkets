@@ -964,7 +964,6 @@ class ProductController extends Controller
             // }
 
 
-
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
                     $product->clearMediaCollection('product');
@@ -975,7 +974,6 @@ class ProductController extends Controller
                     $product->addMedia($filePath)->toMediaCollection('product');
                 }
             }
-
             if (!empty($request->supplier_id)) {
                 SupplierProduct::updateOrCreate(
                     ['product_id' => $product->id],
