@@ -792,13 +792,15 @@
             function calculateTotal() {
                 total = 0;
                 $("#product_table tbody tr").each(function() {
-                var current_stock = parseInt($(this).find(".current_stock").text());
-                var actual_stock = parseInt($(this).find(".actual_stock").val());
-                var purchase_price = parseFloat($(this).find(".default_purchase_price").text());
-                var shortage = current_stock - actual_stock;
-                var shortage_val = shortage * purchase_price;
+                var current_stock = parseFloat($(this).find(".current_stock").text().replace(",", ""));
+                var actual_stock = parseFloat($(this).find(".actual_stock").val());
+                var purchase_price = parseFloat($(this).find(".default_purchase_price").text().replace(",", ""));
+                var shortage = (current_stock - actual_stock).toFixed(2);
+                // var shortage = format_current_stock - actual_stock;
+                var shortage_val =( shortage * purchase_price).toFixed(2);
+                
                 if (!isNaN(shortage_val)) {
-                    total += shortage_val;
+                    total += parseFloat(shortage_val);
                     $(this).find(".shortage").text(shortage);
                     $(this).find(".shortage_value").text(shortage_val);
                 }
