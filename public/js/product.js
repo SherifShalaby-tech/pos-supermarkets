@@ -359,9 +359,7 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
 });
 $(document).ready(function() {
     var product_class_id =$('#product_class_id').val();
-    // alert(product_class_id)
     var category_id=$('#category_value_id').attr('data-category_id');
-    console.log(category_id)
     $.ajax({
         method: "get",
         url:
@@ -399,13 +397,33 @@ $(document).on("change", "#product_class_id", function () {
         },
     });
 });
+$(document).ready(function() {
+    // var sub_category_id=$('#sub_category_value_id').attr('data-sub_category_id');
+    // $.ajax({
+    //     method: "get",
+    //     url:
+    //         "/category/get-sub-category-dropdown?category_id=" +
+    //         $("#category_id").val()+"&type=sub_category",
+    //     data: {},
+    //     contentType: "html",
+    //     success: function (result) {
+    //         console.log(result)
+    //         $("#sub_category_id").empty().append(result).change();
+    //         $("#sub_category_id").selectpicker("refresh");
 
+    //         if (sub_category_id) {
+    //             $("#sub_category_id").selectpicker("val", sub_category_id);
+    //             sub_category_id = null;
+    //         }
+    //     },
+    // });
+})
 $(document).on("change", "#category_id", function () {
     $.ajax({
         method: "get",
         url:
             "/category/get-sub-category-dropdown?category_id=" +
-            $("#category_id").val(),
+            $("#category_id").val()+"&type=sub_category",
         data: {},
         contentType: "html",
         success: function (result) {

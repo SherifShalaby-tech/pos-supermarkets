@@ -1559,7 +1559,6 @@ class ProductController extends Controller
             // }
 
 
-
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
                     if (strlen($imageData) > 300){
@@ -1572,7 +1571,6 @@ class ProductController extends Controller
                     }
                 }
             }
-
             if (!empty($request->supplier_id)) {
                 SupplierProduct::updateOrCreate(
                     ['product_id' => $product->id],

@@ -106,6 +106,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
         <div class="col-md-4">
             {!! Form::label('sub_category_id', __('lang.sub_category'), []) !!}
             <div class="input-group my-group">
+                {{-- <input type="hidden" data-sub_category_id="{{!empty($recent_product) ? $recent_product->sub_category_id : null}}" id="sub_category_value_id"/> --}}
                 {!! Form::select('sub_category_id', [], !empty($recent_product) ? $recent_product->sub_category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                 <span class="input-group-btn">
                     @can('product_module.sub_category.create_and_edit')

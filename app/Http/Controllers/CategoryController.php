@@ -172,11 +172,13 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::find($id);
+        $type = request()->type ?? null;
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('category.edit')->with(compact(
             'category',
+            'type',
             'categories',
             'product_classes'
         ));
@@ -278,9 +280,11 @@ class CategoryController extends Controller
     public function getDropdown()
     {
         // return request()->product_class_id;
+        $categories=[];
         if (!empty(request()->product_class_id)&& request()->type=="category") {
             $categories = Category::where('product_class_id', request()->product_class_id)->orderBy('name', 'asc')->pluck('name', 'id');
-        } else {
+        } 
+        if(request()->type=="sub_category") {
             $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         }
         $categories_dp = $this->commonUtil->createDropdownHtml($categories, __('lang.please_select'));
@@ -290,7 +294,7 @@ class CategoryController extends Controller
 
     public function getSubCategoryDropdown()
     {
-        if (!empty(request()->category_id)) {
+        if (!empty(request()->category_id) &&request()->type=="sub_category") {
             $categories = Category::where('parent_id', request()->category_id)->orderBy('name', 'asc')->pluck('name', 'id');
         } else {
             $categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');

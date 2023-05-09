@@ -43,7 +43,7 @@
                                             @can('product_module.category.delete')
                                             <li>
 
-                                                <a data-href="{{action('CategoryController@edit', $category->id)}}"
+                                                <a data-href="{{action('CategoryController@edit', $category->id)}}?type=sub_category"
                                                     data-container=".view_modal" class="btn btn-modal"><i
                                                         class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                                             </li>
