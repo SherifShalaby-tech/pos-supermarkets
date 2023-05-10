@@ -518,7 +518,7 @@ class ProductInAdjustmentsController extends Controller
                     'created_by' => $user_id,
                 ]);
     
-           
+            }
                 foreach ($request->selected_data as $data){
                     if($request->total_shortage_value > 0 ){
                         if(isset($data['actual_stock'])){
@@ -558,7 +558,7 @@ class ProductInAdjustmentsController extends Controller
             
           
 
-        }
+       
     }
     public function getDetails($id){
          $adjustment_details = ProductInAdjustmentDetails::where('product_adjustments_id',$id)->with('product')->get();
