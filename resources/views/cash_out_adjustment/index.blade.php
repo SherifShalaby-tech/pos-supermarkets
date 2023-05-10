@@ -8,7 +8,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <h4>@lang('lang.cash_out_adjustment')</h4>
+                        <h3 class="print-title">@lang('lang.cash_out_adjustment')</h3>
                     </div>
 
                     <table class="table dataTable">

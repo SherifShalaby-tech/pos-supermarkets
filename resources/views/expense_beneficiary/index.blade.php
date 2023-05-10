@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h4>@lang('lang.add_expense_beneficiary')</h4>
+                    <h3 class="print-title">@lang('lang.add_expense_beneficiary')</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">

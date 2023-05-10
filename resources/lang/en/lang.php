@@ -1370,5 +1370,14 @@ return [
     'adjustment_save' =>'This will change the product stock , please enter admin password to confirm',
 
     'permenant'=>'Permenant',
-    'productions'=>'Productions'
+
+    
+    'productions'=>'Productions',
+    'product_lists'=>'Products list',
+    'products_under_manufacturing'=>'Products under manufacturing list',
+    'products_manufactured'=>'Manufactured Products List',
+    'manufacturers_list'=>'Manufacturers list',
+    'raw_materials_list'=>'Raw materials list',
+    'view_all_remove_stock_list'=>' List of stocks removed',
+    'add_stock_list'=>'All Added Stocks',
 ];

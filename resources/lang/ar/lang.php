@@ -665,7 +665,7 @@ return [
     'quotation_status' => 'حالة عرض السعر',
     'create_invoice' => 'إنشاء فاتورة',
     'view_all_invoices' => 'عرض جميع الفواتير',
-    'all_invoices' => 'كل الفاتورة',
+    'all_invoices' => 'كل الفواتير',
     'validity_days' => 'الصلاحية',
 
     'add_transfer' => 'أضف تحويل',
@@ -1125,7 +1125,7 @@ return [
     'remaining_qty_sufficient_for' => 'الكمية المتبقية كافية لـ',
     'value_of_current_stock' => 'قيمة المخزون الحالي',
     'add_stock_for_raw_material' => 'إضافة مخزون المواد الأولية',
-    'view_all_stock_for_raw_material' => 'عرض جميع المواد الأولية للمخزون المضافة',
+    'view_all_stock_for_raw_material' => ' عرض جميع المواد الأولية المضافة للمخزون',
     'shut_down' => 'اغلق',
     'edit_consumption' => 'تحرير الاستهلاك',
     'price_based_on_raw_material' => 'السعر يعتمد على تكلفة المواد الأولية',
@@ -1351,5 +1351,12 @@ return [
 
     'permenant'=>'دائم',
 
-    'productions'=>"الانتاج"
+    'productions'=>"الانتاج",
+    'product_lists'=>'قائمة المنتجات',
+    'products_under_manufacturing'=>'قائمة المنتجات تحت التصنيع',
+    'products_manufactured'=>'قائمة المنتجات المصنعة',
+    'manufacturers_list'=>'قائمة المصنعين',
+    'raw_materials_list'=>'قائمة المنتجات الاولية',
+    'view_all_remove_stock_list'=>'قائمة الأزالة من المخزون',
+    'add_stock_list'=>'قائمة الاضافة للمخزون'
 ];

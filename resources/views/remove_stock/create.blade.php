@@ -8,7 +8,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.remove_stock')</h4>
+                            <h3 class="print-title">@lang('lang.remove_stock')</h3>
                         </div>
                         {!! Form::open(['url' => action('RemoveStockController@store'), 'method' => 'post', 'id' => 'remove_stock_form', 'enctype' => 'multipart/form-data']) !!}
                         <div class="card-body">

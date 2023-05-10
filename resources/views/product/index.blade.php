@@ -3,21 +3,34 @@
 
 @section('content')
     <div class="container-fluid">
-        @if (empty($page))
-            @can('product_module.product.create_and_edit')
-                <a style="color: white" href="{{ action('ProductController@create') }}" class="btn btn-info"><i
-                        class="dripicons-plus"></i>
-                    @lang('lang.add_product')</a>
-            @endcan
-            <a style="color: white" href="{{ action('ProductController@getImport') }}" class="btn btn-primary"><i
-                    class="fa fa-arrow-down"></i>
-                @lang('lang.import')</a>
-        @else
-            <a style="color: white" href="{{ action('AddStockController@getImport') }}" class="btn btn-primary"><i
-                    class="fa fa-arrow-down"></i>
-                @lang('lang.import')</a>
-        @endif
+        <div class="row">
+            <div class="col-md-10">
+            @if (empty($page))
+                @can('product_module.product.create_and_edit')
+                    <a style="color: white" href="{{ action('ProductController@create') }}" class="btn btn-info"><i
+                            class="dripicons-plus"></i>
+                        @lang('lang.add_product')</a>
+                @endcan
+                <a style="color: white" href="{{ action('ProductController@getImport') }}" class="btn btn-primary"><i
+                        class="fa fa-arrow-down"></i>
+                    @lang('lang.import')</a>
+            @else
+                <a style="color: white" href="{{ action('AddStockController@getImport') }}" class="btn btn-primary"><i
+                        class="fa fa-arrow-down"></i>
+                    @lang('lang.import')</a>
+            @endif
+            </div>
+            <div class="col-md-2">
+                @if (request()->segment(1) == 'product')
+                <div class="print-title pt-1" ><h3>@lang('lang.product_lists')</h3></div>
+                @endif
+                @if (request()->segment(1) == 'product-stocks')
+                <div class="print-title pt-2" ><h3>@lang('lang.product_stocks')</h3></div>
+                @endif
+            </div>
+        </div>
         <div class="card mt-3">
+            
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-3">
@@ -268,7 +281,6 @@
 
     </div>
     <div class="table-responsive">
-        <div class="print-title d-none" >@lang('lang.products')</div>
         <table id="product_table" class="table" style="width: auto">
             <thead>
                 <tr>

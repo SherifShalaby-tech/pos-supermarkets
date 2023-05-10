@@ -9,6 +9,13 @@
     <section class="">
         <div class="col-md-22">
             <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    @if (request()->segment(1) == 'raw-material')
+                    <h3 class="print-title">@lang('lang.view_all_stock_for_raw_material')</h3>
+                    @else
+                    <h3 class="print-title">@lang('lang.add_stock_list')</h3>
+                    @endif
+                </div>
                 <div class="card-body">
                     <form action="">
                         <input type="hidden" name="is_raw_material" id="is_raw_material"

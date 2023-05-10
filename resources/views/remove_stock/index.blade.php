@@ -5,6 +5,9 @@
 <section class="">
     <div class="col-md-12">
         <div class="card">
+            <div class="card-header d-flex align-items-center">
+                <h3 class="print-title">@lang('lang.view_all_remove_stock_list')</h3>
+            </div>
             <div class="card-body">
                 <form action="">
                     <div class="row">
