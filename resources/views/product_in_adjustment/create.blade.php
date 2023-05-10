@@ -859,13 +859,6 @@
                      shortage_val = (current_stock - actual_stock) * purchase_price;
                 }
                 
-                console.log("actual_stock :"+ actual_stock);
-                console.log("current_stock :"+ current_stock);
-                console.log("current_stock_orig :"+ $(this).find(".current_stock").text());
-                console.log("purchase_price_orig :"+ $(this).find(".avg_purchase_price").text());
-                console.log("purchase_price :"+ purchase_price);
-                console.log("shortage :"+ shortage);
-                console.log("shortage_val :"+ shortage_val);
                 if (!isNaN(shortage_val)) {
                     // total += parseFloat(shortage_val);
                     tr.find(".shortage").text(shortage.toFixed(des));
@@ -957,7 +950,7 @@
                     total_shortage_value: total_shortage_value},
                 success: function(response) {
                 console.log('Data sent successfully');
-                // location.reload();
+                location.reload();
                 },
                 error: function(xhr, status, error) {
                 console.log('Error sending data');
