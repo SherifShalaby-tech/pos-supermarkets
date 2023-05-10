@@ -388,7 +388,7 @@ $(document).on("change", "#customer_id", function () {
         },
     });
 });
-$("#customer_id").change();
+// $("#customer_id").change();
 
 $(document).on("change", "#tax_id", function () {
     $("#tax_id_hidden").val($(this).val());

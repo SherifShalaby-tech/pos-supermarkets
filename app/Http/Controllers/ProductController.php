@@ -310,7 +310,10 @@ class ProductController extends Controller
                 ->editColumn('grade', '{{$grade}}')
                 ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
                 ->addColumn('current_stock_value', function ($row) {
-                    return $this->productUtil->num_f($row->current_stock * $row->default_purchase_price);
+                    $price= AddStockLine::where('variation_id',$row->variation_id)
+                        ->whereColumn('quantity',">",'quantity_sold')->first();
+                    $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
+                    return $this->productUtil->num_f($row->current_stock * $price);
                 })
                 ->addColumn('customer_type', function ($row) {
                     return $row->customer_type;

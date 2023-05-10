@@ -44,7 +44,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h4>@lang('lang.expense_categories')</h4>
+                    <h3 class="print-title">@lang('lang.expense_categories')</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">

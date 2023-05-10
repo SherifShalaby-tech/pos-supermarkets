@@ -6,12 +6,24 @@
 
     <div class="col-md-12  no-print">
         <div class="card">
-            <div class="card-header d-flex align-items-center">
-                @can('raw_material_module.production.create_and_edit')
-                <a style="color: white" href="{{action('ManufacturingController@create')}}"
-                     class="btn btn-info"><i class="dripicons-plus"></i>
-                    @lang('lang.add_new_production')</a>
-                @endcan
+            <div class="card-header ">
+                <div class="row">
+                    <div class="col-md-9">
+                        @can('raw_material_module.production.create_and_edit')
+                        <a style="color: white" href="{{action('ManufacturingController@create')}}"
+                            class="btn btn-info"><i class="dripicons-plus"></i>
+                            @lang('lang.add_new_production')</a>
+                        @endcan
+                    </div>
+                
+                    <div class="col-md-3">
+                        @if($_SERVER["QUERY_STRING"]=="manufacture")
+                            <div class="print-title font-weight-bold pt-2" ><h1>@lang('lang.products_under_manufacturing')</h1></div>
+                        @else
+                            <div class="print-title font-weight-bold pt-2" ><h1>@lang('lang.products_manufactured')</h1></div>
+                        @endif
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

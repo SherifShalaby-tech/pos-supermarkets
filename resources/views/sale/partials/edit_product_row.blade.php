@@ -4,10 +4,16 @@ $exchange_rate = !empty($sale->exchange_rate) ? $sale->exchange_rate : 1;
 @forelse ($products as $product)
     <tr class="product_row">
         <td style="width: 20%">
-            {{ $product->product->name }}
+            
 
             @if ($product->variation->name != 'Default')
                 <b>{{ $product->variation->name }}</b>
+                <br>
+                <b>{{ $product->variation->sub_sku }}</b>
+            @else
+                {{ $product->product->name }}
+                <br>
+                {{ $product->product->sku }}
             @endif
             <input type="hidden" name="transaction_sell_line[{{ $loop->index }}][transaction_sell_line_id]"
                 class="transaction_sell_line_id" value="{{ $product->id }}">

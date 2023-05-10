@@ -8,7 +8,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.internal_stock_request')</h4>
+                            <h3 class="print-title">@lang('lang.internal_stock_request')</h3>
                         </div>
                         {!! Form::open(['url' => action('InternalStockRequestController@store'), 'method' => 'post', 'id' => 'internal_stock_request_form', 'enctype' => 'multipart/form-data']) !!}
                         <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{ $is_raw_material }}">

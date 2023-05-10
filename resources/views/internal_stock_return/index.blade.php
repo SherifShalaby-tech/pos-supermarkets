@@ -5,7 +5,7 @@
 <div class="col-md-12 no-print">
     <div class="card">
         <div class="card-header d-flex align-items-center">
-            <h4>@lang('lang.internal_stock_return')</h4>
+            <h3 class="print-title">@lang('lang.return_requests_report')</h3>
         </div>
         <div class="card-body">
             <form action="">
