@@ -6,6 +6,8 @@ use App\Imports\ProductImport;
 use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Employee;
+use App\Models\ExpenseBeneficiary;
+use App\Models\ExpenseCategory;
 use App\Models\Printer;
 use App\Models\Category;
 use App\Models\Color;
@@ -39,6 +41,7 @@ use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use Lang;
+
 class ProductController extends Controller
 {
     /**
@@ -75,7 +78,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id', 'base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -83,8 +86,8 @@ class ProductController extends Controller
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = Customer::getCustomerTreeArray();
-        $stores  = Store::getDropdown();
-        $users  = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
+        $stores = Store::getDropdown();
+        $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::pluck('name', 'id');
         $page = 'product_stock';
 
@@ -115,7 +118,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $process_type = $request->process_type??null;
+        $process_type = $request->process_type ?? null;
         if (request()->ajax()) {
             $products = Product::leftjoin('variations', function ($join) {
                 $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
@@ -246,8 +249,8 @@ class ProductController extends Controller
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
                 ->editColumn('sub_sku', '{{$sub_sku}}')
-                ->editColumn('is_service',function ($row) {
-                    return $row->is_service=='1'?'<span class="badge badge-danger">'.Lang::get('lang.is_have_service').'</span>':'';
+                ->editColumn('is_service', function ($row) {
+                    return $row->is_service == '1' ? '<span class="badge badge-danger">' . Lang::get('lang.is_have_service') . '</span>' : '';
                 })
                 ->addColumn('product_class', '{{$product_class}}')
                 ->addColumn('category', '{{$category}}')
@@ -262,47 +265,47 @@ class ProductController extends Controller
                 })
                 ->editColumn('batch_number', '{{$batch_number}}')
                 ->editColumn('default_sell_price', function ($row) {
-                    $price= AddStockLine::where('variation_id',$row->variation_id)
-                        ->whereColumn('quantity',">",'quantity_sold')->first();
-                    $price= $price? ($price->sell_price > 0 ? $price->sell_price : $row->default_sell_price):$row->default_sell_price;
+                    $price = AddStockLine::where('variation_id', $row->variation_id)
+                        ->whereColumn('quantity', ">", 'quantity_sold')->first();
+                    $price = $price ? ($price->sell_price > 0 ? $price->sell_price : $row->default_sell_price) : $row->default_sell_price;
                     return $this->productUtil->num_f($price);
                 })//, '{{@num_format($default_sell_price)}}')
                 ->editColumn('default_purchase_price', function ($row) {
-                    $price= AddStockLine::where('variation_id',$row->variation_id)
-                        ->whereColumn('quantity',">",'quantity_sold')->first();
-                    $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
+                    $price = AddStockLine::where('variation_id', $row->variation_id)
+                        ->whereColumn('quantity', ">", 'quantity_sold')->first();
+                    $price = $price ? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price) : $row->default_purchase_price;
 
                     return $this->productUtil->num_f($price);
                 })//, '{{@num_format($default_purchase_price)}}')
                 ->addColumn('tax', '{{$tax}}')
                 ->editColumn('brand', '{{$brand}}')
                 ->editColumn('unit', '{{$unit}}')
-                ->editColumn('color', function ($row){
-                    $color='';
-                    if($row->variation_name == "Default"){
-                        if(isset($row->multiple_colors)){
-                          $color_m=Color::whereId($row->multiple_colors)->first();
-                          if($color_m){
-                             $color= $color_m ->name;
-                          }
+                ->editColumn('color', function ($row) {
+                    $color = '';
+                    if ($row->variation_name == "Default") {
+                        if (isset($row->multiple_colors)) {
+                            $color_m = Color::whereId($row->multiple_colors)->first();
+                            if ($color_m) {
+                                $color = $color_m->name;
+                            }
                         }
-                    }else{
+                    } else {
                         $color = $row->color;
                     }
                     return $color;
                 })
-                ->editColumn('size', function ($row){
-                    $size='';
-                    if($row->variation_name == "Default"){
+                ->editColumn('size', function ($row) {
+                    $size = '';
+                    if ($row->variation_name == "Default") {
 
-                        if(isset($row->multiple_sizes)){
-                            $size_m=Size::whereId($row->multiple_sizes)->first();
-                            if($size_m){
-                                $size= $size_m ->name;
+                        if (isset($row->multiple_sizes)) {
+                            $size_m = Size::whereId($row->multiple_sizes)->first();
+                            if ($size_m) {
+                                $size = $size_m->name;
                             }
                         }
 
-                    }else{
+                    } else {
                         $size = $row->size;
                     }
                     return $size;
@@ -317,14 +320,14 @@ class ProductController extends Controller
                 })
                 ->editColumn('exp_date', '@if(!empty($exp_date)){{@format_date($exp_date)}}@endif')
                 ->addColumn('manufacturing_date', '@if(!empty($manufacturing_date)){{@format_date($manufacturing_date)}}@endif')
-                ->editColumn('discount',function ($row) {
-                    $discount_text=$row->discount?$row->discount.' - ':'';
-                    $discounts= ProductDiscount::where('product_id',$row->id)->get();
-                    foreach ($discounts as $k=>$discount){
-                        if($k != 0){
-                            $discount_text.=' - ';
+                ->editColumn('discount', function ($row) {
+                    $discount_text = $row->discount ? $row->discount . ' - ' : '';
+                    $discounts = ProductDiscount::where('product_id', $row->id)->get();
+                    foreach ($discounts as $k => $discount) {
+                        if ($k != 0) {
+                            $discount_text .= ' - ';
                         }
-                        $discount_text.= $discount->discount;
+                        $discount_text .= $discount->discount;
                     }
                     return $discount_text;
                     //'{{@num_format($discount)}}'
@@ -347,14 +350,12 @@ class ProductController extends Controller
                         ->first();
                     return $query->name ?? '';
                 })
-
-
                 ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
                     if ($is_add_stock == 1 && $row->is_service == 1) {
                         $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
 
                     } else {
-                        if ($row->current_stock >= 0 ) {
+                        if ($row->current_stock >= 0) {
                             $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
                         } else {
                             $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
@@ -362,12 +363,12 @@ class ProductController extends Controller
                     }
                     return $html;
 
-                })->addColumn('selection_checkbox_send', function ($row)  {
+                })->addColumn('selection_checkbox_send', function ($row) {
                     $html = '<input type="checkbox" name="product_selected_send" class="product_selected_send" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
 
                     return $html;
                 })
-                ->addColumn('selection_checkbox_delete', function ($row)  {
+                ->addColumn('selection_checkbox_delete', function ($row) {
                     $html = '<input type="checkbox" name="product_selected_delete" class="product_selected_delete" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
 
 
@@ -376,7 +377,7 @@ class ProductController extends Controller
                 ->addColumn(
                     'action',
                     function ($row) {
-                        if($row->parent_branch_id != null ){
+                        if ($row->parent_branch_id != null) {
                             return '';
                         }
                         $html =
@@ -395,14 +396,14 @@ class ProductController extends Controller
                                 ' . __('lang.view') . '</a></li>';
                         }
 //                        if (auth()->user()->can('product_module.product.remove_expiry')) {
-                            $html .=
-                                '<li><a target="_blank" href="' . action('ProductController@get_remove_expiry', $row->id) . '"
+                        $html .=
+                            '<li><a target="_blank" href="' . action('ProductController@get_remove_expiry', $row->id) . '"
                                  class="btn"><i class="fa fa-hourglass-half"></i>
                                 ' . __('lang.remove_expiry') . '</a></li>';
 //                        }
 //                        if (auth()->user()->can('product_module.product.remove_damage')) {
-                            $html .=
-                                '<li><a target="_blank" href="' . action('ProductController@get_remove_damage', $row->id) . '"
+                        $html .=
+                            '<li><a target="_blank" href="' . action('ProductController@get_remove_damage', $row->id) . '"
                                  class="btn"><i class="fa fa-filter"></i>
                                 ' . __('lang.remove_damage') . '</a></li>';
 //                        }
@@ -435,11 +436,10 @@ class ProductController extends Controller
                         return $html;
                     }
                 )
-
                 ->setRowAttr([
                     'data-href' => function ($row) {
                         if (auth()->user()->can("product.view")) {
-                            return  action('ProductController@show', [$row->id]);
+                            return action('ProductController@show', [$row->id]);
                         } else {
                             return '';
                         }
@@ -479,7 +479,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id', 'base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -489,7 +489,7 @@ class ProductController extends Controller
         $discount_customer_types = Customer::getCustomerTreeArray();
         $suppliers = Supplier::pluck('name', 'id');
 
-        $stores  = Store::getDropdown();
+        $stores = Store::getDropdown();
         $users = User::Notview()->pluck('name', 'id');
 
         return view('product.index')->with(compact(
@@ -511,21 +511,27 @@ class ProductController extends Controller
         ));
     }
 
-    public function get_remove_damage(Request $request,$id){
-        $product_damages = ProductExpiryDamage::where("product_id",$id)->where("status","damage")->get();
+    public function get_remove_damage(Request $request, $id)
+    {
+        $product_damages = ProductExpiryDamage::where("product_id", $id)->where("status", "damage")->get();
         $status = "damage";
-        return view('product_expiry_damage.product_damage_index')->with(compact( 'product_damages', 'status' ,'id' ));
+        return view('product_expiry_damage.product_damage_index')->with(compact('product_damages', 'status', 'id'));
     }
-    public function get_remove_expiry(Request $request,$id){
-        $product_expires = ProductExpiryDamage::where("product_id",$id)->where("status","expiry")->get();
+
+    public function get_remove_expiry(Request $request, $id)
+    {
+        $product_expires = ProductExpiryDamage::where("product_id", $id)->where("status", "expiry")->get();
         $status = "expiry";
-        return view('product_expiry_damage.product_expiry_index')->with(compact('product_expires','status','id'));
+        return view('product_expiry_damage.product_expiry_index')->with(compact('product_expires', 'status', 'id'));
     }
-    public function getDamageProduct(Request $request,$id){
+
+    public function getDamageProduct(Request $request, $id)
+    {
+        $users = User::Notview()->pluck('name', 'id');
         if (request()->ajax()) {
             $addStockLines = AddStockLine::
-            where("add_stock_lines.product_id",$id)
-                ->where("add_stock_lines.quantity",">",0 )
+            where("add_stock_lines.product_id", $id)
+                ->where("add_stock_lines.quantity", ">", 0)
                 ->leftjoin('variations', function ($join) {
                     $join->on('add_stock_lines.variation_id', 'variations.id')->whereNull('variations.deleted_at');
                 });
@@ -557,11 +563,11 @@ class ProductController extends Controller
                         return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
                     }
                 })
-                ->editColumn('variation_name' , function ($row) {
-                    if ($row->variation->name != "Default"){
-                        return  $row->variation->name;
-                    }else{
-                        return  "Default";
+                ->editColumn('variation_name', function ($row) {
+                    if ($row->variation->name != "Default") {
+                        return $row->variation->name;
+                    } else {
+                        return "Default";
                     }
                 })
                 ->editColumn('sub_sku', '{{$sub_sku}}')
@@ -578,22 +584,26 @@ class ProductController extends Controller
                     'image'
                 ])->make(true);
         }
-        return view("product_expiry_damage.add_damage_product");
+        return view("product_expiry_damage.add_damage_product", compact("users"));
     }
-    public function storeStockDamaged(Request $request){
-        foreach ($request->selected_data as $data){
+
+    public function storeStockDamaged(Request $request)
+    {
+        $total_value_damaged = 0;
+        foreach ($request->selected_data as $data) {
+            $total_value_damaged += (float)$data["value_of_removed_stocks"];
             $stockRow = AddStockLine::find($data["id"]);
             $variation = Variation::find($data["variation_id"]);
-            $stockRow->decrement("quantity",$data["quantity_to_be_removed"]);
-            $store = ProductStore::where("variation_id",$variation->id)->where("product_id",$variation->product_id)->first();
-            $this->productUtil->decreaseProductQuantity($variation->product_id,$variation->id,$store->store_id,$data["quantity_to_be_removed"]);
-            $stockRow->increment("quantity_damaged",$data["quantity_to_be_removed"]);
-            if ($data["quantity_to_be_removed"] > 0){
+            $stockRow->decrement("quantity", $data["quantity_to_be_removed"]);
+            $store = ProductStore::where("variation_id", $variation->id)->where("product_id", $variation->product_id)->first();
+            $this->productUtil->decreaseProductQuantity($variation->product_id, $variation->id, $store->store_id, $data["quantity_to_be_removed"]);
+            $stockRow->increment("quantity_damaged", $data["quantity_to_be_removed"]);
+            if ($data["quantity_to_be_removed"] > 0) {
                 $productExpiry = ProductExpiryDamage::query()->create([
                     "status" => $data["status"],
-                    "product_id" =>$variation->product_id,
-                    "variation_id" =>$variation->id,
-                    "quantity_of_expired_stock_removed" =>$data["quantity_to_be_removed"],
+                    "product_id" => $variation->product_id,
+                    "variation_id" => $variation->id,
+                    "quantity_of_expired_stock_removed" => $data["quantity_to_be_removed"],
                     "date_of_purchase_of_expired_stock_removed" => Carbon::parse($data["date_of_purchase_of_expired_stock_removed"])->toDateTimeString(),
                     "value_of_removed_stocks" => $data["value_of_removed_stocks"],
                     "added_by" => auth()->id(),
@@ -601,13 +611,37 @@ class ProductController extends Controller
             }
 
         }
+        $expenseCategory = ExpenseCategory::query()->firstOrCreate(["name" => "Damaged"], ["created_by" => Auth::id()]);
+        $expenseBeneficiar = ExpenseBeneficiary::query()->firstOrCreate(["name" => "Damaged"], ["expense_category_id" => $expenseCategory->id, "created_by" => Auth::id()]);
+        $expense_data = [
+            'grand_total' => $this->commonUtil->num_uf($total_value_damaged),
+            'final_total' => $this->commonUtil->num_uf($total_value_damaged),
+            'store_id' => $store->store_id,
+            'type' => 'expense',
+            'status' => 'final',
+            'invoice_no' => $this->productUtil->getNumberByType('expense'),
+            'transaction_date' => Carbon::now(),
+            'expense_category_id' => $expenseCategory->id,
+            'expense_beneficiary_id' => $expenseBeneficiar->id,
+            'next_payment_date' => null,
+            'details' => null,
+            'notify_me' => 0,
+            'notify_before_days' => 0,
+            'source_id' => $request->source_id,
+            'source_type' => $request->source_type,
+        ];
+        $expense_data['created_by'] = Auth::user()->id;
+        $expense = Transaction::create($expense_data);
     }
-    public function addConvolution(Request $request,$id){
+
+    public function addConvolution(Request $request, $id)
+    {
+        $users = User::Notview()->pluck('name', 'id');
         if (request()->ajax()) {
             $addStockLines = AddStockLine::
-            where("add_stock_lines.product_id",$id)
-                ->where("add_stock_lines.expiry_date","<",date('Y-m-d'))
-                ->where("add_stock_lines.quantity",">",0 )
+            where("add_stock_lines.product_id", $id)
+                ->where("add_stock_lines.expiry_date", "<", date('Y-m-d'))
+                ->where("add_stock_lines.quantity", ">", 0)
                 ->whereNotNull("add_stock_lines.expiry_date")
                 ->leftjoin('variations', function ($join) {
                     $join->on('add_stock_lines.variation_id', 'variations.id')->whereNull('variations.deleted_at');
@@ -640,11 +674,11 @@ class ProductController extends Controller
                         return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
                     }
                 })
-                ->editColumn('variation_name' , function ($row) {
-                    if ($row->variation->name != "Default"){
-                        return  $row->variation->name;
-                    }else{
-                        return  "Default";
+                ->editColumn('variation_name', function ($row) {
+                    if ($row->variation->name != "Default") {
+                        return $row->variation->name;
+                    } else {
+                        return "Default";
                     }
                 })
                 ->editColumn('sub_sku', '{{$sub_sku}}')
@@ -661,30 +695,54 @@ class ProductController extends Controller
                     'image'
                 ])->make(true);
         }
-        return view("product_expiry_damage.create");
+        return view("product_expiry_damage.create", compact("users"));
     }
-    public function storeStockRemoved(Request $request){
-        foreach ($request->selected_data as $data){
+
+    public function storeStockRemoved(Request $request)
+    {
+        $total_value_expired = 0;
+        foreach ($request->selected_data as $data) {
+            $total_value_expired += (float)$data["value_of_removed_stocks"];
             $stockRow = AddStockLine::find($data["id"]);
             $variation = Variation::find($data["variation_id"]);
-           $stockRow->decrement("quantity",$data["quantity_to_be_removed"]);
-           $store = ProductStore::where("variation_id",$variation->id)->where("product_id",$variation->product_id)->first();
-           $this->productUtil->decreaseProductQuantity($variation->product_id,$variation->id,$store->store_id,$data["quantity_to_be_removed"]);
-           $stockRow->increment("expired_qauntity",$data["quantity_to_be_removed"]);
-           if ($data["quantity_to_be_removed"] > 0){
-               $productExpiry = ProductExpiryDamage::query()->create([
-                   "status" => $data["status"],
-                   "product_id" =>$variation->product_id,
-                   "variation_id" =>$variation->id,
-                   "quantity_of_expired_stock_removed" =>$data["quantity_to_be_removed"],
-                   "date_of_purchase_of_expired_stock_removed" => Carbon::parse($data["date_of_purchase_of_expired_stock_removed"])->toDateTimeString(),
-                   "value_of_removed_stocks" => $data["value_of_removed_stocks"],
-                   "added_by" => auth()->id(),
-               ]);
-           }
+            $stockRow->decrement("quantity", $data["quantity_to_be_removed"]);
+            $store = ProductStore::where("variation_id", $variation->id)->where("product_id", $variation->product_id)->first();
+            $this->productUtil->decreaseProductQuantity($variation->product_id, $variation->id, $store->store_id, $data["quantity_to_be_removed"]);
+            $stockRow->increment("expired_qauntity", $data["quantity_to_be_removed"]);
+            if ($data["quantity_to_be_removed"] > 0) {
+                $productExpiry = ProductExpiryDamage::query()->create([
+                    "status" => $data["status"],
+                    "product_id" => $variation->product_id,
+                    "variation_id" => $variation->id,
+                    "quantity_of_expired_stock_removed" => $data["quantity_to_be_removed"],
+                    "date_of_purchase_of_expired_stock_removed" => Carbon::parse($data["date_of_purchase_of_expired_stock_removed"])->toDateTimeString(),
+                    "value_of_removed_stocks" => $data["value_of_removed_stocks"],
+                    "added_by" => auth()->id(),
+                ]);
+            }
 
         }
-
+        $expenseCategory = ExpenseCategory::query()->firstOrCreate(["name" => "Expiry"], ["created_by" => Auth::id()]);
+        $expenseBeneficiar = ExpenseBeneficiary::query()->firstOrCreate(["name" => "Expiry"], ["expense_category_id" => $expenseCategory->id, "created_by" => Auth::id()]);
+        $expense_data = [
+            'grand_total' => $this->commonUtil->num_uf($total_value_expired),
+            'final_total' => $this->commonUtil->num_uf($total_value_expired),
+            'store_id' => $store->store_id,
+            'type' => 'expense',
+            'status' => 'final',
+            'invoice_no' => $this->productUtil->getNumberByType('expense'),
+            'transaction_date' => Carbon::now(),
+            'expense_category_id' => $expenseCategory->id,
+            'expense_beneficiary_id' => $expenseBeneficiar->id,
+            'next_payment_date' => null,
+            'details' => null,
+            'notify_me' => 0,
+            'notify_before_days' => 0,
+            'source_id' => $request->source_id,
+            'source_type' => $request->source_type,
+        ];
+        $expense_data['created_by'] = Auth::user()->id;
+        $expense = Transaction::create($expense_data);
     }
 //     public function showPrData(Request $request)
 //     {
@@ -964,9 +1022,6 @@ class ProductController extends Controller
 //                 })
 
 
-
-
-
 //                 ->addColumn(
 //                     'action',
 //                     function ($row) {
@@ -1109,7 +1164,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id', 'base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -1118,13 +1173,13 @@ class ProductController extends Controller
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = CustomerType::pluck('name', 'id');
         $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
-        $stores  = Store::all();
-        $stores_select  = Store::getDropdown();
+        $stores = Store::all();
+        $stores_select = Store::getDropdown();
         $quick_add = request()->quick_add;
-        $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
-        $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_materials = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::pluck('name', 'id');
-        $printers = Printer::get(['id','name']);
+        $printers = Printer::get(['id', 'name']);
 
         if ($quick_add) {
             return view('product.create_quick_add')->with(compact(
@@ -1175,7 +1230,7 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -1194,121 +1249,118 @@ class ProductController extends Controller
 //        try {
 
 
+        $product_data = [
+            'name' => $request->name,
+            'translations' => !empty($request->translations) ? $request->translations : [],
+            'product_class_id' => $request->product_class_id,
+            'category_id' => $request->category_id,
+            'sub_category_id' => $request->sub_category_id,
+            'brand_id' => $request->brand_id,
+            'sku' => !empty($request->sku) ? $request->sku : $this->productUtil->generateSku($request->name),
+            'multiple_units' => $request->multiple_units,
+            'multiple_colors' => $request->multiple_colors,
+            'multiple_sizes' => $request->multiple_sizes,
+            'multiple_grades' => $request->multiple_grades,
+            'is_service' => !empty($request->is_service) ? 1 : 0,
+            'product_details' => $request->product_details,
+            'barcode_type' => $request->barcode_type ?? 'C128',
+            'alert_quantity' => $request->alert_quantity,
+            'other_cost' => !empty($request->other_cost) ? $this->commonUtil->num_uf($request->other_cost) : 0,
+            'purchase_price' => !empty($request->is_service) ? $this->commonUtil->num_uf($request->purchase_price) : 0,
+            'sell_price' => !empty($request->is_service) ? $this->commonUtil->num_uf($request->sell_price) : 0,
+            'tax_id' => $request->tax_id,
+            'tax_method' => $request->tax_method,
+            'show_to_customer' => !empty($request->show_to_customer) ? 1 : 0,
+            'show_to_customer_types' => $request->show_to_customer_types,
+            'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
+            'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
+            'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
+            'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
+            'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
+            'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
+            'active' => !empty($request->active) ? 1 : 0,
+            'have_weight' => !empty($request->have_weight) ? 1 : 0,
+            'created_by' => Auth::user()->id
+        ];
 
-            $product_data = [
-                'name' => $request->name,
-                'translations' => !empty($request->translations) ? $request->translations : [],
-                'product_class_id' => $request->product_class_id,
-                'category_id' => $request->category_id,
-                'sub_category_id' => $request->sub_category_id,
-                'brand_id' => $request->brand_id,
-                'sku' => !empty($request->sku) ? $request->sku : $this->productUtil->generateSku($request->name),
-                'multiple_units' => $request->multiple_units,
-                'multiple_colors' => $request->multiple_colors,
-                'multiple_sizes' => $request->multiple_sizes,
-                'multiple_grades' => $request->multiple_grades,
-                'is_service' => !empty($request->is_service) ? 1 : 0,
-                'product_details' => $request->product_details,
-                'barcode_type' => $request->barcode_type ?? 'C128',
-                'alert_quantity' => $request->alert_quantity,
-                'other_cost' => !empty($request->other_cost) ? $this->commonUtil->num_uf($request->other_cost) : 0,
-                'purchase_price' => !empty($request->is_service) ? $this->commonUtil->num_uf($request->purchase_price) : 0,
-                'sell_price' => !empty($request->is_service) ? $this->commonUtil->num_uf($request->sell_price):0 ,
-                'tax_id' => $request->tax_id,
-                'tax_method' => $request->tax_method,
-                'show_to_customer' => !empty($request->show_to_customer) ? 1 : 0,
-                'show_to_customer_types' => $request->show_to_customer_types,
-                'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
-                'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
-                'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
-                'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
-                'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
-                'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
-                'active' => !empty($request->active) ? 1 : 0,
-                'have_weight' => !empty($request->have_weight) ? 1 : 0,
-                'created_by' => Auth::user()->id
+
+        DB::beginTransaction();
+
+        $product = Product::create($product_data);
+        $index_discounts = [];
+        if ($request->has('discount_type')) {
+            if (count($request->discount_type) > 0) {
+                $index_discounts = array_keys($request->discount_type);
+            }
+        }
+
+
+        foreach ($index_discounts as $index_discount) {
+            $discount_customers = $this->getDiscountCustomerFromType($request->get('discount_customer_types_' . $index_discount));
+            $data_des = [
+                'product_id' => $product->id,
+                'discount_type' => $request->discount_type[$index_discount],
+                'discount_category' => $request->discount_category[$index_discount],
+                'is_discount_permenant' => !empty($request->is_discount_permenant[$index_discount]) ? 1 : 0,
+                'discount_customer_types' => $request->get('discount_customer_types_' . $index_discount),
+                'discount_customers' => $discount_customers,
+                'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),
+                'discount_start_date' => !empty($request->discount_start_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_start_date[$index_discount]) : null,
+                'discount_end_date' => !empty($request->discount_end_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_end_date[$index_discount]) : null
             ];
 
+            ProductDiscount::create($data_des);
+        }
 
-            DB::beginTransaction();
 
-            $product = Product::create($product_data);
-            $index_discounts=[];
-            if($request->has('discount_type')){
-                if(count($request->discount_type)>0){
-                    $index_discounts=array_keys($request->discount_type);
+        if ($request->printers) {
+            // loop printers
+            foreach ($request->printers as $printer) {
+                $data = [
+                    'printer_id' => $printer,
+                    'product_id' => $product['id'],
+                ];
+                $insert_data[] = $data;
+                $insert_data = collect($insert_data);
+                $chunks = $insert_data->chunk(100);
+                foreach ($chunks as $chunk) {
+                    DB::table('printer_product')->insert($chunk->toArray());
                 }
             }
+        }
 
+        $this->productUtil->createOrUpdateVariations($product, $request);
 
-                foreach ($index_discounts as $index_discount){
-                    $discount_customers = $this->getDiscountCustomerFromType($request->get('discount_customer_types_'.$index_discount));
-                    $data_des=[
-                        'product_id' => $product->id,
-                        'discount_type' => $request->discount_type[$index_discount],
-                        'discount_category' => $request->discount_category[$index_discount],
-                        'is_discount_permenant'=>!empty($request->is_discount_permenant[$index_discount])? 1 : 0,
-                        'discount_customer_types' => $request->get('discount_customer_types_'.$index_discount),
-                        'discount_customers' => $discount_customers,
-                        'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),
-                        'discount_start_date' => !empty($request->discount_start_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_start_date[$index_discount]) : null,
-                        'discount_end_date' => !empty($request->discount_end_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_end_date[$index_discount]) : null
-                    ];
-
-                    ProductDiscount::create($data_des);
-                }
-
-
-            if($request->printers){
-                // loop printers
-                foreach ($request->printers as $printer){
-                    $data = [
-                        'printer_id' => $printer,
-                        'product_id' => $product['id'],
-                    ];
-                    $insert_data[] = $data;
-                    $insert_data = collect($insert_data);
-                    $chunks = $insert_data->chunk(100);
-                    foreach ($chunks as $chunk)
-                    {
-                        DB::table('printer_product')->insert($chunk->toArray());
-                    }
-                }
+        if (!empty($request->consumption_details)) {
+            $variations = $product->variations()->get();
+            foreach ($variations as $variation) {
+                $this->productUtil->createOrUpdateRawMaterialToProduct($variation->id, $request->consumption_details);
             }
+        }
 
-            $this->productUtil->createOrUpdateVariations($product, $request);
-
-            if (!empty($request->consumption_details)) {
-                $variations = $product->variations()->get();
-                foreach ($variations as $variation) {
-                    $this->productUtil->createOrUpdateRawMaterialToProduct($variation->id, $request->consumption_details);
-                }
+        if ($request->has("cropImages") && count($request->cropImages) > 0) {
+            foreach ($request->cropImages as $imageData) {
+                $extention = explode(";", explode("/", $imageData)[1])[0];
+                $image = rand(1, 1500) . "_image." . $extention;
+                $filePath = public_path('uploads/' . $image);
+                $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+                $product->addMedia($filePath)->toMediaCollection('product');
             }
-
-            if ($request->has("cropImages") && count($request->cropImages) > 0) {
-                foreach ($request->cropImages as $imageData) {
-                    $extention = explode(";",explode("/",$imageData)[1])[0];
-                    $image = rand(1,1500)."_image.".$extention;
-                    $filePath = public_path('uploads/' . $image);
-                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-                    $product->addMedia($filePath)->toMediaCollection('product');
-                }
-            }
+        }
 
 
+        if (!empty($request->supplier_id)) {
+            SupplierProduct::updateOrCreate(
+                ['product_id' => $product->id, 'supplier_id' => $request->supplier_id]
+            );
+        }
 
-            if (!empty($request->supplier_id)) {
-                SupplierProduct::updateOrCreate(
-                    ['product_id' => $product->id, 'supplier_id' => $request->supplier_id]
-                );
-            }
 
-
-            DB::commit();
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
-            ];
+        DB::commit();
+        $output = [
+            'success' => true,
+            'msg' => __('lang.success')
+        ];
 //        } catch (\Exception $e) {
 //            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
 //            $output = [
@@ -1333,10 +1385,11 @@ class ProductController extends Controller
 
         return $discount_customers;
     }
+
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -1370,7 +1423,7 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -1384,7 +1437,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id','base_unit_multiplier');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id', 'base_unit_multiplier');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -1392,12 +1445,12 @@ class ProductController extends Controller
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = CustomerType::pluck('name', 'id');
-        $stores  = Store::all();
+        $stores = Store::all();
 
-        $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
-        $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_materials = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::pluck('name', 'id');
-        $units_js=$units->pluck('base_unit_multiplier', 'id');
+        $units_js = $units->pluck('base_unit_multiplier', 'id');
         return view('product.edit')->with(compact(
             'raw_materials',
             'raw_material_units',
@@ -1423,8 +1476,8 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -1442,102 +1495,101 @@ class ProductController extends Controller
         );
 
         // try {
-            $product_data = [
-                'name' => $request->name,
-                'translations' => !empty($request->translations) ? $request->translations : [],
-                'product_class_id' => $request->product_class_id,
-                'category_id' => $request->category_id,
-                'sub_category_id' => $request->sub_category_id,
-                'brand_id' => $request->brand_id,
-                'sku' => $request->sku,
-                'multiple_units' => $request->multiple_units,
-                'multiple_colors' => $request->multiple_colors,
-                'multiple_sizes' => $request->multiple_sizes,
-                'multiple_grades' => $request->multiple_grades,
-                'is_service' => !empty($request->is_service) ? 1 : 0,
-                'product_details' => $request->product_details,
-                'barcode_type' => $request->barcode_type ?? 'C128',
-                'alert_quantity' => $request->alert_quantity,
-                'other_cost' => !empty($request->other_cost) ? $this->commonUtil->num_uf($request->other_cost) : 0,
-                'purchase_price' => $this->commonUtil->num_uf($request->purchase_price),
-                'sell_price' => $this->commonUtil->num_uf($request->sell_price),
-                'tax_id' => $request->tax_id,
-                'tax_method' => $request->tax_method,
-                'discount_type' => null,
-                'discount_customer_types' => null,
-                'discount_customers' => null,
-                'discount' => null,
-                'discount_start_date' => null,
-                'discount_end_date' =>  null,
-                'show_to_customer' => !empty($request->show_to_customer) ? 1 : 0,
-                'show_to_customer_types' => $request->show_to_customer_types,
-                'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
-                'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
-                'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
-                'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
-                'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
-                'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
-                'active' => !empty($request->active) ? 1 : 0,
-                'have_weight' => !empty($request->have_weight) ? 1 : 0,
-                'edited_by' => Auth::user()->id,
-            ];
+        $product_data = [
+            'name' => $request->name,
+            'translations' => !empty($request->translations) ? $request->translations : [],
+            'product_class_id' => $request->product_class_id,
+            'category_id' => $request->category_id,
+            'sub_category_id' => $request->sub_category_id,
+            'brand_id' => $request->brand_id,
+            'sku' => $request->sku,
+            'multiple_units' => $request->multiple_units,
+            'multiple_colors' => $request->multiple_colors,
+            'multiple_sizes' => $request->multiple_sizes,
+            'multiple_grades' => $request->multiple_grades,
+            'is_service' => !empty($request->is_service) ? 1 : 0,
+            'product_details' => $request->product_details,
+            'barcode_type' => $request->barcode_type ?? 'C128',
+            'alert_quantity' => $request->alert_quantity,
+            'other_cost' => !empty($request->other_cost) ? $this->commonUtil->num_uf($request->other_cost) : 0,
+            'purchase_price' => $this->commonUtil->num_uf($request->purchase_price),
+            'sell_price' => $this->commonUtil->num_uf($request->sell_price),
+            'tax_id' => $request->tax_id,
+            'tax_method' => $request->tax_method,
+            'discount_type' => null,
+            'discount_customer_types' => null,
+            'discount_customers' => null,
+            'discount' => null,
+            'discount_start_date' => null,
+            'discount_end_date' => null,
+            'show_to_customer' => !empty($request->show_to_customer) ? 1 : 0,
+            'show_to_customer_types' => $request->show_to_customer_types,
+            'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
+            'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
+            'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
+            'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
+            'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
+            'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
+            'active' => !empty($request->active) ? 1 : 0,
+            'have_weight' => !empty($request->have_weight) ? 1 : 0,
+            'edited_by' => Auth::user()->id,
+        ];
 
 
-            DB::beginTransaction();
-            $product = Product::find($id);
-            $product->update($product_data);
+        DB::beginTransaction();
+        $product = Product::find($id);
+        $product->update($product_data);
 
-            $this->productUtil->createOrUpdateVariations($product, $request);
+        $this->productUtil->createOrUpdateVariations($product, $request);
 
-            $index_discounts=[];
-            $index_discounts_olds=[];
-            if($request->discount_type){
-                if(count($request->discount_type)>0){
-                    $index_discounts=array_keys($request->discount_type);
-                    if($request->discount_ids != null ){
-                        $index_discounts_olds=array_keys($request->discount_ids);
-                        ProductDiscount::where('product_id',$product->id)->whereNotIn('id',$request->discount_ids)->delete();
-                    }else{
-                        ProductDiscount::where('product_id',$product->id)->delete();
-                    }
-                }
-
-                foreach ($index_discounts as $index_discount){
-                    $discount_customers = $this->getDiscountCustomerFromType($request->get('discount_customer_types_'.$index_discount));
-                    $data_des=[
-                        'product_id' => $product->id,
-                        'discount_type' => $request->discount_type[$index_discount],
-                        'discount_category' => $request->discount_category[$index_discount],
-                        'is_discount_permenant'=>!empty($request->is_discount_permenant[$index_discount])? 1 : 0,
-                        'discount_customer_types' => $request->get('discount_customer_types_'.$index_discount),
-                        'discount_customers' => $discount_customers,
-                        'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),
-                        'discount_start_date' => !empty($request->discount_start_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_start_date[$index_discount]) : null,
-                        'discount_end_date' => !empty($request->discount_end_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_end_date[$index_discount]) : null
-                    ];
-
-
-                    if(in_array($index_discount,$index_discounts_olds)){
-                        ProductDiscount::where('id',$request->discount_ids[$index_discount])->update($data_des);
-                    }else{
-                        ProductDiscount::create($data_des);
-                    }
-
-
-                }
-
-
-
-            }else{
-                ProductDiscount::where('product_id',$product->id)->delete();
-            }
-
-            if (!empty($request->consumption_details)) {
-                $variations = $product->variations()->get();
-                foreach ($variations as $variation) {
-                    $this->productUtil->createOrUpdateRawMaterialToProduct($variation->id, $request->consumption_details);
+        $index_discounts = [];
+        $index_discounts_olds = [];
+        if ($request->discount_type) {
+            if (count($request->discount_type) > 0) {
+                $index_discounts = array_keys($request->discount_type);
+                if ($request->discount_ids != null) {
+                    $index_discounts_olds = array_keys($request->discount_ids);
+                    ProductDiscount::where('product_id', $product->id)->whereNotIn('id', $request->discount_ids)->delete();
+                } else {
+                    ProductDiscount::where('product_id', $product->id)->delete();
                 }
             }
+
+            foreach ($index_discounts as $index_discount) {
+                $discount_customers = $this->getDiscountCustomerFromType($request->get('discount_customer_types_' . $index_discount));
+                $data_des = [
+                    'product_id' => $product->id,
+                    'discount_type' => $request->discount_type[$index_discount],
+                    'discount_category' => $request->discount_category[$index_discount],
+                    'is_discount_permenant' => !empty($request->is_discount_permenant[$index_discount]) ? 1 : 0,
+                    'discount_customer_types' => $request->get('discount_customer_types_' . $index_discount),
+                    'discount_customers' => $discount_customers,
+                    'discount' => $this->commonUtil->num_uf($request->discount[$index_discount]),
+                    'discount_start_date' => !empty($request->discount_start_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_start_date[$index_discount]) : null,
+                    'discount_end_date' => !empty($request->discount_end_date[$index_discount]) ? $this->commonUtil->uf_date($request->discount_end_date[$index_discount]) : null
+                ];
+
+
+                if (in_array($index_discount, $index_discounts_olds)) {
+                    ProductDiscount::where('id', $request->discount_ids[$index_discount])->update($data_des);
+                } else {
+                    ProductDiscount::create($data_des);
+                }
+
+
+            }
+
+
+        } else {
+            ProductDiscount::where('product_id', $product->id)->delete();
+        }
+
+        if (!empty($request->consumption_details)) {
+            $variations = $product->variations()->get();
+            foreach ($variations as $variation) {
+                $this->productUtil->createOrUpdateRawMaterialToProduct($variation->id, $request->consumption_details);
+            }
+        }
 
 
 //            if ($request->images) {
@@ -1546,48 +1598,47 @@ class ProductController extends Controller
 //                    $product->addMedia($image)->toMediaCollection('product');
 //                }
 //            }
-            // return $request->cropImages;
-            // if ($request->has("cropImages") && count($request->cropImages) > 0) {
-            //     foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-            //         $product->clearMediaCollection('product');
-            //         $extention = explode(";",explode("/",$imageData)[1])[0];
-            //         $image = rand(1,1500)."_image.".$extention;
-            //         $filePath = public_path('uploads/' . $image);
-            //         $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-            //         $product->addMedia($filePath)->toMediaCollection('product');
-            //     }
-            // }
+        // return $request->cropImages;
+        // if ($request->has("cropImages") && count($request->cropImages) > 0) {
+        //     foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
+        //         $product->clearMediaCollection('product');
+        //         $extention = explode(";",explode("/",$imageData)[1])[0];
+        //         $image = rand(1,1500)."_image.".$extention;
+        //         $filePath = public_path('uploads/' . $image);
+        //         $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+        //         $product->addMedia($filePath)->toMediaCollection('product');
+        //     }
+        // }
 
 
-
-            if ($request->has("cropImages") && count($request->cropImages) > 0) {
-                foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-                    if (strlen($imageData) > 300){
-                        $product->clearMediaCollection('product');
-                        $extention = explode(";",explode("/",$imageData)[1])[0];
-                        $image = rand(1,1500)."_image.".$extention;
-                        $filePath = public_path('uploads/' . $image);
-                        $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-                        $product->addMedia($filePath)->toMediaCollection('product');
-                    }
+        if ($request->has("cropImages") && count($request->cropImages) > 0) {
+            foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
+                if (strlen($imageData) > 300) {
+                    $product->clearMediaCollection('product');
+                    $extention = explode(";", explode("/", $imageData)[1])[0];
+                    $image = rand(1, 1500) . "_image." . $extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+                    $product->addMedia($filePath)->toMediaCollection('product');
                 }
             }
+        }
 
-            if (!empty($request->supplier_id)) {
-                SupplierProduct::updateOrCreate(
-                    ['product_id' => $product->id],
-                    ['supplier_id' => $request->supplier_id]
-                );
-            } else {
-                SupplierProduct::where('product_id', $product->id)->delete();
-            }
+        if (!empty($request->supplier_id)) {
+            SupplierProduct::updateOrCreate(
+                ['product_id' => $product->id],
+                ['supplier_id' => $request->supplier_id]
+            );
+        } else {
+            SupplierProduct::where('product_id', $product->id)->delete();
+        }
 
 
-            DB::commit();
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
-            ];
+        DB::commit();
+        $output = [
+            'success' => true,
+            'msg' => __('lang.success')
+        ];
         // } catch (\Exception $e) {
         //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
         //     $output = [
@@ -1606,7 +1657,7 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -1655,7 +1706,7 @@ class ProductController extends Controller
         $row_id = request()->row_id;
         //'base_unit_multiplier'
         $units = Unit::orderBy('name', 'asc');
-        $units_js=$units->pluck('base_unit_multiplier', 'id');
+        $units_js = $units->pluck('base_unit_multiplier', 'id');
         $units = $units->pluck('name', 'id');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
@@ -1725,10 +1776,10 @@ class ProductController extends Controller
                 $products_array[$product->product_id]['type'] = $product->type;
                 $products_array[$product->product_id]['variations'][]
                     = [
-                        'variation_id' => $product->variation_id,
-                        'variation_name' => $product->variation,
-                        'sub_sku' => $product->sub_sku
-                    ];
+                    'variation_id' => $product->variation_id,
+                    'variation_name' => $product->variation,
+                    'sub_sku' => $product->sub_sku
+                ];
             }
 
             $result = [];
@@ -1807,7 +1858,6 @@ class ProductController extends Controller
     {
 
 
-
         $this->validate($request, [
             'file' => 'required|mimes:csv,txt,xlsx'
         ]);
@@ -1820,17 +1870,17 @@ class ProductController extends Controller
                 'msg' => __('lang.success')
             ];
         } catch (\Exception $e) {
-/*            $failures = $e->failures();
-            foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-              return  $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
-            }*/
+            /*            $failures = $e->failures();
+                        foreach ($failures as $failure) {
+                            $failure->row(); // row that went wrong
+                            $failure->attribute(); // either heading key (if using heading row concern) or column index
+                          return  $failure->errors(); // Actual error messages from Laravel validator
+                            $failure->values(); // The values of the row that has failed.
+                        }*/
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [
                 'success' => false,
-                'msg' => __('lang.something_went_wrong') .' , '. __('lang.import_req')
+                'msg' => __('lang.something_went_wrong') . ' , ' . __('lang.import_req')
             ];
         }
 
@@ -1925,8 +1975,8 @@ class ProductController extends Controller
     public function getRawMaterialRow()
     {
         $row_id = request()->row_id ?? 0;
-        $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
-        $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_materials = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('product.partial.raw_material_row')->with(compact(
             'row_id',
@@ -1934,7 +1984,8 @@ class ProductController extends Controller
             'raw_material_units',
         ));
     }
- /**
+
+    /**
      * get raw material row
      *
      * @return void
@@ -1962,6 +2013,7 @@ class ProductController extends Controller
 
         return ['raw_material' => $raw_material];
     }
+
     public function getBase64Image($Image)
     {
 
@@ -1974,9 +2026,11 @@ class ProductController extends Controller
 //    $image_content = file_get_contents($image_path);
         $base64_image = base64_encode($image_content);
         $b64image = "data:image/jpeg;base64," . $base64_image;
-        return  $b64image;
+        return $b64image;
     }
-    public function getCroppedImages($cropImages){
+
+    public function getCroppedImages($cropImages)
+    {
         $dataNewImages = [];
 
         foreach ($cropImages as $img) {

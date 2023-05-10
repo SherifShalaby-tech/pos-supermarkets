@@ -2,7 +2,22 @@
 @section('title', __('lang.product'))
 
 @section('content')
-
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
+                    {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], 'user', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
+                    {!! Form::select('source_id', $users, null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
+                </div>
+            </div>
+        </div>
+    </div>
 
     <input type="hidden" id="productIdRequest"  value="{{ request("product_id") }}">
 
@@ -218,57 +233,65 @@
 
         $(document).on('click', '.check_pass', function(e) {
             e.preventDefault();
-
-            swal({
-                title: 'Are you sure?',
-                text: "@lang('lang.adjustment_save')",
-                icon: 'warning',
-            }).then(willDelete => {
-                if (willDelete) {
-                    var check_password = $(this).data('check_password');
-                    // var href = $(this).data('href');
-                    var data = $(this).serialize();
-                    swal({
-                        title: 'Please Enter Your Password',
-                        content: {
-                            element: "input",
-                            attributes: {
-                                placeholder: "Type your password",
-                                type: "password",
-                                autocomplete: "off",
-                                autofocus: false,
-                            },
-                        },
-                        inputAttributes: {
-                            autocapitalize: 'off',
-                            autoComplete: 'off',
-                        },
-                        focusConfirm: true
-                    }).then((result) => {
-                        if (result) {
-                            $.ajax({
-                                url: check_password,
-                                method: 'POST',
-                                data: {
-                                    value: result
+            if($("#source_type").val() == "" || $("#source_id").val() == ""){
+                swal({
+                    title: 'Validation',
+                    {{--text: "@lang('lang.adjustment_save')",--}}
+                    text:'source payment or source type is required please fill',
+                    icon: 'warning'
+                });
+            }else {
+                swal({
+                    title: 'Are you sure?',
+                    text: "@lang('lang.adjustment_save')",
+                    icon: 'warning',
+                }).then(willDelete => {
+                    if (willDelete) {
+                        var check_password = $(this).data('check_password');
+                        // var href = $(this).data('href');
+                        var data = $(this).serialize();
+                        swal({
+                            title: 'Please Enter Your Password',
+                            content: {
+                                element: "input",
+                                attributes: {
+                                    placeholder: "Type your password",
+                                    type: "password",
+                                    autocomplete: "off",
+                                    autofocus: false,
                                 },
-                                dataType: 'json',
-                                success: (data) => {
-                                    if (data.success == true) {
-                                         sendData();
-                                    } else {
-                                        swal(
-                                            'Failed!',
-                                            'Wrong Password!',
-                                            'error'
-                                        )
+                            },
+                            inputAttributes: {
+                                autocapitalize: 'off',
+                                autoComplete: 'off',
+                            },
+                            focusConfirm: true
+                        }).then((result) => {
+                            if (result) {
+                                $.ajax({
+                                    url: check_password,
+                                    method: 'POST',
+                                    data: {
+                                        value: result
+                                    },
+                                    dataType: 'json',
+                                    success: (data) => {
+                                        if (data.success == true) {
+                                            sendData();
+                                        } else {
+                                            swal(
+                                                'Failed!',
+                                                'Wrong Password!',
+                                                'error'
+                                            )
+                                        }
                                     }
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+                                });
+                            }
+                        });
+                    }
+                });
+            }
         });
 
         function sendData() {
@@ -308,7 +331,9 @@
                 url: '/product/convolutions/storeStockRemoved',
                 data: {
                     selected_data: selectedData,
-                    total_shortage_value: total_shortage_value
+                    total_shortage_value: total_shortage_value,
+                    source_type: $("#source_type").val(),
+                    source_id: $("#source_id").val(),
                 },
                 success: function(response) {
                     swal(
