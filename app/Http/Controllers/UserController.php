@@ -181,7 +181,7 @@ class UserController extends Controller
                 return ['success' => true];
             }
         }else{
-            $user = User::where('id', 1)->first();
+            $user = User::first();
             if (Hash::check(request()->value, $user->password)) {
                 return ['success' => true];
             }
