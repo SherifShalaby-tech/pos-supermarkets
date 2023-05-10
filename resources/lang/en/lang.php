@@ -1370,5 +1370,5 @@ return [
     'adjustment_save' =>'This will change the product stock , please enter admin password to confirm',
 
     'permenant'=>'Permenant',
-
+    'productions'=>'Productions'
 ];

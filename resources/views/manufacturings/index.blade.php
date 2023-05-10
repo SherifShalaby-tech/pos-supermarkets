@@ -15,6 +15,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
+                    <div class="print-title d-none" >@lang('lang.productions')</div>
                     <table id="store_table" class="table dataTable">
                         <thead>
                             <tr>

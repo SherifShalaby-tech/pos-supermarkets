@@ -89,6 +89,7 @@
 
 </div>
 <div class="table-responsive">
+    <div class="print-title d-none" >@lang('lang.list_view_the_consumption_of_raw_material')</div>
     <table id="raw_material_table" class="table" style="width: 100%">
         <thead>
             <tr>

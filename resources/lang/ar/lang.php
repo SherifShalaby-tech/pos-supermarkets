@@ -1351,4 +1351,5 @@ return [
 
     'permenant'=>'دائم',
 
+    'productions'=>"الانتاج"
 ];

@@ -21,6 +21,7 @@
                                 <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.description')</th>
+                                <th>@lang('lang.path')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -32,7 +33,7 @@
                                 </td>
                                 <td>{{$category->name}}</td>
                                 <td>{{$category->description}}</td>
-
+                                <td><a href='/product-class'>{{$category->productClass->name ?? null}} </a>  / {{$category->name}}</td>
                                 <td>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm dropdown-toggle"

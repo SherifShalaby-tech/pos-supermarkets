@@ -109,6 +109,7 @@
 
     </div>
     <div class="table-responsive">
+        <div class="print-title d-none" >@lang('lang.raw_materials')</div>
         <table id="raw_material_table" class="table ajax_view" style="width: auto">
             <thead>
                 <tr>

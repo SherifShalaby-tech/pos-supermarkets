@@ -268,6 +268,7 @@
 
     </div>
     <div class="table-responsive">
+        <div class="print-title d-none" >@lang('lang.products')</div>
         <table id="product_table" class="table" style="width: auto">
             <thead>
                 <tr>
@@ -337,6 +338,7 @@
                 </tr>
             </tfoot>
         </table>
+        
     </div>
 @endsection
 
