@@ -481,7 +481,7 @@ class ProductInAdjustmentsController extends Controller
         $store_pos = StorePos::where('user_id', $user_id)->first();
        
         
-            if($request->total_shortage_value > 0 ){
+            // if($request->total_shortage_value > 0 ){
                 $ProductInAdjustment = ProductInAdjustment::create([
                     'total_shortage_value'=>$request->total_shortage_value,
                     'created_by'=> $user_id,
@@ -518,9 +518,9 @@ class ProductInAdjustmentsController extends Controller
                     'created_by' => $user_id,
                 ]);
     
-            }
+            // }
                 foreach ($request->selected_data as $data){
-                    if($request->total_shortage_value > 0 ){
+                    // if($request->total_shortage_value > 0 ){
                         if(isset($data['actual_stock'])){
                             ProductStore::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])
                             ->where('store_id',$store_pos->store_id)
@@ -537,7 +537,7 @@ class ProductInAdjustmentsController extends Controller
                                 'shortage_value'=>$data['shortage_value'],
                             ]);
                         }
-                    }      
+                    // }      
                     if(isset($data['default_purchase_price']) || isset($data['default_sell_price'])){
                         $stocks = AddStockLine::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])->get();
                          foreach($stocks as $stock){
