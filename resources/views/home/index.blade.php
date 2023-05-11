@@ -204,6 +204,9 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     // $(".revenue-data").text(__currency_trans_from_en(result.revenue, false));
 
                     let currenct_stock_string = '<div>';
+                    let currenct_stock_string_p = '<div>';
+                    let currenct_stock_string_m = '<div>';
+
                     let revenue_string = '<div>';
                     let sell_return_string = '<div>';
                     let total_tax_string = '<div>';
@@ -220,18 +223,30 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                                 ${element.currency.symbol}</span>
                                             <span
                                                 class="total">${__currency_trans_from_en(element.data.current_stock_value, false)}</span>
-                                        </h3><h5><span class="symbol" style="padding-right: 10px;">
+                                        </h3>
+                                      `;
+                                      currenct_stock_string_p +=`<h5 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.current_stock_value_product}"
+                                            data-orig_value="${element.data.current_stock_value_product}"><span class="symbol" style="padding-right: 10px;">
                                                 ${element.currency.symbol}</span>
                                             <span
                                                 class="total">${__currency_trans_from_en(element.data.current_stock_value_product, false)}</span>
                                         <span style="color: #3fc3ee">P</span>
-                                        </h5>
-                                        <h5><span class="symbol" style="padding-right: 3px;">
-                                                ${element.currency.symbol}</span>
-                                            <span
-                                                class="total">${__currency_trans_from_en(element.data.current_stock_value_material, false)}</span>
-                                        <span style="color: #3fc3ee">M</span></h5>`;
-
+                                        </h5>`;
+                                        currenct_stock_string_m +=`<h5 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                            data-currency_id="${element.currency.currency_id}"
+                            data-is_default="${element.currency.is_default}"
+                            data-conversion_rate="${element.currency.conversion_rate}"
+                            data-base_conversion="${element.currency.conversion_rate * element.data.current_stock_value_material}"
+                            data-orig_value="${element.data.current_stock_value_material}"><span class="symbol" style="padding-right: 10px;">
+                                ${element.currency.symbol}</span>
+                            <span
+                                class="total">${__currency_trans_from_en(element.data.current_stock_value_material, false)}</span>
+                        <span style="color: #3fc3ee">M</span>
+                        </h5>`;
                         revenue_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
                                             data-currency_id="${element.currency.currency_id}"
                                             data-is_default="${element.currency.is_default}"
@@ -291,6 +306,8 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                         </h3>`;
                     });
                     currenct_stock_string += `</div>`;
+                    currenct_stock_string_p += `</div>`;
+                    currenct_stock_string_m += `</div>`;
                     revenue_string += `</div>`;
                     sell_return_string += `</div>`;
                     purchase_return_string += `</div>`;
@@ -302,7 +319,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     $('.revenue-data').show(500);
 
                     $('.current_stock_value-data').hide();
-                    $(".current_stock_value-data").html(currenct_stock_string);
+                    $(".current_stock_value-data").html(currenct_stock_string + currenct_stock_string_p + currenct_stock_string_m);
                     $('.current_stock_value-data').show(500);
 
                     $('.sell_return-data').hide();

@@ -1801,6 +1801,44 @@ class ProductUtil extends Util
         return $current_stock_value ? $current_stock_value->current_stock_value : 0;
     }
 
+    public function getCurrentStockValueProductByStore($store_id = null)
+    {
+        $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+            ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+            ->where('is_service', 0)
+            ->where('is_raw_material',0);
+        if (!empty($store_id)) {
+            $query->where('product_stores.store_id', $store_id);
+        }
+        $query->select(
+            DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value_product'),
+        );
+
+        $current_stock_value_product = $query->first();
+
+        return $current_stock_value_product ? $current_stock_value_product->current_stock_value_product : 0;
+    }
+
+    public function getCurrentStockValueMaterialByStore($store_id = null)
+    {
+        $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+            ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+            ->where('is_service', 0)
+            ->where('is_raw_material',1);
+        if (!empty($store_id)) {
+            $query->where('product_stores.store_id', $store_id);
+        }
+        $query->select(
+            DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value_material'),
+        );
+
+        $current_stock_value_material = $query->first();
+
+        return $current_stock_value_material ? $current_stock_value_material->current_stock_value_material : 0;
+    }
+
 
     /**
      * get product list for product tree

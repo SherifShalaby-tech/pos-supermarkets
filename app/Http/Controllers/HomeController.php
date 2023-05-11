@@ -815,11 +815,17 @@ class HomeController extends Controller
         if (!empty($currency_id)) {
             if ($currency_id == $default_currency_id) {
                 $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
+                $current_stock_value_product = $this->productUtil->getCurrentStockValueProductByStore($store_id);
+                $current_stock_value_material = $this->productUtil->getCurrentStockValueMaterialByStore($store_id);
             } else {
                 $current_stock_value = 0; //expense does not have currency
+                $current_stock_value_product = 0; //expense does not have 
+                $current_stock_value_material = 0; //expense does not have currency
             }
         } else {
             $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
+            $current_stock_value_product = $this->productUtil->getCurrentStockValueProductByStore($store_id);
+            $current_stock_value_material = $this->productUtil->getCurrentStockValueMaterialByStore($store_id);
         }
 
         $data['revenue'] = $revenue;
@@ -832,6 +838,8 @@ class HomeController extends Controller
         $data['payment_received'] = $payment_received_total;
         $data['payment_sent'] = $payment_sent;
         $data['current_stock_value'] = $current_stock_value;
+        $data['current_stock_value_product'] = $current_stock_value_product;
+        $data['current_stock_value_material'] = $current_stock_value_material;
 
         return $data;
     }
