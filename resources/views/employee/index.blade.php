@@ -3,6 +3,9 @@
 
 @section('content')
     <div class="container-fluid">
+        <div class="card-header d-flex align-items-center">
+            <h3 class="print-title">@lang('lang.employees')</h3>
+        </div>
         @can('hr_management.employee.create_and_edit')
             <a style="color: white" href="{{ action('EmployeeController@create') }}" class="btn btn-info"><i
                     class="dripicons-plus"></i>

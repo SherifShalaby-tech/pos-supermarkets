@@ -3,6 +3,9 @@
 
 @section('content')
     <div class="container-fluid">
+        <div class="card-header d-flex align-items-center">
+            <h4 class="print-title">@lang('lang.general_tax')</h4>
+        </div>
         <a style="color: white" data-href="{{ action('TaxController@create') }}?type={{ $type }}"
             data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
             @lang('lang.add')</a>

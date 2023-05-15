@@ -7,6 +7,9 @@
     <section class="">
         <div class="col-md-22">
             <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <h3 class="print-title">@lang('lang.supplier_services')</h3>
+                </div>
                 <div class="card-body">
                     <form action="">
                         <div class="row">

@@ -3,6 +3,9 @@
 
 @section('content')
 <div class="container-fluid">
+    <div class="card-header d-flex align-items-center">
+        <h3 class="print-title">@lang('lang.earning_of_point_system')</h3>
+    </div>
     <a style="color: white" href="{{action('EarningOfPointController@create')}}" class="btn btn-info"><i
             class="dripicons-plus"></i>
         @lang('lang.earning_of_point_system')</a>

@@ -5,7 +5,7 @@
 <div class="col-md-12  no-print">
     <div class="card">
         <div class="card-header d-flex align-items-center">
-            <h4>@lang('lang.expected_payable_report')</h4>
+            <h3 class="print-title">@lang('lang.expected_payable_report')</h3>
         </div>
         <form action="">
             <div class="col-md-12">

@@ -1401,4 +1401,13 @@ return [
     'raw_materials_list'=>'Raw materials list',
     'view_all_remove_stock_list'=>' List of stocks removed',
     'add_stock_list'=>'All Added Stocks',
+    'all_customers'=>'All Customers',
+    'product_classes'=>'Product Classes',
+    'product_categories'=>'Categories',
+    'sub_categories'=>'Sub Categories',
+    'brands'=>'Brands',
+    'colors'=>'Colors',
+    'grades'=>'Grades',
+    'units'=>'Units',
+    'taxes'=>' Public Taxes'
 ];
