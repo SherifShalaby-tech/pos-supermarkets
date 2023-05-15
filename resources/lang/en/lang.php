@@ -1169,7 +1169,7 @@ return [
     'add_consumption_for_others' => 'Add Compensation for Others',
 
 
-    'other_expenses' => 'Other expenses',
+    'other_expenses' => 'Expenses',
     'tutorials' => 'Tutorials',
     'tutorial' => 'Tutorial',
     'add_tutorial' => 'Add Tutorial',
@@ -1401,4 +1401,6 @@ return [
     'raw_materials_list'=>'Raw materials list',
     'view_all_remove_stock_list'=>' List of stocks removed',
     'add_stock_list'=>'All Added Stocks',
+
+    'net_profit' => 'Net Profit'
 ];

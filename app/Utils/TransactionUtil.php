@@ -175,6 +175,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->tax_method = !empty($line['tax_method']) ? $line['tax_method'] : null;
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
+                $transaction_sell_line->cost_ratio_per_one = $this->num_uf($line['cost_ratio_per_one']);
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
             } 
@@ -201,6 +202,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->tax_method = !empty($line['tax_method']) ? $line['tax_method'] : null;
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
+                $transaction_sell_line->cost_ratio_per_one = $this->num_uf($line['cost_ratio_per_one']);
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $transaction_sell_line->id;
             }

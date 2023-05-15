@@ -1066,7 +1066,7 @@ return [
     'default_purchase_price_percentage_info' => 'أضف النسبة المئوية لسعر شراء صفحة المنتج لسعر البيع ، افتراضيًا 75',
     'source_of_payment' => ' اسم الموظف',
     'source_type' => 'مصدر الأموال',
-    'other_payments' => 'خصومات أخرى',
+    'other_payments' => 'مصروفات أخرى',
     'start_time' => 'وقت البدء',
     'end_time' => 'وقت النهاية',
     'edited_by' => 'تحرير بواسطة',
@@ -1161,7 +1161,7 @@ return [
     'setting' => 'جلسة',
     'store_pos' => 'تخزين نقاط البيع',
     'add_consumption_for_others' => 'أضف تعويضات للآخرين',
-    'other_expenses' => 'مصروفات أخرى',
+    'other_expenses' => 'مصروفات ',
     'tutorials' => 'فيديوهات تعليمية',
 
     'tutorial' => 'فيديوهات تعليمي',
@@ -1382,5 +1382,6 @@ return [
     'manufacturers_list'=>'قائمة المصنعين',
     'raw_materials_list'=>'قائمة المنتجات الاولية',
     'view_all_remove_stock_list'=>'قائمة الأزالة من المخزون',
-    'add_stock_list'=>'قائمة الاضافة للمخزون'
+    'add_stock_list'=>'قائمة الاضافة للمخزون',
+    'net_profit' => 'صافي الربح',
 ];
