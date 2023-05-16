@@ -21,14 +21,14 @@ class WagesAndCompensation extends Model implements HasMedia
     public static function getPaymentTypes()
     {
         return [
-            'salary' => 'Salary',
-            'paid_leave' => 'Paid Leave',
-            'paid_annual_leave' => 'Paid Annual Leave',
-            'commission' => 'Commission',
-            'annual_bonus' => 'Annual Bonus',
-            'annual_incentive' => 'Annual Incentive',
-            'recognition' => 'Recognition',
-            'other_reward' => 'Other Reward'
+            'salary' => __('lang.salary'),
+            'paid_leave' => __('lang.paid_leave'),
+            'paid_annual_leave' => __('lang.paid_annual_leave'),
+            'commission' => __('lang.commission'),
+            'annual_bonus' => __('lang.annual_bonus'),
+            'annual_incentive' => __('lang.annual_incentive'),
+            'recognition' =>  __('lang.recognition'),
+            'other_reward' =>  __('lang.other_reward')
         ];
     }
 
