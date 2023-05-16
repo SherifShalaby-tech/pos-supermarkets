@@ -1218,12 +1218,21 @@ class ProductUtil extends Util
     } --*/
     public function createOrUpdateAddStockLines($add_stocks, $transaction,$batch_row=null)
     {
-
+        
         $keep_lines_ids = [];
         $batch_numbers=[];
         $qty=0;
         // return $add_stocks;
         foreach ($add_stocks as $line) {
+            if( $transaction->discount_amount || $transaction->other_payments || $transaction->other_expenses){
+                $all_cost_percentage = ((($line['quantity'] * $line['purchase_price'])*100) / $transaction->grand_total); //percentage
+                
+                $discount_amount_per_line =  !empty($transaction->discount_amount) ? ($transaction->discount_amount * $all_cost_percentage /100 ): 0;
+                $other_payments_per_line = !empty($transaction->other_payments) ? ($transaction->other_payments * $all_cost_percentage /100) : 0;
+                $other_expenses_per_line = !empty($transaction->other_expenses) ? ($transaction->other_expenses * $all_cost_percentage /100) : 0;
+                $all_cost_ratio = $this->num_uf($discount_amount_per_line + $other_payments_per_line +$other_expenses_per_line);
+            }
+           
             if(isset($line['product_id'] ) && isset($line['variation_id']) ){
             if (!empty($line['add_stock_line_id'])) {
                 $add_stock = AddStockLine::find($line['add_stock_line_id']);
@@ -1248,6 +1257,7 @@ class ProductUtil extends Util
                 $add_stock->bounce_expiry_date = $line['bounce_expiry_date'];
                 $add_stock->bounce_manufacturing_date = $line['bounce_manufacturing_date'];
                 $add_stock->bounce_batch_number = $line['bounce_batch_number'];
+                $add_stock->cost_ratio_per_one = $this->num_uf($all_cost_ratio / $line['quantity']) ?? 0;
                 $add_stock->save();
                 $keep_lines_ids[] = $line['add_stock_line_id'];
                 $batch_numbers[]=$line['batch_number'];
@@ -1276,6 +1286,7 @@ class ProductUtil extends Util
                     'bounce_expiry_date' => $line['bounce_expiry_date'],
                     'bounce_manufacturing_date' => $line['bounce_manufacturing_date'],
                     'bounce_batch_number' => $line['bounce_batch_number'],
+                    'cost_ratio_per_one' => $this->num_uf($all_cost_ratio / $line['quantity']) ?? 0,
                 ];
               
                 $add_stock = AddStockLine::create($add_stock_data);
@@ -1309,6 +1320,7 @@ class ProductUtil extends Util
                                     'bounce_expiry_date' => $line['bounce_expiry_date'],
                                     'bounce_manufacturing_date' => $line['bounce_manufacturing_date'],
                                     'bounce_batch_number' => $line['bounce_batch_number'],
+                                    'cost_ratio_per_one' => $this->num_uf($all_cost_ratio / $line['quantity']) ?? 0,
                                 ];
                                 // $batch_number=$add_stock->batch_number;
                                 $add_stock_batch = AddStockLine::create($add_stock_batch_data);

@@ -92,7 +92,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
             <div class="input-group my-group">
                 <input type="hidden" data-category_id="{{!empty($recent_product) ? $recent_product->category_id : null}}" id="category_value_id"/>
-                {!! Form::select('category_id', $categories, !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
+                {!! Form::select('category_id', $categories, !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), ]) !!}
                 <span class="input-group-btn">
                     @can('product_module.category.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"

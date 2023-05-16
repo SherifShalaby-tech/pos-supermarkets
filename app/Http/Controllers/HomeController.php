@@ -684,11 +684,13 @@ class HomeController extends Controller
 
         $cost_query = $cost_query->select(
             DB::raw("SUM(transaction_sell_lines.quantity * transaction_sell_lines.purchase_price) as cost_of_sold_products"),
-            DB::raw("SUM(transaction_sell_lines.quantity_returned * transaction_sell_lines.purchase_price) as cost_of_sold_returned_products")
+            DB::raw("SUM(transaction_sell_lines.quantity_returned * transaction_sell_lines.purchase_price) as cost_of_sold_returned_products"),
+            DB::raw("SUM(transaction_sell_lines.quantity * transaction_sell_lines.cost_ratio_per_one) as other_stock_cost")
         )->first();
 
         $cost_sold_product = $cost_query->cost_of_sold_products ?? 0;
         $cost_sold_returned_product = $cost_query->cost_of_sold_returned_products ?? 0;
+        $other_stock_cost = $cost_query->other_stock_cost ?? 0;
 
         if (!empty($currency_id)) {
             if ($currency_id == $default_currency_id) {
@@ -699,10 +701,10 @@ class HomeController extends Controller
         } else {
             $gift_card_sold = GiftCard::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('balance');
         }
-
         $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;
+       
         //excluding taxes from profit as its not part of profit
-        $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
+        $expense_query = Transaction::where('type', 'expense');
         if (!empty($start_date)) {
             $expense_query->whereDate('transaction_date', '>=', $start_date);
         }
@@ -809,9 +811,10 @@ class HomeController extends Controller
         } else {
             $wages_payment = $wages_query->sum('net_amount');
         }
-
+      
         $payment_sent = $payment_purchase + $payment_expense + $wages_payment + $sell_return_payment;
-
+        $net_profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive - $other_stock_cost - $wages_payment - $expense;
+      
         if (!empty($currency_id)) {
             if ($currency_id == $default_currency_id) {
                 $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
@@ -831,6 +834,7 @@ class HomeController extends Controller
         $data['revenue'] = $revenue;
         $data['sell_return'] = $sell_return;
         $data['profit'] = $profit;
+        $data['net_profit'] = $net_profit;
         $data['purchase'] = $purchase;
         $data['total_tax'] = $total_tax;
         $data['expense'] = $expense;

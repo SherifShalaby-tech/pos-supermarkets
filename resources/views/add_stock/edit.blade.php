@@ -41,7 +41,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('status', __('lang.status') . ':*', []) !!}
-                                        {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('status', ['received' => __('lang.received'), 'partially_received' => __('lang.partially_received'),], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -291,7 +291,19 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
-                                        {!! Form::select('source_id', $users, $add_stock->source_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
+                                        <select name="source_id" id="source_id" class="selectpicker form-control" data-live-search ="true" style="width: 80%" required>
+                                            @foreach ($users as $key => $val)
+                                            @if ($add_stock->source_id == $key)
+                                                <option value="{{ $key }}" selected>{{ $val }}</option>
+                                            @else
+                                                <option value="{{ $key }}">{{ $val }}</option>
+                                            @endif
+                                                {{-- <option value="{{ $key }}" @selected(old('user') == $key)>
+                                                    {{ $val }}
+                                                </option> --}}
+                                            @endforeach
+                                        </select>
+                                        {{-- {!! Form::select('source_id', $users, $add_stock->source_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!} --}}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -525,7 +537,7 @@
 
         $(document).ready(function() {
             $('#payment_status').change();
-            $('#source_type').change();
+            // $('#source_type').change();
         })
         $('#source_type').change(function() {
             if ($(this).val() !== '') {
