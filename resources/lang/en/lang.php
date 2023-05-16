@@ -1409,6 +1409,6 @@ return [
     'colors'=>'Colors',
     'grades'=>'Grades',
     'units'=>'Units',
-    'taxes'=>' Public Taxes'
+    'taxes'=>' Public Taxes',
     'net_profit' => 'Net Profit'
 ];
