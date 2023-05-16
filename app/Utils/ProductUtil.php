@@ -1222,6 +1222,7 @@ class ProductUtil extends Util
         $keep_lines_ids = [];
         $batch_numbers=[];
         $qty=0;
+        $all_cost_ratio = 0;
         // return $add_stocks;
         foreach ($add_stocks as $line) {
             if( $transaction->discount_amount || $transaction->other_payments || $transaction->other_expenses){
