@@ -5,7 +5,7 @@
 <div class="col-md-12  no-print">
     <div class="card">
         <div class="card-header d-flex align-items-center">
-            <h4>@lang('lang.emails')</h4>
+            <h4 class="print-title">@lang('lang.emails')</h4>
         </div>
         <div class="card-body">
             <div class="table-responsive">

@@ -3,6 +3,9 @@
 
 @section('content')
 <div class="container-fluid">
+    <div class="card-header d-flex align-items-center">
+        <h3 class="print-title">@lang('lang.sales_promotion_formal_discount')</h3>
+    </div>
     <a style="color: white" href="{{action('SalesPromotionController@create')}}" class="btn btn-info"><i
             class="dripicons-plus"></i>
         @lang('lang.sales_promotion_formal_discount')</a>
