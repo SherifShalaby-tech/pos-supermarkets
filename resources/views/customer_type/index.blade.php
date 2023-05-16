@@ -3,6 +3,9 @@
 
 @section('content')
 <div class="container-fluid">
+    <div class="card-header d-flex align-items-center">
+        <h4 class="print-title">@lang('lang.customer_types')</h4>
+    </div>
     <a style="color: white" href="{{action('CustomerTypeController@create')}}" class="btn btn-info"><i
             class="dripicons-plus"></i>
         @lang('lang.customer_type')</a>

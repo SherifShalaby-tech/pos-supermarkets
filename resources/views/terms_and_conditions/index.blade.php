@@ -5,6 +5,11 @@
 <div class="col-md-12  no-print">
     <div class="card">
         <div class="card-header d-flex align-items-center">
+            {{-- @if (request()->segment(3) == 'quotation') --}}
+            <h4 class="print-title">@lang('lang.terms_and_conditions')</h4>
+            {{-- @endif --}}
+        </div>
+        <div class="card-header d-flex align-items-center">
             @can('settings.terms_and_conditions.create_and_edit')
             <button type="button" class="btn btn-primary btn-modal ml-3"
                 data-href="{{action('TermsAndConditionsController@create')}}?type={{$type}}"

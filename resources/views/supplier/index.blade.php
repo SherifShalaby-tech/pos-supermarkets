@@ -5,6 +5,9 @@
     <div class="container-fluid">
         <div class="col-md-12  no-print">
             <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <h3 class="print-title">@lang('lang.suppliers')</h3>
+                </div>
                 <div class="card-body">
                     <form action="">
                         <div class="row">
