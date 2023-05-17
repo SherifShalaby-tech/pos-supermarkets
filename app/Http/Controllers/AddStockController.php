@@ -610,9 +610,9 @@ class AddStockController extends Controller
                 }
             }
         }
-
-        $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-        if($request->payment_status == "pending" && $transaction_old_payment_status == "paid"){
+        
+       
+        if($transaction->payment_status == "pending" && $transaction_old_payment_status == "paid"){
            $TransactionPayment = TransactionPayment::where('transaction_id', $transaction->id)->where('transaction_id', $transaction->id)->first();
             if($TransactionPayment){
                 $money_safe_t =  MoneySafeTransaction::where('transaction_payment_id', $TransactionPayment->id)->where('transaction_id', $transaction->id)->first();
@@ -634,6 +634,8 @@ class AddStockController extends Controller
            
           
             
+        }else{
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
         }
         //update purchase order status if selected
         if (!empty($transaction->purchase_order_id)) {
