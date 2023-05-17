@@ -693,7 +693,7 @@ class EmployeeController extends Controller
             try {
                 $employee = Employee::find($id);
 
-                $user = User::find($employee->user_id);
+                $user = User::where('email', '!=', 'admin@sherifshalaby.tech')->find($employee->user_id);
                 $user->delete();
                 $employee->delete();
 

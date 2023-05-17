@@ -1410,5 +1410,7 @@ return [
     'grades'=>'Grades',
     'units'=>'Units',
     'taxes'=>' Public Taxes',
-    'net_profit' => 'Net Profit'
+    'net_profit' => 'Net Profit',
+    'walk-in-customer' => 'Walk-in-customer',
+    'cancel_add_stock_payment' => 'Cancel Stock Payment',
 ];

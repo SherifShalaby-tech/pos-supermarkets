@@ -25,6 +25,7 @@ use App\Models\Supplier;
 use App\Models\System;
 use App\Models\Tax;
 use App\Models\Transaction;
+use App\Models\TransactionPayment;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
@@ -547,6 +548,7 @@ class AddStockController extends Controller
 
         DB::beginTransaction();
         $transaction = Transaction::where('id', $id)->first();
+        $transaction_old_payment_status = $transaction->payment_status;
         $transaction->update($transaction_data);
 
         $mismtach = $this->productUtil->checkSoldAndPurchaseQtyMismatch($request->add_stock_lines, $transaction);
@@ -610,7 +612,29 @@ class AddStockController extends Controller
         }
 
         $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-
+        if($request->payment_status == "pending" && $transaction_old_payment_status == "paid"){
+           $TransactionPayment = TransactionPayment::where('transaction_id', $transaction->id)->where('transaction_id', $transaction->id)->first();
+            if($TransactionPayment){
+                $money_safe_t =  MoneySafeTransaction::where('transaction_payment_id', $TransactionPayment->id)->where('transaction_id', $transaction->id)->first();
+                if($money_safe_t){
+                    $money_safe_t->delete();
+                }
+                $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->where('transaction_payment_id', $TransactionPayment->id)->first();
+                if( $cr_transaction){
+                        $register = CashRegister::where('id', $cr_transaction->cash_register_id)->where('status','close')->first();
+                        if($register){
+                            $register->closing_amount += $TransactionPayment->amount;
+                            $register->save();
+                        }
+                        $cr_transaction->delete();
+                }
+                $TransactionPayment->delete();
+            }
+            
+           
+          
+            
+        }
         //update purchase order status if selected
         if (!empty($transaction->purchase_order_id)) {
             Transaction::find($transaction->purchase_order_id)->update(['status' => 'received']);

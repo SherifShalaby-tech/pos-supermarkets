@@ -1231,7 +1231,7 @@ class ProductUtil extends Util
                 $discount_amount_per_line =  !empty($transaction->discount_amount) ? ($transaction->discount_amount * $all_cost_percentage /100 ): 0;
                 $other_payments_per_line = !empty($transaction->other_payments) ? ($transaction->other_payments * $all_cost_percentage /100) : 0;
                 $other_expenses_per_line = !empty($transaction->other_expenses) ? ($transaction->other_expenses * $all_cost_percentage /100) : 0;
-                $all_cost_ratio = $this->num_uf($discount_amount_per_line + $other_payments_per_line +$other_expenses_per_line);
+                $all_cost_ratio = $this->num_uf( $other_payments_per_line +$other_expenses_per_line - $discount_amount_per_line );
             }
            
             if(isset($line['product_id'] ) && isset($line['variation_id']) ){
