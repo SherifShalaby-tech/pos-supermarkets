@@ -2249,7 +2249,12 @@ function getCustomerPointDetails() {
                 $(".redeem_btn").attr("disabled", true);
                 $("#is_redeem_points").val(0);
             }
-            $(".customer_type_name").text(result.customer_type_name);
+            if(result.customer_type_name == "Walk in"){
+                $(".customer_type_name").text(LANG.walk_in_customer);
+            }else{
+                $(".customer_type_name").text(result.customer_type_name);
+            }
+            
             $("#emails").val(result.customer.email);
             // $(".customer_balance").text(
             //     __currency_trans_from_en(result.balance, false)

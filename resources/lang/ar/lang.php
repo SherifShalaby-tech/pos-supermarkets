@@ -1393,4 +1393,6 @@ return [
     'units'=>'الوحدات',
     'taxes'=>'الضرائب',
     'net_profit' => 'صافي الربح',
+    'walk-in-customer' => 'عميل عادي',
+    'cancel_add_stock_payment' => 'الغاء دفع المخزون'
 ];

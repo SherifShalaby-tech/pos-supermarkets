@@ -7,4 +7,5 @@ LANG = {
     the_order_is_saved_to_draft: "تم حفظ الطلب في المسودة",
     sell_price_less_than_purchase_price: "سعر البيع أقل من سعر الشراء",
     warning: "تحذير",
+    walk_in_customer:'عميل عادي',
 };

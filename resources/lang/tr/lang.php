@@ -1280,5 +1280,6 @@ return [
     'sales_and_returns' => 'Satış iadeleri',
     'delivery_cost_given_to_deliveryman' => 'Teslimatçıya Verilen Teslimat Maliyeti',
     'sale_payment_date' => 'Ödeme tarihi',
+    'walk-in-customer' => 'Normal Müşteri',
 
 ];

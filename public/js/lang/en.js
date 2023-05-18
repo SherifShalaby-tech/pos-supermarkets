@@ -10,4 +10,5 @@ LANG = {
     sell_price_less_than_purchase_price:
         "The selling price is less than purchase price",
     warning: "Warning",
+    walk_in_customer:'Normal Müşteri',
 };

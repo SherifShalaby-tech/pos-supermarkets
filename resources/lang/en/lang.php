@@ -1409,6 +1409,8 @@ return [
     'colors'=>'Colors',
     'grades'=>'Grades',
     'units'=>'Units',
-    'taxes'=>' Public Taxes'
-    'net_profit' => 'Net Profit'
+    'taxes'=>' Public Taxes',
+    'net_profit' => 'Net Profit',
+    'walk-in-customer' => 'Walk-in-customer',
+    'cancel_add_stock_payment' => 'Cancel Stock Payment',
 ];
