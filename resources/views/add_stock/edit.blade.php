@@ -536,7 +536,20 @@
         });
 
         $(document).ready(function() {
-            $('#payment_status').change();
+                $.ajax({
+                    method: 'get',
+                    url: '/add-stock/get-source-by-type-dropdown/{{$add_stock->source_type}}' ,
+                    data: {},
+                    success: function(result) {
+                        // console.log(result);
+                        $("#source_id").empty().append(result);
+                        $("#source_id").selectpicker("refresh");
+
+                        var sourceId = {{$add_stock->source_id}};
+                        $("#source_id").val(sourceId);
+                        $("#source_id").selectpicker("refresh");
+                    },
+                });
             // $('#source_type').change();
         })
         $('#source_type').change(function() {
