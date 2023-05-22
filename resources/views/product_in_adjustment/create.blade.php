@@ -336,6 +336,7 @@
             </tfoot>
         </table>
     </div>
+    <input type="hidden" id="des" value="{{\App\Models\System::getProperty('numbers_length_after_dot')}}" />
     <input hidden value="" name="total_shortage_value" id="total_shortage_value">
     <button data-check_password="{{ action('UserController@checkAdminPassword',2 ) }}" class="btn btn-primary check_pass">Save</button>
     <button data-check_password="{{ action('UserController@checkAdminPassword',2 ) }}" class="check_pass btn btn-primary"  onclick="printTable()" >Print Table</button>
@@ -847,7 +848,7 @@
             function calculateTotal(tr) {
                 // total = 0;
                 // var tr = $(this).closest('tr');
-                des = {{\App\Models\System::getProperty('numbers_length_after_dot')}};
+                var des = document.getElementById("des").value;
                 console.log(tr);
                 var current_stock = __read_number(tr.find(".current_stock_hidden"));
                 var actual_stock = tr.find(".actual_stock").val();

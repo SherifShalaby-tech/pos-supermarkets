@@ -599,8 +599,13 @@ class AddStockController extends Controller
 
                 if (!empty($user_id)) {
                     $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
-                    $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
-                    $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                    if($cr_transaction){
+                        $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+                        $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                    }else{
+                        $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
+                    }
+                    
                 }
             }
 
