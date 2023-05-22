@@ -316,7 +316,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('payment_status', __('lang.payment_status') . ':*', []) !!}
-                                        {!! Form::select('payment_status', $payment_status_array, $add_stock->payment_status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('payment_status', $payment_status_array, $add_stock->payment_status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%','id' => 'payment_status', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
 
@@ -493,7 +493,35 @@
         });
 
         //payment related script
-
+        $(document).ready(function() {
+            var payment_status = $("#payment_status").val();
+            if (payment_status === 'paid' || payment_status === 'partial') {
+                $('.not_cash_fields').addClass('hide');
+                $('#method').change();
+                $('#method').attr('required', true);
+                $('#paid_on').attr('required', true);
+                $('.payment_fields').removeClass('hide');
+                
+            } else {
+                $('.payment_fields').addClass('hide');
+            }
+            if (payment_status === 'pending' || payment_status === 'partial') {
+                $('.due_fields').removeClass('hide');
+            } else {
+                $('.due_fields').addClass('hide');
+            }
+            if (payment_status === 'pending') {
+                $('.not_cash_fields').addClass('hide');
+                $('.not_cash').attr('required', false);
+                $('#method').attr('required', false);
+                $('#paid_on').attr('required', false);
+            } else {
+                $('#method').attr('required', true);
+            }
+            if (payment_status === 'paid') {
+                $('.due_fields').addClass('hide');
+            }
+        })
         $('#payment_status').change(function() {
             var payment_status = $(this).val();
 
@@ -503,6 +531,7 @@
                 $('#method').attr('required', true);
                 $('#paid_on').attr('required', true);
                 $('.payment_fields').removeClass('hide');
+                
             } else {
                 $('.payment_fields').addClass('hide');
             }
