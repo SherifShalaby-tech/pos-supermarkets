@@ -25,6 +25,7 @@
                                 <th>@lang('lang.store')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.user')</th>
+                                <th>@lang('lang.email')</th>
                                 <th>@lang('lang.date_and_time')</th>
                                 <th>@lang('lang.total_sales')</th>
                                 <th>@lang('lang.cash_sales')</th>
@@ -44,6 +45,7 @@
                                 <td>{{$store_pos->store->name ?? ''}}</td>
                                 <td>{{$store_pos->name}}</td>
                                 <td>{{$store_pos->user->name}}</td>
+                                <td>{{$store_pos->user->email}}</td>
                                 <td>{{@format_datetime($store_pos->created_at)}}</td>
                                 <td>{{@num_format($store_pos->total_sales)}}</td>
                                 <td>{{@num_format($store_pos->total_cash)}}</td>

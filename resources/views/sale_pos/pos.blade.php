@@ -315,7 +315,13 @@
                                                         data-target="#add-payment" id="cash-btn">@lang('lang.pay_and_close')</button>
                                                     <button style="background-color: #d63031" type="button"
                                                         class="btn mr-2 btn-md payment-btn text-white" data-toggle="modal"
-                                                        data-target="#discount_modal">@lang('lang.random_discount')</button>
+                                                        data-target="#discount_modal"
+                                                        @if(!auth()->user()->can('sp_module.sales_promotion.view')
+                                                        || !auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                                                        || !auth()->user()->can('sp_module.sales_promotion.delete'))
+                                                            disabled 
+                                                        @endif
+                                                        >@lang('lang.random_discount')</button>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
