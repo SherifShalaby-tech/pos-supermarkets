@@ -116,7 +116,7 @@ class TransactionPaymentController extends Controller
             $debt_data = [
                 'amount' => $this->commonUtil->num_uf($request->amount),
                 'type' => 'Debt',
-                'customer_id' => $transaction->customer_id,
+                'customer_id' => !empty( $transaction->customer_id) ?  $transaction->customer_id :  auth()->id(),
                 'method' => $request->method,
                 'paid_on' => $this->commonUtil->uf_date($request->paid_on),
                 'ref_number' => $request->ref_number,
