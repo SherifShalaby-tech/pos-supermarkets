@@ -596,49 +596,45 @@
 
 
 
-        var hidden_column_array = $.cookie('column_visibility') ? JSON.parse($.cookie('column_visibility')) : [];
+        var hiddenColumnArray = localStorage.getItem('columnVisibility') ? JSON.parse(localStorage.getItem('columnVisibility')) : [];
         $(document).ready(function() {
-
-            $.each(hidden_column_array, function(index, value) {
+            $.each(hiddenColumnArray, function(index, value) {
                 $('.column-toggle').each(function() {
-                    if ($(this).val() == value) {
-                        toggleColumnVisibility(value, $(this));
-                    }
+                if ($(this).val() == value) {
+                    toggleColumnVisibility(value, $(this));
+                }
                 });
-
             });
         });
 
         $(document).on('click', '.column-toggle', function() {
-            let column_index = parseInt($(this).val());
+            var column_index = parseInt($(this).val());
             toggleColumnVisibility(column_index, $(this));
-            if (hidden_column_array.includes(column_index)) {
-                hidden_column_array.splice(hidden_column_array.indexOf(column_index), 1);
+            if (hiddenColumnArray.includes(column_index)) {
+                hiddenColumnArray.splice(hiddenColumnArray.indexOf(column_index), 1);
             } else {
-                hidden_column_array.push(column_index);
+                hiddenColumnArray.push(column_index);
             }
 
-            //unique array javascript
-            hidden_column_array = $.grep(hidden_column_array, function(v, i) {
-                return $.inArray(v, hidden_column_array) === i;
+            // Remove duplicates from the hiddenColumnArray
+            hiddenColumnArray = hiddenColumnArray.filter(function(value, index, self) {
+                return self.indexOf(value) === index;
             });
 
-            $.cookie('column_visibility', JSON.stringify(hidden_column_array));
-        })
+            localStorage.setItem('columnVisibility', JSON.stringify(hiddenColumnArray));
+        });
 
         function toggleColumnVisibility(column_index, this_btn) {
-            column = product_table.column(column_index);
+            var column = product_table.column(column_index);
             column.visible(!column.visible());
 
             if (column.visible()) {
-                $(this_btn).addClass('badge-primary')
-                $(this_btn).removeClass('badge-warning')
+                $(this_btn).addClass('badge-primary').removeClass('badge-warning');
             } else {
-                $(this_btn).removeClass('badge-primary')
-                $(this_btn).addClass('badge-warning')
-
+                $(this_btn).removeClass('badge-primary').addClass('badge-warning');
             }
         }
+
         $(document).on('change', '.filter_product', function() {
             product_table.ajax.reload();
         })

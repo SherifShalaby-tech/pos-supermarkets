@@ -1169,7 +1169,7 @@ return [
     'add_consumption_for_others' => 'Add Compensation for Others',
 
 
-    'other_expenses' => 'Other expenses',
+    'other_expenses' => 'Expenses',
     'tutorials' => 'Tutorials',
     'tutorial' => 'Tutorial',
     'add_tutorial' => 'Add Tutorial',
@@ -1413,4 +1413,9 @@ return [
     'taxes'=>' Public Taxes',
     'coupons'=>'Coupons',
     'product_taxes'=>'Product Taxes',
+
+    'net_profit' => 'Net Profit',
+    'walk-in-customer' => 'Walk-in-customer',
+    'cancel_add_stock_payment' => 'Cancel Stock Payment',
+
 ];

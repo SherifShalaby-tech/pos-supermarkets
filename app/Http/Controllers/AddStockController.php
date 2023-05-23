@@ -25,6 +25,7 @@ use App\Models\Supplier;
 use App\Models\System;
 use App\Models\Tax;
 use App\Models\Transaction;
+use App\Models\TransactionPayment;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
@@ -181,7 +182,7 @@ class AddStockController extends Controller
                                  </li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1) {
+                        if (auth()->user()->can('stock.add_stock.create_and_edit')) {
                             $html .=
                                 '<li>
                                 <a href="' . action('AddStockController@edit', $row->id) . '"><i
@@ -547,6 +548,7 @@ class AddStockController extends Controller
 
         DB::beginTransaction();
         $transaction = Transaction::where('id', $id)->first();
+        $transaction_old_payment_status = $transaction->payment_status;
         $transaction->update($transaction_data);
 
         $mismtach = $this->productUtil->checkSoldAndPurchaseQtyMismatch($request->add_stock_lines, $transaction);
@@ -597,8 +599,13 @@ class AddStockController extends Controller
 
                 if (!empty($user_id)) {
                     $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
-                    $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
-                    $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                    if($cr_transaction){
+                        $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+                        $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                    }else{
+                        $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
+                    }
+                    
                 }
             }
 
@@ -608,9 +615,33 @@ class AddStockController extends Controller
                 }
             }
         }
-
-        $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-
+        
+       
+        if($transaction->payment_status == "pending" && $transaction_old_payment_status == "paid"){
+           $TransactionPayment = TransactionPayment::where('transaction_id', $transaction->id)->where('transaction_id', $transaction->id)->first();
+            if($TransactionPayment){
+                $money_safe_t =  MoneySafeTransaction::where('transaction_payment_id', $TransactionPayment->id)->where('transaction_id', $transaction->id)->first();
+                if($money_safe_t){
+                    $money_safe_t->delete();
+                }
+                $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->where('transaction_payment_id', $TransactionPayment->id)->first();
+                if( $cr_transaction){
+                        $register = CashRegister::where('id', $cr_transaction->cash_register_id)->where('status','close')->first();
+                        if($register){
+                            $register->closing_amount += $TransactionPayment->amount;
+                            $register->save();
+                        }
+                        $cr_transaction->delete();
+                }
+                $TransactionPayment->delete();
+            }
+            
+           
+          
+            
+        }else{
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+        }
         //update purchase order status if selected
         if (!empty($transaction->purchase_order_id)) {
             Transaction::find($transaction->purchase_order_id)->update(['status' => 'received']);
