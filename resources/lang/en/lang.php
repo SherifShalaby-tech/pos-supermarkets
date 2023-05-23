@@ -1400,6 +1400,7 @@ return [
     'manufacturers_list'=>'Manufacturers list',
     'raw_materials_list'=>'Raw materials list',
     'view_all_remove_stock_list'=>' List of stocks removed',
+    'all_return_purchase' =>'List Of Returned Purchases',
     'add_stock_list'=>'All Added Stocks',
     'all_customers'=>'All Customers',
     'product_classes'=>'Product Classes',
@@ -1410,7 +1411,11 @@ return [
     'grades'=>'Grades',
     'units'=>'Units',
     'taxes'=>' Public Taxes',
+    'coupons'=>'Coupons',
+    'product_taxes'=>'Product Taxes',
+
     'net_profit' => 'Net Profit',
     'walk-in-customer' => 'Walk-in-customer',
     'cancel_add_stock_payment' => 'Cancel Stock Payment',
+
 ];

@@ -77,7 +77,7 @@
                    value="@if(!empty($sale_promotion_details)){{$sale_promotion_details->discount_type}}@else{{0}}@endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_amount]"
                    class="promotion_discount_amount" value="0">
-            @php $loop_index= $loop->index + $index@endphp
+            @php $loop_index= $loop->index + $index @endphp
 
 
 

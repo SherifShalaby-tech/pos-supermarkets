@@ -182,7 +182,7 @@ class AddStockController extends Controller
                                  </li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1) {
+                        if (auth()->user()->can('stock.add_stock.create_and_edit')) {
                             $html .=
                                 '<li>
                                 <a href="' . action('AddStockController@edit', $row->id) . '"><i

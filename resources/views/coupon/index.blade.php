@@ -3,6 +3,9 @@
 
 @section('content')
 <div class="container-fluid">
+    <div class="card-header d-flex align-items-center">
+        <h3 class="print-title">@lang('lang.coupons')</h3>
+    </div>
     @can('coupons_and_gift_cards.coupon.create_and_edit')
     <a style="color: white" href="{{action('CouponController@create')}}"
         class="btn btn-info"><i class="dripicons-plus"></i>
