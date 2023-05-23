@@ -176,6 +176,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->cost_ratio_per_one = $this->num_uf($line['cost_ratio_per_one']);
+                $transaction_sell_line->stock_line_id = !empty($line['stock_id']) ? $line['stock_id'] : null;
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
             } 
@@ -203,6 +204,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->cost_ratio_per_one = $this->num_uf($line['cost_ratio_per_one']);
+                $transaction_sell_line->stock_line_id = !empty($line['stock_id']) ? $line['stock_id'] : null;
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $transaction_sell_line->id;
             }
@@ -231,7 +233,18 @@ class TransactionUtil extends Util
 
         $qty_difference =$new_quantity - $old_quantity;
         if ($qty_difference != 0) {
-            $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
+            if($stock_id != null){
+                $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
+                ->where('transactions.store_id', $store_id)
+                ->where('product_id', $product_id)
+                ->where('variation_id', $variation_id)
+                ->where('add_stock_lines.id',$stock_id)
+                ->select('add_stock_lines.id', DB::raw('SUM(quantity - quantity_sold) as remaining_qty'))
+                ->having('remaining_qty', '>', 0)
+                ->groupBy('add_stock_lines.id')
+                ->get();
+            }else{
+                $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
                 ->where('transactions.store_id', $store_id)
                 ->where('product_id', $product_id)
                 ->where('variation_id', $variation_id)
@@ -239,6 +252,8 @@ class TransactionUtil extends Util
                 ->having('remaining_qty', '>', 0)
                 ->groupBy('add_stock_lines.id')
                 ->get();
+            }
+            
             foreach ($add_stock_lines as $line) {
                 if ($qty_difference == 0) {
                     return true;

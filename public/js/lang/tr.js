@@ -7,5 +7,6 @@ LANG = {
     the_order_is_saved_to_draft: "Sipariş Taslağa Kaydedildi",
     sell_price_less_than_purchase_price: "Satış fiyatı alış fiyatından düşük",
     warning: "Uyarı",
-    walk_in_customer:'Walk-in-customer',
+    walk_in_customer:'Normal Müşteri',
+    
 };

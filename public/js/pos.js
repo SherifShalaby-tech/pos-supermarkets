@@ -289,7 +289,7 @@ $(document).ready(function () {
             })
             .autocomplete("instance")._renderItem = function (ul, item) {
             var string = "";
-            if (item.is_service == 0 && item.qty_available <= 0) {
+            if (item.is_service == 0 && item.qty_available <= 0 && item.quantity <= item.quantity_sold) {
                 string +=
                     '<li class="ui-state-disabled">'
                     +item.text +
@@ -396,7 +396,8 @@ function get_label_product_row(
                 weighing_scale_barcode: weighing_scale_barcode,
                 dining_table_id: $("#dining_table_id").val(),
                 is_direct_sale: $("#is_direct_sale").val(),
-                batch_number_id:add_stock_lines_id
+                batch_number_id:add_stock_lines_id,
+                stock_id:add_stock_lines_id
             },
             success: function (result) {
                 if (!result.success) {
@@ -626,9 +627,6 @@ function calculate_sub_totals() {
             sub_total = price_hidden * quantity;
         } else {
             sub_total = price_hidden * quantity;
-            console.log("quantity "+ quantity)
-            console.log("price_hidden "+ price_hidden)
-            console.log("sub_total "+ sub_total)
         }
         // console.log(quantity)
         // console.log(quantity)
@@ -990,14 +988,127 @@ $(document).on("click", ".plus", function () {
     let qty = parseFloat($(tr).find(".quantity").val());
     let max = parseFloat($(tr).find(".quantity").attr("max"));
     let is_service = parseInt($(tr).find(".is_service").val());
-    let new_qty = qty + 1;
-    if (!is_service) {
-        if (new_qty < 0.1 || new_qty > max) {
-            return;
-        }
+    let stock_id = parseInt($(tr).find(".batch_number_id").val());
+    var is_added = false;
+    var row_v_id = $(tr).find(".variation_id").val();
+    var row_p_id = $(tr).find(".product_id").val();
+    var row_batch_number = $(tr).find(".batch_number_id").val();
+    var stock_ids = [];
+    $('.batch_number_id_'+ row_v_id).each(function() {
+    var value = $(this).val();
+    if(value != "" || value != " "){
+        stock_ids.push(value);
     }
-    $(tr).find(".quantity").val(new_qty);
-    $(tr).find(".quantity").trigger("change");
+    
+    });
+    // Make an AJAX request to the server
+    console.log(stock_ids);
+    if(stock_ids.length >  0 && !is_service){    
+        $.ajax({
+            url: "/pos/check-stock-line", // Replace with the actual URL of your controller
+            method: "GET",
+            data: {
+                row_v_id: row_v_id,
+                stock_id: stock_id,
+                row_p_id: row_p_id,
+                qty: qty,
+                stock_ids:stock_ids,
+    
+            },
+            success: function (response) {
+                console.log(response);
+                if (response == "qty") {
+                    // Stock line found, increment the quantity
+                    let new_qty = qty + 1;
+                    console.log(new_qty);
+                    if (!is_service) {
+                        if (new_qty < 0.1 || new_qty > max) {
+                            return;
+                        }
+                    }
+                    $(tr).find(".quantity").val(new_qty);
+                    $(tr).find(".quantity").trigger("change");
+                } else if(response != "nothing") {
+                    console.log(response);
+                    var store_id = $("#store_id").val();
+                    var customer_id = $("#customer_id").val();
+                    let currency_id = $("#received_currency_id").val();
+                    var store_pos_id = $("#store_pos_id").val();
+                    let  edit_quantity = 1;
+                    let weighing_scale_barcode = null;
+                    let edit_row_count = 0; 
+                    if (edit_row_count !== 0) {
+                        row_count = edit_row_count;
+                    } else {
+                        var row_count = parseInt($("#row_count").val());
+                        $("#row_count").val(row_count + 1);
+                    }
+                    // if(qty <= response.quntity && qty > response.quntity_sold){
+                        $.ajax({
+                            method: "GET",
+                            url: "/pos/add-product-row",
+                            dataType: "json",
+                            async: false,
+                            data: {
+                                product_id: row_p_id,
+                                row_count: row_count,
+                                variation_id: row_v_id,
+                                store_id: store_id,
+                                store_pos_id : store_pos_id,
+                                customer_id: customer_id,
+                                currency_id: currency_id,
+                                edit_quantity: edit_quantity,
+                                weighing_scale_barcode: weighing_scale_barcode,
+                                dining_table_id: $("#dining_table_id").val(),
+                                is_direct_sale: $("#is_direct_sale").val(),
+                                batch_number_id:response,
+                                stock_id:response
+                            },
+                            success: function (result) {
+                                console.log(result);
+                                // var newTr = $($.parseHTML(result.html_content));
+                                // var filteredTr = newTr.find("tr.product_row");
+                                // // Access the tr element from the new row
+                                
+                                // console.log(filteredTr);
+                                if (!result.success) {
+                                    swal("Error", result.msg, "error");
+                                    return;
+                                }
+                                $("table#product_table tbody").prepend(result.html_content);
+                                $("input#search_product").val("");
+                                $("input#search_product").focus();
+                                // filteredTr.find(".sell_price").val(response.sell_price);
+                                // filteredTr.find(".price_hidden").val(response.sell_price);
+                                check_for_sale_promotion();
+                                calculate_sub_totals();
+                                reset_row_numbering();
+                                getCustomerPointDetails();
+                            },
+                        });
+                    // }
+                    
+                    // Stock line not found, handle accordingly (e.g., add a new row)
+                    // Your code here to add a new row or take any other action
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle the error if the AJAX request fails
+            }
+        });
+    }else{
+        let new_qty = qty + 1;
+        if (!is_service) {
+            if (new_qty < 0.1 || new_qty > max) {
+                return;
+            }
+        }
+        $(tr).find(".quantity").val(new_qty);
+        $(tr).find(".quantity").trigger("change");
+    }
+   
+    // console.log(stock_id);
+    
 });
 
 $(document).on("submit", "form#quick_add_customer_form", function (e) {

@@ -5,10 +5,18 @@
         @endif
         <td style="width: @if(session('system_mode')  != 'restaurant') 17%; @else 20%; @endif font-size: 13px;">
             @php
+            $qty_available = $product->qty_available;
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
-                        $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)->whereColumn('quantity',">",'quantity_sold')
-                        ->first();
+                       
+                        if(isset($stock_id)){
+                            $stockLines=\App\Models\AddStockLine::where('id',$stock_id)->where('sell_price','>',0)->where('variation_id',$Variation->id)->whereColumn('quantity',">",'quantity_sold')
+                            ->first();
+                            $qty_available = $stockLines->quantity - $stockLines->sold_quantity;
+                        }else{
+                            $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
+                            ->latest()->first();
+                        }
                         $default_sell_price=$stockLines?$stockLines->sell_price : $Variation->default_sell_price;
                         $default_purchase_price=$stockLines?$stockLines->purchase_price : $Variation->default_purchase_price;
                         $cost_ratio_per_one = $stockLines ? $stockLines->cost_ratio_per_one : 0;
@@ -37,12 +45,12 @@
                    value="{{$product->product_id}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]" class="variation_id"
                    value="{{$product->variation_id}}">
-            <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][stock_id]" class="batch_number_id"
-                    value="@if($product->stock_id){{$product->stock_id}}@else {{false}} @endif">
+            <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][stock_id]" class="batch_number_id batch_number_id_{{$product->variation_id}}"
+            @if($stockLines)  value="{{$stockLines->id}}" @endif>
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][batch_number]" class="batch_number"
             value="@if($product->batch_number){{$product->batch_number}}@else {{false}} @endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][price_hidden]" class="price_hidden"
-                   value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif">
+                   value="@if(isset($product->stock_sell_price)) {{@num_format(($product->stock_sell_price) / $exchange_rate)}}@else @if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif @endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][purchase_price]" class="purchase_price"
                    value="@if(isset($default_purchase_price)){{@num_format($default_purchase_price / $exchange_rate)}}@else{{0}}@endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][cost_ratio_per_one]" class="cost_ratio_per_one"
@@ -77,6 +85,9 @@
                    value="@if(!empty($sale_promotion_details)){{$sale_promotion_details->discount_type}}@else{{0}}@endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_amount]"
                    class="promotion_discount_amount" value="0">
+            <input type="hidden" 
+            class="qty_available" value="{{$product->qty_available}}">
+            
             @php $loop_index= $loop->index + $index@endphp
 
 
@@ -90,7 +101,7 @@
             </span>
                 <input type="number" class="form-control quantity  qty numkey input-number" step="any"
                        autocomplete="off" style="width: 50px;"
-                       @if(!$product->is_service)max="{{$product->qty_available}}"@endif
+                       @if(!$product->is_service)max="{{$qty_available}}"@endif
                        name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
                        required
                        value="@if(!empty($edit_quantity)){{$edit_quantity}}@else @if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{@num_format(1)}}@endif @endif">
@@ -106,7 +117,7 @@
             <input type="text" class="form-control sell_price"
                    name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
                    @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @elseif(env('IS_SUB_BRANCH',false)) readonly @endif
-                   value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif ">
+                   value="@if(isset($product->stock_sell_price)) {{@num_format(($product->stock_sell_price) / $exchange_rate)}}@else @if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif @endif">
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif">
 
@@ -157,7 +168,12 @@
         @if(session('system_mode') != 'restaurant')
             <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
                 @if($product->is_service) {{'-'}} @else
-                    @if(isset($product->qty_available)){{preg_match('/\.\d*[1-9]+/', (string)$product->qty_available) ? $product->qty_available : @num_format($product->qty_available)}}@else{{0}}@endif @endif
+                    @if ((isset($product->quantity)))
+                        {{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}
+                    @else
+                        @if(isset($qty_available)){{preg_match('/\.\d*[1-9]+/', (string)$qty_available) ? $qty_available : @num_format($qty_available)}}@else{{0}}@endif @endif
+                    @endif
+                    
             </td>
         @endif
         <td style="width: @if(session('system_mode')  != 'restaurant') 9%; @else 15%; @endif padding: 0px;">

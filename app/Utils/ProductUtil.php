@@ -670,8 +670,59 @@ class ProductUtil extends Util
             array_push($selectRaws,'add_stock_lines.batch_number');
             array_push($selectRaws,'add_stock_lines.id as stock_id');
         }
+        
+        // $stocks = AddStockLine::leftJoin('products', 'add_stock_lines.product_id', '=', 'products.id')
+        // ->leftJoin('variations', 'add_stock_lines.variation_id', '=', 'variations.id')
+        // ->leftJoin('taxes', 'products.tax_id', '=', 'taxes.id')
+        // ->leftJoin('product_stores', 'variations.id', '=', 'product_stores.variation_id')
+        // ->where('add_stock_lines.product_id', $product_id)
+        // ->where('add_stock_lines.variation_id', $variation_id)
+        // ->select([
+        //     'add_stock_lines.id as stock_id',
+        //     // 'products.*', // Select all columns from the products table
+        //     'products.id as product_id',
+        //    'products.name as product_name',
+        //    'products.is_service',
+        //    'products.alert_quantity',
+        //    'products.tax_id',
+        //    'products.tax_method',
+        //     'product_stores.qty_available',
+        //     'add_stock_lines.sell_price as stock_sell_price',
+        //     'add_stock_lines.purchase_price as stock_purchase_price',
+        //     'add_stock_lines.quantity',
+        //     'add_stock_lines.quantity_sold',
+        //     'add_stock_lines.quantity_returned',
+        //     'add_stock_lines.expired_qauntity',
+        //     'add_stock_lines.batch_number',
+        //     'taxes.rate as tax_rate',
+        //     'variations.id as variation_id',
+        //     'variations.name as variation_name',
+        //     'variations.default_purchase_price',
+        //     'variations.default_sell_price',
+        //     'variations.sub_sku',
+        // ])
+        // ->get();
+        // if(!is_null($stocks)){
+        //     // dd('test');
+        //     $firstStock = $stocks->first();
+        //     $sellPrice = $firstStock->stock_sell_price;
+        //     $differentSellPrice = !$stocks->every(function ($stock) use ($sellPrice) {
+        //         return $stock->stock_sell_price === $sellPrice;
+        //     });
+        //     foreach ($stocks as $stock) {
+        //         if($differentSellPrice){  
+        //             // dd('test');  
+        //            return $stocks;
+        //         }
+        //     }
+
+        // }
         $products = $product->select($selectRaws);
         $products=$product->groupBy('v.id')->get();
+        // foreach ($products as $product) {
+            
+        //     return $product;
+        // }
         return $products;
 }
 

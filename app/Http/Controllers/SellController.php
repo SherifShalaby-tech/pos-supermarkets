@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\TransactionSellLineImport;
+use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\CashRegisterTransaction;
 use App\Models\Category;
@@ -707,6 +708,14 @@ class SellController extends Controller
                         $product = Product::find($transaction_sell_line->product_id);
                         if (!$product->is_service) {
                             $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
+                            if(isset($transaction_sell_line->stock_line_id)){
+                                $stock = AddStockLine::where('id',$transaction_sell_line->stock_line_id)->first();
+                                $stock->update([
+                                    'quantity' =>  $stock->quantity + $transaction_sell_line->quantity,
+                                    'quantity_sold' =>  $stock->quantity - $transaction_sell_line->quantity
+                                ]);
+                            }
+                                
                         }
                     }
                     $transaction_sell_line->delete();
