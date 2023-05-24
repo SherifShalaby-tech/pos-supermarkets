@@ -449,22 +449,24 @@ function check_for_sale_promotion() {
             added_qty: JSON.stringify(added_qty),
         },
         success: function (result) {
+            console.log('aa',result)
             if (result.valid) {
                 let  discount = 0;
                 let  sum_item_discount = 0;
                 result.sale_promotion_details.forEach((data, index) => {
+                    
                     let sum_discount = 0;
                     if (
                         data.type === "package_promotion"
                     ) {
-                        console.log("dis", data.actual_sell_price, data.discount_value)
+
                         if (
                             data.discount_type === "fixed"
                         ) {
                             sum_discount =
-                                (parseFloat(
-                                    data.discount_value
-                                ) ) *  parseFloat(data.count_discount_number);
+                                ( parseFloat(
+                                        data.discount_value
+                                    ) ) *  parseFloat(data.count_discount_number);
 
                         }
                         if (
@@ -472,18 +474,16 @@ function check_for_sale_promotion() {
                             "percentage"
                         ) {
                             let discount_value =
-                                (parseFloat(
-                                    data.actual_sell_price
-                                ) *
-                                    parseFloat(
+                                ( parseFloat(
                                         data.discount_value
                                     )) /
                                 100;
                             sum_discount =
-                                ( discount_value ) *  parseFloat(data.count_discount_number);;
+                                (parseFloat(
+                                    data.actual_sell_price
+                                ) - discount_value ) *  parseFloat(data.count_discount_number);;
 
                         }
-                        console.log("sum_discount",sum_discount)
                         if (data.purchase_condition) {
                             let purchase_condition_amount =
                                 data
@@ -524,6 +524,7 @@ function check_for_sale_promotion() {
                             $("#product_table tbody")
                                 .find("tr")
                                 .each(function () {
+                                    
                                     var row_product_id = $(this)
                                         .find(".variation_id")
                                         .val()
@@ -532,6 +533,8 @@ function check_for_sale_promotion() {
                                         .find(".qty")
                                         .val()
                                         .trim();
+                                        console.log(row_product_id)
+                                        console.log(product_id)
                                     if (row_product_id == product_id) {
                                         if (discount_type == "fixed") {
                                             $(this)
@@ -542,6 +545,7 @@ function check_for_sale_promotion() {
                                                 .find(".promotion_discount_type")
                                                 .val("percentage");
                                         }
+                                        
                                         $(this)
                                             .find(".promotion_discount_value")
                                             .val(discount_value*qty);
@@ -563,9 +567,10 @@ function check_for_sale_promotion() {
                 });
                 console.log('sales_promotion-cost_span=>',sum_item_discount,discount)
                 $("span#sales_promotion-cost_span").text(
-                    __currency_trans_from_en(discount, false)
+                    __currency_trans_from_en(sum_item_discount+discount, false)
                 );
                 __write_number($("#total_pp_discount"), discount);
+
 
                 calculate_sub_totals();
             }else{
