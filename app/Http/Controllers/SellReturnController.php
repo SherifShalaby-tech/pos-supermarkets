@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Currency;
@@ -469,6 +470,13 @@ class SellReturnController extends Controller
                         $product = Product::find($line->product_id);
                         if (!$product->is_service) {
                             $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $sell_return->store_id, $sell_line['quantity'], $old_quantity);
+                            if(isset($line->stock_line_id)){
+                                $stock = AddStockLine::where('id',$line->stock_line_id)->first();
+                                $stock->update([
+                                    'quantity' =>  $stock->quantity + $old_quantity,
+                                    'quantity_sold' =>  $stock->quantity - $old_quantity
+                                ]);
+                            }
                         }
                     }
                 }
