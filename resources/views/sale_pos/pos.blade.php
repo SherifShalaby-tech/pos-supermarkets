@@ -261,9 +261,14 @@
                                                     id="subtotal">0.00</span>
                                             </div>
                                             <div class="col-sm-4">
+                                                @if(auth()->user()->can('sp_module.sales_promotion.view')
+                                                        || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                                                        || auth()->user()->can('sp_module.sales_promotion.delete'))
                                                 <button style="background-color: #d63031" type="button"
                                                     class="btn btn-md payment-btn text-white" data-toggle="modal"
-                                                    data-target="#discount_modal">@lang('lang.random_discount')</button>
+                                                    data-target="#discount_modal"
+                                                    >@lang('lang.random_discount')</button>
+                                                    @endif
                                                 {{-- <span id="discount">0.00</span> --}}
                                             </div>
 
@@ -313,9 +318,14 @@
                                                     <button data-method="cash" style="background: #0082ce" type="button"
                                                         class="btn mr-2 payment-btn text-white" data-toggle="modal"
                                                         data-target="#add-payment" id="cash-btn">@lang('lang.pay_and_close')</button>
-                                                    <button style="background-color: #d63031" type="button"
+                                                        @if(auth()->user()->can('sp_module.sales_promotion.view')
+                                                        || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                                                        || auth()->user()->can('sp_module.sales_promotion.delete'))
+                                                        <button style="background-color: #d63031" type="button"
                                                         class="btn mr-2 btn-md payment-btn text-white" data-toggle="modal"
-                                                        data-target="#discount_modal">@lang('lang.random_discount')</button>
+                                                        data-target="#discount_modal"
+                                                        >@lang('lang.random_discount')</button>
+                                                        @endif
                                                 </div>
                                             </div>
                                             <div class="col-md-4">

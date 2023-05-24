@@ -2,6 +2,9 @@
 @section('title', __('lang.printers'))
 @section('content')
     <div class="container-fluid">
+        <div class="card-header d-flex align-items-center">
+            <h3 class="print-title">@lang('lang.printers')</h3>
+        </div>
         <a style="color: white" href="{{route('printers.create')}}" class="btn btn-info"><i
                 class="dripicons-plus"></i>
             @lang('lang.add_new_printer')</a>

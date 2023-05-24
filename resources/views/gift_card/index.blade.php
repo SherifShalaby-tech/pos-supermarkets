@@ -3,6 +3,9 @@
 
 @section('content')
 <div class="container-fluid">
+    <div class="card-header d-flex align-items-center">
+        <h3 class="print-title">@lang('lang.gift_card')</h3>
+    </div>
     @can('coupons_and_gift_cards.gift_card.create_and_edit')
     <a style="color: white" data-href="{{action('GiftCardController@create')}}" data-container=".view_modal"
         class="btn btn-modal btn-info"><i class="dripicons-plus"></i>

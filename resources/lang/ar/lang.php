@@ -1382,6 +1382,7 @@ return [
     'manufacturers_list'=>'قائمة المصنعين',
     'raw_materials_list'=>'قائمة المنتجات الاولية',
     'view_all_remove_stock_list'=>'قائمة الأزالة من المخزون',
+    'all_return_purchase' => ' مشتريات المرتجعات',
     'add_stock_list'=>'قائمة الاضافة للمخزون',
     'all_customers'=>'كل العملاء',
     'product_classes'=>'الفئات',
@@ -1392,7 +1393,12 @@ return [
     'grades'=>'درجات',
     'units'=>'الوحدات',
     'taxes'=>'الضرائب',
+
+    'coupons'=>'قسائم',
+    'product_taxes'=>'ضريبة المنتج',
+
     'net_profit' => 'صافي الربح',
     'walk-in-customer' => 'عميل عادي',
     'cancel_add_stock_payment' => 'الغاء دفع المخزون'
+
 ];

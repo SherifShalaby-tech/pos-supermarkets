@@ -319,6 +319,7 @@
                                     @else
                                         {{ $line->product->sku ?? '' }}
                                     @endif
+                                    fgcfgfcg
                                 </td>
                                 <td style="width: 10% !important;">
                                     {{ $line->batch_number ?? '' }}
