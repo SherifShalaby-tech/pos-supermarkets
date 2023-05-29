@@ -1392,7 +1392,7 @@ return [
 
     'permenant'=>'Permenant',
 
-    
+
     'productions'=>'Productions',
     'product_lists'=>'Products list',
     'products_under_manufacturing'=>'Products under manufacturing list',
@@ -1417,5 +1417,7 @@ return [
     'net_profit' => 'Net Profit',
     'walk-in-customer' => 'Walk-in-customer',
     'cancel_add_stock_payment' => 'Cancel Stock Payment',
+    'Discount_from_the_cost_of_delivery' => 'Amount deducted from the cost of delivery',
+    'The_actual_delivery_cost' => 'The value found for the delivery cost',
 
 ];

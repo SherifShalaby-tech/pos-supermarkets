@@ -94,21 +94,25 @@
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                {!! Form::label('delivery_cost', __('lang.delivery_cost'), []) !!}
-                                {!! Form::text('delivery_cost', @num_format($sale->delivery_cost), ['class' => 'form-control']) !!}
+                                {!! Form::label('delivery_cost_actual', __('lang.The_actual_delivery_cost'), []) !!}
+                                {!! Form::text('delivery_cost_actual', @num_format($sale->delivery_cost), ['class' => 'form-control', 'readonly']) !!}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-5">
+                                {!! Form::label('delivery_cost', __('lang.Discount_from_the_cost_of_delivery'), []) !!}
+                                {!! Form::text('delivery_cost', @num_format($sell_return->delivery_cost??0), ['class' => 'form-control','max'=>@num_format($sale->delivery_cost)]) !!}
+                            </div>
+                            <div class="col-md-2">
                                 {!! Form::hidden('discount_type', $sale->discount_type, ['class' => 'form-control', 'id' => 'discount_type']) !!}
                                 {!! Form::hidden('discount_value', $sale->discount_value, ['class' => 'form-control', 'id' => 'discount_value']) !!}
 
                                 {!! Form::label('discount_amount', __('lang.discount'), []) !!}
                                 {!! Form::text('discount_amount', !empty($sell_return->discount_amount) ? @num_format($sell_return->discount_amount) : @num_format($sale->discount_amount), ['class' => 'form-control']) !!}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-1">
                                 {!! Form::label('total_tax', __('lang.tax'), []) !!}
                                 {!! Form::text('total_tax', !empty($sell_return->total_tax) ? @num_format($sell_return->total_tax) : @num_format($sale->total_tax), ['class' => 'form-control']) !!}
                                 <input type="hidden" name="tax_method" id="tax_method"
-                                    value="{{ $sale->tax_method }}">
+                                       value="{{ $sale->tax_method }}">
                                 <input type="hidden" name="tax_rate" id="tax_rate" value="{{ $sale->tax_rate }}">
                                 <input type="hidden" name="tax_type" id="tax_type" value="{{ $sale->tax_type }}">
                             </div>
@@ -172,8 +176,24 @@
 @section('javascript')
     <script src="{{ asset('js/sell_return.js') }}"></script>
     <script>
+
         $(document).ready(function() {
             calculate_sub_totals()
         })
+
+        $('#delivery_cost').change(function() {
+            let max = parseFloat($(this).attr("max"));
+            let value_qty = parseFloat($(this).val());
+            if(max < value_qty){
+                $(this).val(max);
+                swal(
+                    "warning",
+                    "Max quantity is " + " :" + max,
+                    "warning"
+                );
+            }
+            calculate_sub_totals();
+        });
+
     </script>
 @endsection
