@@ -171,13 +171,13 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
-                            {!! Form::select('source_type', ['user' => __('lang.user'), 'safe' => __('lang.safe')], 'user', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                            {!! Form::select('source_type', ['user' => __('lang.user'), 'safe' => __('lang.safe')], 'user', ['class' => 'selectpicker form-control', 'required', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('cash_given_to', __('lang.cash_given_to') . ':*') !!}
-                            {!! Form::select('cash_given_to', $users, false, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
+                            {!! Form::select('cash_given_to', $users, false, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required','placeholder' => __('lang.please_select')]) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
