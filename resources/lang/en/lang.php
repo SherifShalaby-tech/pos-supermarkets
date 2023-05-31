@@ -1417,5 +1417,6 @@ return [
     'net_profit' => 'Net Profit',
     'walk-in-customer' => 'Walk-in-customer',
     'cancel_add_stock_payment' => 'Cancel Stock Payment',
+    'add_to_customer_balance' => 'Add to customer balance'
 
 ];

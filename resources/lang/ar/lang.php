@@ -1399,6 +1399,7 @@ return [
 
     'net_profit' => 'صافي الربح',
     'walk-in-customer' => 'عميل عادي',
-    'cancel_add_stock_payment' => 'الغاء دفع المخزون'
+    'cancel_add_stock_payment' => 'الغاء دفع المخزون',
+    'add_to_customer_balance' => 'اضافة الى حساب العميل'
 
 ];

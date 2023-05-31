@@ -1543,6 +1543,7 @@ class TransactionUtil extends Util
         $query->select(
             'customers.total_rp',
             'customers.deposit_balance',
+            'customers.added_balance',
             DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', final_total, 0)) as total_return"),
             DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_return_paid"),
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
@@ -1552,7 +1553,7 @@ class TransactionUtil extends Util
 
 
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
-        $balance = $customer_details->total_paid - $customer_details->total_invoice  + $customer_details->total_return - $customer_details->total_return_paid;
+        $balance = ($customer_details->total_paid - $customer_details->total_invoice  + $customer_details->total_return - $customer_details->total_return_paid)+ $customer_details->deposit_balance + $customer_details->added_balance;
         // print_r( $customer_details->total_return); die();
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }

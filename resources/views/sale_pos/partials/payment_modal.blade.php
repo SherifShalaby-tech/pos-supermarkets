@@ -32,11 +32,16 @@
                                         <spand class="change" class="ml-2">0.00</spand>
                                         <input type="hidden" name="payments[0][change_amount]" class="change_amount"
                                             id="change_amount">
-                                        <input type="hidden" name="payments[0][pending_amount]" class="pending_amount">
+                                        <input type="hidden" name="payments[0][pending_amount]" class="pending_amount"> 
+                                        <div class="col-md-6">
+                                            <button type="button" 
+                                                class="ml-1 btn btn-danger add_to_customer_balance hide">@lang('lang.add_to_customer_balance')</button>
+                                            <input type="hidden" name="add_to_customer_balance" id="add_to_customer_balance" value="0">
+                                        </div>
                                     </div>
                                     <div class="col-md-6 mt-1">
                                         <label>@lang('lang.payment_method'): *</label>
-                                        {!! Form::select('payments[0][method]', $payment_types, null, ['class' => 'form-control method', 'required']) !!}
+                                        {!! Form::select('payments[0][method]', $payment_types, null, ['class' => 'form-control method payment_way', 'required']) !!}
                                     </div>
                                     <div class="col-md-6 mt-1 text-red">
                                         <label class="discount_lable">@lang('lang.discount'):</label>
