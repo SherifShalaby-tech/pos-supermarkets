@@ -289,7 +289,7 @@ $(document).ready(function () {
             })
             .autocomplete("instance")._renderItem = function (ul, item) {
             var string = "";
-            if (item.is_service == 0 && item.qty_available <= 0 && item.quantity <= item.quantity_sold) {
+            if (item.is_service == 0 && item.qty_available <= 0 ) {
                 string +=
                     '<li class="ui-state-disabled">'
                     +item.text +
