@@ -1404,4 +1404,7 @@ return [
     'select_class_value' =>'.من فضلك اختار فئة',
     'products_count' => 'عدد المنتجات',
 
+    'Discount_from_the_cost_of_delivery'=>'المبلغ المخصوم من تكلفة الدليفري',
+    'The_actual_delivery_cost'=>'القيمة الفعلية لتكلفة الدليفري',
+
 ];

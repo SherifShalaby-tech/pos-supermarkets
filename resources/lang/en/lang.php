@@ -1392,7 +1392,7 @@ return [
 
     'permenant'=>'Permenant',
 
-    
+
     'productions'=>'Productions',
     'product_lists'=>'Products list',
     'products_under_manufacturing'=>'Products under manufacturing list',
@@ -1420,5 +1420,7 @@ return [
     'add_to_customer_balance' => 'Add to customer balance',
     'select_class_value' =>'Please select a value for the class field.',
     'products_count' => 'Products Count',
+    'Discount_from_the_cost_of_delivery' => 'Amount deducted from the cost of delivery',
+    'The_actual_delivery_cost' => 'The value found for the delivery cost',
 
 ];
