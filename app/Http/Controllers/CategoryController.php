@@ -37,7 +37,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::whereNull('parent_id')->get();
+        $categories = Category::whereNull('parent_id')->withCount('products')->get();
 
         return view('category.index')->with(compact(
             'categories'
@@ -68,7 +68,6 @@ class CategoryController extends Controller
         $type = $request->type ?? null;
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
-
         return view('category.create')->with(compact(
             'type',
             'quick_add',

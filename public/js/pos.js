@@ -289,7 +289,7 @@ $(document).ready(function () {
             })
             .autocomplete("instance")._renderItem = function (ul, item) {
             var string = "";
-            if (item.is_service == 0 && item.qty_available <= 0 && item.quantity <= item.quantity_sold) {
+            if (item.is_service == 0 && item.qty_available <= 0 ) {
                 string +=
                     '<li class="ui-state-disabled">'
                     +item.text +
@@ -1335,6 +1335,20 @@ $(document).on("change", ".received_amount", function () {
             .find(".change")
             .text(__currency_trans_from_en(change, false));
         $(this_row).find(".change_amount").val(change);
+        $(".add_to_customer_balance").removeClass("hide");
+        $(document).on("click", ".add_to_customer_balance", function () {
+            if($(".payment_way").val() != 'deposit'){ // or this.value == 'volvo'
+                $(this_row).find("#add_to_customer_balance").val(change);
+                $(this_row).find(".change_amount").val(0);
+                $(this_row).find(".change").text(0);
+                $(this).attr("disabled", true);
+                let new_amount  = received_amount - change;
+                $(this_row).find(".received_amount").val(new_amount)
+            }else{
+                $(".add_to_customer_balance").addClass("hide");
+            }   
+        });
+        
     } else {
         $(this_row)
             .find(".change")
