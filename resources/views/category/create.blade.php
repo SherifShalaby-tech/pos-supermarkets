@@ -32,10 +32,16 @@
             </div>
             <input type="hidden" name="quick_add" value="{{ $quick_add }}">
             @if ($type == 'category')
-                <div class="form-group">
-                    {!! Form::label('product_class_id', __('lang.class') . ':') !!}
-                    {!! Form::select('product_class_id', $product_classes, false, ['class' => 'form-control', 'data-live-search' => 'true', 'style' => 'width: 100%', 'placeholder' => __('lang.please_select'), 'required', 'id' => 'cat_product_class_id']) !!}
-                </div>
+            <div class="form-group">
+                <label for="product_class_id">{{ __('lang.class') }}:</label>
+                <select class="form-control" data-live-search="true" style="width: 100%" placeholder="{{ __('lang.please_select') }}" required id="cat_product_class_id" name="product_class_id">
+                    <option value="" selected disabled>{{ __('lang.please_select') }}</option>
+                    @foreach($product_classes as $product_class_id => $product_class)
+                        <option value="{{ $product_class_id }}">{{ $product_class }}</option>
+                    @endforeach
+                </select>
+                <span class="text-danger hide required-class">Tis field is required</span>
+            </div>
             @endif
             @if ($type == 'sub_category')
                 <div class="form-group ">
@@ -131,6 +137,13 @@
 <script>
     $("#add-category-btn").on("click",function (e){
         e.preventDefault();
+        // Check if a value is selected
+        var selectedValue = $("#cat_product_class_id").val();
+        if (!selectedValue) {
+            // Display an error message or perform any other desired action
+            $(".required-class").removeClass("hide");
+            return; // Prevent form submission
+        }
         setTimeout(()=>{
             getAddCategoryImages();
             $("#category_add_form").submit();

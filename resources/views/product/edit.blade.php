@@ -292,7 +292,7 @@
                                             <span class="input-group-btn">
                                                 @can('product_module.category.create_and_edit')
                                                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
-                                                        data-href="{{ action('CategoryController@create') }}?quick_add=1"
+                                                        data-href="{{ action('CategoryController@create') }}?quick_add=1&type=category"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
                                                 @endcan

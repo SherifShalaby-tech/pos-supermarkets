@@ -1281,6 +1281,8 @@ return [
     'delivery_cost_given_to_deliveryman' => 'Teslimatçıya Verilen Teslimat Maliyeti',
     'sale_payment_date' => 'Ödeme tarihi',
     'walk-in-customer' => 'Normal Müşteri',
-    'add_to_customer_balance' => 'Müşteri bakiyesine ekle'
+    'add_to_customer_balance' => 'Müşteri bakiyesine ekle',
+    'select_class_value' =>'Lütfen sınıf alanı için bir değer seçin.',
+    'products_count' => 'Ürün Sayısı',
 
 ];
