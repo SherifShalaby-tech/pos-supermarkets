@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
@@ -1038,7 +1037,6 @@ class SellPosController extends Controller
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id, $store_id, $batch_number_id);
-                $stock_id = $request->stock_id;
                 $System=System::where('key','weight_product'.$store_pos_id)->first();
                 if(!$System){
                     System::Create([
@@ -1078,7 +1076,7 @@ class SellPosController extends Controller
                         'sale_promotion_details', 'product_discount_details',
                         'product_all_discounts_categories',
                         'edit_quantity', 'is_direct_sale', 'dining_table_id',
-                        'exchange_rate','stock_id'))->render();
+                        'exchange_rate'))->render();
 
                 $output['success'] = true;
                 $output['html_content'] = $html_content;
@@ -1883,24 +1881,5 @@ class SellPosController extends Controller
             ];
         }
         return $output;
-    }
-
-    public function checkStockLine(Request $request){
-        $stock = AddStockLine::where('id', $request->stock_id)->first();
-        if($stock->quantity > $stock->quantity_sold && $request->qty < $stock->quantity){
-            return "qty";
-        }else{
-            // return $request;
-            $stock = AddStockLine::whereNotIn('id',$request->stock_ids)->where('quantity', '>','quantity_sold')
-            ->where('variation_id',$request->row_v_id)
-            ->where('product_id',$request->row_p_id)
-            ->select('id')
-            ->first();
-            if ($stock) {
-                return $stock->id;
-            } else {
-                return 'nothing'; // or any other appropriate response for no matching stock line found
-            }
-        }
     }
 }
