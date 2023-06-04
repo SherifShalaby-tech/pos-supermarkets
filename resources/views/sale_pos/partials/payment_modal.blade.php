@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 id="exampleModalLabel" class="modal-title">@lang('lang.finalize_sale')</h5>
-                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close close-payment-madal"><span
                         aria-hidden="true"><i class="dripicons-cross"></i></span></button>
             </div>
             <div class="modal-body">
