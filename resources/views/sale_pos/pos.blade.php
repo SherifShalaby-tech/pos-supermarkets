@@ -317,7 +317,7 @@
                                                         class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
                                                     <button data-method="cash" style="background: #0082ce" type="button"
                                                         class="btn mr-2 payment-btn text-white" data-toggle="modal"
-                                                        data-target="#add-payment" id="cash-btn">@lang('lang.pay_and_close')</button>
+                                                        data-target="#add-payment" data-backdrop="static" data-keyboard="false" id="cash-btn">@lang('lang.pay_and_close')</button>
                                                         @if(auth()->user()->can('sp_module.sales_promotion.view')
                                                         || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
                                                         || auth()->user()->can('sp_module.sales_promotion.delete'))
@@ -396,8 +396,8 @@
                             </div> --}}
                             <div class="column-5">
                                 <button data-method="cash" style="background: #0094ce" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="cash-btn"><i class="fa fa-money"></i>
+                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" data-backdrop="static" data-keyboard="false"
+                                    id="cash-btn" ><i class="fa fa-money"></i>
                                     @lang('lang.pay')</button>
                             </div>
                             <div class="column-5">
@@ -409,7 +409,7 @@
                             @if (session('system_mode') != 'restaurant')
                                 <div class="column-5">
                                     <button data-method="paypal" style="background-color: #213170" type="button"
-                                        class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
+                                        class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" data-backdrop="static" data-keyboard="false"
                                         id="paypal-btn"><i class="fa fa-paypal"></i>
                                         @lang('lang.other_online_payments')</button>
                                 </div>
