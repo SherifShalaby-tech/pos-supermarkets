@@ -1254,7 +1254,7 @@ $(document).on("click", ".close-payment-madal", function () {
    
 });
 
-$('#add-payment').modal({backdrop: 'static', keyboard: false})
+
 
   
 
