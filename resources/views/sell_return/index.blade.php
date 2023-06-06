@@ -199,7 +199,8 @@
                     },
                     {
                         data: "method",
-                        name: "transaction_payments.method"
+                        name: "transaction_payments.method",
+                        searchable: false,
                     },
                     {
                         data: "received_currency_symbol",
