@@ -17,7 +17,12 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('amount', __('lang.amount') . ':*', []) !!} <br>
+                        @if (isset($transaction->return_parent))
+                        {!! Form::text('amount', @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount') - $transaction->return_parent->final_total), ['class' => 'form-control', 'placeholder' => __('lang.amount')]) !!}
+                        @else 
                         {!! Form::text('amount', @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')), ['class' => 'form-control', 'placeholder' => __('lang.amount')]) !!}
+                        @endif
+                       
                     </div>
                 </div>
 
