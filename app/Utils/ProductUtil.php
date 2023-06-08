@@ -732,18 +732,23 @@ class ProductUtil extends Util
 
     public function getProductAllDiscountCategories($product_id)
     {
-            $product = Product::where('id', $product_id)
+            // $product = Product::where('id', $product_id)
+            //     ->where('discount', '>',0)
+            //     ->select(
+            //         'products.discount_type',
+            //         'products.discount',
+            //         'products.discount_start_date',
+            //         'products.discount_end_date',
+            //     )
+            //     ->first();
+            // if(!$product){
+                $product = ProductDiscount::where('product_id', 14)
                 ->where('discount', '>',0)
-                ->select(
-                    'products.discount_type',
-                    'products.discount',
-                    'products.discount_start_date',
-                    'products.discount_end_date',
-                )
-                ->first();
-            if(!$product){
-                $product = ProductDiscount::where('product_id', $product_id)
-                    ->select(
+                ->where(function($query){
+                    $query->where('discount_start_date','<=',date('Y-m-d'));
+                    $query->where('discount_end_date','>=',date('Y-m-d'));
+                    $query->orWhere('is_discount_permenant',"1");
+                }) ->select(
                         'id',
                         'discount_type',
                         'discount',
@@ -752,17 +757,17 @@ class ProductUtil extends Util
                         'discount_end_date',
                     )
                     ->get();
-            }
+            // }
 
             if (!empty($product)) {
-                if (!empty($product->discount_start_date) && !empty($product->discount_end_date)) {
+                // if (!empty($product->discount_start_date) && !empty($product->discount_end_date)) {
                     //if end date set then check for expiry
-                    if ($product->discount_start_date <= date('Y-m-d') && $product->discount_end_date >= date('Y-m-d')) {
-                        return $product;
-                    } else {
-                        return false;
-                    }
-                }
+                    // if (($product->discount_start_date <= date('Y-m-d') && $product->discount_end_date >= date('Y-m-d')) ) {
+                        // return $product;
+                    // } else {
+                        // return false;
+                    // }
+                // }
                 return $product;
             }
         // }

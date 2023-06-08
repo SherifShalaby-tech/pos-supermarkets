@@ -3029,7 +3029,8 @@ $(document).on("change", ".discount_category", function (e) {
 
                 __write_number($(".discount_amount"+product_id), response.result.discount*qty);
 
-            }else{
+            }
+            else{
                 $(".discount_type"+product_id).val('');
                 __write_number($(".discount_value"+product_id), 0);
                 __write_number($(".discount_amount"+product_id), 0);
