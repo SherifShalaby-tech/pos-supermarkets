@@ -502,7 +502,13 @@ class SellReturnController extends Controller
                         'bank_name' => $request->bank_name,
                         // 'is_return' => 1,
                     ];
-                    $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($sell_return, $payment_data);
+                    if(!$sell_transaction->payment_status == "pending" || ($sell_transaction->payment_status == "partial" &&  ($sell_transaction->final_total - $sell_transaction->transaction_payments->sum('amount')) <  $request->amount)){
+                        $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($sell_return, $payment_data);
+                        
+                    }else{
+                        $this->transactionUtil->updateTransactionPaymentStatus($sell_transaction->id);
+                    }
+                    
 
                     if ($request->upload_documents) {
                         foreach ($request->file('upload_documents', []) as $key => $doc) {

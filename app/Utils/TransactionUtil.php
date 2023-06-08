@@ -124,8 +124,13 @@ class TransactionUtil extends Util
         $total_paid = $transaction_payments->sum('amount');
 
         $transaction = Transaction::find($transaction_id);
-        $final_amount = $transaction->final_total - $transaction->used_deposit_balance;
-
+        $returned_transaction = Transaction::where('return_parent_id',$transaction_id)->sum('final_total');
+        if($returned_transaction){
+            $final_amount = $transaction->final_total - $transaction->used_deposit_balance -  $returned_transaction;
+        }else{
+            $final_amount = $transaction->final_total - $transaction->used_deposit_balance;
+        }
+        
         $payment_status = 'pending';
         if ($final_amount <= $total_paid) {
             $payment_status = 'paid';
@@ -1529,31 +1534,15 @@ class TransactionUtil extends Util
             'customers.total_rp',
             'customers.deposit_balance',
             'customers.added_balance',
-            't.payment_status',
             DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', final_total, 0)) as total_return"),
             DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_return_paid"),
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
         );
         $customer_details = $query->first();
-
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
         $balance = ($customer_details->total_paid - $customer_details->total_invoice  + $customer_details->total_return - $customer_details->total_return_paid)+ $customer_details->deposit_balance + $customer_details->added_balance;
         // print_r( $customer_details->total_return); die();
-
-       //handle customer balance if return invoice was pending(pay later) delete returned from its debit
-        foreach($customers_details as $customer_detail){
-            if($customer_detail->type == "sell_return"){
-                $customer_detail_invoice_num = preg_replace('/[^0-9]/', '', $customer_detail->invoice_no);
-                foreach($customers_details as $cust_det){
-                    $cust_det_invoice_num =  preg_replace('/[^0-9]/', '', $cust_det->invoice_no);
-                    
-                    if($cust_det_invoice_num == $customer_detail_invoice_num && $cust_det->type == "sell" && $balance < 0 &&  $cust_det->payment_status == 'pending'){
-                        $balance += $customer_detail->final_total;
-                    }
-                }
-            }
-        }
        
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }
