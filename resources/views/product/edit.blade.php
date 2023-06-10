@@ -619,7 +619,7 @@
                                             $index_old=0;
                                         @endphp
 
-                                        @if($product->discount)
+                                        {{-- @if($product->discount)
                                             @php
                                             $index_old=1;
                                             @endphp
@@ -627,7 +627,7 @@
                                                 'row_id' => 0,
                                                 'discount_product'=>$product,
                                             ])
-                                        @endif
+                                        @endif --}}
                                         @foreach($discounts as $discount)
                                             @include('product.partial.raw_discount', [
                                             'row_id' => $loop->index + $index_old,
