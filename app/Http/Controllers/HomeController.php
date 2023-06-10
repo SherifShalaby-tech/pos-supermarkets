@@ -702,9 +702,9 @@ class HomeController extends Controller
             $gift_card_sold = GiftCard::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('balance');
         }
         $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;
-       
+
         //excluding taxes from profit as its not part of profit
-        $expense_query = Transaction::where('type', 'expense');
+        $expense_query = Transaction::where('type', 'expense')->where('payment_status' , 'paid');
         if (!empty($start_date)) {
             $expense_query->whereDate('transaction_date', '>=', $start_date);
         }
@@ -811,10 +811,10 @@ class HomeController extends Controller
         } else {
             $wages_payment = $wages_query->sum('net_amount');
         }
-      
+
         $payment_sent = $payment_purchase + $payment_expense + $wages_payment + $sell_return_payment;
         $net_profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive - $other_stock_cost - $wages_payment - $expense;
-      
+
         if (!empty($currency_id)) {
             if ($currency_id == $default_currency_id) {
                 $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
@@ -822,7 +822,7 @@ class HomeController extends Controller
                 $current_stock_value_material = $this->productUtil->getCurrentStockValueMaterialByStore($store_id);
             } else {
                 $current_stock_value = 0; //expense does not have currency
-                $current_stock_value_product = 0; //expense does not have 
+                $current_stock_value_product = 0; //expense does not have
                 $current_stock_value_material = 0; //expense does not have currency
             }
         } else {

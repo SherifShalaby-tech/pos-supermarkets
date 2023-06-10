@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashRegisterTransaction;
 use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
@@ -677,6 +678,7 @@ class CustomerController extends Controller
                 }
                 Transaction::where('return_parent_id', $transaction->id)->delete();
                 Transaction::where('parent_sale_id', $transaction->id)->delete();
+                CashRegisterTransaction::where('transaction_id' , $transaction->id)->delete();
 
                 $transaction->delete();
             }
