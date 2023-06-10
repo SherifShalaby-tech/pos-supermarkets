@@ -742,8 +742,7 @@ class ProductUtil extends Util
             //     )
             //     ->first();
             // if(!$product){
-                $product = ProductDiscount::where('product_id', 14)
-                ->where('discount', '>',0)
+                $product = ProductDiscount::where('product_id', $product_id)
                 ->where(function($query){
                     $query->where('discount_start_date','<=',date('Y-m-d'));
                     $query->where('discount_end_date','>=',date('Y-m-d'));
