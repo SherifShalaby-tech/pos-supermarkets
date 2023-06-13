@@ -65,7 +65,7 @@ $exchange_rate = !empty($sale->exchange_rate) ? $sale->exchange_rate : 1;
                 name="transaction_sell_line[{{ $loop->index }}][sell_price]" required
                 value="@if (isset($product->sell_price)) {{ @num_format($product->sell_price) }}@else{{ 0 }} @endif">
         </td>
-        <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif">
+        {{-- <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 15% @endif">
 
         <div class="input-group">
             <input type="hidden" class="form-control product_discount_type  discount_type{{$product->product_id}}"
@@ -80,18 +80,18 @@ $exchange_rate = !empty($sale->exchange_rate) ? $sale->exchange_rate : 1;
                     value="@if(!empty($product->discount)){{@num_format($product->discount)}}@else{{0}}@endif">
                     </div>
         </div>
-        </td>
-        {{-- <td style="width: 15%">
-            <input type="hidden" class="form-control product_discount_type"
+        </td> --}}
+        <td style="width: 15%">
+            <input type="hidden" class="form-control "
                 name="transaction_sell_line[{{ $loop->index }}][product_discount_type]"
                 value="@if (!empty($product->product_discount_type)){{ $product->product_discount_type }}@else{{ 0 }} @endif">
-            <input type="hidden" class="form-control product_discount_value"
+            <input type="hidden" class="form-control "
                 name="transaction_sell_line[{{ $loop->index }}][product_discount_value]"
                 value="@if (!empty($product->product_discount_value)){{ ($product->product_discount_value) }}@else{{ 0 }} @endif">
-            <input type="text" class="form-control product_discount_amount"
+            <input type="text" class="form-control "
                 name="transaction_sell_line[{{ $loop->index }}][product_discount_amount]" readonly
                value="@if (!empty($product->product_discount_amount)){{ @num_format($product->product_discount_amount) }}@else{{ 0 }} @endif">
-        </td> --}}
+        </td>
         <td style="width: 15%">
             <span class="sub_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}</span>
             <input type="hidden" class="form-control sub_total"

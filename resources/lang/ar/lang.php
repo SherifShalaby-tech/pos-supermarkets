@@ -291,7 +291,7 @@ return [
     'payment_status' => 'حالة السداد',
     'due_date' => 'تاريخ الاستحقاق',
     'notify_me' => 'أعلمني، بلغني',
-    'payment_date' => 'فترة الحساب',
+    'payment_date' => 'تاريخ السداد',
     'upload_documents' => 'تحميل المستندات',
     'ref_number' => 'رقم المرجع',
     'bank_deposit_date' => 'تاريخ الإيداع المصرفي',
