@@ -391,7 +391,6 @@ class TransactionPaymentController extends Controller
         try {
             $amount = $this->commonUtil->num_uf($request->amount);
             $transactions = Transaction::where('customer_id', $customer_id)->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])->orderBy('transaction_date', 'asc')->get();
-
             DB::beginTransaction();
             $debt_data = [
                 'amount' => $amount,
