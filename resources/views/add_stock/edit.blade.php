@@ -147,29 +147,32 @@
                                                 </td>
                                                 <td>
                                                     <span
-                                                            class="sub_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}</span>
-                                                        <input type="hidden" class="form-control sub_total"
-                                                            name="add_stock_lines[{{ $loop->index }}][sub_total]"
-                                                            value="{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}">
+                                                        class="sub_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}
+                                                    </span>
+                                                    <input type="hidden" class="form-control sub_total"
+                                                        name="add_stock_lines[{{ $loop->index }}][sub_total]"
+{{--                                                            value="{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}">--}}
+                                                        value="{{ @num_format($product->sub_total) }}">
 
                                                 </td>
                                                  @php
-                                                        $current_stock = App\Models\ProductStore::where('product_id', $product->product_id)
-                                                            ->where('store_id', $add_stock->store_id)
-                                                            ->sum('qty_available');
-                                                    @endphp
-                                                    <td>
-                                                        <input type="hidden" name="current_stock" class="current_stock"
-                                                            value="@if (isset($current_stock)) {{ preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock) }}@else{{ 0 }} @endif">
-                                                        <span class="current_stock_text">
-                                                            @if (isset($current_stock))
-                                                                {{ preg_match('/\.\d*[1-9]+/', (string)$current_stock) ? $current_stock : @num_format($current_stock) }}@else{{ 0 }}
-                                                            @endif
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div class="i-checks"><input name="add_stock_lines[{{$loop->index}}][stock_pricechange]" id="active" type="checkbox" class="" checked value="1"></div>
-                                                    </td>
+
+                                                           $current_stock = App\Models\ProductStore::where('product_id', $product->product_id)
+                                                               ->where('store_id', $add_stock->store_id)
+                                                               ->sum('qty_available');
+                                                @endphp
+                                                <td>
+                                                    <input type="hidden" name="current_stock" class="current_stock"
+                                                        value="@if (isset($current_stock)) {{ number_format($current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }}@else{{ 0 }} @endif">
+                                                    <span class="current_stock_text">
+                                                        @if (isset($current_stock))
+                                                            {{ number_format($current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }}@else{{ 0 }}
+                                                        @endif
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="i-checks"><input name="add_stock_lines[{{$loop->index}}][stock_pricechange]" id="active" type="checkbox" class="" checked value="1"></div>
+                                                </td>
                                                 <td rowspan="2">
                                                     <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$loop->index}}"><i
                                                             class="fa fa-times"></i></button>
@@ -501,7 +504,7 @@
                 $('#method').attr('required', true);
                 $('#paid_on').attr('required', true);
                 $('.payment_fields').removeClass('hide');
-                
+
             } else {
                 $('.payment_fields').addClass('hide');
             }
@@ -531,7 +534,7 @@
                 $('#method').attr('required', true);
                 $('#paid_on').attr('required', true);
                 $('.payment_fields').removeClass('hide');
-                
+
             } else {
                 $('.payment_fields').addClass('hide');
             }
