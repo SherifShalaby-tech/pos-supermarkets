@@ -25,6 +25,7 @@
                                     <th>@lang('lang.name')</th>
                                     <th>@lang('lang.description')</th>
                                     <th>@lang('lang.sort')</th>
+                                    <th>@lang('lang.products_count')</th>
                                     <th>@lang('lang.active')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
@@ -37,6 +38,7 @@
                                         <td>{{ $product_class->name }}</td>
                                         <td>{{ $product_class->description }}</td>
                                         <td>{{ $product_class->sort }}</td>
+                                        <td>{{$product_class->products_count}}</td>
                                         <td>
                                             @if ($product_class->status == 1)
                                                 @lang('lang.yes')

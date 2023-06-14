@@ -38,7 +38,7 @@ class ProductClassController extends Controller
      */
     public function index()
     {
-        $product_classes = ProductClass::orderBy('sort', 'asc')->get();
+        $product_classes = ProductClass::withCount('products')->orderBy('sort', 'asc')->get();
 
         return view('product_class.index')->with(compact(
             'product_classes'
