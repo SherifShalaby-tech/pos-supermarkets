@@ -152,7 +152,29 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
 //         var myDropzone = this;
 $("#submit-btn").on("click", function (e) {
     e.preventDefault();
-    if ($("#product-form").valid()) {
+    let sku = $('#sku').val();
+  
+    if (sku.trim() !== "") {
+      $.ajax({
+        method: "get",
+        url: "/product/check-sku/" + sku,
+        data: {},
+        success: function (result) {
+          console.log(result.success);
+          if (!result.success) {
+            swal("Error", result.msg, "error");
+          } else {
+            submitForm();
+          }
+        },
+      });
+    } else {
+      submitForm();
+    }
+  });
+  
+    function submitForm() {
+        if ($("#product-form").valid()) {
             tinyMCE.triggerSave();
             document.getElementById("loader").style.display = "block";
             document.getElementById("content").style.display = "none";
@@ -168,9 +190,9 @@ $("#submit-btn").on("click", function (e) {
                         $("#name").val("").change();
                         $(".translations").val("").change();
 
-                        if(!$('#clear_all_input_form').is(':checked')){
-                            $('.clear_input_form').val('');
-                            $('.clear_input_form').selectpicker('refresh');
+                        if (!$('#clear_all_input_form').is(':checked')) {
+                        $('.clear_input_form').val('');
+                        $('.clear_input_form').selectpicker('refresh');
                         }
                         const previewContainer = document.querySelector('.preview-container');
                         previewContainer.innerHTML = '';
@@ -186,7 +208,8 @@ $("#submit-btn").on("click", function (e) {
                 },
             });
         }
-});
+    }
+  
 //
 //         this.on("sending", function (file, xhr, formData) {
 //             document.getElementById("loader").style.display = "block";
