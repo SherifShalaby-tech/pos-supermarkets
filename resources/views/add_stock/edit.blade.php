@@ -147,12 +147,13 @@
                                                 </td>
                                                 <td>
                                                     <span
-                                                        class="sub_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}
+{{--                                                        class="sub_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}--}}
+                                                        class="sub_total_span">{{ number_format($product->sub_total,2) }}
                                                     </span>
                                                     <input type="hidden" class="form-control sub_total"
                                                         name="add_stock_lines[{{ $loop->index }}][sub_total]"
 {{--                                                            value="{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}">--}}
-                                                        value="{{ @num_format($product->sub_total) }}">
+                                                        value="{{ number_format($product->sub_total,2) }}">
 
                                                 </td>
                                                  @php
