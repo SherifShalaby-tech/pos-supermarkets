@@ -1406,5 +1406,7 @@ return [
 
     'Discount_from_the_cost_of_delivery'=>'المبلغ المخصوم من تكلفة الدليفري',
     'The_actual_delivery_cost'=>'القيمة الفعلية لتكلفة الدليفري',
+    'categories_count' => 'عدد الاقسام',
+
 
 ];
