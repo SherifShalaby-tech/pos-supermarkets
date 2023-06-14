@@ -1284,5 +1284,6 @@ return [
     'add_to_customer_balance' => 'Müşteri bakiyesine ekle',
     'select_class_value' =>'Lütfen sınıf alanı için bir değer seçin.',
     'products_count' => 'Ürün Sayısı',
+    'categories_count' => 'Kategoriler Sayısı',
 
 ];

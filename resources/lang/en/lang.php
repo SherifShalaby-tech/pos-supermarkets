@@ -1422,5 +1422,6 @@ return [
     'products_count' => 'Products Count',
     'Discount_from_the_cost_of_delivery' => 'Amount deducted from the cost of delivery',
     'The_actual_delivery_cost' => 'The value found for the delivery cost',
+    'categories_count' => 'Categories Count',
 
 ];
