@@ -11,6 +11,8 @@ use App\Models\Category;
 use App\Models\Color;
 use App\Models\Customer;
 use App\Models\CustomerType;
+use App\Models\ExpenseBeneficiary;
+use App\Models\ExpenseCategory;
 use App\Models\Grade;
 use App\Models\Product;
 use App\Models\ProductClass;
@@ -601,6 +603,36 @@ class ProductController extends Controller
                     "value_of_removed_stocks" => $data["value_of_removed_stocks"],
                     "added_by" => auth()->id(),
                 ]);
+                $expenses_category = ExpenseCategory::where('name','Damage')->orWhere('name','damage')->first();
+                if(!$expenses_category){
+                    $expenses_category = ExpenseCategory::create([
+                        'name' => 'Damage',
+                        'created_by' => 1
+                    ]);
+                }
+                $expenses_beneficiary = ExpenseBeneficiary::where('name','expiry products')->first();
+                if(!$expenses_beneficiary){
+                    $expenses_beneficiary = ExpenseBeneficiary::create([
+                        'name' => 'damage products',
+                        'expense_category_id' => $expenses_category->id,
+                        'created_by' => 1,
+                    ]);
+                }
+          
+                Transaction::create([
+                    'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'store_id' => $store->store_id,
+                    'type' => 'expense',
+                    'status' => 'final',
+                    'invoice_no' => $this->productUtil->getNumberByType('expense'),
+                    'transaction_date' =>$productExpiry->created_at,
+                    'expense_category_id' => $expenses_category->id,
+                    'expense_beneficiary_id' => $expenses_beneficiary->id,
+                    'source_id' => 1,
+                    'source_type' => 'store',
+                    'created_by' => auth()->id(),
+                ]);
             }
 
         }
@@ -673,7 +705,6 @@ class ProductController extends Controller
            $stockRow->decrement("quantity",$data["quantity_to_be_removed"]);
            $store = ProductStore::where("variation_id",$variation->id)->where("product_id",$variation->product_id)->first();
            $this->productUtil->decreaseProductQuantity($variation->product_id,$variation->id,$store->store_id,$data["quantity_to_be_removed"]);
-           $stockRow->increment("expired_qauntity",$data["quantity_to_be_removed"]);
            if ($data["quantity_to_be_removed"] > 0){
                $productExpiry = ProductExpiryDamage::query()->create([
                    "status" => $data["status"],
@@ -684,6 +715,36 @@ class ProductController extends Controller
                    "value_of_removed_stocks" => $data["value_of_removed_stocks"],
                    "added_by" => auth()->id(),
                ]);
+               $expenses_category = ExpenseCategory::where('name','Expiry')->orWhere('name','expiry')->first();
+                if(!$expenses_category){
+                    $expenses_category = ExpenseCategory::create([
+                        'name' => 'Expiry',
+                        'created_by' => 1
+                    ]);
+                }
+                $expenses_beneficiary = ExpenseBeneficiary::where('name','expiry products')->first();
+                if(!$expenses_beneficiary){
+                    $expenses_beneficiary = ExpenseBeneficiary::create([
+                        'name' => 'expiry products',
+                        'expense_category_id' => $expenses_category->id,
+                        'created_by' => 1,
+                    ]);
+                }
+          
+                Transaction::create([
+                    'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'store_id' => $store->store_id,
+                    'type' => 'expense',
+                    'status' => 'final',
+                    'invoice_no' => $this->productUtil->getNumberByType('expense'),
+                    'transaction_date' =>$productExpiry->created_at,
+                    'expense_category_id' => $expenses_category->id,
+                    'expense_beneficiary_id' => $expenses_beneficiary->id,
+                    'source_id' => 1,
+                    'source_type' => 'store',
+                    'created_by' => auth()->id(),
+                ]);
            }
 
         }
