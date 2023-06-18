@@ -1175,7 +1175,6 @@ class SellPosController extends Controller
             }
         }
     }
-
     /**
      * get the row for non identifiable products
      *
@@ -1894,4 +1893,17 @@ class SellPosController extends Controller
         }
         return $output;
     }
+    public function addEditProductRow(Request $request){
+        $transaction_id=$request->transaction_id;
+        $products =TransactionSellLine::where('transaction_id', $transaction_id)->get();
+
+        $html_content =  view('sale.partials.edit_product_row')
+        ->with(compact('products'))->render();
+        $output['success'] = true;
+        $output['html_content'] = $html_content;
+
+        return  $html_content;
+    }
+        
+    
 }

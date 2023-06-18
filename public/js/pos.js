@@ -3021,6 +3021,7 @@ $(document).on("change", ".discount_category", function (e) {
         success: function (response) {
             if(response.result){
                 console.log(response.result)
+                console.log("dddddd")
                 qty=__read_number($(this).find('.quantity'))
                 $(".discount_type"+product_id).val(response.result.discount_type);
                 __write_number($(".discount_value"+product_id), response.result.discount);
@@ -3031,6 +3032,7 @@ $(document).on("change", ".discount_category", function (e) {
 
             }
             else{
+                alert("333")
                 $(".discount_type"+product_id).val('');
                 __write_number($(".discount_value"+product_id), 0);
                 __write_number($(".discount_amount"+product_id), 0);
