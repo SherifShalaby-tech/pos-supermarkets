@@ -272,4 +272,33 @@
 <script type="text/javascript">
 
 </script>
+<script> 
+$("#submit-btn").on("click", function (e) {
+    e.preventDefault();
+    setTimeout(() => {
+        if ($("#product-edit-form").valid()) {
+            tinyMCE.triggerSave();
+            $.ajax({
+                type: "POST",
+                url: $("#product-edit-form").attr("action"),
+                data: $("#product-edit-form").serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        swal("Success", response.msg, "success");
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }
+                },
+                error: function (response) {
+                    if (!response.success) {
+                        swal("Error", response.msg, "error");
+                    }
+                },
+            });
+        }
+    });
+});
+
+</script>
 @endsection
