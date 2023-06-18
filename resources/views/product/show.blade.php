@@ -99,7 +99,7 @@
                                 @foreach ($add_stocks as $add_stock)
                                     <tr>
                                         <td>{{ $add_stock->store->name ?? '' }}</td>
-                                        <td>{{ @num_format($add_stock->current_stock) }}</td>
+                                        <td>{{ number_format($add_stock->current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }}</td>
                                         <td>{{ @format_date($add_stock->expiry_date) }}</td>
                                     </tr>
                                 @endforeach
@@ -133,7 +133,7 @@
                                     </td>
                                     <td>{{ $stock_detial->variation->sub_sku ?? '' }}</td>
                                     <td>{{ $stock_detial->store->name ?? '' }}</td>
-                                    <td>{{ @num_format($stock_detial->qty_available) }}</td>
+                                    <td>{{ @number_format($stock_detial->qty_available,App\Models\System::getProperty('numbers_length_after_dot')) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -265,14 +265,14 @@ class ProductController extends Controller
                     $price= AddStockLine::where('variation_id',$row->variation_id)
                         ->latest()->first();
                     $price= $price? ($price->sell_price > 0 ? $price->sell_price : $row->default_sell_price):$row->default_sell_price;
-                    return $this->productUtil->num_f($price);
+                    return number_format($price,2);
                 })//, '{{@num_format($default_sell_price)}}')
                 ->editColumn('default_purchase_price', function ($row) {
                     $price= AddStockLine::where('variation_id',$row->variation_id)
                     ->latest()->first();
                     $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
 
-                    return $this->productUtil->num_f($price);
+                    return number_format($price,2);
                 })//, '{{@num_format($default_purchase_price)}}')
                 ->addColumn('tax', '{{$tax}}')
                 ->editColumn('brand', '{{$brand}}')
@@ -307,8 +307,14 @@ class ProductController extends Controller
                     }
                     return $size;
                 })
+
                 ->editColumn('grade', '{{$grade}}')
-                ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
+//                ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
+                ->editColumn('current_stock', function ($row) {
+                    if(!$row->is_service)
+                        return $this->productUtil->num_f($row->current_stock ,false,null,true);
+                    return 0;
+                })
                 ->addColumn('current_stock_value', function ($row) {
                     $price= AddStockLine::where('variation_id',$row->variation_id)
                         ->whereColumn('quantity',">",'quantity_sold')->first();
