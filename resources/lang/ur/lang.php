@@ -996,6 +996,7 @@ return [
     'start_time' => 'وقت آغاز',
     'end_time' => 'اختتامی وقت',
     'edited_by' => 'کی طرف سے ترمیم کریں',
+    'edited_at' => 'پر ترمیم کی',
     'out_of_stock' => 'زخیرے سے باہر',
 
     'new_price' => 'نئی قیمت',

@@ -243,6 +243,7 @@ class ProductController extends Controller
                         return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
                     }
                 })
+
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
                 ->editColumn('sub_sku', '{{$sub_sku}}')
@@ -346,6 +347,8 @@ class ProductController extends Controller
                     }
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
+                ->editColumn('created_at', '{{@format_datetime($created_at)}}')
+                ->editColumn('updated_at', '{{@format_datetime($updated_at)}}')
                 ->addColumn('supplier', function ($row) {
                     $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
                         ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
