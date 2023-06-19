@@ -366,7 +366,7 @@ class TransactionPaymentController extends Controller
      * @param int $customer_id
      * @return void
      */
-    public function getCustomerDue($customer_id)
+    public function getCustomerDue($customer_id, $extract_due = 'false')
     {
         $customer = Customer::find($customer_id);
 
@@ -376,7 +376,8 @@ class TransactionPaymentController extends Controller
         return view('transaction_payment.pay_customer_due')->with(compact(
             'payment_type_array',
             'due',
-            'customer'
+            'customer',
+            'extract_due'
         ));
     }
 
@@ -390,57 +391,42 @@ class TransactionPaymentController extends Controller
     {
         try {
             $amount = $this->commonUtil->num_uf($request->amount);
-            $transactions = Transaction::where('customer_id', $customer_id)->whereIn('type', ['sell','addToBalance'])->whereIn('payment_status', ['pending', 'partial'])->orderBy('transaction_date', 'asc')->get();
-            DB::beginTransaction();
-            $debt_data = [
-                'amount' => $amount,
-                'type' => 'Debt',
-                'customer_id' => $request->customer_id,
-                'method' => $request->method,
-                'paid_on' => $this->commonUtil->uf_date($request->paid_on),
-                'ref_number' => $request->ref_number,
-                'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
-                'bank_name' => $request->bank_name,
-                'created_by' => auth()->id(),
-            ];
-            $debt_payment=  DebtPayment::create($debt_data);
-            if ($request->upload_documents) {
-                foreach ($request->file('upload_documents', []) as $key => $doc) {
-                    $debt_payment->addMedia($doc)->toMediaCollection('debt_payment');
-                }
+            $customer = Customer::find($customer_id);
+            if($this->commonUtil->num_uf($request->balance)<$amount && $request->extract_due == 'true'){
+                DB::commit();
+                $output = [
+                    'success' => false,
+                    'msg' => __('lang.amount_greater_than_balance')
+                ];
             }
-            $debt_payment_transactions=[];
-            foreach ($transactions as $transaction) {
-                $due_for_transaction = $this->getDueForTransaction($transaction->id);
-                $paid_amount = 0;
-                if ($amount > 0) {
-                    if ($amount >= $due_for_transaction) {
-                        $paid_amount = $due_for_transaction;
-                        $amount -= $due_for_transaction;
-                    } else if ($amount < $due_for_transaction) {
-                        $paid_amount = $amount;
-                        $amount = 0;
-                    }
+                $transactions = Transaction::where('customer_id', $customer_id)->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])->orderBy('transaction_date', 'asc')->get();
 
-                    $payment_data = [
-                        'transaction_payment_id' =>  !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
-                        'transaction_id' =>  $transaction->id,
-                        'amount' => $paid_amount,
-                        'method' => $request->method,
-                        'paid_on' => $this->commonUtil->uf_date($request->paid_on),
-                        'ref_number' => $request->ref_number,
-                        'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
-                        'bank_name' => $request->bank_name,
-                    ];
+                DB::beginTransaction();
+                $remaining_due_amount=0;
+                foreach ($transactions as $transaction) {
+                    $due_for_transaction = $this->getDueForTransaction($transaction->id);
+                    $paid_amount = 0;
+                    if ($amount > 0) {
+                        if ($amount >= $due_for_transaction) {
+                            $paid_amount = $due_for_transaction;
+                            $amount -= $due_for_transaction;
+                        } else if ($amount < $due_for_transaction) {
+                            $paid_amount = $amount;
+                            $amount = 0;
+                        }
+                        $remaining_due_amount+=$paid_amount;
+                        $payment_data = [
+                            'transaction_payment_id' =>  !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
+                            'transaction_id' =>  $transaction->id,
+                            'amount' => $paid_amount,
+                            'method' => $request->method,
+                            'paid_on' => $this->commonUtil->uf_date($request->paid_on),
+                            'ref_number' => $request->ref_number,
+                            'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
+                            'bank_name' => $request->bank_name,
+                        ];
 
-                    $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
-                    if($transaction_payment){
-                        DebtTransactionPayment::create([
-                            'debt_payment_id'=>$debt_payment->id,
-                            'transaction_payment_id'=>$transaction_payment->id,
-                            'amount'=>$paid_amount,
-                        ]);
-                        $debt_payment_transactions[$transaction_payment->id]=$paid_amount;
+                        $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
                         $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
                         $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
 
@@ -451,12 +437,40 @@ class TransactionPaymentController extends Controller
                         }
                     }
                 }
-            }
-            DB::commit();
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
-            ];
+                if ($request->extract_due == 'true') {
+                    //update customer deposit balance if any
+                    if($this->commonUtil->num_uf($request->amount)==($customer->added_balance-$remaining_due_amount)){
+                        $customer->added_balance = $customer->added_balance-$this->commonUtil->num_uf($request->amount)-$remaining_due_amount;
+                        $customer->save();
+                        DB::commit();
+                        $output = [
+                            'success' => true,
+                            'msg' => __('lang.success')
+                        ];
+                    }elseif($this->commonUtil->num_uf($request->amount)<($customer->added_balance-$remaining_due_amount)){
+                        $customer->added_balance = $customer->added_balance-($this->commonUtil->num_uf($request->amount)-$remaining_due_amount);
+                        $customer->save();
+                        DB::commit();
+                        $output = [
+                            'success' => true,
+                            'msg' => __('lang.success')
+                        ];
+                    }
+                    else{
+                        DB::commit();
+                        $output = [
+                            'success' => false,
+                            'msg' => __('lang.amount_greater_than_balance')
+                        ];
+                    }
+                }else{
+                    DB::commit();
+                    $output = [
+                        'success' => true,
+                        'msg' => __('lang.success')
+                    ];
+                }
+            
         } catch (\Exception $e) {
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [
@@ -470,6 +484,90 @@ class TransactionPaymentController extends Controller
 
         return redirect()->back()->with('status', $output);
     }
+    // public function payCustomerDue(Request $request, $customer_id)
+    // {
+    //     try {
+    //         $amount = $this->commonUtil->num_uf($request->amount);
+    //         $transactions = Transaction::where('customer_id', $customer_id)->whereIn('type', ['sell','addToBalance'])->whereIn('payment_status', ['pending', 'partial'])->orderBy('transaction_date', 'asc')->get();
+    //         DB::beginTransaction();
+    //         $debt_data = [
+    //             'amount' => $amount,
+    //             'type' => 'Debt',
+    //             'customer_id' => $request->customer_id,
+    //             'method' => $request->method,
+    //             'paid_on' => $this->commonUtil->uf_date($request->paid_on),
+    //             'ref_number' => $request->ref_number,
+    //             'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
+    //             'bank_name' => $request->bank_name,
+    //             'created_by' => auth()->id(),
+    //         ];
+    //         $debt_payment=  DebtPayment::create($debt_data);
+    //         if ($request->upload_documents) {
+    //             foreach ($request->file('upload_documents', []) as $key => $doc) {
+    //                 $debt_payment->addMedia($doc)->toMediaCollection('debt_payment');
+    //             }
+    //         }
+    //         $debt_payment_transactions=[];
+    //         foreach ($transactions as $transaction) {
+    //             $due_for_transaction = $this->getDueForTransaction($transaction->id);
+    //             $paid_amount = 0;
+    //             if ($amount > 0) {
+    //                 if ($amount >= $due_for_transaction) {
+    //                     $paid_amount = $due_for_transaction;
+    //                     $amount -= $due_for_transaction;
+    //                 } else if ($amount < $due_for_transaction) {
+    //                     $paid_amount = $amount;
+    //                     $amount = 0;
+    //                 }
+
+    //                 $payment_data = [
+    //                     'transaction_payment_id' =>  !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
+    //                     'transaction_id' =>  $transaction->id,
+    //                     'amount' => $paid_amount,
+    //                     'method' => $request->method,
+    //                     'paid_on' => $this->commonUtil->uf_date($request->paid_on),
+    //                     'ref_number' => $request->ref_number,
+    //                     'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
+    //                     'bank_name' => $request->bank_name,
+    //                 ];
+
+    //                 $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+    //                 if($transaction_payment){
+    //                     DebtTransactionPayment::create([
+    //                         'debt_payment_id'=>$debt_payment->id,
+    //                         'transaction_payment_id'=>$transaction_payment->id,
+    //                         'amount'=>$paid_amount,
+    //                     ]);
+    //                     $debt_payment_transactions[$transaction_payment->id]=$paid_amount;
+    //                     $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+    //                     $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+
+    //                     if ($request->upload_documents) {
+    //                         foreach ($request->file('upload_documents', []) as $key => $doc) {
+    //                             $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         DB::commit();
+    //         $output = [
+    //             'success' => true,
+    //             'msg' => __('lang.success')
+    //         ];
+    //     } catch (\Exception $e) {
+    //         Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+    //         $output = [
+    //             'success' => false,
+    //             'msg' => __('lang.something_went_wrong')
+    //         ];
+    //     }
+    //     if (request()->ajax()) {
+    //         return $output;
+    //     }
+
+    //     return redirect()->back()->with('status', $output);
+    // }
 
     /**
      * calculate the amount due for transaction

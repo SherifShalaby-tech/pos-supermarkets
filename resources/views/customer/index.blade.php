@@ -89,6 +89,16 @@
                                             <li class="divider"></li>
                                         @endif
                                     @endcan
+                                    @can('customer_module.add_payment.create_and_edit')
+                                    @if ($balances[$customer->id] > 0)
+                                        <li>
+                                            <a data-href="{{ action('TransactionPaymentController@getCustomerDue', ['customer_id'=>$customer->id,'extract_due'=>'true']) }}"
+                                                class="btn-modal" data-container=".view_modal"><i
+                                                    class="fa fa-money btn"></i>@lang('lang.extract_customer_due')</a>
+                                        </li>
+                                        <li class="divider"></li>
+                                    @endif
+                                    @endcan
                                     @can('adjustment.customer_balance_adjustment.create_and_edit')
                                         <li>
                                             <a href="{{ action('CustomerBalanceAdjustmentController@create', ['customer_id' => $customer->id]) }}"

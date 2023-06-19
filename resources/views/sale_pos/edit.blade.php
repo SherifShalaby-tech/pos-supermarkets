@@ -293,7 +293,7 @@
                                                         > <i
                                                             class="dripicons-document-edit"></i></button></span><span
                                                     id="discount">0.00</span>
-                                                    @endif
+                                                    {{-- @endif --}}
                                             </div>
                                             <div class="col-sm-4">
                                                 <span class="totals-title">{{ __('lang.tax') }}</span><span
