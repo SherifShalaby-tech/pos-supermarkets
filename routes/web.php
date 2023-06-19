@@ -200,7 +200,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::resource('quotation', QuotationController::class);
 
     Route::post('transaction-payment/pay-customer-due/{customer_id}', 'TransactionPaymentController@payCustomerDue');
-    Route::get('transaction-payment/get-customer-due/{customer_id}', 'TransactionPaymentController@getCustomerDue');
+    Route::get('transaction-payment/get-customer-due/{customer_id}/{extract_due?}', 'TransactionPaymentController@getCustomerDue');
     Route::get('transaction-payment/add-payment/{id}', 'TransactionPaymentController@addPayment');
     Route::get('transaction-payment/by-method-gift-card/{gift_card_number}', 'TransactionPaymentController@showMethodGiftCard');
     Route::resource('transaction-payment', TransactionPaymentController::class);
@@ -212,6 +212,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('pos/get-non-identifiable-item-row', 'SellPosController@getNonIdentifiableItemRow');
     Route::get('pos/get-products', 'SellPosController@getProducts');
     Route::get('pos/add-product-row', 'SellPosController@addProductRow');
+    Route::get('sale/addEditProductRow', 'SellPosController@addEditProductRow');
     Route::get('pos/add-discounts', 'SellPosController@addDiscounts');
     Route::get('pos/get-product-discount', 'SellPosController@getProductDiscount');
     Route::get('pos/get-product-items-by-filter', 'SellPosController@getProductItemsByFilter');
@@ -240,6 +241,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('dining-table/get-dropdown-by-dining-room/{id}', 'DiningTableController@getDropdownByDiningRoom');
     Route::resource('dining-table', DiningTableController::class);
 
+    
     Route::post('sale/save-import', 'SellController@saveImport');
     Route::get('sale/get-import', 'SellController@getImport');
     Route::get('sale/get-delivery-list', 'SellController@getDeliveryList');
