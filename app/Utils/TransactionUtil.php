@@ -233,8 +233,9 @@ class TransactionUtil extends Util
      */
     public function updateSoldQuantityInAddStockLine($product_id, $variation_id, $store_id, $new_quantity, $old_quantity,$stock_id=null)
     {
-
-        $qty_difference =$new_quantity - $old_quantity;
+        $qtyByUnit=Variation::find($variation_id)->number_vs_base_unit==0?1:Variation::find($variation_id)->number_vs_base_unit;
+        $qty_difference = ($qtyByUnit?$qtyByUnit*$new_quantity:$new_quantity) - $old_quantity;
+        // $qty_difference =$new_quantity - $old_quantity;
         if ($qty_difference != 0) {
             $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
                 ->where('transactions.store_id', $store_id)
