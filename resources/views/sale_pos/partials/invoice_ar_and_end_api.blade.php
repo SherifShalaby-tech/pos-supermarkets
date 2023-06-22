@@ -365,7 +365,7 @@
                                 </th>
                             </tr>
                         @endif
-                        @if (!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
+                        @if (!empty($transaction->deliveryman))
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->delivery_cost) }}
