@@ -133,17 +133,17 @@ class AddStockController extends Controller
                 ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     $final_total =  $row->final_total;
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($final_total,2) . '</span>';
                 })
                 ->addColumn('paid_amount', function ($row) use ($default_currency_id) {
                     $amount_paid =  $row->transaction_payments->sum('amount');
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($amount_paid,2) . '</span>';
                 })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $due =  $row->final_total - $row->transaction_payments->sum('amount');
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($due,2) . '</span>';
                 })
                 ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);
@@ -605,7 +605,7 @@ class AddStockController extends Controller
                     }else{
                         $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
                     }
-                    
+
                 }
             }
 
@@ -615,8 +615,8 @@ class AddStockController extends Controller
                 }
             }
         }
-        
-       
+
+
         if($transaction->payment_status == "pending" && $transaction_old_payment_status == "paid"){
            $TransactionPayment = TransactionPayment::where('transaction_id', $transaction->id)->where('transaction_id', $transaction->id)->first();
             if($TransactionPayment){
@@ -635,10 +635,10 @@ class AddStockController extends Controller
                 }
                 $TransactionPayment->delete();
             }
-            
-           
-          
-            
+
+
+
+
         }else{
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
         }
@@ -791,7 +791,7 @@ class AddStockController extends Controller
                 $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
                 return view('add_stock.partials.batch_row')
                     ->with(compact('products','row_count','exchange_rate','batch_count'));
-            
+
         }
     }
     public function getPurchaseOrderDetails($id)

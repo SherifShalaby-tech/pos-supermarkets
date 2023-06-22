@@ -69,7 +69,7 @@
                                                 <th>@lang('lang.email')</th>
                                                 <th>@lang('lang.mobile')</th>
                                                 <th>@lang('lang.job_title')</th>
-                                                <th>@lang('lang.wage')</th>
+                                                <th class="sum">@lang('lang.wage')</th>
                                                 <th>@lang('lang.annual_leave_balance')</th>
                                                 <th>@lang('lang.age')</th>
                                                 <th>@lang('lang.start_working_date')</th>
@@ -271,7 +271,23 @@
 
 
                                         </tbody>
-
+                                        <tfoot>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>{{$currency_symbol}}</td>
+                                                <td></td>
+                                                <th style="text-align: right">@lang('lang.total')</th>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
 
@@ -431,59 +447,24 @@
                     },
                 ],
                 createdRow: function(row, data, dataIndex) {},
-                footerCallback: function(row, data, start, end, display) {
-                    var intVal = function(i) {
-                        return typeof i === "string" ?
-                            i.replace(/[\$,]/g, "") * 1 :
-                            typeof i === "number" ?
-                            i :
-                            0;
-                    };
-
-                    this.api()
-                        .columns(".currencies", {
-                            page: "current"
-                        }).every(function() {
-                            var column = this;
-                            let currencies_html = '';
-                            $.each(currency_obj, function(key, value) {
-                                currencies_html +=
-                                    `<h6 class="footer_currency" data-is_default="${value.is_default}"  data-currency_id="${value.currency_id}">${value.symbol}</h6>`
-                                $(column.footer()).html(currencies_html);
-                            });
-                        })
-
-
-                    this.api()
-                        .columns(".sum", {
-                            page: "current"
-                        })
-                        .every(function() {
-                            var column = this;
-                            var currency_total = [];
-                            $.each(currency_obj, function(key, value) {
-                                currency_total[value.currency_id] = 0;
-                            });
-                            column.data().each(function(group, i) {
-                                b = $(group).text();
-                                currency_id = $(group).data('currency_id');
-
-                                $.each(currency_obj, function(key, value) {
-                                    if (currency_id == value.currency_id) {
-                                        currency_total[value.currency_id] += intVal(
-                                            b);
-                                    }
-                                });
-                            });
-                            var footer_html = '';
-                            $.each(currency_obj, function(key, value) {
-                                footer_html +=
-                                    `<h6 class="currency_total currency_total_${value.currency_id}" data-currency_id="${value.currency_id}" data-is_default="${value.is_default}" data-conversion_rate="${value.conversion_rate}" data-base_conversion="${currency_total[value.currency_id] * value.conversion_rate}" data-orig_value="${currency_total[value.currency_id]}">${__currency_trans_from_en(currency_total[value.currency_id], false)}</h6>`
-                            });
-                            $(column.footer()).html(
-                                footer_html
+                "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(),
+                        intVal = function (i) {
+                            return typeof i === 'string' ?
+                                i.replace(/[, Rs]|(\.\d{2})/g,"")* 1 :
+                                typeof i === 'number' ?
+                                i : 0;
+                        },
+                        total2 = api
+                            .column(5)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                
+                    $(api.column(5).footer()).html(
+                            total2
                             );
-                        });
                 },
             });
             $(document).on('change', '.filter', function() {

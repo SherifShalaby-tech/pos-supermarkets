@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Currency;
 use App\Models\CustomerType;
 use App\Models\Employee;
 use App\Models\JobType;
@@ -294,9 +295,10 @@ class EmployeeController extends Controller
                 ->make(true);
         }
 
-
+        $currency_symbol=Currency::find(System::getProperty('currency'))->symbol;
         return view('employee.index')->with(compact(
-            'employees'
+            'employees',
+            'currency_symbol'
         ));
     }
 

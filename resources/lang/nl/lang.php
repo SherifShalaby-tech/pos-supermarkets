@@ -997,6 +997,7 @@ return [
     'start_time' => 'Starttijd',
     'end_time' => 'Eindtijd',
     'edited_by' => 'Bewerkt door',
+    'edited_at' => 'Bewerkt op',
     'out_of_stock' => 'Uitverkocht',
 
     'new_price' => 'Nieuwe prijs',

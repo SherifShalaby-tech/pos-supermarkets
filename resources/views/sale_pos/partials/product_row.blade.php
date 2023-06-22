@@ -36,7 +36,8 @@
                     <input type="hidden" id="{{$ex}}" name="old_ex" value="1">
                 </p>
             @endif
-            <small>@if($product->batch_number){{$product->batch_number}}@endif </small>
+            <small class="text-danger">@if($Variation->unit)<br>{{$Variation->unit->name}}@endif</small>
+            <small>@if($product->batch_number)<br>{{$product->batch_number}}@endif </small>
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][is_service]" class="is_service"
                    value="{{$product->is_service}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][have_weight]" class="have_weight"
@@ -98,7 +99,7 @@
                 </button>
             </span>
                 <input type="number" class="form-control quantity  qty numkey input-number" step="any"
-                       autocomplete="off" style="width: 50px;" @if($check_unit->name == "قطعه" || $check_unit->name == "Piece") oninput="this.value = Math.round(this.value);" @endif
+                       autocomplete="off" style="width: 50px;" @if($check_unit->name == "قطعه" || $check_unit->name == "Piece") oninput="this.value = Math.round(this.value);" @endif id="quantity"
                        @if(!$product->is_service)max="{{$product->qty_available}}"@endif
                        name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
                        required

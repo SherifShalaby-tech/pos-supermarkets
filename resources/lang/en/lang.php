@@ -1076,6 +1076,7 @@ return [
     'start_time' => 'Start Time',
     'end_time' => 'End Time',
     'edited_by' => 'Edited By',
+    'edited_at' => 'Edited At',
     'out_of_stock' => 'Out of Stock',
 
     'new_price' => 'New Price',

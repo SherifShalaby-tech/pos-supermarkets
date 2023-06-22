@@ -388,11 +388,14 @@ $(document).on("change", ".purchase_price", function () {
 $(document).on("change", ".quantity", function () {
     let tr = $(this).closest("tr");
     let old_qty=parseInt($(this).data('val'));
+    let number_vs_base_unit = __read_number($(tr).find("#number_vs_base_unit"));
     let current_stock = __read_number($(tr).find(".current_stock"));
     let qty = __read_number($(tr).find(".quantity"));
     let is_service = parseInt($(tr).find(".is_service").val());
     let purchase_price = __read_number($(tr).find(".purchase_price"));
     // alert(22)
+    qty=qty * number_vs_base_unit;
+    old_qty=old_qty * number_vs_base_unit;
     let new_qty =0;
     if(current_stock==0){
         new_qty=current_stock + qty;

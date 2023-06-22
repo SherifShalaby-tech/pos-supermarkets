@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="card mt-3">
-            
+
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-3">
@@ -199,8 +199,8 @@
                             {!! Form::label('show_zero_stocks',"Don't show zero stocks" . ':') !!}
                             {!! Form::checkbox('show_zero_stocks', 1, false, ['class' => ' form-control  show_zero_stocks','data-live-search' => 'true',
                             ], request()->show_zero_stocks ? true : false) !!}
-                            
-                            
+
+
                         </div>
                     </div>
                     <input type="hidden" name="product_id" id="product_id" value="">
@@ -321,7 +321,9 @@
                     <th>@lang('lang.supplier')</th>
                     <th>@lang('lang.active')</th>
                     <th>@lang('lang.created_by')</th>
+                    <th>@lang('lang.date_of_creation')</th>
                     <th>@lang('lang.edited_by')</th>
+                    <th>@lang('lang.edited_at')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
@@ -350,7 +352,7 @@
                 </tr>
             </tfoot>
         </table>
-        
+
     </div>
 @endsection
 
@@ -423,8 +425,9 @@
                         d.customer_type_id = $('#customer_type_id').val();
                         d.active = $('#active').val();
                         d.created_by = $('#created_by').val();
+                        d.created_at = $('#dat').val();
                         d.show_zero_stocks = $('#show_zero_stocks').val();
-                        
+
                     }
                 },
                 columnDefs: [{
@@ -543,8 +546,16 @@
                         name: 'users.name'
                     },
                     {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                    {
                         data: 'edited_by_name',
                         name: 'edited.name'
+                    },
+                    {
+                        data: 'updated_at',
+                        name: 'updated_at'
                     },
                     {
                         data: 'action',

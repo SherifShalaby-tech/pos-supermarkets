@@ -245,6 +245,7 @@ class ProductController extends Controller
                         return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
                     }
                 })
+
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
                 ->editColumn('sub_sku', '{{$sub_sku}}')
@@ -267,14 +268,14 @@ class ProductController extends Controller
                     $price= AddStockLine::where('variation_id',$row->variation_id)
                         ->latest()->first();
                     $price= $price? ($price->sell_price > 0 ? $price->sell_price : $row->default_sell_price):$row->default_sell_price;
-                    return $this->productUtil->num_f($price);
+                    return number_format($price,2);
                 })//, '{{@num_format($default_sell_price)}}')
                 ->editColumn('default_purchase_price', function ($row) {
                     $price= AddStockLine::where('variation_id',$row->variation_id)
                     ->latest()->first();
                     $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
 
-                    return $this->productUtil->num_f($price);
+                    return number_format($price,2);
                 })//, '{{@num_format($default_purchase_price)}}')
                 ->addColumn('tax', '{{$tax}}')
                 ->editColumn('brand', '{{$brand}}')
@@ -309,8 +310,14 @@ class ProductController extends Controller
                     }
                     return $size;
                 })
+
                 ->editColumn('grade', '{{$grade}}')
-                ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
+//                ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
+                ->editColumn('current_stock', function ($row) {
+                    if(!$row->is_service)
+                        return $this->productUtil->num_f($row->current_stock ,false,null,true);
+                    return 0;
+                })
                 ->addColumn('current_stock_value', function ($row) {
                     $price= AddStockLine::where('variation_id',$row->variation_id)
                         ->whereColumn('quantity',">",'quantity_sold')->first();
@@ -342,6 +349,8 @@ class ProductController extends Controller
                     }
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
+                ->editColumn('created_at', '{{@format_datetime($created_at)}}')
+                ->editColumn('updated_at', '{{@format_datetime($updated_at)}}')
                 ->addColumn('supplier', function ($row) {
                     $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
                         ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
