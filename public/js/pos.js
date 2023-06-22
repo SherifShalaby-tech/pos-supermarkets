@@ -1428,7 +1428,14 @@ $(document).on("click", "#pay-later-btn", function (e) {
     $("#amount").val(0);
     pos_form_obj.submit();
 });
-
+$(document).on("click", "#quick-pay-btn", function (e) {
+    //Check if product is present or not.
+    if ($("table#product_table tbody").find(".product_row").length <= 0) {
+        toastr.warning("No Product Added");
+        return false;
+    }
+    pos_form_obj.submit();
+});
 $("button#submit-btn").click(function () {
     //Check if product is present or not.
     if ($("table#product_table tbody").find(".product_row").length <= 0) {
