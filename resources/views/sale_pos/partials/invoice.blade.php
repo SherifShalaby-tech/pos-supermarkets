@@ -295,7 +295,7 @@ if (empty($invoice_lang)) {
                                 </th>
                             </tr>
                         @endif
-                        @if (!empty($transaction->deliveryman))
+                        @if (!empty($transaction->deliveryman_id))
                             <tr>
                                 <th style="font-size: 16px;" colspan="3">@lang('lang.delivery_cost', [], $invoice_lang)
                                     @if (!empty($transaction->deliveryman->employee_name))
