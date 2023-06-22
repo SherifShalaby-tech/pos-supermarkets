@@ -995,6 +995,7 @@ return [
     'start_time' => 'زمان شروع',
     'end_time' => 'زمان پایان',
     'edited_by' => 'ویرایش توسط',
+    'edited_at' => 'ویرایش شده در',
     'out_of_stock' => 'تمام شده',
 
     'new_price' => 'قیمت جدید',

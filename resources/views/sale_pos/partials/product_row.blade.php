@@ -90,7 +90,7 @@
                 </button>
             </span>
                 <input type="number" class="form-control quantity  qty numkey input-number" step="any"
-                       autocomplete="off" style="width: 50px;"
+                       autocomplete="off" style="width: 50px;" id="quantity"
                        @if(!$product->is_service)max="{{$product->qty_available}}"@endif
                        name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
                        required
