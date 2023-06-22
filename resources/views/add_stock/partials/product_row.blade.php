@@ -4,8 +4,9 @@ $i = $index;
 @forelse ($products as $product)
 @php
 $i=$i+1;
-$current_stock = \App\Models\ProductStore::where('product_id', $product->id)->first();
+$current_stock = \App\Models\ProductStore::where('product_id', $product->id)->where('variation_id', $product->variation_id)->first();
 $stock = \App\Models\AddStockLine::where('product_id', $product->id)->where('variation_id', $product->variation_id)->latest()->first();
+$number_vs_base_unit=\App\Models\Variation::find($product->variation_id)->number_vs_base_unit;
 if($stock){
     $purchase_price = $stock->purchase_price;
     $sell_price = $stock->sell_price;
@@ -41,6 +42,7 @@ if($stock){
 
     </td>
     <td>
+        <input type="hidden" value="{{isset($number_vs_base_unit)&&$number_vs_base_unit!=0?$number_vs_base_unit:1}}" id="number_vs_base_unit"/>
 <input type="text" class="form-control quantity quantity_{{$i}}" data-val="0" name="add_stock_lines[{{$i}}][quantity]" required
             value="0"  index_id="{{$i}}">
     </td>

@@ -28,7 +28,8 @@
                     <input type="hidden" id="{{$ex}}" name="old_ex" value="1">
                 </p>
             @endif
-            <small>@if($product->batch_number){{$product->batch_number}}@endif </small>
+            <small class="text-danger">@if($Variation->unit)<br>{{$Variation->unit->name}}@endif</small>
+            <small>@if($product->batch_number)<br>{{$product->batch_number}}@endif </small>
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][is_service]" class="is_service"
                    value="{{$product->is_service}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][have_weight]" class="have_weight"
