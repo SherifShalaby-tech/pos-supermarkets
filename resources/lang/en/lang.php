@@ -1427,4 +1427,5 @@ return [
     'categories_count' => 'Categories Count',
     'extract_customer_due'=>'Extract customer due',
     'amount_greater_than_balance'=>'Amount greater than balance',
+    'quick_pay' => 'Quick pay',
 ];

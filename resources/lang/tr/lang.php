@@ -1286,5 +1286,5 @@ return [
     'select_class_value' =>'Lütfen sınıf alanı için bir değer seçin.',
     'products_count' => 'Ürün Sayısı',
     'categories_count' => 'Kategoriler Sayısı',
-
+    'quick_pay' => 'hızlı ödeme',
 ];

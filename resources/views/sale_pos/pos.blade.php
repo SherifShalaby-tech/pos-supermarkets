@@ -401,6 +401,12 @@
                                     @lang('lang.pay')</button>
                             </div>
                             <div class="column-5">
+                                <button data-method="cash" style="background: #478299" type="button"
+                                    class="btn btn-custom" 
+                                    id="quick-pay-btn" ><i class="fa fa-money"></i>
+                                    @lang('lang.quick_pay')</button>
+                            </div>
+                            <div class="column-5">
                                 <button data-method="coupon" style="background: #00cec9" type="button"
                                     class="btn btn-custom" data-toggle="modal" data-target="#coupon_modal"
                                     id="coupon-btn"><i class="fa fa-tag"></i>

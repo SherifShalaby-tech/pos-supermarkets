@@ -103,7 +103,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('deliveryman_id', __('lang.deliveryman'), []) !!}
-                                        {!! Form::select('deliveryman_id', $delivery_men, request()->deliveryman_id, ['class' => 'form-control sale_filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true']) !!}
+                                        {!! Form::select('deliveryman_id',['all_delivery' => 'All Delivery'] + $delivery_men, request()->deliveryman_id, ['class' => 'form-control sale_filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true']) !!}
                                     </div>
                                 </div>
 

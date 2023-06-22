@@ -146,7 +146,12 @@ class SellController extends Controller
                 $query->wherein('transactions.store_id', (array) $employee->store_id);
             }
             if (!empty(request()->deliveryman_id)) {
-                $query->where('deliveryman_id', request()->deliveryman_id);
+                if(request()->deliveryman_id == 'all_delivery'){
+                    $query->where('deliveryman_id','!=', null);
+                }else{
+                    $query->where('deliveryman_id', request()->deliveryman_id);
+                }
+                
             }
             if (!empty(request()->payment_status)) {
                 $query->where('payment_status', request()->payment_status);
@@ -1024,7 +1029,11 @@ class SellController extends Controller
                 $query->where('store_id', $store_id);
             }
             if (!empty(request()->deliveryman_id)) {
-                $query->where('deliveryman_id', request()->deliveryman_id);
+                if(request()->deliveryman_id == 'all_delivery'){
+                    $query->where('deliveryman_id','!=', null);
+                }else{
+                    $query->where('deliveryman_id', request()->deliveryman_id);
+                }
             }
             if (!empty(request()->payment_status)) {
                 $query->where('payment_status', request()->payment_status);
