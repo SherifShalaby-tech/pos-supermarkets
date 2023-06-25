@@ -488,7 +488,7 @@ $(document).on("click", "#clear_all_input_form", function () {
 });
 
 $(document).on('submit','#add_stock_form',function(e){
-    e.preventDefault();
+    // e.preventDefault();
     let willDelete=0;
     let namePurchacePrice='';
     let nameSellingPrice='';
@@ -496,21 +496,24 @@ $(document).on('submit','#add_stock_form',function(e){
     .find(".product_row")
     .each(function () {
         if($(this).find('.quantity').val()==0){
+            e.preventDefault();
             $(this).find('.quantity').css('border', '2px solid red');
-            swal("Error", LANG.qty_msg, "error");
+            swal("Error",LANG.qty_msg, "error");
         }
         ///
         if($(this).find('.purchase_price').val()==0){
             if($(this).find('.purchase_price_submit').val()=="0"){
-            $(this).find('.purchase_price_submit').val('1')
-            $(this).find('.purchase_price').css('border', '2px solid #6f42c1');
-            willDelete=1;
-            namePurchacePrice='purchace_price';
+                e.preventDefault();
+                $(this).find('.purchase_price_submit').val('1')
+                $(this).find('.purchase_price').css('border', '2px solid #6f42c1');
+                willDelete=1;
+                namePurchacePrice='purchace_price';
             }
         }
         ////
         if($(this).find('.selling_price').val()==0){
             if($(this).find('.selling_price_submit').val()=="0"){
+                e.preventDefault();
                 $(this).find('.selling_price_submit').val('1')
                 $(this).find('.selling_price').css('border', '2px solid #6f42c1');
                 willDelete=1;
