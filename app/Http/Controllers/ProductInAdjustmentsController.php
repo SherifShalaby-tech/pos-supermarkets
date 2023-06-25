@@ -574,6 +574,8 @@ class ProductInAdjustmentsController extends Controller
     {
         try {
            $product_adjust = ProductInAdjustment::find($id);
+           $product_adjust->deleted_by= request()->user()->id;
+           $product_adjust->save();
             $products = ProductInAdjustmentDetails::where('product_adjustments_id',$id)->get();
             foreach($products as $product){
                 ProductStore::where('product_id', $product->product_id)->where('variation_id',$product->variation_id)

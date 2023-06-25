@@ -769,7 +769,10 @@
                 },
                 ajax: {
                     url: "/customer/{{ $customer->id }}",
-                    data: function(d) {},
+                    data: function(d) {
+                        d.start_date = $('#start_date').val();
+                        d.end_date = $('#end_date').val();
+                    },
                 },
                 columnDefs: [{
                     targets: "date",

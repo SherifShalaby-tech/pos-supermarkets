@@ -309,7 +309,7 @@ class ProductController extends Controller
                         $size = $row->size;
                     }
                     return $size;
-                })
+                })e
 
                 ->editColumn('grade', '{{$grade}}')
 //                ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
