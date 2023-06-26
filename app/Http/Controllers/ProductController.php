@@ -237,6 +237,16 @@ class ProductController extends Controller
 
             //  return $products;
             return DataTables::of($products)
+                ->addColumn('show_at_the_main_pos_page', function ($row) {
+                    $checked='ff';
+                    if (!empty($row->show_at_the_main_pos_page)&& $row->show_at_the_main_pos_page=="yes"){
+                        $checked='checked';
+                    }else{
+                        $checked='';
+                    }
+                    return ' <input id="show_at_the_main_pos_page'.$row->id.'" data-id='.$row->id.' name="show_at_the_main_pos_page" type="checkbox"
+                    '. $checked .' value="1" class="show_at_the_main_pos_page">';
+                })
                 ->addColumn('image', function ($row) {
                     $image = $row->getFirstMediaUrl('product');
                     if (!empty($image)) {
@@ -309,8 +319,7 @@ class ProductController extends Controller
                         $size = $row->size;
                     }
                     return $size;
-                })e
-
+                })
                 ->editColumn('grade', '{{$grade}}')
 //                ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
                 ->editColumn('current_stock', function ($row) {
@@ -460,6 +469,7 @@ class ProductController extends Controller
                     }
                 ])
                 ->rawColumns([
+                    'show_at_the_main_pos_page',
                     'selection_checkbox',
                     'selection_checkbox_send',
                     'selection_checkbox_delete',
@@ -1299,7 +1309,8 @@ class ProductController extends Controller
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'have_weight' => !empty($request->have_weight) ? 1 : 0,
-                'created_by' => Auth::user()->id
+                'created_by' => Auth::user()->id,
+                'show_at_the_main_pos_page' => !empty($request->show_at_the_main_pos_page) ? 'yes' : 'no',
             ];
 
 
@@ -1553,6 +1564,7 @@ class ProductController extends Controller
                 'active' => !empty($request->active) ? 1 : 0,
                 'have_weight' => !empty($request->have_weight) ? 1 : 0,
                 'edited_by' => Auth::user()->id,
+                'show_at_the_main_pos_page' => !empty($request->show_at_the_main_pos_page) ? 'yes' : 'no',
             ];
 
 
@@ -2054,5 +2066,34 @@ class ProductController extends Controller
             $dataNewImages[] = $img;
         }
         return $dataNewImages;
+    }
+    public function toggleAppearancePos($id){
+        $products_count=Product::where('show_at_the_main_pos_page','yes')->count();
+        if(isset($products_count) && $products_count <40){
+            $product=Product::find($id);
+            if($product->show_at_the_main_pos_page=='no'){
+                $product->show_at_the_main_pos_page='yes';
+                $product->save();
+                return [
+                    'success' => 'success',
+                    'msg' => __('lang.added_to_pos_window'),
+                    'status'=>'success'
+                ];
+            }else{
+                $product->show_at_the_main_pos_page='no';
+                $product->save();
+                return [
+                    'success' => 'success',
+                    'msg' => __('lang.hide_from_pos_window'),
+                    'status'=>'success'
+                ];
+            }
+        }else{
+            return [
+                'success' => 'Failed!',
+                'msg' => __("lang.Cant_Add_More_Than_40_Products"),
+                'status'=>'error'
+            ];
+        }
     }
 }
