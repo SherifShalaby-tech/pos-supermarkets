@@ -607,8 +607,9 @@
 
 
 
-        var hiddenColumnArray = localStorage.getItem('columnVisibility') ? JSON.parse(localStorage.getItem('columnVisibility')) : [];
         $(document).ready(function() {
+            var hiddenColumnArray = JSON.parse('{!! addslashes(json_encode(Cache::get("key_" . auth()->id(), []))) !!}');
+
             $.each(hiddenColumnArray, function(index, value) {
                 $('.column-toggle').each(function() {
                 if ($(this).val() == value) {
@@ -616,35 +617,41 @@
                 }
                 });
             });
-        });
 
-        $(document).on('click', '.column-toggle', function() {
-            var column_index = parseInt($(this).val());
-            toggleColumnVisibility(column_index, $(this));
-            if (hiddenColumnArray.includes(column_index)) {
+            $(document).on('click', '.column-toggle', function() {
+                var column_index = parseInt($(this).val());
+                toggleColumnVisibility(column_index, $(this));
+
+                if (hiddenColumnArray.includes(column_index)) {
                 hiddenColumnArray.splice(hiddenColumnArray.indexOf(column_index), 1);
-            } else {
+                } else {
                 hiddenColumnArray.push(column_index);
-            }
+                }
 
-            // Remove duplicates from the hiddenColumnArray
-            hiddenColumnArray = hiddenColumnArray.filter(function(value, index, self) {
-                return self.indexOf(value) === index;
+                hiddenColumnArray = [...new Set(hiddenColumnArray)]; // Remove duplicates
+
+                // Update the columnVisibility cache data
+                $.ajax({
+                url: '/update-column-visibility', // Replace with your route or endpoint for updating cache data
+                method: 'POST',
+                data: { columnVisibility: hiddenColumnArray },
+                    success: function() {
+                        console.log('Column visibility updated successfully.');
+                    }
+                });
             });
 
-            localStorage.setItem('columnVisibility', JSON.stringify(hiddenColumnArray));
-        });
+            function toggleColumnVisibility(column_index, this_btn) {
+                var column = product_table.column(column_index);
+                column.visible(!column.visible());
 
-        function toggleColumnVisibility(column_index, this_btn) {
-            var column = product_table.column(column_index);
-            column.visible(!column.visible());
-
-            if (column.visible()) {
+                if (column.visible()) {
                 $(this_btn).addClass('badge-primary').removeClass('badge-warning');
-            } else {
+                } else {
                 $(this_btn).removeClass('badge-primary').addClass('badge-warning');
+                }
             }
-        }
+        });
 
         $(document).on('change', '.filter_product', function() {
             product_table.ajax.reload();

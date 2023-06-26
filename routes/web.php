@@ -65,6 +65,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 //    Route::post('product/remove_damage/{id}', 'ProductController@send_remove_expiry');
 //    Route::post('product/remove_expiry/{id}', 'ProductController@send_remove_damage');
     Route::resource('product', ProductController::class);
+    Route::post('/update-column-visibility', 'ProductController@updateColumnVisibility');
 
     Route::get('raw-material/add-stock/create', 'AddStockController@create');
     Route::get('raw-material/add-stock', 'AddStockController@index');
