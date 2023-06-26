@@ -14,6 +14,7 @@ use App\Models\CustomerType;
 use App\Models\ExpenseBeneficiary;
 use App\Models\ExpenseCategory;
 use App\Models\Grade;
+use App\Models\manufacturingProduct;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\ProductDiscount;
@@ -36,6 +37,7 @@ use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
@@ -1688,5 +1690,55 @@ class ProductController extends Controller
                 'status'=>'error'
             ];
         }
+    }
+    public function multiDeleteRow(Request $request){
+        if (!auth()->user()->can('product_module.product.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        try {
+            DB::beginTransaction();
+            foreach ($request->ids as $id){
+                $variation = Variation::find($id);
+                $variation_count = Variation::where('product_id', $variation->product_id)->count();
+                if ($variation_count > 1) {
+                    $variation->delete();
+                    ProductStore::where('variation_id', $id)->delete();
+                    $output = [
+                        'success' => true,
+                        'msg' => __('lang.deleted')
+                    ];
+                } else {
+                    ProductStore::where('product_id', $variation->product_id)->delete();
+                    $product = Product::where('id', $variation->product_id)->first();
+                    $product->clearMediaCollection('product');
+                    $product->delete();
+                    $variation->delete();
+                }
+                $ENABLE_POS_Branch = env('ENABLE_POS_Branch', false);
+                $POS_SYSTEM_URL = env('Branch_SYSTEM_URL', null);
+                $POS_ACCESS_TOKEN = env('Branch_ACCESS_TOKEN', null);
+                if($ENABLE_POS_Branch && $POS_SYSTEM_URL &&$POS_ACCESS_TOKEN ){
+                    $response = Http::withHeaders([
+                        'Authorization' => 'Bearer ' . $POS_ACCESS_TOKEN,
+                    ])->post($POS_SYSTEM_URL . '/api/delete_product/'.$id, [])->json();
+
+                }
+            }
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+
+            DB::commit();
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 }
