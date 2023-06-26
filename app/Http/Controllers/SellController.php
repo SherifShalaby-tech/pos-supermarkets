@@ -232,9 +232,9 @@ class SellController extends Controller
                 })
                 ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     if (!empty($row->return_parent)) {
-                        $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                        $final_total = number_format($row->final_total - $row->return_parent->final_total,2);
                     } else {
-                        $final_total = $this->commonUtil->num_f($row->final_total);
+                        $final_total = number_format($row->final_total,2);
                     }
 
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
@@ -252,14 +252,14 @@ class SellController extends Controller
                     }
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($amount_paid,2) . '</span>';
                 })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $paid = $row->transaction_payments->sum('amount');
                     $due = $row->final_total - $paid;
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($due,2) . '</span>';
                 })
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
@@ -274,7 +274,7 @@ class SellController extends Controller
                     foreach ($commissions as $commission) {
                         $total +=  $commission->final_total;
                     }
-                    return $this->commonUtil->num_f($total);
+                    return number_format($total,2);
                 })
                 ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);

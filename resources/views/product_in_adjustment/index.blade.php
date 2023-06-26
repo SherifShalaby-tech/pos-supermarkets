@@ -26,7 +26,7 @@
                         <tr>
                             <td>{{@format_datetime($adjustment->created_at)}}</td>
                             <td>{{$adjustment->store->name ?? ''}}</td>
-                            <td>{{$adjustment->total_shortage_value}}</td>
+                            <td>{{@num_format($adjustment->total_shortage_value)}}</td>
                             <td>{{$adjustment->created_by_user->name ?? ''}}</td>
                             <td>
                                 <div class="btn-group">

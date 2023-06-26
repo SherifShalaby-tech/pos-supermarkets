@@ -7,8 +7,8 @@ $i=$i+1;
 $current_stock = \App\Models\ProductStore::where('product_id', $product->id)->first();
 $stock = \App\Models\AddStockLine::where('product_id', $product->id)->where('variation_id', $product->variation_id)->latest()->first();
 if($stock){
-    $purchase_price = $stock->purchase_price;
-    $sell_price = $stock->sell_price;
+    $purchase_price = number_format($stock->purchase_price,2);
+    $sell_price = number_format($stock->sell_price,2);
 }
 @endphp
 <tr class="product_row">
@@ -50,13 +50,13 @@ if($stock){
     <td>
         <span class="text-secondary font-weight-bold">*</span>
         <input type="text" class="form-control purchase_price purchase_price_{{$i}}" name="add_stock_lines[{{$i}}][purchase_price]" required
-            value="@if(isset($purchase_price)){{$purchase_price}}@else @if($product->purchase_price_depends == null) {{@num_format($product->default_purchase_price / $exchange_rate)}} @else {{@num_format($product->purchase_price_depends / $exchange_rate)}} @endif @endif" index_id="{{$i}}">
+            value="@if(isset($purchase_price)){{@num_format($purchase_price)}}@else @if($product->purchase_price_depends == null) {{@num_format($product->default_purchase_price / $exchange_rate)}} @else {{@num_format($product->purchase_price_depends / $exchange_rate)}} @endif @endif" index_id="{{$i}}">
             <input class="final_cost" type="hidden" name="add_stock_lines[{{$i}}][final_cost]" value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price / $exchange_rate)}}@else{{0}}@endif"  >
     </td>
     <td>
         <span class="text-secondary font-weight-bold">*</span>
         <input type="text" class="form-control selling_price selling_price_{{$i}}" name="add_stock_lines[{{$i}}][selling_price]" required index_id="{{$i}}"
-               value="@if(isset($sell_price)){{$sell_price}}@else @if($product->selling_price_depends == null) {{@num_format($product->sell_price)}} @else {{@num_format($product->selling_price_depends)}} @endif @endif"  >
+               value="@if(isset($sell_price)){{@num_format($sell_price)}}@else @if($product->selling_price_depends == null) {{@num_format($product->sell_price)}} @else {{@num_format($product->selling_price_depends)}} @endif @endif"  >
 {{--        <input class="final_cost" type="hidden" name="add_stock_lines[{{$i}}][final_cost]" value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price / $exchange_rate)}}@else{{0}}@endif">--}}
     </td>
     <td>
