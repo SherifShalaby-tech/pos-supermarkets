@@ -62,7 +62,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('product/convolutions/storeStockRemoved', 'ProductController@storeStockRemoved')->name("storeStockRemoved");
     Route::post('product/convolutions/storeStockDamaged', 'ProductController@storeStockDamaged')->name("storeStockDamaged");
     Route::post('product/convolutions/deleteExpiryRow', 'ProductController@deleteExpiryRow')->name("deleteExpiryRow");
-//    Route::post('product/remove_damage/{id}', 'ProductController@send_remove_expiry');
+   Route::get('product/toggle-appearance-pos/{id}', 'ProductController@toggleAppearancePos');
 //    Route::post('product/remove_expiry/{id}', 'ProductController@send_remove_damage');
     Route::resource('product', ProductController::class);
 

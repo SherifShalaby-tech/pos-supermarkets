@@ -8,4 +8,9 @@ LANG = {
     sell_price_less_than_purchase_price: "سعر البيع أقل من سعر الشراء",
     warning: "تحذير",
     walk_in_customer:'عميل عادي',
+    purchase_price_and_sell_price_equal_to_zero:'سعر البيع والشراء يساوى صفر ',
+    sell_price_equal_to_zero:'سعر البيع يساوى صفر ',
+    purchase_price_equal_to_zero:'سعر الشراء يساوى صفر ',
+    continue:'استمرار',
+    qty_msg:'الكمية يجب ان تكون اكبر من الصفر',
 };

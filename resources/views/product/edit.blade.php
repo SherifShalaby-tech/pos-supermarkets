@@ -225,7 +225,7 @@
                                             </strong></label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="i-checks">
                                         <input id="active" name="active" type="checkbox"
                                             @if (!empty($product->active)) checked @endif value="1"
@@ -235,7 +235,7 @@
                                             </strong></label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="i-checks">
                                         <input id="have_weight" name="have_weight" type="checkbox"
                                                @if (!empty($product->have_weight)) checked @endif value="1" class="form-control-custom">
@@ -244,7 +244,16 @@
                                             </strong></label>
                                     </div>
                                 </div>
-
+                                @php
+                                $products_count=App\Models\Product::where('show_at_the_main_pos_page','yes')->count();
+                                @endphp
+                                <div class="col-md-2">
+                                    <div class="i-checks">
+                                        <input id="show_at_the_main_pos_page" name="show_at_the_main_pos_page" type="checkbox"
+                                            @if (isset($products_count)&& $products_count < 40) @if (!empty($product->show_at_the_main_pos_page)&& $product->show_at_the_main_pos_page=="yes") checked @endif @elseif((isset($products_count)&& $products_count == 40)) disabled @endif value="1" class="form-control-custom">
+                                        <label for="show_at_the_main_pos_page"><strong>@lang('lang.show_at_the_main_pos_page')</strong></label>
+                                    </div>
+                                </div>
 
                                 <div class="col-md-4 supplier_div @if (empty($product->is_service)) hide @endif">
                                     <div class="form-group ">
