@@ -152,6 +152,7 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
 //         var myDropzone = this;
 $("#submit-btn").on("click", function (e) {
     e.preventDefault();
+    let system_mode = $("#system_mode").val();
     let sku = $('#sku').val();
   
     if (sku.trim() !== "") {
@@ -168,6 +169,27 @@ $("#submit-btn").on("click", function (e) {
           }
         },
       });
+    }else if(system_mode != "garments"){
+        let name = $("#name").val();
+        let product_class_id = $("#product_class_id").val();
+        let category_id = $("#category_id").val();
+            $.ajax({
+                method: "get",
+                url: "/product/check-name",
+                data: {
+                    name: name,
+                    product_class_id: product_class_id,
+                    category_id: category_id,
+                },
+                success: function (result) {
+                    if (!result.success) {
+                        swal("Error", result.msg, "error");
+                        $("#name").val("");
+                    }else {
+                        submitForm();
+                    }
+                },
+            });
     } else {
       submitForm();
     }
