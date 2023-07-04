@@ -1812,7 +1812,7 @@ class ProductUtil extends Util
             $query->where('product_stores.store_id', $store_id);
         }
         $query->select(
-            DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value'),
+            DB::raw('SUM((product_stores.qty_available ) * add_stock_lines.purchase_price) as current_stock_value'),
         );
 
         $current_stock_value = $query->first();
@@ -1831,7 +1831,7 @@ class ProductUtil extends Util
             $query->where('product_stores.store_id', $store_id);
         }
         $query->select(
-            DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value_product'),
+            DB::raw('SUM((product_stores.qty_available) * add_stock_lines.purchase_price) as current_stock_value_product'),
         );
 
         $current_stock_value_product = $query->first();
