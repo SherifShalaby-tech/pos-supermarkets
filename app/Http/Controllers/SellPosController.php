@@ -318,6 +318,10 @@ class SellPosController extends Controller
                 $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
             }
             $customer->added_balance = $request->add_to_customer_balance;
+            if($request->add_to_customer_balance){
+                $register = CashRegister::where('store_id', $request->store_id)->where('store_pos_id',$request->store_pos_id)->where('user_id',Auth::user()->id)->where('closed_at', null)->where('status','open')->first();
+                $this->cashRegisterUtil->createCashRegisterTransaction($register,$request->add_to_customer_balance, 'cash_in','debit', $request->customer_id,$request->notes ,null, 'customer_balance');
+            }
             $customer->save();
         }
 

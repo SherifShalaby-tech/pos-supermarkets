@@ -1002,6 +1002,10 @@ $(document).on("click", ".remove_row", function () {
     calculate_sub_totals();
     check_for_sale_promotion();
     reset_row_numbering();
+    $(this).find(".change").text(0);
+    __write_number($("#add_to_customer_balance"),0);
+    $(".add_to_customer_balance").attr("disabled", false);
+    $(".add_to_customer_balance").addClass("hide");
 });
 $(document).on("click", ".minus", function () {
     let tr = $(this).closest("tr");
@@ -1646,6 +1650,10 @@ function reset_pos_form() {
     $("#received_currency_id").val(default_currency_id);
     $("#received_currency_id").change();
     $("#received_currency_id").selectpicker("refresh");
+
+    __write_number($("#add_to_customer_balance"),0);
+    $(".add_to_customer_balance").attr("disabled", false);
+    $(".add_to_customer_balance").addClass("hide");
 }
 $(document).ready(function () {
     $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());

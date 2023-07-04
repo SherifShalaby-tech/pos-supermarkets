@@ -72,7 +72,7 @@ class CashRegisterUtil extends Util
         return $register;
     }
 
-    public function createCashRegisterTransaction($register, $amount, $transaction_type, $type, $source_id, $notes, $referenced_id = null)
+    public function createCashRegisterTransaction($register, $amount, $transaction_type, $type, $source_id, $notes, $referenced_id = null,$source_type = null)
     {
         $cash_register_transaction = CashRegisterTransaction::create([
             'cash_register_id' => $register->id,
@@ -81,6 +81,7 @@ class CashRegisterUtil extends Util
             'type' => $type,
             'transaction_type' => $transaction_type,
             'source_id' => $source_id,
+            'source_type' => $source_type,
             'referenced_id' => $referenced_id,
             'notes' => $notes,
         ]);
