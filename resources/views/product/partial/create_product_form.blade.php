@@ -28,7 +28,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                 </strong></label>
         </div>
     </div>
-    <div class="col-md-3 ">
+    <div class="col-md-2">
         <div class="i-checks">
             <input id="clear_all_input_form" name="clear_all_input_form"
                    type="checkbox" @if ($clear_all_input_form == null || $clear_all_input_form == '1') checked @endif value="1"
@@ -40,11 +40,21 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             </label>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="i-checks">
             <input id="have_weight" name="have_weight" type="checkbox"  value="1"
                    class="form-control-custom">
             <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
+        </div>
+    </div>
+    @php
+    $products_count=App\Models\Product::where('show_at_the_main_pos_page','yes')->count();
+    @endphp
+    <div class="col-md-2">
+        <div class="i-checks">
+            <input id="show_at_the_main_pos_page" name="show_at_the_main_pos_page" type="checkbox"
+                @if (isset($products_count)&& $products_count < 40) checked @else disabled @endif value="1" class="form-control-custom">
+            <label for="show_at_the_main_pos_page"><strong>@lang('lang.show_at_the_main_pos_page')</strong></label>
         </div>
     </div>
     <div class="col-md-3">
