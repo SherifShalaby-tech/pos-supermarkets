@@ -85,7 +85,7 @@ class MoneySafeController extends Controller
                             data-orig_value="' . $balance . '">
                             <span class="symbol">
                                 ' . $currency['symbol'] . '</span>
-                            <span class="total">' . $this->commonUtil->num_f($balance) . '</span>
+                            <span class="total">' .number_format($balance,2,'.',',') . '</span>
                         </span>';
                         $html .= "</h6>";
                     }

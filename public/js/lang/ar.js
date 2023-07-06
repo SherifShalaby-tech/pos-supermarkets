@@ -13,4 +13,7 @@ LANG = {
     purchase_price_equal_to_zero:'سعر الشراء يساوى صفر ',
     continue:'استمرار',
     qty_msg:'الكمية يجب ان تكون اكبر من الصفر',
+    sorry_you_should_select_products_to_continue_delete:'يجب اختيار منتجات لحذفها',
+    all_transactions_related_to_this_products_will_be_deleted:'سيتم حذف جميع المعاملات المتعلقة بهذا المنتج ؛ الأسهم والمبيعات والمشتريات وما إلى ذلك.',
+
 };
