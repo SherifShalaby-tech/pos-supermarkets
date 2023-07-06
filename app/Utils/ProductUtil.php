@@ -1804,58 +1804,124 @@ class ProductUtil extends Util
      */
     public function getCurrentStockValueByStore($store_id = null)
     {
+        if(!$store_id){
+            $stores = Store::get();
+            $current_stock_value = 0;
+            foreach($stores as $store){
+                $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+                ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+                ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+                
+                ->where('is_service', 0)
+                ->where('product_stores.store_id', $store->id)
+                ->where('add_stock_lines.purchase_price','>',0)
+                ;
+                $query->groupBy('variations.id')->select(
+                    DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+                );
+
+                $current_stock_value += $query->get()->sum('current_stock_value');
+            }
+            return $current_stock_value;
+        }
+        
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
             ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
-            ->where('is_service', 0);
-        if (!empty($store_id)) {
-            $query->where('product_stores.store_id', $store_id);
-        }
-        $query->select(
-            DB::raw('SUM((product_stores.qty_available ) * add_stock_lines.purchase_price) as current_stock_value'),
+            ->where('product_stores.store_id', $store_id)
+            ->where('is_service', 0)
+            ->where('add_stock_lines.purchase_price','>',0)
+            ;
+        
+        $query->groupBy('variations.id')->select(
+            DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
         );
 
-        $current_stock_value = $query->first();
-
-        return $current_stock_value ? $current_stock_value->current_stock_value : 0;
+        $current_stock_value = $query->get()->sum('current_stock_value');
+        // dd($current_stock_value);
+        return $current_stock_value ;
     }
 
     public function getCurrentStockValueProductByStore($store_id = null)
     {
+        if(!$store_id){
+            $stores = Store::get();
+            $current_stock_value_product = 0;
+            foreach($stores as $store){
+                $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+                ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+                ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+                
+                ->where('is_service', 0)
+                ->where('is_raw_material',0)
+                ->where('product_stores.store_id', $store->id)
+                ->where('add_stock_lines.purchase_price','>',0)
+                ;
+                $query->groupBy('variations.id')->select(
+                    DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+                );
+
+                $current_stock_value_product += $query->get()->sum('current_stock_value');
+            }
+            return $current_stock_value_product;
+        }
+        
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
             ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+            ->where('product_stores.store_id', $store_id)
             ->where('is_service', 0)
-            ->where('is_raw_material',0);
-        if (!empty($store_id)) {
-            $query->where('product_stores.store_id', $store_id);
-        }
-        $query->select(
-            DB::raw('SUM((product_stores.qty_available) * add_stock_lines.purchase_price) as current_stock_value_product'),
+            ->where('is_raw_material',0)
+            ->where('add_stock_lines.purchase_price','>',0)
+            ;
+        
+        $query->groupBy('variations.id')->select(
+            DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
         );
 
-        $current_stock_value_product = $query->first();
-
-        return $current_stock_value_product ? $current_stock_value_product->current_stock_value_product : 0;
+        $current_stock_value_product = $query->get()->sum('current_stock_value');
+        return $current_stock_value_product ;
     }
 
     public function getCurrentStockValueMaterialByStore($store_id = null)
     {
+         if(!$store_id){
+            $stores = Store::get();
+            $current_stock_value_material = 0;
+            foreach($stores as $store){
+                $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+                ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+                ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+                
+                ->where('is_service', 0)
+                ->where('is_raw_material',1)
+                ->where('product_stores.store_id', $store->id)
+                ->where('add_stock_lines.purchase_price','>',0)
+                ;
+                $query->groupBy('variations.id')->select(
+                    DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+                );
+
+                $current_stock_value_material += $query->get()->sum('current_stock_value');
+            }
+            return $current_stock_value_material;
+        }
+        
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
             ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+            ->where('product_stores.store_id', $store_id)
             ->where('is_service', 0)
-            ->where('is_raw_material',1);
-        if (!empty($store_id)) {
-            $query->where('product_stores.store_id', $store_id);
-        }
-        $query->select(
-            DB::raw('SUM((product_stores.qty_available) * add_stock_lines.purchase_price) as current_stock_value_material'),
+            ->where('is_raw_material',0)
+            ->where('add_stock_lines.purchase_price','>',0)
+            ;
+        
+        $query->groupBy('variations.id')->select(
+            DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
         );
 
-        $current_stock_value_material = $query->first();
-
-        return $current_stock_value_material ? $current_stock_value_material->current_stock_value_material : 0;
+        $current_stock_value_material = $query->get()->sum('current_stock_value');
+        return $current_stock_value_material ;
     }
 
 
