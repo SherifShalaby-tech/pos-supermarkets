@@ -2607,8 +2607,9 @@ a.text-dark:hover {
 }
 
 .badge-warning {
-    color: color-yiq(#ffc107);
-    background-color: #ffc107;
+    color: color-yiq(#ffffff);
+    background-color: #f3d373;
+    
 }
 
 .badge-warning[href]:focus,
