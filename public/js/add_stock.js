@@ -542,7 +542,7 @@ $(document).on('submit','#add_stock_form',function(e){
         })
         .then((isConfirm) => {
             if (isConfirm) {
-                $('form').submit();
+                $('#add_stock_form').submit();
             }else{
                 $(this).find('.purchase_price_submit').val('0');
                 $(this).find('.selling_price_submit').val('0')
