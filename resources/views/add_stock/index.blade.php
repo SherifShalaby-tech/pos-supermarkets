@@ -129,7 +129,7 @@
                 paging: true,
                 info: false,
                 bAutoWidth: false,
-                order: [],
+                order: [[2, 'desc']],
                 language: {
                     url: dt_lang_url,
                 },
@@ -142,9 +142,9 @@
                 buttons: buttons,
                 processing: true,
                 serverSide: true,
-                aaSorting: [
-                    [2, 'desc']
-                ],
+                // aaSorting: [
+                //     [2, 'desc']
+                // ],
                 "ajax": {
                     "url": "/add-stock",
                     "data": function(d) {
@@ -160,7 +160,7 @@
                     }
                 },
                 columnDefs: [{
-                    "targets": [0, 3],
+                    "targets": [0, 3, 9, 8],
                     "orderable": false,
                     "searchable": false
                 }],

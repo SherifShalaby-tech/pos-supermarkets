@@ -124,7 +124,7 @@ class AddStockController extends Controller
                 'users.name as created_by_name',
                 'suppliers.name as supplier',
                 'paying_currency.symbol as paying_currency_symbol'
-            )->with(['add_stock_variations'])->groupBy('transactions.id')->orderBy('transaction_date', 'desc');
+            )->with(['add_stock_variations'])->groupBy('transactions.id');
             return DataTables::of($add_stocks)
                 ->editColumn('created_at', '{{@format_datetime($created_at)}}')
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
@@ -216,6 +216,7 @@ class AddStockController extends Controller
                     }
                 )
                 ->rawColumns([
+                    'po_no',
                     'action',
                     'transaction_date',
                     'created_at',
