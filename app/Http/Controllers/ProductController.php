@@ -1760,10 +1760,4 @@ class ProductController extends Controller
 
         return $output;
     }
-    public function updateColumnVisibility(Request $request)
-    {
-        $columnVisibility = $request->input('columnVisibility');
-        Cache::forever('key_' . auth()->id(), $columnVisibility);
-        return response()->json(['success' => true]);
-    }
 }
