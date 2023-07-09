@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Cache;
 use Lang;
 use Illuminate\Support\Facades\Cache;
 class ProductController extends Controller
@@ -1759,5 +1760,11 @@ class ProductController extends Controller
         }
 
         return $output;
+    }
+    public function updateColumnVisibility(Request $request)
+    {
+        $columnVisibility = $request->input('columnVisibility');
+        Cache::forever('key_' . auth()->id(), $columnVisibility);
+        return response()->json(['success' => true]);
     }
 }
