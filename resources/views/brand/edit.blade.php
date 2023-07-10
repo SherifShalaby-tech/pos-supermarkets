@@ -4,7 +4,6 @@
         {!! Form::open(['url' => action('BrandController@update', $brand->id), 'method' => 'put', 'id' => 'brand_add_form', 'files' => true ]) !!}
 
         <div class="modal-header">
-
             <h4 class="modal-title">@lang( 'lang.edit' )</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
