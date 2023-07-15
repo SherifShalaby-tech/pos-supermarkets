@@ -242,6 +242,26 @@ if (empty($invoice_lang)) {
                                     {{ $transaction->received_currency->symbol }}
                                 </th>
                             </tr>
+                            
+                            @if ($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->whereNotNull('discount_category')->sum('product_discount_amount') > 0)
+                            <tr>
+                                <th style="font-size: 16px;" colspan="3">@lang('lang.category_discount')</th>
+                            </tr>
+                            @foreach ($transaction->transaction_sell_lines as $line)
+                                @if(!empty($line->discount_category))
+                                <tr>
+                                    <th style="font-size: 16px;" colspan="3">{{$line->discount_category}}</th>
+                                    <th style="font-size: 16px; text-align:right;">
+                                        {{ @num_format($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->where('discount_category',$line->discount_category)->sum('product_discount_amount')) }}
+                                        {{ $transaction->received_currency->symbol }}
+                                    </th>
+                                </tr>
+                                @endif
+                            @endforeach
+                            @endif
+
+                            
+                           
                         @endif
                         @if ($transaction->total_item_tax != 0)
                             <tr>
