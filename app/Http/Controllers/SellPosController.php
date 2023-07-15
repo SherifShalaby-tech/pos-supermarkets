@@ -190,6 +190,7 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->transaction_sell_line;
         // try {
         $transaction_data = [
             'store_id' => $request->store_id,
