@@ -1683,7 +1683,7 @@ class ProductController extends Controller
     }
     public function toggleAppearancePos($id,Request $request){
         $products_count=Product::where('show_at_the_main_pos_page','yes')->count();
-        if(isset($products_count) && $products_count <4){
+        if(isset($products_count) && $products_count <40){
             $product=Product::find($id);
             if($product->show_at_the_main_pos_page=='no'){
                 $product->show_at_the_main_pos_page='yes';
