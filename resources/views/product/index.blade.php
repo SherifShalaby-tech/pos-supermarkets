@@ -983,9 +983,14 @@
             $.ajax({
                 type: "GET",
                 url: "/product/toggle-appearance-pos/"+$(this).data('id'),
+                data:{
+                    check:$(this).is(":checked")?'yes':'no'
+                },
                 // dataType: "dataType",
                 success: function (response) {
                     if(response){
+                        $(this).removeAttr('checked');
+                        $(this).attr('checked', false);
                         swal(response.success,response.msg,response.status);
                     }
                 }
