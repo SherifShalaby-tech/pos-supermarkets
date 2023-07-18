@@ -645,7 +645,7 @@
                                         @endforeach
                                         </tbody>
                                     </table>
-                                    <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
+                                    <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="{{count($discounts)}}">
                                 </div>
 
 
