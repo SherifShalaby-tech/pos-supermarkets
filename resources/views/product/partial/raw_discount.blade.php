@@ -13,7 +13,7 @@
         </td>
         <td>
             <span class="i-checks">
-                <input id="is_discount_permenant" name="is_discount_permenant[{{$row_id}}]" type="checkbox" @if($discount->is_discount_permenant) checked @endif class="form-control-custom">
+                <input class="is_discount_permenant" name="is_discount_permenant[{{$row_id}}]" type="checkbox" @if($discount->is_discount_permenant) checked @endif class="form-control-custom">
                 <label for="is_discount_permenant"><strong>
                             @lang('lang.permenant')
     
@@ -45,7 +45,7 @@
     </td>
     <td>
         <span class="i-checks">
-            <input id="is_discount_permenant" name="is_discount_permenant[{{$row_id}}]" type="checkbox" checked class="form-control-custom">
+            <input class="is_discount_permenant" name="is_discount_permenant[{{$row_id}}]" type="checkbox" checked class="form-control-custom">
             <label for="is_discount_permenant"><strong>
                         @lang('lang.permenant')
 
@@ -53,7 +53,6 @@
         </span>
     </td>
     <td>
-      <input id="is_discount_permenant" name="is_discount_permenant" type="checkbox" checked class="form-control-custom">
         {!! Form::text('discount_start_date['.$row_id.']',  !empty($discount_product->discount_start_date) ? @format_date($discount_product->discount_start_date) : null, ['class' => 'clear_input_form form-control datepicker', 'placeholder' => __('lang.discount_start_date')]) !!}
     </td>
     <td>
@@ -78,7 +77,7 @@
         </td>
         <td>
             <span class="i-checks">
-                <input id="is_discount_permenant" name="is_discount_permenant[{{$row_id}}]" type="checkbox" checked class="form-control-custom">
+                <input class="is_discount_permenant" name="is_discount_permenant[{{$row_id}}]" type="checkbox" checked class="form-control-custom">
                 <label for="is_discount_permenant"><strong>
                             @lang('lang.permenant')
     
