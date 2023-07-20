@@ -3074,7 +3074,6 @@ $(document).on("change", ".discount_category", function (e) {
 
             }
             else{
-                alert("333")
                 $(".discount_type"+product_id).val('');
                 __write_number($(".discount_value"+product_id), 0);
                 __write_number($(".discount_amount"+product_id), 0);
