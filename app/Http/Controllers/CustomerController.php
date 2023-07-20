@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashRegisterTransaction;
 use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
@@ -212,7 +213,12 @@ class CustomerController extends Controller
                 ->where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled']);
 
             $query->where('customer_id', $id);
-
+            if (!empty(request()->start_date)) {
+                $query->where('transaction_date', '>=', request()->start_date);
+            }
+            if (!empty(request()->end_date)) {
+                $query->where('transaction_date', '<=', request()->end_date);
+            }
 
             $sales = $query->select(
                 'transactions.final_total',
@@ -482,24 +488,6 @@ class CustomerController extends Controller
                 ])
                 ->make(true);
         }
-
-        $sale_query = Transaction::whereIn('transactions.type', ['sell'])
-            ->whereIn('transactions.status', ['final']);
-        // ->whereNull('parent_return_id');
-
-        if (!empty(request()->start_date)) {
-            $sale_query->where('transaction_date', '>=', request()->start_date);
-        }
-        if (!empty(request()->end_date)) {
-            $sale_query->where('transaction_date', '<=', request()->end_date);
-        }
-        if (!empty($customer_id)) {
-            $sale_query->where('transactions.customer_id', $customer_id);
-        }
-        $sales = $sale_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->get();
-
         $sale_return_query = Transaction::whereIn('transactions.type', ['sell_return'])
             ->whereIn('transactions.status', ['final']);
         // ->whereNull('parent_return_id');
@@ -572,7 +560,6 @@ class CustomerController extends Controller
         $payments=DebtPayment::with('created_by_user')->where('customer_id', $id)->get();
 
         return view('customer.show')->with(compact(
-            'sales',
             'sale_returns',
             'points',
             'discounts',
@@ -677,6 +664,7 @@ class CustomerController extends Controller
                 }
                 Transaction::where('return_parent_id', $transaction->id)->delete();
                 Transaction::where('parent_sale_id', $transaction->id)->delete();
+                CashRegisterTransaction::where('transaction_id' , $transaction->id)->delete();
 
                 $transaction->delete();
             }

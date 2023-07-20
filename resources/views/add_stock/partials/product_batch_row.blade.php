@@ -20,11 +20,11 @@ $i = 0;
     </td>
     <td>
         {{$product->sub_sku}}
-        
+
     </td>
     <td>
         <input type="text" class="form-control batchquantity quantity_{{$i}}" min=1 name="add_stock_lines[{{$i}}][quantity]" required
-            value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif"  index_id="{{$i}}">
+            value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity) }}@else{{1}}@endif"  index_id="{{$i}}">
     </td>
     <td>
         <span class="text-secondary font-weight-bold">*</span>
@@ -56,5 +56,6 @@ $i = 0;
 <script>
     $('.datepicker').datepicker({
         language: "{{session('language')}}",
+        todayHighlight: true,
     })
 </script>

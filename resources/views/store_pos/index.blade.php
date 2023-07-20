@@ -7,6 +7,9 @@
     <div class="col-md-12  no-print">
         <div class="card">
             <div class="card-header d-flex align-items-center">
+                <h4 class="print-title">@lang('lang.pos_for_the_stores')</h4>
+            </div>
+            <div class="card-header d-flex align-items-center">
                 @can('settings.store.create_and_edit')
                 <a style="color: white" data-href="{{action('StorePosController@create')}}" data-container=".view_modal"
                     class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
@@ -22,6 +25,7 @@
                                 <th>@lang('lang.store')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.user')</th>
+                                <th>@lang('lang.email')</th>
                                 <th>@lang('lang.date_and_time')</th>
                                 <th>@lang('lang.total_sales')</th>
                                 <th>@lang('lang.cash_sales')</th>
@@ -41,6 +45,7 @@
                                 <td>{{$store_pos->store->name ?? ''}}</td>
                                 <td>{{$store_pos->name}}</td>
                                 <td>{{$store_pos->user->name}}</td>
+                                <td>{{$store_pos->user->email}}</td>
                                 <td>{{@format_datetime($store_pos->created_at)}}</td>
                                 <td>{{@num_format($store_pos->total_sales)}}</td>
                                 <td>{{@num_format($store_pos->total_cash)}}</td>

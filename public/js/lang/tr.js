@@ -7,4 +7,10 @@ LANG = {
     the_order_is_saved_to_draft: "Sipariş Taslağa Kaydedildi",
     sell_price_less_than_purchase_price: "Satış fiyatı alış fiyatından düşük",
     warning: "Uyarı",
+    walk_in_customer:'Walk-in-customer',
+    purchase_price_and_sell_price_equal_to_zero:'Alış Fiyatı ve Satış Fiyatı Sıfıra Eşittir',
+    sell_price_equal_to_zero:'Satış Fiyatı Sıfıra Eşit',
+    purchase_price_equal_to_zero:'Alış Fiyatı Sıfıra Eşit',
+    continue:'devam etmek',
+    qty_msg:"Miktar 0'dan Büyük Olmalıdır.",
 };

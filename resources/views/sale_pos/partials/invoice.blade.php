@@ -207,16 +207,18 @@ if (empty($invoice_lang)) {
                             </td>
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center !important;vertical-align:bottom; width: 20%;">
-                                    {{ @num_format($line->sell_price) }}</td>
+                                    {{ @num_format($line->sell_price)  }}</td>
                             @endif
                             <td style="text-align:center;vertical-align:bottom; width: 20%;">
-                                {{ @num_format($line->quantity) }}</td>
+                                {{ preg_match('/\.\d*[1-9]+/', (string)$line->quantity) ? $line->quantity : @num_format($line->quantity)  }}</td>
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center;vertical-align:bottom; width: 30%;">
                                     @if ($line->product_discount_type != 'surplus')
-                                        {{ @num_format($line->sub_total + $line->product_discount_amount) }}
+{{--                                        {{ round( @num_format(($line->sub_total + $line->product_discount_amount)), 1, PHP_ROUND_HALF_UP)  }}--}}
+                                        {{@num_format(($line->sub_total + $line->product_discount_amount))  }}
                                     @else
-                                        {{ @num_format($line->sub_total) }}
+{{--                                        {{  round(@num_format($line->sub_total), 1, PHP_ROUND_HALF_UP)  }}--}}
+                                        {{ @num_format($line->sub_total)}}
                                     @endif
                                 </td>
                             @endif
@@ -240,6 +242,26 @@ if (empty($invoice_lang)) {
                                     {{ $transaction->received_currency->symbol }}
                                 </th>
                             </tr>
+                            
+                            @if ($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->whereNotNull('discount_category')->sum('product_discount_amount') > 0)
+                            <tr>
+                                <th style="font-size: 16px;" colspan="3">@lang('lang.category_discount')</th>
+                            </tr>
+                            @foreach ($transaction->transaction_sell_lines as $line)
+                                @if(!empty($line->discount_category))
+                                <tr>
+                                    <th style="font-size: 16px;" colspan="3">{{$line->discount_category}}</th>
+                                    <th style="font-size: 16px; text-align:right;">
+                                        {{ @num_format($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->where('discount_category',$line->discount_category)->sum('product_discount_amount')) }}
+                                        {{ $transaction->received_currency->symbol }}
+                                    </th>
+                                </tr>
+                                @endif
+                            @endforeach
+                            @endif
+
+                            
+                           
                         @endif
                         @if ($transaction->total_item_tax != 0)
                             <tr>
@@ -293,7 +315,7 @@ if (empty($invoice_lang)) {
                                 </th>
                             </tr>
                         @endif
-                        @if (!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
+                        @if (!empty($transaction->deliveryman_id))
                             <tr>
                                 <th style="font-size: 16px;" colspan="3">@lang('lang.delivery_cost', [], $invoice_lang)
                                     @if (!empty($transaction->deliveryman->employee_name))

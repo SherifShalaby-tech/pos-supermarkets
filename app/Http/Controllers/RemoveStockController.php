@@ -407,6 +407,8 @@ class RemoveStockController extends Controller
             DB::beginTransaction();
             $deleted_lines = RemoveStockLine::where('transaction_id', $id)->get();
             foreach ($deleted_lines as $deleted_line) {
+                $deleted_line->deleted_by= request()->user()->id;
+                $deleted_line->save();
                 $this->productUtil->updateProductQuantityStore($deleted_line->product_id, $deleted_line->variation_id, $transaction->store_id, $deleted_line->quantity, 0);
                 $deleted_line->delete();
             }

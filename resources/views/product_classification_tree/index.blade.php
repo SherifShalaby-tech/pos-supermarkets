@@ -224,7 +224,7 @@
                                                 <div class="col-md-6">
                                                     <div class="col-md-12">
                                                         <label style="color: #222;">@lang('lang.stock'):
-                                                            @if(!empty($current_stock)){{@num_format($current_stock->current_stock)}}@endif</label>
+                                                            @if(!empty($current_stock)){{preg_match('/\.\d*[1-9]+/', (string)$current_stock->current_stock) ? $current_stock->current_stock : @num_format($current_stock->current_stock)}}@endif</label>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <label style="color: #222;">@lang('lang.price'):

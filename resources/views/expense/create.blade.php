@@ -24,7 +24,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="expense_beneficiary_id">@lang('lang.beneficiary')</label>
-                                            {!! Form::select('expense_beneficiary_id', [], null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required', 'id' => 'expense_beneficiary_id', 'placeholder' => __('lang.please_select')]) !!}
+                                            {!! Form::select('expense_beneficiary_id', [], null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'id' => 'expense_beneficiary_id', 'placeholder' => __('lang.please_select')]) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-4">

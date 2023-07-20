@@ -684,11 +684,13 @@ class HomeController extends Controller
 
         $cost_query = $cost_query->select(
             DB::raw("SUM(transaction_sell_lines.quantity * transaction_sell_lines.purchase_price) as cost_of_sold_products"),
-            DB::raw("SUM(transaction_sell_lines.quantity_returned * transaction_sell_lines.purchase_price) as cost_of_sold_returned_products")
+            DB::raw("SUM(transaction_sell_lines.quantity_returned * transaction_sell_lines.purchase_price) as cost_of_sold_returned_products"),
+            DB::raw("SUM(transaction_sell_lines.quantity * transaction_sell_lines.cost_ratio_per_one) as other_stock_cost")
         )->first();
 
         $cost_sold_product = $cost_query->cost_of_sold_products ?? 0;
         $cost_sold_returned_product = $cost_query->cost_of_sold_returned_products ?? 0;
+        $other_stock_cost = $cost_query->other_stock_cost ?? 0;
 
         if (!empty($currency_id)) {
             if ($currency_id == $default_currency_id) {
@@ -699,10 +701,10 @@ class HomeController extends Controller
         } else {
             $gift_card_sold = GiftCard::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('balance');
         }
-
         $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;
+
         //excluding taxes from profit as its not part of profit
-        $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
+        $expense_query = Transaction::where('type', 'expense')->where('payment_status' , 'paid');
         if (!empty($start_date)) {
             $expense_query->whereDate('transaction_date', '>=', $start_date);
         }
@@ -811,27 +813,37 @@ class HomeController extends Controller
         }
 
         $payment_sent = $payment_purchase + $payment_expense + $wages_payment + $sell_return_payment;
+        $net_profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive - $other_stock_cost - $wages_payment - $expense;
 
         if (!empty($currency_id)) {
             if ($currency_id == $default_currency_id) {
                 $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
+                $current_stock_value_product = $this->productUtil->getCurrentStockValueProductByStore($store_id);
+                $current_stock_value_material = $this->productUtil->getCurrentStockValueMaterialByStore($store_id);
             } else {
                 $current_stock_value = 0; //expense does not have currency
+                $current_stock_value_product = 0; //expense does not have
+                $current_stock_value_material = 0; //expense does not have currency
             }
         } else {
             $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
+            $current_stock_value_product = $this->productUtil->getCurrentStockValueProductByStore($store_id);
+            $current_stock_value_material = $this->productUtil->getCurrentStockValueMaterialByStore($store_id);
         }
 
         $data['revenue'] = $revenue;
         $data['sell_return'] = $sell_return;
-        $data['profit'] = $profit;
-        $data['purchase'] = $purchase;
-        $data['total_tax'] = $total_tax;
-        $data['expense'] = $expense;
-        $data['purchase_return'] = $purchase_return;
-        $data['payment_received'] = $payment_received_total;
-        $data['payment_sent'] = $payment_sent;
-        $data['current_stock_value'] = $current_stock_value;
+        $data['profit'] = number_format($profit,2);
+        $data['net_profit'] =number_format($net_profit,2);
+        $data['purchase'] = number_format($purchase,2);
+        $data['total_tax'] = number_format($total_tax,2);
+        $data['expense'] = number_format($expense,2);
+        $data['purchase_return'] = number_format($purchase_return,2);
+        $data['payment_received'] = number_format($payment_received_total,2);
+        $data['payment_sent'] = number_format($payment_sent,2);
+        $data['current_stock_value'] = number_format($current_stock_value,2);
+        $data['current_stock_value_product'] = number_format($current_stock_value_product,2);
+        $data['current_stock_value_material'] = number_format($current_stock_value_material,2);
 
         return $data;
     }

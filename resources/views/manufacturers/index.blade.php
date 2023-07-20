@@ -6,13 +6,20 @@
 
     <div class="col-md-12  no-print">
         <div class="card">
-            <div class="card-header d-flex align-items-center">
+            <div class="card-header ">
+                <div class="row">
+                    <div class="col-md-10">
 {{--                    TODO add permissions--}}
 {{--                @can('product_module.product_class.create_and_edit')--}}
-                <a style="color: white" data-href="{{action('ManufacturerController@create')}}"
-                    data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
-                    @lang('lang.add_manufacturer')</a>
+                        <a style="color: white" data-href="{{action('ManufacturerController@create')}}"
+                            data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
+                            @lang('lang.add_manufacturer')</a>
 {{--                @endcan--}}
+                    </div>
+                    <div class="col-md-2">
+                        <div class="print-title font-weight-bold pt-2" ><h1>@lang('lang.manufacturers_list')</h1></div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

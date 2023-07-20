@@ -124,8 +124,13 @@ class TransactionUtil extends Util
         $total_paid = $transaction_payments->sum('amount');
 
         $transaction = Transaction::find($transaction_id);
-        $final_amount = $transaction->final_total - $transaction->used_deposit_balance;
-
+        $returned_transaction = Transaction::where('return_parent_id',$transaction_id)->sum('final_total');
+        if($returned_transaction){
+            $final_amount = $transaction->final_total - $transaction->used_deposit_balance -  $returned_transaction;
+        }else{
+            $final_amount = $transaction->final_total - $transaction->used_deposit_balance;
+        }
+        
         $payment_status = 'pending';
         if ($final_amount <= $total_paid) {
             $payment_status = 'paid';
@@ -152,8 +157,8 @@ class TransactionUtil extends Util
 
         foreach ($transaction_sell_lines as $line) {
             $old_quantity = 0;
-            if (!empty($transaction_sell_line['transaction_sell_line_id'])) {
-                $transaction_sell_line = TransactionSellLine::find($line['transaction_sell_line_id']);
+            if (!empty($transaction_sell_lines['transaction_sell_line_id'])) {
+                $transaction_sell_line = TransactionSellLine::find($transaction_sell_lines['transaction_sell_line_id']);
                 $transaction_sell_line->product_id = $line['product_id'];
                 $transaction_sell_line->variation_id = $line['variation_id'];
                 $transaction_sell_line->coupon_discount = !empty($line['coupon_discount']) ? $this->num_uf($line['coupon_discount']) : 0;
@@ -165,8 +170,11 @@ class TransactionUtil extends Util
                 $transaction_sell_line->product_discount_value = !empty($line['product_discount_value']) ? $this->num_uf($line['product_discount_value']) : 0;
                 $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
                 $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->num_uf($line['product_discount_amount']) : 0;
+                $transaction_sell_line->discount_category = !empty($line['discount_category']) ? $line['discount_category'] : '';
+                
+                $transaction_sell_line->batch_number = !empty($line['batch_number']) ?$line['batch_number']: null;
                 $old_quantity = $transaction_sell_line->quantity;
-                $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
+                $transaction_sell_line->quantity =(float) $line['quantity'];
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
@@ -174,9 +182,11 @@ class TransactionUtil extends Util
                 $transaction_sell_line->tax_method = !empty($line['tax_method']) ? $line['tax_method'] : null;
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
+                $transaction_sell_line->cost_ratio_per_one = $this->num_uf($line['cost_ratio_per_one']);
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
-            } else {
+            } 
+            else {
                 $transaction_sell_line = new TransactionSellLine();
                 $transaction_sell_line->transaction_id = $transaction->id;
                 $transaction_sell_line->product_id = $line['product_id'];
@@ -190,7 +200,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->product_discount_value = !empty($line['product_discount_value']) ? $this->num_uf($line['product_discount_value']) : 0;
                 $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
                 $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->num_uf($line['product_discount_amount']) : 0;
-                $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
+                $transaction_sell_line->discount_category = !empty($line['discount_category']) ? $line['discount_category'] : '';
+                $transaction_sell_line->batch_number = !empty($line['batch_number']) ? $line['batch_number'] : null;
+                $transaction_sell_line->quantity = (float) $line['quantity'];
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
@@ -198,10 +210,12 @@ class TransactionUtil extends Util
                 $transaction_sell_line->tax_method = !empty($line['tax_method']) ? $line['tax_method'] : null;
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
+                $transaction_sell_line->cost_ratio_per_one = $this->num_uf($line['cost_ratio_per_one']);
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $transaction_sell_line->id;
             }
-            $this->updateSoldQuantityInAddStockLine($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $line['quantity'], $old_quantity);
+            $stock_id=$line['stock_id'];
+            $this->updateSoldQuantityInAddStockLine($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id,(float) $line['quantity'], $old_quantity,$stock_id);
         }
 
         //delete sell lines remove by user
@@ -220,15 +234,16 @@ class TransactionUtil extends Util
      * @param float $old_quantity
      * @return void
      */
-    public function updateSoldQuantityInAddStockLine($product_id, $variation_id, $store_id, $new_quantity, $old_quantity,$stock_id)
+    public function updateSoldQuantityInAddStockLine($product_id, $variation_id, $store_id, $new_quantity, $old_quantity,$stock_id=null)
     {
-        $qty_difference = $this->num_uf($new_quantity) - $this->num_uf($old_quantity);
+        $qtyByUnit=Variation::find($variation_id)->number_vs_base_unit==0?1:Variation::find($variation_id)->number_vs_base_unit;
+        $qty_difference = ($qtyByUnit?$qtyByUnit*$new_quantity:$new_quantity) - $old_quantity;
+        // $qty_difference =$new_quantity - $old_quantity;
         if ($qty_difference != 0) {
             $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
                 ->where('transactions.store_id', $store_id)
                 ->where('product_id', $product_id)
                 ->where('variation_id', $variation_id)
-                ->orWhere('add_stock_lines.id',$stock_id)
                 ->select('add_stock_lines.id', DB::raw('SUM(quantity - quantity_sold) as remaining_qty'))
                 ->having('remaining_qty', '>', 0)
                 ->groupBy('add_stock_lines.id')
@@ -240,16 +255,10 @@ class TransactionUtil extends Util
 
                 if ($line->remaining_qty >= $qty_difference) {
                     $line->increment('quantity_sold', $qty_difference);
-                    if($stock_id){
-                        $line->decrement('quantity', $qty_difference);
-                    }
                     $qty_difference = 0;
                 }
                 if ($line->remaining_qty < $qty_difference) {
                     $line->increment('quantity_sold', $line->remaining_qty);
-                    if($stock_id){
-                        $line->decrement('quantity', $line->remaining_qty);
-                    }
                     $qty_difference = $qty_difference - $line->remaining_qty;
                 }
             }
@@ -1528,6 +1537,7 @@ class TransactionUtil extends Util
         $query->select(
             'customers.total_rp',
             'customers.deposit_balance',
+            'customers.added_balance',
             DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', final_total, 0)) as total_return"),
             DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_return_paid"),
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
@@ -1537,8 +1547,7 @@ class TransactionUtil extends Util
 
 
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
-        $balance = $customer_details->total_paid - $customer_details->total_invoice  + $customer_details->total_return - $customer_details->total_return_paid;
-        // print_r( $customer_details->total_return); die();
+        $balance = ($customer_details->total_paid - $customer_details->total_invoice  + $customer_details->total_return - $customer_details->total_return_paid)+ $customer_details->deposit_balance + $customer_details->added_balance;        // print_r( $customer_details->total_return); die();
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }
 

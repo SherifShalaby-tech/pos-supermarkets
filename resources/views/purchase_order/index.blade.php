@@ -5,6 +5,13 @@
 <section class="">
     <div class="col-md-12">
         <div class="card">
+            <div class="card-header d-flex align-items-center">
+                @if (request()->segment(2) == 'draft-purchase-order')
+                    <h3 class="print-title">@lang('lang.draft_purchase_order')</h3>
+                @else
+                    <h3 class="print-title">@lang('lang.view_all_purchase_orders')</h3>
+                @endif
+            </div>
             <div class="card-body">
                 <form action="">
                     <div class="row">

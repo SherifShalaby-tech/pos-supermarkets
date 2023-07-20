@@ -5,7 +5,7 @@
     <div class="col-md-12  no-print">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h4>@lang('lang.customer_details')</h4>
+                <h4 class="print-title">@lang('lang.customer_details')</h4>
             </div>
             <form action="">
                 <div class="col-md-12">
@@ -769,7 +769,10 @@
                 },
                 ajax: {
                     url: "/customer/{{ $customer->id }}",
-                    data: function(d) {},
+                    data: function(d) {
+                        d.start_date = $('#start_date').val();
+                        d.end_date = $('#end_date').val();
+                    },
                 },
                 columnDefs: [{
                     targets: "date",

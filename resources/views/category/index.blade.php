@@ -7,8 +7,11 @@
     <div class="col-md-12  no-print">
         <div class="card">
             <div class="card-header d-flex align-items-center">
+                <h4 class="print-title">@lang('lang.product_categories')</h4>
+            </div>
+            <div class="card-header d-flex align-items-center">
                 @can('product_module.product_class.create_and_edit')
-                <a style="color: white" data-href="{{action('CategoryController@create')}}"
+                <a style="color: white" data-href="{{action('CategoryController@create',['type'=>'category'])}}"
                     data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
                     @lang('lang.add_category')</a>
                 @endcan
@@ -21,6 +24,8 @@
                                 <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.description')</th>
+                                <th>@lang('lang.path')</th>
+                                <th>@lang('lang.products_count')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -32,7 +37,8 @@
                                 </td>
                                 <td>{{$category->name}}</td>
                                 <td>{{$category->description}}</td>
-
+                                <td><a href='/product-class'>{{$category->productClass->name ?? null}} </a>  / {{$category->name}}</td>
+                                <td>{{$category->products_count}}</td>
                                 <td>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm dropdown-toggle"
@@ -46,7 +52,7 @@
                                             @can('product_module.category.create_and_edit')
                                             <li>
 
-                                                <a data-href="{{action('CategoryController@edit', $category->id)}}"
+                                                <a data-href="{{action('CategoryController@edit', $category->id)}}?type=category"
                                                     data-container=".view_modal" class="btn btn-modal"><i
                                                         class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                                             </li>

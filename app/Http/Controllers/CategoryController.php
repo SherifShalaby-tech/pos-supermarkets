@@ -37,7 +37,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::whereNull('parent_id')->get();
+        $categories = Category::whereNull('parent_id')->withCount('products')->get();
 
         return view('category.index')->with(compact(
             'categories'
@@ -62,14 +62,12 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $quick_add = request()->quick_add ?? null;
-        $type = request()->type ?? null;
-
+        $quick_add = $request->quick_add ?? null;
+        $type = $request->type ?? null;
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
-
         return view('category.create')->with(compact(
             'type',
             'quick_add',
@@ -86,7 +84,6 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']]
@@ -113,12 +110,16 @@ class CategoryController extends Controller
             DB::beginTransaction();
             $category = Category::create($data);
 
-            if ($request->has('uploaded_image_name')) {
-                if (!empty($request->input('uploaded_image_name'))) {
-                    $category->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('category');
+            if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                foreach ($request->cropImages as $imageData) {
+                    $extention = explode(";",explode("/",$imageData)[1])[0];
+                    $image = rand(1,1500)."_image.".$extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+                    $category->addMedia($filePath)->toMediaCollection('category');
+
                 }
             }
-
             $category_id = $category->id;
             $sub_category_id = null;
             if ($request->parent_id) {
@@ -170,11 +171,13 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::find($id);
+        $type = request()->type ?? null;
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('category.edit')->with(compact(
             'category',
+            'type',
             'categories',
             'product_classes'
         ));
@@ -201,10 +204,14 @@ class CategoryController extends Controller
             $category = Category::find($id);
 
             $category->update($data);
-            if ($request->has('uploaded_image_name')) {
-                if (!empty($request->input('uploaded_image_name'))) {
+            if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
                     $category->clearMediaCollection('category');
-                    $category->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('category');
+                    $extention = explode(";",explode("/",$imageData)[1])[0];
+                    $image = rand(1,1500)."_image.".$extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
+                    $category->addMedia($filePath)->toMediaCollection('category');
                 }
             }
 
@@ -271,19 +278,22 @@ class CategoryController extends Controller
 
     public function getDropdown()
     {
-        if (!empty(request()->product_class_id)) {
+        // return request()->product_class_id;
+        $categories=[];
+        if (!empty(request()->product_class_id)&& request()->type=="category") {
             $categories = Category::where('product_class_id', request()->product_class_id)->orderBy('name', 'asc')->pluck('name', 'id');
-        } else {
+        } 
+        if(request()->type=="sub_category") {
             $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         }
-        $categories_dp = $this->commonUtil->createDropdownHtml($categories, 'Please Select');
+        $categories_dp = $this->commonUtil->createDropdownHtml($categories, __('lang.please_select'));
 
         return $categories_dp;
     }
 
     public function getSubCategoryDropdown()
     {
-        if (!empty(request()->category_id)) {
+        if (!empty(request()->category_id) &&request()->type=="sub_category") {
             $categories = Category::where('parent_id', request()->category_id)->orderBy('name', 'asc')->pluck('name', 'id');
         } else {
             $categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
@@ -291,5 +301,30 @@ class CategoryController extends Controller
         $categories_dp = $this->commonUtil->createDropdownHtml($categories, 'Please Select');
 
         return $categories_dp;
+    }
+    public function getBase64Image($Image)
+    {
+
+        $image_path = str_replace(env("APP_URL") . "/", "", $Image);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $image_path);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $image_content = curl_exec($ch);
+        curl_close($ch);
+//    $image_content = file_get_contents($image_path);
+        $base64_image = base64_encode($image_content);
+        $b64image = "data:image/jpeg;base64," . $base64_image;
+        return  $b64image;
+    }
+    public function getCroppedImages($cropImages){
+        $dataNewImages = [];
+        foreach ($cropImages as $img) {
+            if (strlen($img) < 200){
+                $dataNewImages[] = $this->getBase64Image($img);
+            }else{
+                $dataNewImages[] = $img;
+            }
+        }
+        return $dataNewImages;
     }
 }

@@ -86,7 +86,7 @@
                                                     <td></td>
                                                     <th style="text-align: right">@lang('lang.total')</th>
                                                     <th><span
-                                                            class="grand_total_span">{{ @num_format($sale->grand_total) }}</span>
+                                                            class="grand_total_span">{{ ($sale->grand_total) }}</span>
                                                     </th>
                                                 </tr>
                                             </tfoot>

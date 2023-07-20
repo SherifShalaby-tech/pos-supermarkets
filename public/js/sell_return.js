@@ -243,7 +243,21 @@ $(document).on(
     }
 );
 
-$(document).on("change", ".quantity, .sell_price", function () {
+
+$(document).on("change", ".sell_price", function () {
+    calculate_sub_totals();
+});
+$(document).on("change", ".quantity", function () {
+    let max = parseFloat($(this).attr("max"));
+    let value_qty = parseFloat($(this).val());
+    if(max < value_qty){
+        $(this).val(max);
+        swal(
+            "warning",
+            "Max quantity is " + " :" + max,
+            "warning"
+        );
+    }
     calculate_sub_totals();
 });
 $(document).on("click", ".remove_row", function () {
@@ -286,14 +300,15 @@ $(document).on("change", "#final_total", function (e) {
 $(document).on("change", "#amount", function (e) {
     let amount = __read_number($("#amount"));
     let total_amount_paid = __read_number($("#total_amount_paid"));
-
-    if (amount > total_amount_paid) {
-        swal(
-            "warning",
-            LANG.amount_exceeds_total_paid + " :" + total_amount_paid,
-            "warning"
-        );
-        __write_number($("#amount"), total_amount_paid);
+    if (total_amount_paid != 0){
+        if (amount > total_amount_paid) {
+            swal(
+                "warning",
+                "amount exceeds total paid" + " :" + total_amount_paid,
+                "warning"
+            );
+            __write_number($("#amount"), total_amount_paid);
+        }
     }
 });
 
@@ -388,7 +403,7 @@ $(document).on("change", "#customer_id", function () {
         },
     });
 });
-$("#customer_id").change();
+// $("#customer_id").change();
 
 $(document).on("change", "#tax_id", function () {
     $("#tax_id_hidden").val($(this).val());

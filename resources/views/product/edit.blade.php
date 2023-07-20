@@ -1,6 +1,203 @@
 @extends('layouts.app')
 @section('title', __('lang.product'))
+@section("styles")
+<style>
+    .preview-edit-product-container {
+        /* display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px; */
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 170px);
+    }
+    .preview {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        padding: 4px;
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        margin: 30px 0px;
+        border: 1px solid #ddd;
+    }
 
+    .preview img {
+        width: 100%;
+        height: 100%;
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        border: 1px solid #ddd;
+        object-fit: cover;
+
+    }
+
+    .delete-btn {
+        position: absolute;
+        top: 156px;
+        right: 0px;
+        /*border: 2px solid #ddd;*/
+        border: none;
+        cursor: pointer;
+    }
+
+    .delete-btn {
+        background: transparent;
+        color: rgba(235, 32, 38, 0.97);
+    }
+
+    .crop-btn {
+        position: absolute;
+        top: 156px;
+        left: 0px;
+        /*border: 2px solid #ddd;*/
+        border: none;
+        cursor: pointer;
+        background: transparent;
+        color: #007bff;
+    }
+</style>
+<style>
+    .variants {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .variants>div {
+        margin-right: 5px;
+    }
+
+    .variants>div:last-of-type {
+        margin-right: 0;
+    }
+
+    .file {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .file>input[type='file'] {
+        display: none
+    }
+
+    .file>label {
+        font-size: 1rem;
+        font-weight: 300;
+        cursor: pointer;
+        outline: 0;
+        user-select: none;
+        border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+        border-style: solid;
+        border-radius: 4px;
+        border-width: 1px;
+        background-color: hsl(0, 0%, 100%);
+        color: hsl(0, 0%, 29%);
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .file>label:hover {
+        border-color: hsl(0, 0%, 21%);
+    }
+
+    .file>label:active {
+        background-color: hsl(0, 0%, 96%);
+    }
+
+    .file>label>i {
+        padding-right: 5px;
+    }
+
+    .file--upload>label {
+        color: hsl(204, 86%, 53%);
+        border-color: hsl(204, 86%, 53%);
+    }
+
+    .file--upload>label:hover {
+        border-color: hsl(204, 86%, 53%);
+        background-color: hsl(204, 86%, 96%);
+    }
+
+    .file--upload>label:active {
+        background-color: hsl(204, 86%, 91%);
+    }
+
+    .file--uploading>label {
+        color: hsl(48, 100%, 67%);
+        border-color: hsl(48, 100%, 67%);
+    }
+
+    .file--uploading>label>i {
+        animation: pulse 5s infinite;
+    }
+
+    .file--uploading>label:hover {
+        border-color: hsl(48, 100%, 67%);
+        background-color: hsl(48, 100%, 96%);
+    }
+
+    .file--uploading>label:active {
+        background-color: hsl(48, 100%, 91%);
+    }
+
+    .file--success>label {
+        color: hsl(141, 71%, 48%);
+        border-color: hsl(141, 71%, 48%);
+    }
+
+    .file--success>label:hover {
+        border-color: hsl(141, 71%, 48%);
+        background-color: hsl(141, 71%, 96%);
+    }
+
+    .file--success>label:active {
+        background-color: hsl(141, 71%, 91%);
+    }
+
+    .file--danger>label {
+        color: hsl(348, 100%, 61%);
+        border-color: hsl(348, 100%, 61%);
+    }
+
+    .file--danger>label:hover {
+        border-color: hsl(348, 100%, 61%);
+        background-color: hsl(348, 100%, 96%);
+    }
+
+    .file--danger>label:active {
+        background-color: hsl(348, 100%, 91%);
+    }
+
+    .file--disabled {
+        cursor: not-allowed;
+    }
+
+    .file--disabled>label {
+        border-color: #e6e7ef;
+        color: #e6e7ef;
+        pointer-events: none;
+    }
+
+    @keyframes pulse {
+        0% {
+            color: hsl(48, 100%, 67%);
+        }
+
+        50% {
+            color: hsl(48, 100%, 38%);
+        }
+
+        100% {
+            color: hsl(48, 100%, 67%);
+        }
+    }
+</style>
+@endsection
 @section('content')
     <section class="forms">
         <div class="container-fluid">
@@ -28,7 +225,7 @@
                                             </strong></label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="i-checks">
                                         <input id="active" name="active" type="checkbox"
                                             @if (!empty($product->active)) checked @endif value="1"
@@ -38,7 +235,7 @@
                                             </strong></label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="i-checks">
                                         <input id="have_weight" name="have_weight" type="checkbox"
                                                @if (!empty($product->have_weight)) checked @endif value="1" class="form-control-custom">
@@ -47,7 +244,16 @@
                                             </strong></label>
                                     </div>
                                 </div>
-
+                                @php
+                                $products_count=App\Models\Product::where('show_at_the_main_pos_page','yes')->count();
+                                @endphp
+                                <div class="col-md-2">
+                                    <div class="i-checks">
+                                        <input id="show_at_the_main_pos_page" name="show_at_the_main_pos_page" type="checkbox"
+                                            @if (isset($products_count)&& $products_count < 40) @if (!empty($product->show_at_the_main_pos_page)&& $product->show_at_the_main_pos_page=="yes") checked @endif @elseif((isset($products_count)&& $products_count == 40)) disabled @endif value="1" class="form-control-custom">
+                                        <label for="show_at_the_main_pos_page"><strong>@lang('lang.show_at_the_main_pos_page')</strong></label>
+                                    </div>
+                                </div>
 
                                 <div class="col-md-4 supplier_div @if (empty($product->is_service)) hide @endif">
                                     <div class="form-group ">
@@ -85,15 +291,17 @@
                                     </div>
                                     <div class="error-msg text-red"></div>
                                 </div>
+                               
                                 @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                                     <div class="col-md-4">
                                         {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
                                         <div class="input-group my-group">
-                                            {!! Form::select('category_id', $categories, $product->category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
+                                            <input type="hidden" data-category_id="{{$product->category_id}}" id="category_value_id"/>
+                                            {!! Form::select('category_id', $categories, $product->category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'),]) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.category.create_and_edit')
                                                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
-                                                        data-href="{{ action('CategoryController@create') }}?quick_add=1"
+                                                        data-href="{{ action('CategoryController@create') }}?quick_add=1&type=category"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
                                                 @endcan
@@ -101,9 +309,11 @@
                                         </div>
                                         <div class="error-msg text-red"></div>
                                     </div>
+                                    
                                     <div class="col-md-4">
                                         {!! Form::label('sub_category_id', __('lang.sub_category') . ' *', []) !!}
                                         <div class="input-group my-group">
+                                            <input type="hidden" data-sub_category_id="{{$product->sub_category_id}}" id="sub_category_id_data"/>
                                             {!! Form::select('sub_category_id', $sub_categories, $product->sub_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.sub_category.create_and_edit')
@@ -175,7 +385,7 @@
                                     <div class="col-md-4">
                                         {!! Form::label('multiple_colors', __('lang.color'), []) !!}
                                         <div class="input-group my-group">
-                                            {!! Form::select('multiple_colors[]', $colors, $product->multiple_colors, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => $product->type == 'variable' ? true : false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_colors']) !!}
+                                            {!! Form::select('multiple_colors[]', $colors, $product->multiple_colors, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_colors']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.color.create_and_edit')
                                                     <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
@@ -217,26 +427,49 @@
                                         </div>
                                     </div>
                                 @endif
-
-                                <div class="col-md-12 mt-3">
-                                    @if (!empty($product->getFirstMediaUrl('product')))
-                                        <div style="width: 120px;" class="images_div">
-                                            <button type="button" class="delete-image btn btn-danger btn-xs"
-                                                data-href="{{ action('ProductController@deleteProductImage', $product->id) }}"
-                                                style="margin-left: 100px; border-radius: 50%"><i
-                                                    class="fa fa-times"></i></button>
-                                            <img src="@if (!empty($product->getFirstMediaUrl('product'))) {{ $product->getFirstMediaUrl('product') }}@else{{ asset('/uploads/' . session('logo')) }} @endif"
-                                                alt="photo" style="width: 120px;">
-                                        </div>
-                                    @endif
-                                </div>
-
                                 <div class="col-md-12 " style="margin-top: 10px;">
-                                    <div class="dropzone" id="my-dropzone">
-                                        <div class="dz-message" data-dz-message>
-                                            <span>@lang('lang.drop_file_here_to_upload')</span>
+                                    <div class="container mt-3">
+                                        <div class="row mx-0" style="border: 1px solid #ddd;padding: 30px 0px;">
+                                            <div class="col-12">
+                                                <div class="mt-3">
+                                                    <div class="row">
+                                                        <div class="col-10 offset-1">
+                                                            <div class="variants">
+                                                                <div class='file file-upload w-100'>
+                                                                    <label for='file-product-edit-product' class="w-100">
+                                                                        <i class="fas fa-cloud-upload-alt"></i>Upload
+                                                                    </label>
+                                                                    <!-- <input  id="file-input" multiple type='file' /> -->
+                                                                    <input type="file" id="file-product-edit-product">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-10 offset-1">
+                                                <div class="preview-edit-product-container">
+                                                    @if(!empty($product->getFirstMediaUrl('product')))
+                                                        <div id="preview{{ $product->id }}" class="preview">
+                                                            <img
+                                                                src="{{  $product->getFirstMediaUrl('product')  }}"
+                                                                id="img{{  $product->id }}" alt="">
+                                                            <div class="action_div"></div>
+                                                            <button type="button"
+                                                                    class="delete-btn"><i
+                                                                    style="font-size: 20px;"
+                                                                    data-href="{{ action('ProductController@deleteProductImage', $product->id) }}"
+                                                                    id="deleteBtn{{ $product->id }}"
+                                                                    class="fas fa-trash"></i>
+                                                            </button>
+
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
 
                                 <div class="col-md-12">
@@ -380,6 +613,7 @@
                                             <th style="width: 20%;">@lang('lang.discount_type')</th>
                                             <th style="width: 15%;">@lang('lang.discount')</th>
                                             <th style="width: 7%;">@lang('lang.discount_category')</th>
+                                            <th style="width: 5%;"></th>
                                             <th style="width: 20%;">@lang('lang.discount_start_date')</th>
                                             <th style="width: 20%;">@lang('lang.discount_end_date')</th>
                                             <th style="width: 20%;">@lang('lang.customer_type') <i class="dripicons-question" data-toggle="tooltip"
@@ -394,7 +628,7 @@
                                             $index_old=0;
                                         @endphp
 
-                                        @if($product->discount)
+                                        {{-- @if($product->discount)
                                             @php
                                             $index_old=1;
                                             @endphp
@@ -402,7 +636,7 @@
                                                 'row_id' => 0,
                                                 'discount_product'=>$product,
                                             ])
-                                        @endif
+                                        @endif --}}
                                         @foreach($discounts as $discount)
                                             @include('product.partial.raw_discount', [
                                             'row_id' => $loop->index + $index_old,
@@ -411,7 +645,7 @@
                                         @endforeach
                                         </tbody>
                                     </table>
-                                    <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
+                                    <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="{{count($discounts)}}">
                                 </div>
 
 
@@ -494,8 +728,9 @@
                                                 <th>@lang('lang.grade')</th>
                                                 <th>@lang('lang.unit')</th>
                                                 <th>@lang('lang.number_vs_base_unit')</th>
-                                                <th class="supplier_div @if (empty($product->is_service)) hide @endif">@lang('lang.purchase_price')</th>
-                                                <th class="supplier_div @if (empty($product->is_service)) hide @endif">@lang('lang.sell_price')</th>
+                                                {{-- @if (empty($product->is_service)) hide @endif --}}
+                                                <th class="supplier_div @if(empty($is_service)) hide @endif">@lang('lang.purchase_price')</th>
+                                                <th class="supplier_div @if(empty($is_service)) hide @endif">@lang('lang.sell_price')</th>
                                                 <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
                                                             class="dripicons-plus"></i></button></th>
                                             </tr>
@@ -514,7 +749,7 @@
                                 <input type="hidden" name="row_id" id="row_id"
                                     value="{{ $product->variations->count() }}">
                             </div>
-
+                            <div id="cropped_edit_product_images"></div>
                             <div class="row">
                                 <div class="col-md-4 mt-5">
                                     <div class="form-group">
@@ -531,32 +766,26 @@
         </div>
     </section>
 
-
-    <div class="modal fade" id="product_cropper_modal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+    <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@lang('lang.crop_image_before_upload')</h5>
+                    <h5 class="modal-title" id="editProductModalLabel">Modal title</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="img-container">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <img src="" id="product_sample_image" />
-                            </div>
-                            <div class="col-md-4">
-                                <div class="product_preview_div"></div>
-                            </div>
-                        </div>
+                    <div id="croppie-edit-product-modal" style="display:none">
+                        <div id="croppie-edit-product-container"></div>
+                        <button data-dismiss="modal" id="croppie-edit-product-cancel-btn" type="button" class="btn btn-secondary"><i
+                                class="fas fa-times"></i></button>
+                        <button id="croppie-edit-product-submit-btn" type="button" class="btn btn-primary"><i
+                                class="fas fa-crop"></i></button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" id="product_crop" class="btn btn-primary">@lang('lang.crop')</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
+
             </div>
         </div>
     </div>
@@ -571,5 +800,203 @@
             $('#different_prices_for_stores').change();
             $('#this_product_have_variant').change();
         })
+    </script>
+    <script>
+        $("#submit-btn").on("click", function (e) {
+            getEditProductImages()
+            e.preventDefault();
+            setTimeout(() => {
+                if ($("#product-edit-form").valid()) {
+                    tinyMCE.triggerSave();
+                    $.ajax({
+                        type: "POST",
+                        url: $("#product-edit-form").attr("action"),
+                        data: $("#product-edit-form").serialize(),
+                        success: function (response) {
+                            if (response.success) {
+                                swal("Success", response.msg, "success");
+                                setTimeout(() => {
+                                    window.reload();
+                                }, 1000);
+                            }
+                        },
+                        error: function (response) {
+                            if (!response.success) {
+                                swal("Error", response.msg, "error");
+                            }
+                        },
+                    });
+                }
+            });
+        });
+        @if($product)
+        {{--document.getElementById("cropBtn{{ $product->id }}").addEventListener('click', () => {--}}
+        {{--    setTimeout(() => {--}}
+        {{--        launchEditProductCropTool(document.getElementById("img{{ $product->id }}"));--}}
+        {{--    }, 500);--}}
+        {{--});--}}
+        document.getElementById("deleteBtn{{ $product->id }}").addEventListener('click', () => {
+            Swal.fire({
+                title: '{{ __("site.Are you sure?") }}',
+                text: "{{ __("site.You won't be able to delete!") }}",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Deleted!',
+                        '{{ __("site.Your Image has been deleted.") }}',
+                        'success'
+                    )
+                    $("#preview{{ $product->id }}").remove();
+                }
+            });
+        });
+
+        @endif
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+    <script>
+        var fileEditProductInput = document.querySelector('#file-product-edit-product');
+        var previewEditProductContainer = document.querySelector('.preview-edit-product-container');
+        var croppieEditProductModal = document.querySelector('#croppie-edit-product-modal');
+        var croppieEditProductContainer = document.querySelector('#croppie-edit-product-container');
+        var croppieEditProductCancelBtn = document.querySelector('#croppie-edit-product-cancel-btn');
+        var croppieEditProductSubmitBtn = document.querySelector('#croppie-edit-product-submit-btn');
+
+        // let currentFiles = [];
+        fileEditProductInput.addEventListener('change', () => {
+            // let files = fileEditProductInput.files;
+            previewEditProductContainer.innerHTML = '';
+            let files = Array.from(fileEditProductInput.files)
+            // files.concat(currentFiles)
+            // currentFiles.push(...files)
+            // currentFiles && (files = currentFiles)
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.match('image.*')) {
+                    const reader = new FileReader();
+                    reader.addEventListener('load', () => {
+                        const preview = document.createElement('div');
+                        preview.classList.add('preview');
+                        const img = document.createElement('img');
+                        img.src = reader.result;
+                        preview.appendChild(img);
+                        const container = document.createElement('div');
+                        const deleteBtn = document.createElement('span');
+                        deleteBtn.classList.add('delete-btn');
+                        deleteBtn.innerHTML = '<i style="font-size: 20px;" class="fas fa-trash"></i>';
+                        deleteBtn.addEventListener('click', () => {
+                            swal({
+                                title: "Delete",
+                                text: "Are you sure you want to delete this image ?",
+                                icon: "warning",
+                                buttons: true,
+                                dangerMode: true,
+                                buttons: ["Cancel", "Delete"],
+                            }).then((addPO) => {
+                                if (addPO) {
+                                    files.splice(file, 1)
+                                    preview.remove();
+                                    getEditProductImages()
+                                }
+                            });
+                        });
+
+                        preview.appendChild(deleteBtn);
+                        const cropBtn = document.createElement('span');
+                        cropBtn.setAttribute("data-toggle", "modal")
+                        cropBtn.setAttribute("data-target", "#editProductModal")
+                        cropBtn.classList.add('crop-btn');
+                        cropBtn.innerHTML = '<i style="font-size: 20px;" class="fas fa-crop"></i>';
+                        cropBtn.addEventListener('click', () => {
+                            setTimeout(() => {
+                                launchEditProductCropTool(img);
+                            }, 500);
+                        });
+                        preview.appendChild(cropBtn);
+                        previewEditProductContainer.appendChild(preview);
+                    });
+                    reader.readAsDataURL(file);
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: '{{ __("site.Oops...") }}',
+                        text: '{{ __("site.Sorry , You Should Upload Valid Image") }}',
+                    })
+                }
+            }
+
+            getEditProductImages()
+        });
+        function launchEditProductCropTool(img) {
+            getEditProductImages();
+            // Set up Croppie options
+            const croppieOptions = {
+                viewport: {
+                    width: 200,
+                    height: 200,
+                    type: 'square' // or 'square'
+                },
+                boundary: {
+                    width: 300,
+                    height: 300,
+                },
+                enableOrientation: true
+            };
+
+            // Create a new Croppie instance with the selected image and options
+            const croppie = new Croppie(croppieEditProductContainer, croppieOptions);
+            croppie.bind({
+                url: img.src,
+                orientation: 1,
+            });
+
+            // Show the Croppie modal
+            croppieEditProductModal.style.display = 'block';
+
+            // When the user clicks the "Cancel" button, hide the modal
+            croppieEditProductCancelBtn.addEventListener('click', () => {
+                croppieEditProductModal.style.display = 'none';
+                $('#editProductModal').modal('hide');
+                croppie.destroy();
+            });
+
+            // When the user clicks the "Crop" button, get the cropped image and replace the original image in the preview
+            croppieEditProductSubmitBtn.addEventListener('click', () => {
+                croppie.result({
+                    type: 'canvas',
+                    size: {
+                        width: 800,
+                        height: 600
+                    },
+                    quality: 1 // Set quality to 1 for maximum quality
+                }).then((croppedImg) => {
+                    img.src = croppedImg;
+                    croppieEditProductModal.style.display = 'none';
+                    $('#editProductModal').modal('hide');
+                    croppie.destroy();
+                    getEditProductImages()
+                });
+            });
+        }
+        function getEditProductImages() {
+            setTimeout(() => {
+                const container = document.querySelectorAll('.preview-edit-product-container');
+                let images = [];
+                $("#cropped_edit_product_images").empty();
+                for (let i = 0; i < container[0].children.length; i++) {
+                    var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0].children[i].children[0].src);
+                    $("#cropped_edit_product_images").append(newInput);
+                    images.push(container[0].children[i].children[0].src)
+                }
+                console.log(images)
+                return images
+            }, 300);
+        }
+  
     </script>
 @endsection

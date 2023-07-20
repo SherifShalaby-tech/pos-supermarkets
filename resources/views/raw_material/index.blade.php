@@ -3,11 +3,18 @@
 
 @section('content')
     <div class="container-fluid">
-        @can('product_module.raw_material.create_and_edit')
-            <a style="color: white" href="{{ action('RawMaterialController@create') }}" class="btn btn-info"><i
-                    class="dripicons-plus"></i>
-                @lang('lang.add_new_raw_material')</a>
-        @endcan
+        <div class="row">
+            <div class="col-md-9">
+                @can('product_module.raw_material.create_and_edit')
+                    <a style="color: white" href="{{ action('RawMaterialController@create') }}" class="btn btn-info"><i
+                            class="dripicons-plus"></i>
+                        @lang('lang.add_new_raw_material')</a>
+                @endcan
+            </div>
+            <div class="col-md-3">
+                <div class="print-title font-weight-bold pt-2" ><h1>@lang('lang.raw_materials_list')</h1></div>
+            </div>
+        </div>
 
         <div class="card mt-3">
             <div class="col-md-12">

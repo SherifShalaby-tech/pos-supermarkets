@@ -38,7 +38,7 @@ class ProductClassController extends Controller
      */
     public function index()
     {
-        $product_classes = ProductClass::orderBy('sort', 'asc')->get();
+        $product_classes = ProductClass::withCount('products')->withCount('categories')->orderBy('sort', 'asc')->get();
 
         return view('product_class.index')->with(compact(
             'product_classes'
@@ -59,12 +59,6 @@ class ProductClassController extends Controller
         ));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -87,9 +81,15 @@ class ProductClassController extends Controller
 
             $class = ProductClass::create($data);
 
-            if ($request->has('uploaded_image_name')) {
-                if (!empty($request->input('uploaded_image_name'))) {
-                    $class->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('product_class');
+
+            if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
+                    $class->clearMediaCollection('product_class');
+                    $extention = explode(";", explode("/", $imageData)[1])[0];
+                    $image = rand(1, 1500) . "_image." . $extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+                    $class->addMedia($filePath)->toMediaCollection('product_class');
                 }
             }
 
@@ -114,23 +114,11 @@ class ProductClassController extends Controller
         return redirect()->back()->with('status', $output);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $product_class = ProductClass::find($id);
@@ -140,13 +128,6 @@ class ProductClassController extends Controller
         ));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $this->validate(
@@ -161,10 +142,20 @@ class ProductClassController extends Controller
             $class = ProductClass::where('id', $id)->first();
             $class->update($data);
 
-            if ($request->has('uploaded_image_name')) {
-                if (!empty($request->input('uploaded_image_name'))) {
+//            if ($request->has('uploaded_image_name')) {
+//                if (!empty($request->input('uploaded_image_name'))) {
+//                    $class->clearMediaCollection('product_class');
+//                    $class->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('product_class');
+//                }
+//            }
+            if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
                     $class->clearMediaCollection('product_class');
-                    $class->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('product_class');
+                    $extention = explode(";", explode("/", $imageData)[1])[0];
+                    $image = rand(1, 1500) . "_image." . $extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+                    $class->addMedia($filePath)->toMediaCollection('product_class');
                 }
             }
             $output = [
@@ -241,5 +232,32 @@ class ProductClassController extends Controller
         $product_classes_dp = $this->commonUtil->createDropdownHtml($product_classes, 'Please Select');
 
         return $product_classes_dp;
+    }
+    public function getBase64Image($Image)
+    {
+
+        $image_path = str_replace(env("APP_URL") . "/", "", $Image);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $image_path);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $image_content = curl_exec($ch);
+        curl_close($ch);
+//    $image_content = file_get_contents($image_path);
+        $base64_image = base64_encode($image_content);
+        $b64image = "data:image/jpeg;base64," . $base64_image;
+        return $b64image;
+    }
+
+    public function getCroppedImages($cropImages)
+    {
+        $dataNewImages = [];
+        foreach ($cropImages as $img) {
+            if (strlen($img) < 200) {
+                $dataNewImages[] = $this->getBase64Image($img);
+            } else {
+                $dataNewImages[] = $img;
+            }
+        }
+        return $dataNewImages;
     }
 }

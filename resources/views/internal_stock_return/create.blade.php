@@ -8,7 +8,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.internal_stock_return')</h4>
+                            <h3 class="print-title">@lang('lang.internal_stock_return')</h3>
                         </div>
                         {!! Form::open(['url' => action('InternalStockReturnController@store'), 'method' => 'post', 'id' => 'internal_stock_return_form', 'enctype' => 'multipart/form-data']) !!}
                         <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{ $is_raw_material }}">
@@ -186,7 +186,7 @@
                             <input type="hidden" id="store_array" name="store_array" value="[]">
                             <div class="row">
                                 <div class="col-md-12 p-5" style="text-align: right; font-size: 22px; font-weight: bold;">
-                                    @lang('lang.total'): <span class="final_total_span">{{ @num_format(0) }}</span>
+                                    @lang('lang.total'): <span class="final_total_span">{{ (0) }}</span>
                                 </div>
                             </div>
                             <div class="row">

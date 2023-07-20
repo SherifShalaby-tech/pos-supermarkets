@@ -995,6 +995,7 @@ return [
     'start_time' => 'Heure de début',
     'end_time' => 'Heure de fin',
     'edited_by' => 'Édité par',
+    'edited_at' => 'Edité à',
     'out_of_stock' => 'En rupture de stock',
 
     'new_price' => 'Nouveau prix',

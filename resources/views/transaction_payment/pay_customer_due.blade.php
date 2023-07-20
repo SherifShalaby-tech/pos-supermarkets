@@ -17,6 +17,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
+                            <input type="hidden" value="{{$extract_due}}" name="extract_due"/>
                             <label for="">@lang('lang.customer_name'): {{$customer->name}}</label> <br>
                             <label for="">@lang('lang.mobile'): {{$customer->mobile}}</label><br>
                             <label for="">@lang('lang.address'): {{$customer->address}}</label><br>
@@ -31,6 +32,7 @@
                             {!! Form::label('amount', __('lang.amount'). ':*', []) !!} <br>
                             {!! Form::text('amount', @num_format($due), ['class' => 'form-control', 'placeholder'
                             => __('lang.amount')]) !!}
+                            <input type="hidden" value="{{@num_format($due)}}" name="balance"/>
                         </div>
                     </div>
 
@@ -47,7 +49,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             {!! Form::label('paid_on', __('lang.payment_date'). ':', []) !!} <br>
-                            {!! Form::text('paid_on', null, ['class' => 'form-control datepicker', 'readonly',
+                            {!! Form::text('paid_on', @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'readonly',
                             'placeholder' => __('lang.payment_date')]) !!}
                         </div>
                     </div>

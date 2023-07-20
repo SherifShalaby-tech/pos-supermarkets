@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Currency;
@@ -132,9 +133,9 @@ class SellReturnController extends Controller
                 })
                 ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     if (!empty($row->return_parent)) {
-                        $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                        $final_total = number_format($row->final_total - $row->return_parent->final_total,2);
                     } else {
-                        $final_total = $this->commonUtil->num_f($row->final_total);
+                        $final_total = number_format($row->final_total,2);
                     }
 
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
@@ -142,8 +143,8 @@ class SellReturnController extends Controller
                 })
                 ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
                     $amount_paid = 0;
-                    if (!empty($request->method)) {
-                        $payments = $row->transaction_payments->where('method', $request->method);
+                    if (!empty($request["method"])) {
+                        $payments = $row->transaction_payments->where('method', $request["method"]);
                     } else {
                         $payments = $row->transaction_payments;
                     }
@@ -152,14 +153,14 @@ class SellReturnController extends Controller
                     }
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($amount_paid,2) . '</span>';
                 })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $paid = $row->transaction_payments->sum('amount');
                     $due = $row->final_total - $paid;
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($due,2) . '</span>';
                 })
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
@@ -174,7 +175,7 @@ class SellReturnController extends Controller
                     foreach ($commissions as $commission) {
                         $total +=  $commission->final_total;
                     }
-                    return $this->commonUtil->num_f($total);
+                    return number_format($total,2);
                 })
                 ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);
@@ -183,8 +184,8 @@ class SellReturnController extends Controller
                 ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
                 ->addColumn('method', function ($row) use ($payment_types, $request) {
                     $methods = '';
-                    if (!empty($request->method)) {
-                        $payments = $row->transaction_payments->where('method', $request->method);
+                    if (!empty($request["method"])) {
+                        $payments = $row->transaction_payments->where('method', $request["method"]);
                     } else {
                         $payments = $row->transaction_payments;
                     }
@@ -204,8 +205,8 @@ class SellReturnController extends Controller
                 })
                 ->addColumn('ref_number', function ($row) use ($request) {
                     $ref_numbers = '';
-                    if (!empty($request->method)) {
-                        $payments = $row->transaction_payments->where('method', $request->method);
+                    if (!empty($request["method"])) {
+                        $payments = $row->transaction_payments->where('method', $request["method"]);
                     } else {
                         $payments = $row->transaction_payments;
                     }
@@ -386,7 +387,7 @@ class SellReturnController extends Controller
             ->first();
 
         $stores = Store::getDropdown();
-
+//        dd($store_pos);
         return view('sell_return.create')->with(compact(
             'sell_return',
             'sale',
@@ -430,6 +431,7 @@ class SellReturnController extends Controller
                     'grand_total' => $this->commonUtil->num_uf($request->grand_total),
                     'discount_type' => $request->discount_type,
                     'discount_value' => $this->commonUtil->num_uf($request->discount_value),
+                    'delivery_cost' => $request->delivery_cost,
                     'total_tax' => $this->commonUtil->num_uf($request->total_tax),
                     'gift_card_id' => $request->gift_card_id,
                     'gift_card_amount' => $request->gift_card_amount,
@@ -448,6 +450,7 @@ class SellReturnController extends Controller
                 if (empty($sell_return)) {
                     $sell_return = Transaction::create($transaction_data);
                 } else {
+                    $sell_return->delivery_cost = $this->commonUtil->num_uf($request->delivery_cost);
                     $sell_return->final_total = $this->commonUtil->num_uf($request->final_total);
                     $sell_return->grand_total = $this->commonUtil->num_uf($request->grand_total);
                     $sell_return->status = 'final';
@@ -469,6 +472,13 @@ class SellReturnController extends Controller
                         $product = Product::find($line->product_id);
                         if (!$product->is_service) {
                             $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $sell_return->store_id, $sell_line['quantity'], $old_quantity);
+                            if(isset($line->stock_line_id)){
+                                $stock = AddStockLine::where('id',$line->stock_line_id)->first();
+                                $stock->update([
+                                    'quantity' =>  $stock->quantity + $old_quantity,
+                                    'quantity_sold' =>  $stock->quantity - $old_quantity
+                                ]);
+                            }
                         }
                     }
                 }
@@ -485,14 +495,21 @@ class SellReturnController extends Controller
                         'transaction_payment_id' => $request->transaction_payment_id,
                         'transaction_id' => $sell_return->id,
                         'amount' => $this->commonUtil->num_uf($request->amount),
-                        'method' => $request->method,
+                        'method' => $request["method"],
                         'paid_on' => $this->commonUtil->uf_date($request->paid_on) . ' ' . date('H:i:s'),
                         'ref_number' => $request->ref_number,
                         'bank_deposit_date' => !empty($request->bank_deposit_date) ? $request->bank_deposit_date : null,
                         'bank_name' => $request->bank_name,
                         // 'is_return' => 1,
                     ];
-                    $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($sell_return, $payment_data);
+                    if($sell_transaction->payment_status !== "pending" || ($sell_transaction->payment_status == "partial" &&  ($sell_transaction->final_total - $sell_transaction->transaction_payments->sum('amount')) <  $request->amount)){
+                        
+                        $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($sell_return, $payment_data);
+
+                    }else{
+                        $this->transactionUtil->updateTransactionPaymentStatus($sell_transaction->id);
+                    }
+
 
                     if ($request->upload_documents) {
                         foreach ($request->file('upload_documents', []) as $key => $doc) {

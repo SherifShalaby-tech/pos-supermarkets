@@ -8,7 +8,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <h4>@lang('lang.expenses')</h4>
+                        <h3 class="print-title">@lang('lang.expenses')</h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -160,6 +160,7 @@
                                                                         @lang('lang.view')</a>
                                                                 </li>
                                                             @endcan
+                                                            {{-- new edit --}}
                                                             @can('expense.expenses.create_and_edit')
                                                                 <li>
                                                                     <a href="{{ action('ExpenseController@edit', $expense->id) }}"
@@ -176,6 +177,7 @@
                                                                             class="fa fa-trash"></i> @lang('lang.delete')</a>
                                                                 </li>
                                                             @endcan
+                                                            {{-- new edit  --}}
                                                         </ul>
                                                     </div>
                                                 </td>

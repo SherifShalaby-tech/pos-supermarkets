@@ -1,6 +1,7 @@
 @php
 $logo = App\Models\System::getProperty('logo');
 $site_title = App\Models\System::getProperty('site_title');
+$watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
 @endphp
 <header class="header no-print">
     <nav class="navbar">
@@ -19,8 +20,11 @@ $site_title = App\Models\System::getProperty('site_title');
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a target="_blank" href="{{action('ContactUsController@getUserContactUs')}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
+                        {{-- <a target="_blank" href="{{action('ContactUsController@getUserContactUs')}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
                             style="background-image: url('{{asset('images/handshake.jpg')}}');" class="btn no-print">
+                        </a> --}}
+                        <a target="_blank" href="https://api.whatsapp.com/send?phone={{$watsapp_numbers}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
+                            style="background-image: url('{{asset('images/watsapp.jpg')}}');background-size: 40px;" class="btn no-print">
                         </a>
                     </li>
                     <li class="nav-item"><button class="btn-danger btn-sm hide" id="power_off_btn"  data-toggle="tooltip" data-title="@lang('lang.shut_down')"><i

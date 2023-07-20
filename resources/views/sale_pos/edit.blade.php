@@ -2,6 +2,9 @@
 @section('title', __('lang.pos'))
 
 @section('content')
+    @php
+    $watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
+    @endphp
     <section class="forms pos-section no-print">
         <div class="container-fluid">
             <div class="row">
@@ -209,27 +212,30 @@
                                                 <thead>
                                                     <tr>
                                                         <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
+                                                            style="width: @if (session('system_mode') != 'restaurant') 17% @else 20% @endif; font-size: 12px !important;">
                                                             @lang('lang.product')</th>
                                                         <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
+                                                            style="width: @if (session('system_mode') != 'restaurant') 17% @else 20% @endif; font-size: 12px !important;">
                                                             @lang('lang.quantity')</th>
                                                         <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 16% @else 15% @endif; font-size: 12px !important;">
+                                                            style="width: @if (session('system_mode') != 'restaurant') 14% @else 15% @endif; font-size: 12px !important;">
                                                             @lang('lang.price')</th>
                                                         <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 13% @else 15% @endif; font-size: 12px !important;">
+                                                            style="width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; font-size: 12px !important;">
                                                             @lang('lang.discount')</th>
                                                         <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                        style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                        @lang('lang.category_discount')</th>
+                                                        <th
+                                                            style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 12px !important;">
                                                             @lang('lang.sub_total')</th>
                                                         @if (session('system_mode') != 'restaurant')
                                                             <th
-                                                                style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                                style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 12px !important;">
                                                                 @lang('lang.current_stock')</th>
                                                         @endif
                                                         <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                            style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 12px !important;">
                                                             @lang('lang.action')</th>
                                                     </tr>
                                                 </thead>
@@ -275,11 +281,19 @@
                                                     id="subtotal">0.00</span>
                                             </div>
                                             <div class="col-sm-4">
+                                                
                                                 <span class="totals-title">{{ __('lang.random_discount') }} <button
                                                         type="button" class="btn btn-link btn-sm" data-toggle="modal"
-                                                        data-target="#discount_modal"> <i
+                                                        data-target="#discount_modal"
+                                                        @if(!auth()->user()->can('sp_module.sales_promotion.view')
+                                                        || !auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                                                        || !auth()->user()->can('sp_module.sales_promotion.delete'))
+                                                        disabled 
+                                                        @endif
+                                                        > <i
                                                             class="dripicons-document-edit"></i></button></span><span
                                                     id="discount">0.00</span>
+                                                    {{-- @endif --}}
                                             </div>
                                             <div class="col-sm-4">
                                                 <span class="totals-title">{{ __('lang.tax') }}</span><span
@@ -332,9 +346,13 @@
                                                         class="btn mr-2 payment-btn text-white" data-toggle="modal"
                                                         data-target="#add-payment"
                                                         id="cash-btn">@lang('lang.pay_and_close')</button>
-                                                    <button style="background-color: #d63031" type="button"
+                                                        @if(auth()->user()->can('sp_module.sales_promotion.view')
+                                                        || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                                                        || auth()->user()->can('sp_module.sales_promotion.delete'))
+                                                        <button style="background-color: #d63031" type="button"
                                                         class="btn mr-2 btn-md payment-btn text-white" data-toggle="modal"
                                                         data-target="#discount_modal">@lang('lang.random_discount')</button>
+                                                        @endif
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -486,13 +504,16 @@
                                                 </a>
                                             </li>
                                             <li class="nav-item">
-                                                <a target="_blank"
+                                                <a target="_blank" href="https://api.whatsapp.com/send?phone={{$watsapp_numbers}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
+                                                    style="background-image:  url('{{asset('images/watsapp.jpg')}}');background-size: 40px;" class="btn no-print">
+                                                </a>
+                                                {{-- <a target="_blank"
                                                     href="{{ action('ContactUsController@getUserContactUs') }}"
                                                     id="contact_us_btn" data-toggle="tooltip"
                                                     data-title="@lang('lang.contact_us')"
                                                     style="background-image: url('{{ asset('images/handshake.jpg') }}');"
                                                     class="btn no-print">
-                                                </a>
+                                                </a> --}}
                                             </li>
                                             <li class="nav-item"><button class="btn-danger btn-sm hide"
                                                     id="power_off_btn"><i class="fa fa-power-off"></i></button></li>
@@ -753,7 +774,9 @@
     <script>
         $(document).ready(function() {
             @foreach ($transaction->transaction_sell_lines as $line)
-                get_label_product_row({{ $line->product_id }}, {{ $line->variation_id }},
+            
+
+                get_label_product_row({{ $line->product_id }}, {{ $line->variation_id }},null,
                     {{ $line->quantity }},
                     {{ $loop->index }})
             @endforeach

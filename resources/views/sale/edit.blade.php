@@ -85,14 +85,13 @@
                                                     <th style="width: 20%">{{ __('lang.quantity') }}</th>
                                                     <th style="width: 20%">{{ __('lang.price') }}</th>
                                                     <th style="width: 20%">{{ __('lang.discount') }}</th>
+                                                    <th style="width: 20%">{{ __('lang.category_discount') }}</th>
                                                     <th style="width: 10%">{{ __('lang.sub_total') }}</th>
                                                     <th style="width: 20%"></th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                @include('sale.partials.edit_product_row', [
-                                                    'products' => $sale->transaction_sell_lines,
-                                                ])
+                                            <tbody class="edit_product_row">
+                                              
                                             </tbody>
                                             <input type="hidden" name="row_count" id="row_count"
                                                 value="{{ $sale->transaction_sell_lines->count() }}">
@@ -103,7 +102,7 @@
                                                     <td></td>
                                                     <th style="text-align: right">@lang('lang.total')</th>
                                                     <th><span
-                                                            class="grand_total_span">{{ @num_format($sale->grand_total) }}</span>
+                                                            class="grand_total_span">{{ $sale->grand_total }}</span>
                                                     </th>
                                                 </tr>
                                             </tfoot>
@@ -354,6 +353,17 @@
                         }
                     }
                 },
+            });
+        })
+        $(document).ready(function() {
+            $.ajax({
+                type: "get",
+                url: "/sale/addEditProductRow",
+                data:{transaction_id: {{ $sale->id }}},
+                dataType: "html",
+                success: function (response) {
+                    $('.edit_product_row').append(response);
+                }
             });
         })
     </script>

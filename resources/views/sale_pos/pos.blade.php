@@ -2,6 +2,9 @@
 @section('title', __('lang.pos'))
 
 @section('content')
+    @php
+    $watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
+    @endphp
     <section class="forms pos-section no-print">
         <div class="container-fluid">
 
@@ -248,15 +251,24 @@
                                             <div class="col-sm-4">
                                                 <span class="totals-title">{{ __('lang.items') }}</span><span
                                                     id="item">0</span>
+                                                <br>
+                                                <span class="totals-title  text-dark" style="font-weight:1000">{{ __('lang.quantity') }}</span><span
+                                                id="item-quantity">0</span>
+
                                             </div>
                                             <div class="col-sm-4">
                                                 <span class="totals-title">{{ __('lang.total') }}</span><span
                                                     id="subtotal">0.00</span>
                                             </div>
                                             <div class="col-sm-4">
+                                                @if(auth()->user()->can('sp_module.sales_promotion.view')
+                                                        || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                                                        || auth()->user()->can('sp_module.sales_promotion.delete'))
                                                 <button style="background-color: #d63031" type="button"
                                                     class="btn btn-md payment-btn text-white" data-toggle="modal"
-                                                    data-target="#discount_modal">@lang('lang.random_discount')</button>
+                                                    data-target="#discount_modal"
+                                                    >@lang('lang.random_discount')</button>
+                                                    @endif
                                                 {{-- <span id="discount">0.00</span> --}}
                                             </div>
 
@@ -305,10 +317,15 @@
                                                         class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
                                                     <button data-method="cash" style="background: #0082ce" type="button"
                                                         class="btn mr-2 payment-btn text-white" data-toggle="modal"
-                                                        data-target="#add-payment" id="cash-btn">@lang('lang.pay_and_close')</button>
-                                                    <button style="background-color: #d63031" type="button"
+                                                        data-target="#add-payment" data-backdrop="static" data-keyboard="false" id="cash-btn">@lang('lang.pay_and_close')</button>
+                                                        @if(auth()->user()->can('sp_module.sales_promotion.view')
+                                                        || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
+                                                        || auth()->user()->can('sp_module.sales_promotion.delete'))
+                                                        <button style="background-color: #d63031" type="button"
                                                         class="btn mr-2 btn-md payment-btn text-white" data-toggle="modal"
-                                                        data-target="#discount_modal">@lang('lang.random_discount')</button>
+                                                        data-target="#discount_modal"
+                                                        >@lang('lang.random_discount')</button>
+                                                        @endif
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -379,9 +396,15 @@
                             </div> --}}
                             <div class="column-5">
                                 <button data-method="cash" style="background: #0094ce" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="cash-btn"><i class="fa fa-money"></i>
+                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" data-backdrop="static" data-keyboard="false"
+                                    id="cash-btn" ><i class="fa fa-money"></i>
                                     @lang('lang.pay')</button>
+                            </div>
+                            <div class="column-5">
+                                <button data-method="cash" style="background: #478299" type="button"
+                                    class="btn btn-custom" 
+                                    id="quick-pay-btn" ><i class="fa fa-money"></i>
+                                    @lang('lang.quick_pay')</button>
                             </div>
                             <div class="column-5">
                                 <button data-method="coupon" style="background: #00cec9" type="button"
@@ -392,7 +415,7 @@
                             @if (session('system_mode') != 'restaurant')
                                 <div class="column-5">
                                     <button data-method="paypal" style="background-color: #213170" type="button"
-                                        class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
+                                        class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" data-backdrop="static" data-keyboard="false"
                                         id="paypal-btn"><i class="fa fa-paypal"></i>
                                         @lang('lang.other_online_payments')</button>
                                 </div>
@@ -495,12 +518,8 @@
                                                 </a>
                                             </li>
                                             <li class="nav-item">
-                                                <a target="_blank"
-                                                    href="{{ action('ContactUsController@getUserContactUs') }}"
-                                                    id="contact_us_btn" data-toggle="tooltip"
-                                                    data-title="@lang('lang.contact_us')"
-                                                    style="background-image: url('{{ asset('images/handshake.jpg') }}');"
-                                                    class="btn no-print">
+                                                <a target="_blank" href="https://api.whatsapp.com/send?phone={{$watsapp_numbers}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
+                                                    style="background-image:  url('{{asset('images/watsapp.jpg')}}');background-size: 40px;" class="btn no-print">
                                                 </a>
                                             </li>
                                             <li class="nav-item"><button class="btn-danger btn-sm hide"

@@ -7,7 +7,7 @@
 <div class="col-md-12">
     <div class="card">
         <div class="card-header d-flex align-items-center">
-            <h4>@lang('lang.delivery_list')</h4>
+            <h3 class="print-title">@lang('lang.delivery_list')</h3>
         </div>
         <div class="card-body">
             <form action="">

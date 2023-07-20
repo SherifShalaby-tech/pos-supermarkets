@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductInAdjustmentsController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
 
     Route::get('product/get-raw-material-details/{raw_material_id}', 'ProductController@getRawMaterialDetail');
+    // Route::get('product/show-pr', 'ProductController@showPr');
+    // Route::get('product/show-pr-data', 'ProductController@showPrData');
     Route::get('product/get-raw-material-row', 'ProductController@getRawMaterialRow');
     Route::get('product/get-raw-discount', 'ProductController@getRawDiscount');
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
@@ -52,8 +55,19 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('product/check-name', 'ProductController@checkName');
     Route::get('product-stocks', 'ProductController@getProductStocks');
     Route::get('product/delete-product-image/{id}', 'ProductController@deleteProductImage');
+    Route::get('product/remove_damage/{id}', 'ProductController@get_remove_damage');
+    Route::get('product/remove_expiry/{id}', 'ProductController@get_remove_expiry');
+    Route::get('product/create/product_id={id}/convolutions', 'ProductController@addConvolution')->name("addConvolution");
+    Route::get('product/create/product_id={id}/getDamageProduct', 'ProductController@getDamageProduct')->name("getDamageProduct");
+    Route::post('product/convolutions/storeStockRemoved', 'ProductController@storeStockRemoved')->name("storeStockRemoved");
+    Route::post('product/convolutions/storeStockDamaged', 'ProductController@storeStockDamaged')->name("storeStockDamaged");
+    Route::post('product/convolutions/deleteExpiryRow', 'ProductController@deleteExpiryRow')->name("deleteExpiryRow");
+   Route::get('product/toggle-appearance-pos/{id}', 'ProductController@toggleAppearancePos');
+   Route::post('/update-column-visibility', 'ProductController@updateColumnVisibility');
+//    Route::post('product/remove_expiry/{id}', 'ProductController@send_remove_damage');
     Route::resource('product', ProductController::class);
-
+    Route::post('product/multiDeleteRow', 'ProductController@multiDeleteRow');
+    Route::post('/update-column-visibility', 'ProductController@updateColumnVisibility');
     Route::get('raw-material/add-stock/create', 'AddStockController@create');
     Route::get('raw-material/add-stock', 'AddStockController@index');
     Route::get('raw-material/add-product-row', 'RawMaterialController@addProductRow');
@@ -130,6 +144,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('store/get-dropdown', 'StoreController@getDropdown');
     Route::resource('store', StoreController::class);
     Route::post('user/check-password/{id}', 'UserController@checkPassword');
+    Route::post('user/check-admin-password/{id}', 'UserController@checkAdminPassword');
     Route::get('user/get-dropdown', 'UserController@getDropdown');
     Route::get('user/get-profile', 'UserController@getProfile');
     Route::put('user/update-profile', 'UserController@updateProfile');
@@ -146,7 +161,9 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::get('add-stock/get-source-by-type-dropdown/{type}', 'AddStockController@getSourceByTypeDropdown');
     Route::get('add-stock/add-product-row', 'AddStockController@addProductRow');
+    Route::get('add-stock/add-multiple-product-row', 'AddStockController@addMultipleProductRow');
     Route::get('add-stock/add-product-different-batch-row', 'AddStockController@addProductBatchRow');
+    Route::get('add-stock/add-product-batch-row', 'AddStockController@addProductBatchRow');
 
     Route::get('add-stock/get-purchase-order-details/{id}', 'AddStockController@getPurchaseOrderDetails');
     Route::post('add-stock/save-import', 'AddStockController@saveImport');
@@ -185,7 +202,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::resource('quotation', QuotationController::class);
 
     Route::post('transaction-payment/pay-customer-due/{customer_id}', 'TransactionPaymentController@payCustomerDue');
-    Route::get('transaction-payment/get-customer-due/{customer_id}', 'TransactionPaymentController@getCustomerDue');
+    Route::get('transaction-payment/get-customer-due/{customer_id}/{extract_due?}', 'TransactionPaymentController@getCustomerDue');
     Route::get('transaction-payment/add-payment/{id}', 'TransactionPaymentController@addPayment');
     Route::get('transaction-payment/by-method-gift-card/{gift_card_number}', 'TransactionPaymentController@showMethodGiftCard');
     Route::resource('transaction-payment', TransactionPaymentController::class);
@@ -197,6 +214,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('pos/get-non-identifiable-item-row', 'SellPosController@getNonIdentifiableItemRow');
     Route::get('pos/get-products', 'SellPosController@getProducts');
     Route::get('pos/add-product-row', 'SellPosController@addProductRow');
+    Route::get('sale/addEditProductRow', 'SellPosController@addEditProductRow');
     Route::get('pos/add-discounts', 'SellPosController@addDiscounts');
     Route::get('pos/get-product-discount', 'SellPosController@getProductDiscount');
     Route::get('pos/get-product-items-by-filter', 'SellPosController@getProductItemsByFilter');
@@ -225,6 +243,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('dining-table/get-dropdown-by-dining-room/{id}', 'DiningTableController@getDropdownByDiningRoom');
     Route::resource('dining-table', DiningTableController::class);
 
+    
     Route::post('sale/save-import', 'SellController@saveImport');
     Route::get('sale/get-import', 'SellController@getImport');
     Route::get('sale/get-delivery-list', 'SellController@getDeliveryList');
@@ -312,6 +331,12 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::resource('customer-balance-adjustment', CustomerBalanceAdjustmentController::class);
     Route::resource('customer-point-adjustment', CustomerPointAdjustmentController::class);
 
+    Route::resource('product-in-adjustment', ProductInAdjustmentsController::class);
+    Route::get('product-in-adjustment-index', 'ProductInAdjustmentsController@index');
+    Route::get('product-in-adjustment-create', 'ProductInAdjustmentsController@create');
+    Route::post('product-in-adjustment-store', 'ProductInAdjustmentsController@store')->name('add_product_adjustment');
+    Route::delete('product-in-adjustment-delete/{id}', 'ProductInAdjustmentsController@delete')->name('delete_product_adjustment');
+    Route::get('product-in-adjustment/get-details/{id}', 'ProductInAdjustmentsController@getDetails');
 
     Route::get('report/get-profit-loss', 'ReportController@getProfitLoss');
     Route::get('report/daily-sales-summary', 'ReportController@getDailySalesSummary');

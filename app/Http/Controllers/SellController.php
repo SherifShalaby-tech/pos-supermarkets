@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Imports\TransactionSellLineImport;
+use App\Models\AddStockLine;
 use App\Models\Brand;
+use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
 use App\Models\Category;
 use App\Models\Color;
@@ -144,7 +146,12 @@ class SellController extends Controller
                 $query->wherein('transactions.store_id', (array) $employee->store_id);
             }
             if (!empty(request()->deliveryman_id)) {
-                $query->where('deliveryman_id', request()->deliveryman_id);
+                if(request()->deliveryman_id == 'all_delivery'){
+                    $query->where('deliveryman_id','!=', null);
+                }else{
+                    $query->where('deliveryman_id', request()->deliveryman_id);
+                }
+                
             }
             if (!empty(request()->payment_status)) {
                 $query->where('payment_status', request()->payment_status);
@@ -230,9 +237,9 @@ class SellController extends Controller
                 })
                 ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     if (!empty($row->return_parent)) {
-                        $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                        $final_total = number_format($row->final_total - $row->return_parent->final_total,2);
                     } else {
-                        $final_total = $this->commonUtil->num_f($row->final_total);
+                        $final_total = number_format($row->final_total,2);
                     }
 
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
@@ -250,14 +257,14 @@ class SellController extends Controller
                     }
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($amount_paid,2) . '</span>';
                 })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $paid = $row->transaction_payments->sum('amount');
                     $due = $row->final_total - $paid;
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($due,2) . '</span>';
                 })
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
@@ -272,7 +279,7 @@ class SellController extends Controller
                     foreach ($commissions as $commission) {
                         $total +=  $commission->final_total;
                     }
-                    return $this->commonUtil->num_f($total);
+                    return number_format($total,2);
                 })
                 ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);
@@ -432,12 +439,18 @@ class SellController extends Controller
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('sale.pay.create_and_edit')) {
                             if ($row->status != 'draft' && $row->payment_status != 'paid' && $row->status != 'canceled') {
-                                $html .=
-                                    ' <li>
-                                    <a data-href="' . action('TransactionPaymentController@addPayment', $row->id) . '"
-                                        data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
-                                        ' . __('lang.add_payment') . '</a>
-                                    </li>';
+                                $final_total=$row->final_total;
+                                if (!empty($row->return_parent)) {
+                                    $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                                }
+                                if($final_total > 0) {
+                                    $html .=
+                                        ' <li>
+                                        <a data-href="' . action('TransactionPaymentController@addPayment', $row->id) . '"
+                                            data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
+                                            ' . __('lang.add_payment') . '</a>
+                                        </li>';
+                                }
                             }
                         }
                         $html .= '<li class="divider"></li>';
@@ -707,13 +720,27 @@ class SellController extends Controller
                         $product = Product::find($transaction_sell_line->product_id);
                         if (!$product->is_service) {
                             $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
+                            if(isset($transaction_sell_line->stock_line_id)){
+                                $stock = AddStockLine::where('id',$transaction_sell_line->stock_line_id)->first();
+                                $stock->update([
+                                    'quantity' =>  $stock->quantity + $transaction_sell_line->quantity,
+                                    'quantity_sold' =>  $stock->quantity - $transaction_sell_line->quantity
+                                ]);
+                            }
+
                         }
                     }
                     $transaction_sell_line->delete();
                 }
 
+            $return_ids =Transaction::where('return_parent_id', $id)->pluck('id');
+
+
+
             Transaction::where('return_parent_id', $id)->delete();
             Transaction::where('parent_sale_id', $id)->delete();
+
+            CashRegisterTransaction::wherein('transaction_id', $return_ids)->delete();
 
             $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, 0, $transaction->rp_earned, 0, $transaction->rp_redeemed);
 
@@ -1002,7 +1029,11 @@ class SellController extends Controller
                 $query->where('store_id', $store_id);
             }
             if (!empty(request()->deliveryman_id)) {
-                $query->where('deliveryman_id', request()->deliveryman_id);
+                if(request()->deliveryman_id == 'all_delivery'){
+                    $query->where('deliveryman_id','!=', null);
+                }else{
+                    $query->where('deliveryman_id', request()->deliveryman_id);
+                }
             }
             if (!empty(request()->payment_status)) {
                 $query->where('payment_status', request()->payment_status);

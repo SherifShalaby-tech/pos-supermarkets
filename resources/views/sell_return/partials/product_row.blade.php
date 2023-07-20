@@ -2,7 +2,6 @@
     <tr class="product_row">
         <td style="width: 30%">
             {{$product->product->name}}
-
             @if($product->variation->name != "Default")
                 <b>{{$product->variation->name}}</b>
             @endif
@@ -13,7 +12,7 @@
             <input type="hidden" name="transaction_sell_line[{{$loop->index}}][variation_id]" class="variation_id"
                    value="{{$product->variation_id}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index}}][price_hidden]" class="price_hidden"
-                   value="@if(isset($product->variation->default_sell_price)){{@num_format($product->variation->default_sell_price)}}@else{{0}}@endif">
+                   value="@if(isset($product->sell_price)){{@num_format($product->sell_price)}}@else{{0}}@endif">
             <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount]"
                    class="coupon_discount_value" value="{{$product->coupon_discount_value}}">
             <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount_type]"
@@ -32,12 +31,12 @@
         <td style="width: 20%">
             {{$product->variation->sub_sku}}
         </td>
-        <td>@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif</td>
+        <td>@if(isset($product->quantity)){{ preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif</td>
         <td style="width: 15%">
             <div class="input-group">
-                <input type="text" class="form-control quantity" min=0 max="{{$product->quantity}}"
+                <input type="text" class="form-control quantity" min=0 max="{{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}"
                        name="transaction_sell_line[{{$loop->index}}][quantity]" required
-                       value="@if(isset($product->quantity_returned)){{@num_format($product->quantity_returned)}}@else{{0}}@endif">
+                       value="@if(isset($product->quantity_returned)){{@num_format($product->quantity_returned)}}@else{{0}}@endif" >
             </div>
 
         </td>

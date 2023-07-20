@@ -14,6 +14,7 @@
                         <div class="card-body">
                             <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
                             {!! Form::open(['url' =>action('ManufacturingController@store'), 'id' =>'product-edit-form', 'method'=>'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
+                            {{-- <input type="hidden" name="is_add_stock" id="is_add_stock" value="1"> --}}
                             <div class="row">
                                 <div class="col-md-3">
                                     {!! Form::label('store_id', __('lang.store'), []) !!}

@@ -25,6 +25,7 @@ use App\Models\Supplier;
 use App\Models\System;
 use App\Models\Tax;
 use App\Models\Transaction;
+use App\Models\TransactionPayment;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
@@ -55,12 +56,6 @@ class AddStockController extends Controller
     protected $cashRegisterUtil;
     protected $moneysafeUtil;
 
-    /**
-     * Constructor
-     *
-     * @param ProductUtils $product
-     * @return void
-     */
     public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil, NotificationUtil $notificationUtil, CashRegisterUtil $cashRegisterUtil, MoneySafeUtil $moneysafeUtil)
     {
         $this->commonUtil = $commonUtil;
@@ -72,11 +67,6 @@ class AddStockController extends Controller
 
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         if (request()->ajax()) {
@@ -88,12 +78,11 @@ class AddStockController extends Controller
             ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
             ->leftjoin('users', 'transactions.created_by', '=', 'users.id')
             ->leftjoin('currencies as paying_currency', 'transactions.paying_currency_id', 'paying_currency.id')
-            ->where('manufacturing_id','!=',null)
             ->whereIn('type',['material_manufactured','add_stock'])
-           ->orWhere(function($query){
-                $manufacturingIds=Transaction::where('type','material_manufactured')->pluck('manufacturing_id');
-                $query->whereNotIn('manufacturing_id',$manufacturingIds)->where('type','material_under_manufacture');
-            })
+        //    ->orWhere(function($query){
+        //         $manufacturingIds=Transaction::where('type','material_manufactured')->pluck('manufacturing_id');
+        //         $query->whereNotIn('manufacturing_id',$manufacturingIds)->where('type','material_under_manufacture');
+        //     })
             ->where('status', '!=', 'draft');
 
             if (!empty($store_id)) {
@@ -126,16 +115,16 @@ class AddStockController extends Controller
             if (!empty(request()->end_time)) {
                 $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
             }
-            if (strtolower($request->session()->get('user.job_title')) == 'cashier') {
-                $query->where('transactions.created_by', $request->session()->get('user.id'));
-            }
+            // if (strtolower($request->session()->get('user.job_title')) == 'cashier') {
+            //     $query->where('transactions.created_by', $request->session()->get('user.id'));
+            // }
 
             $add_stocks = $query->select(
                 'transactions.*',
                 'users.name as created_by_name',
                 'suppliers.name as supplier',
                 'paying_currency.symbol as paying_currency_symbol'
-            )->with(['add_stock_variations'])->groupBy('transactions.id')->orderBy('transaction_date', 'desc')->get();
+            )->with(['add_stock_variations'])->groupBy('transactions.id');
             return DataTables::of($add_stocks)
                 ->editColumn('created_at', '{{@format_datetime($created_at)}}')
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
@@ -144,17 +133,17 @@ class AddStockController extends Controller
                 ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     $final_total =  $row->final_total;
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($final_total,2) . '</span>';
                 })
                 ->addColumn('paid_amount', function ($row) use ($default_currency_id) {
                     $amount_paid =  $row->transaction_payments->sum('amount');
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($amount_paid,2) . '</span>';
                 })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $due =  $row->final_total - $row->transaction_payments->sum('amount');
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($due,2) . '</span>';
                 })
                 ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);
@@ -193,7 +182,7 @@ class AddStockController extends Controller
                                  </li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1) {
+                        if (auth()->user()->can('stock.add_stock.create_and_edit')) {
                             $html .=
                                 '<li>
                                 <a href="' . action('AddStockController@edit', $row->id) . '"><i
@@ -227,6 +216,7 @@ class AddStockController extends Controller
                     }
                 )
                 ->rawColumns([
+                    'po_no',
                     'action',
                     'transaction_date',
                     'created_at',
@@ -255,11 +245,6 @@ class AddStockController extends Controller
         ));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
@@ -320,17 +305,9 @@ class AddStockController extends Controller
             'users',
         ));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-
-         try {
+        //  try {
         $data = $request->except('_token');
 
         if (!empty($data['po_no'])) {
@@ -369,7 +346,7 @@ class AddStockController extends Controller
         DB::beginTransaction();
         $transaction = Transaction::create($transaction_data);
 
-        $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction);
+       $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction,$request->batch_row);
 
         if ($request->files) {
             foreach ($request->file('files', []) as $key => $file) {
@@ -381,7 +358,7 @@ class AddStockController extends Controller
             $payment_data = [
                 'transaction_id' => $transaction->id,
                 'amount' => $this->commonUtil->num_uf($request->amount),
-                'method' => $request->method,
+                'method' => $request["method"],
                 'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
                 'ref_number' => $request->ref_number,
                 'source_type' => $request->source_type,
@@ -433,7 +410,7 @@ class AddStockController extends Controller
         }
         DB::commit();
 
-        if ($data['submit'] == 'print') {
+        if (isset($data['submit']) &&$data['submit'] == 'print') {
             $print = 'print';
             $url = action('AddStockController@show', $transaction->id) . '?print=' . $print;
 
@@ -444,23 +421,17 @@ class AddStockController extends Controller
             'success' => true,
             'msg' => __('lang.success')
         ];
-         } catch (\Exception $e) {
-             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-             $output = [
-                 'success' => false,
-                 'msg' => __('lang.something_went_wrong')
-             ];
-         }
+        //  } catch (\Exception $e) {
+        //      Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //      $output = [
+        //          'success' => false,
+        //          'msg' => __('lang.something_went_wrong')
+        //      ];
+        //  }
 
         return redirect()->back()->with('status', $output);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $add_stock = Transaction::find($id);
@@ -479,12 +450,6 @@ class AddStockController extends Controller
         ));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $add_stock = Transaction::find($id);
@@ -540,13 +505,6 @@ class AddStockController extends Controller
         ));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
 
@@ -591,6 +549,7 @@ class AddStockController extends Controller
 
         DB::beginTransaction();
         $transaction = Transaction::where('id', $id)->first();
+        $transaction_old_payment_status = $transaction->payment_status;
         $transaction->update($transaction_data);
 
         $mismtach = $this->productUtil->checkSoldAndPurchaseQtyMismatch($request->add_stock_lines, $transaction);
@@ -611,7 +570,7 @@ class AddStockController extends Controller
                 'transaction_payment_id' => !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
                 'transaction_id' => $transaction->id,
                 'amount' => $this->commonUtil->num_uf($request->amount),
-                'method' => $request->method,
+                'method' => $request["method"],
                 'paid_on' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['paid_on']) : null,
                 'ref_number' => $request->ref_number,
                 'source_type' => $request->source_type,
@@ -641,8 +600,13 @@ class AddStockController extends Controller
 
                 if (!empty($user_id)) {
                     $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
-                    $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
-                    $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                    if($cr_transaction){
+                        $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+                        $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                    }else{
+                        $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
+                    }
+
                 }
             }
 
@@ -653,8 +617,32 @@ class AddStockController extends Controller
             }
         }
 
-        $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
 
+        if($transaction->payment_status == "pending" && $transaction_old_payment_status == "paid"){
+           $TransactionPayment = TransactionPayment::where('transaction_id', $transaction->id)->where('transaction_id', $transaction->id)->first();
+            if($TransactionPayment){
+                $money_safe_t =  MoneySafeTransaction::where('transaction_payment_id', $TransactionPayment->id)->where('transaction_id', $transaction->id)->first();
+                if($money_safe_t){
+                    $money_safe_t->delete();
+                }
+                $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->where('transaction_payment_id', $TransactionPayment->id)->first();
+                if( $cr_transaction){
+                        $register = CashRegister::where('id', $cr_transaction->cash_register_id)->where('status','close')->first();
+                        if($register){
+                            $register->closing_amount += $TransactionPayment->amount;
+                            $register->save();
+                        }
+                        $cr_transaction->delete();
+                }
+                $TransactionPayment->delete();
+            }
+
+
+
+
+        }else{
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+        }
         //update purchase order status if selected
         if (!empty($transaction->purchase_order_id)) {
             Transaction::find($transaction->purchase_order_id)->update(['status' => 'received']);
@@ -683,12 +671,6 @@ class AddStockController extends Controller
         return redirect()->back()->with('status', $output);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         try {
@@ -734,11 +716,6 @@ class AddStockController extends Controller
         return $output;
     }
 
-    /**
-     * Returns the html for product row
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function addProductRow(Request $request)
     {
         if ($request->ajax()) {
@@ -760,6 +737,44 @@ class AddStockController extends Controller
             }
         }
     }
+
+    public function addMultipleProductRow(Request $request)
+    {
+        if ($request->ajax()) {
+            $currency_id = $request->currency_id;
+            $currency = Currency::find($currency_id);
+            $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
+
+            $product_selected = $request->input('product_selected');
+            $store_id = $request->input('store_id');
+            if (!empty($product_selected)) {
+                $index = $request->input('row_count');
+                $products = $this->productUtil->getMultipleDetailsFromProduct($product_selected, $store_id);
+                return view('add_stock.partials.product_row')
+                    ->with(compact('products', 'index', 'currency', 'exchange_rate'));
+            }
+        }
+    }
+    // public function addProductBatchRow(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $currency_id = $request->currency_id;
+    //         $currency = Currency::find($currency_id);
+    //         $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
+
+    //         $product_id = $request->input('product_id');
+    //         $variation_id = $request->input('variation_id');
+    //         $store_id = $request->input('store_id');
+    //         if (!empty($product_id)) {
+    //             $index = $request->input('row_count');
+    //             $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
+
+    //             return view('add_stock.partials.product_batch_row')
+    //                 ->with(compact('products', 'index', 'currency', 'exchange_rate'));
+    //         }
+    //     }
+    // }
+
     public function addProductBatchRow(Request $request)
     {
         if ($request->ajax()) {
@@ -770,13 +785,14 @@ class AddStockController extends Controller
             $product_id = $request->input('product_id');
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
-            if (!empty($product_id)) {
-                $index = $request->input('row_count');
-                $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
+            $batch_count = $request->input('batch_count');
 
-                return view('add_stock.partials.product_batch_row')
-                    ->with(compact('products', 'index', 'currency', 'exchange_rate'));
-            }
+            // if (!empty($product_id)) {
+                 $row_count = $request->input('index');
+                $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
+                return view('add_stock.partials.batch_row')
+                    ->with(compact('products','row_count','exchange_rate','batch_count'));
+
         }
     }
     public function getPurchaseOrderDetails($id)
@@ -788,16 +804,10 @@ class AddStockController extends Controller
         ));
     }
 
-    /**
-     * Show the form for importing a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function getImport()
     {
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
         $stores = Store::getDropdown();
-
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
@@ -819,9 +829,9 @@ class AddStockController extends Controller
 
     public function saveImport(Request $request)
     {
+
         try {
             $data = $request->except('_token');
-
             if (!empty($data['po_no'])) {
                 $ref_transaction_po = Transaction::find($data['po_no']);
             }
@@ -857,7 +867,6 @@ class AddStockController extends Controller
             $transaction = Transaction::create($transaction_data);
 
             Excel::import(new AddStockLineImport($transaction->id), $request->file);
-
             foreach ($transaction->add_stock_lines as $line) {
                 $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $transaction->store_id,  $line->quantity, 0);
             }
@@ -877,7 +886,7 @@ class AddStockController extends Controller
                 $payment_data = [
                     'transaction_id' => $transaction->id,
                     'amount' => $this->commonUtil->num_uf($request->amount),
-                    'method' => $request->method,
+                    'method' => $request["method"],
                     'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
                     'ref_number' => $request->ref_number,
                     'source_type' => $request->source_type,
@@ -928,7 +937,6 @@ class AddStockController extends Controller
                 'msg' => __('lang.something_went_wrong')
             ];
         }
-
         return redirect()->back()->with('status', $output);
     }
 

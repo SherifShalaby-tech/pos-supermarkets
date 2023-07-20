@@ -85,7 +85,7 @@
                                     </td>
                                     <td>
                                         @if (isset($line->quantity))
-                                            {{ @num_format($line->quantity) }}@else{{ 0 }}
+                                            {{ ($line->quantity) }}@else{{ 0 }}
                                         @endif
                                     </td>
                                     <td>

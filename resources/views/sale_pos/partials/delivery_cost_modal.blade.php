@@ -52,7 +52,6 @@
                         <div class="form-group">
                             <select class="form-control selectpicker" name="deliveryman_id" id="deliveryman_id"
                                 data-live-search="true">
-                                <option value="" selected>@lang('lang.please_select')</option>
                                 @foreach ($deliverymen as $key => $name)
                                     <option @if (!empty($transaction) && $transaction->deliveryman_id == $key) selected @endif
                                         value="{{ $key }}">{{ $name }}</option>
@@ -94,7 +93,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" name="delivery_cost_btn" class="btn btn-primary"
+                    <button type="button" id= "delivery_cost_btn" name="delivery_cost_btn" class="btn btn-primary"
                         data-dismiss="modal">{{ __('lang.submit') }}</button>
                 </div>
             </div>

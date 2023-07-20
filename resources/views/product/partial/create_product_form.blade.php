@@ -28,7 +28,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                 </strong></label>
         </div>
     </div>
-    <div class="col-md-3 ">
+    <div class="col-md-2">
         <div class="i-checks">
             <input id="clear_all_input_form" name="clear_all_input_form"
                    type="checkbox" @if ($clear_all_input_form == null || $clear_all_input_form == '1') checked @endif value="1"
@@ -40,11 +40,21 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             </label>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="i-checks">
             <input id="have_weight" name="have_weight" type="checkbox"  value="1"
                    class="form-control-custom">
             <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
+        </div>
+    </div>
+    @php
+    $products_count=App\Models\Product::where('show_at_the_main_pos_page','yes')->count();
+    @endphp
+    <div class="col-md-2">
+        <div class="i-checks">
+            <input id="show_at_the_main_pos_page" name="show_at_the_main_pos_page" type="checkbox"
+                @if (isset($products_count)&& $products_count < 40) checked @else disabled @endif value="1" class="form-control-custom">
+            <label for="show_at_the_main_pos_page"><strong>@lang('lang.show_at_the_main_pos_page')</strong></label>
         </div>
     </div>
     <div class="col-md-3">
@@ -91,7 +101,8 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
         <div class="col-md-4">
             {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
             <div class="input-group my-group">
-                {!! Form::select('category_id', $categories, !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
+                <input type="hidden" data-category_id="{{!empty($recent_product) ? $recent_product->category_id : null}}" id="category_value_id"/>
+                {!! Form::select('category_id', $categories, !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), ]) !!}
                 <span class="input-group-btn">
                     @can('product_module.category.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -105,6 +116,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
         <div class="col-md-4">
             {!! Form::label('sub_category_id', __('lang.sub_category'), []) !!}
             <div class="input-group my-group">
+                {{-- <input type="hidden" data-sub_category_id="{{!empty($recent_product) ? $recent_product->sub_category_id : null}}" id="sub_category_value_id"/> --}}
                 {!! Form::select('sub_category_id', [], !empty($recent_product) ? $recent_product->sub_category_id : false, ['class' => 'clear_input_form selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                 <span class="input-group-btn">
                     @can('product_module.sub_category.create_and_edit')
@@ -236,7 +248,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                                             <i class="fas fa-cloud-upload-alt"></i>Upload
                                         </label>
                                         <!-- <input  id="file-input" multiple type='file' /> -->
-                                        <input type="file" id="file-input" multiple>
+                                        <input type="file" id="file-input">
                                     </div>
                                 </div>
                             </div>
@@ -376,6 +388,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                 <th style="width: 20%;">@lang('lang.discount_type')</th>
                 <th style="width: 15%;">@lang('lang.discount')</th>
                 <th style="width: 10%;">@lang('lang.discount_category')</th>
+                <th style="width: 5%;"></th>
                 <th style="width: 20%;">@lang('lang.discount_start_date')</th>
                 <th style="width: 20%;">@lang('lang.discount_end_date')</th>
                 <th style="width: 20%;">@lang('lang.customer_type') <i class="dripicons-question" data-toggle="tooltip"
@@ -385,7 +398,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             </tr>
             </thead>
             <tbody>
-            @include('product.partial.raw_discount', ['row_id' => 0])
+            {{-- @include('product.partial.raw_discount', ['row_id' => 0]) --}}
             </tbody>
         </table>
         <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
@@ -468,8 +481,9 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                     <th>@lang('lang.grade')</th>
                     <th>@lang('lang.unit')</th>
                     <th>@lang('lang.number_vs_base_unit')</th>
-                    <th class="@if(empty($is_service)) hide @endif default_purchase_price_th">@lang('lang.purchase_price')</th>
-                    <th class="@if(empty($is_service)) hide @endif default_sell_price_th">@lang('lang.sell_price')</th>
+                    {{-- @if(empty($is_service)) hide @endif --}}
+                    <th class="default_purchase_price_th @if(empty($is_service)) hide @endif">@lang('lang.purchase_price')</th>
+                    <th class="default_sell_price_th @if(empty($is_service)) hide @endif">@lang('lang.sell_price')</th>
                     <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
                                 class="dripicons-plus"></i></button></th>
                 </tr>

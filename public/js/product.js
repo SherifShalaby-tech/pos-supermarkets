@@ -35,14 +35,14 @@ $("#different_prices_for_stores").change(function () {
 $(".this_product_have_variant_div").slideUp();
 $("#this_product_have_variant").change(function () {
     if ($(this).prop("checked")) {
-        $(
-            "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
-        ).selectpicker("val", "");
-        $(
-            "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
-        )
-            .attr("disabled", true)
-            .selectpicker("refresh");
+        // $(
+        //     "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
+        // ).selectpicker("val", "");
+        // $(
+        //     "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
+        // )
+        //     .attr("disabled", true)
+        //     .selectpicker("refresh");
         $(".this_product_have_variant_div").slideDown();
     } else {
         $(
@@ -70,6 +70,11 @@ $(document).on("click", ".remove_row", function () {
 
 $(document).on("click", ".add_row", function () {
     var row_id = parseInt($("#row_id").val());
+    var is_service_checked=document.querySelector('#is_service');
+    let is_service;
+    if(is_service_checked.checked == true){
+        is_service=1;
+    }
     $.ajax({
         method: "get",
         url: "/product/get-variation-row?row_id=" + row_id,
@@ -77,6 +82,7 @@ $(document).on("click", ".add_row", function () {
             name: $("#name").val(),
             purchase_price: $("#purchase_price").val(),
             sell_price: $("#sell_price").val(),
+            is_service:is_service
         },
         contentType: "html",
         success: function (result) {
@@ -144,43 +150,88 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
 //     acceptedFiles: ".jpeg,.jpg,.png,.gif",
 //     init: function () {
 //         var myDropzone = this;
-        $("#submit-btn").on("click", function (e) {
-            e.preventDefault();
-            if ($("#product-form").valid()) {
-                tinyMCE.triggerSave();
-                document.getElementById("loader").style.display = "block";
-                document.getElementById("content").style.display = "none";
-                $.ajax({
-                    type: "POST",
-                    url: $("form#product-form").attr("action"),
-                    data: $("#product-form").serialize(),
-                    success: function (response) {
-                        myFunction();
-                        if (response.success) {
-                            swal("Success", response.msg, "success");
-                            $("#sku").val("").change();
-                            $("#name").val("").change();
-                            $(".translations").val("").change();
+$("#submit-btn").on("click", function (e) {
+    e.preventDefault();
+    let system_mode = $("#system_mode").val();
+    let sku = $('#sku').val();
+  
+    if (sku.trim() !== "") {
+      $.ajax({
+        method: "get",
+        url: "/product/check-sku/" + sku,
+        data: {},
+        success: function (result) {
+          console.log(result.success);
+          if (!result.success) {
+            swal("Error", result.msg, "error");
+          } else {
+            submitForm();
+          }
+        },
+      });
+    }else if(system_mode != "garments"){
+        let name = $("#name").val();
+        let product_class_id = $("#product_class_id").val();
+        let category_id = $("#category_id").val();
+            $.ajax({
+                method: "get",
+                url: "/product/check-name",
+                data: {
+                    name: name,
+                    product_class_id: product_class_id,
+                    category_id: category_id,
+                },
+                success: function (result) {
+                    if (!result.success) {
+                        swal("Error", result.msg, "error");
+                        $("#name").val("");
+                    }else {
+                        submitForm();
+                    }
+                },
+            });
+    } else {
+      submitForm();
+    }
+  });
+  
+    function submitForm() {
+        if ($("#product-form").valid()) {
+            tinyMCE.triggerSave();
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            $.ajax({
+                type: "POST",
+                url: $("form#product-form").attr("action"),
+                data: $("#product-form").serialize(),
+                success: function (response) {
+                    myFunction();
+                    if (response.success) {
+                        swal("Success", response.msg, "success");
+                        $("#sku").val("").change();
+                        $("#name").val("").change();
+                        $(".translations").val("").change();
 
-                            if(!$('#clear_all_input_form').is(':checked')){
-                                $('.clear_input_form').val('');
-                                $('.clear_input_form').selectpicker('refresh');
-                            }
-                            const previewContainer = document.querySelector('.preview-container');
-                            previewContainer.innerHTML = '';
-                        } else {
-                            swal("Error", response.msg, "error");
+                        if (!$('#clear_all_input_form').is(':checked')) {
+                        $('.clear_input_form').val('');
+                        $('.clear_input_form').selectpicker('refresh');
                         }
-                    },
-                    error: function (response) {
-                        myFunction();
-                        if (!response.success) {
-                            swal("Error", response.msg, "error");
-                        }
-                    },
-                });
-            }
-        });
+                        const previewContainer = document.querySelector('.preview-container');
+                        previewContainer.innerHTML = '';
+                    } else {
+                        swal("Error", response.msg, "error");
+                    }
+                },
+                error: function (response) {
+                    myFunction();
+                    if (!response.success) {
+                        swal("Error", response.msg, "error");
+                    }
+                },
+            });
+        }
+    }
+  
 //
 //         this.on("sending", function (file, xhr, formData) {
 //             document.getElementById("loader").style.display = "block";
@@ -351,16 +402,37 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
         },
     });
 });
+$(document).ready(function() {
+    var product_class_id =$('#product_class_id').val();
+    var category_id=$('#category_value_id').attr('data-category_id');
+    $.ajax({
+        method: "get",
+        url:
+            "/category/get-dropdown?product_class_id=" +product_class_id+"&type=category",
+        data: {},
+        contentType: "html",
+        success: function (result) {
+            console.log(result)
+            $("#category_id").empty().append(result).change();
+            $("#category_id").selectpicker("refresh");
+            // $("#category_id").val(category_id);
 
+            if (category_id) {
+                $("#category_id").selectpicker("val", category_id);
+            }
+        },
+    });
+})
 $(document).on("change", "#product_class_id", function () {
     $.ajax({
         method: "get",
         url:
             "/category/get-dropdown?product_class_id=" +
-            $("#product_class_id").val(),
+            $("#product_class_id").val()+"&type=category",
         data: {},
         contentType: "html",
         success: function (result) {
+            
             $("#category_id").empty().append(result).change();
             $("#category_id").selectpicker("refresh");
 
@@ -370,13 +442,33 @@ $(document).on("change", "#product_class_id", function () {
         },
     });
 });
+$(document).ready(function() {
+    // var sub_category_id=$('#sub_category_value_id').attr('data-sub_category_id');
+    // $.ajax({
+    //     method: "get",
+    //     url:
+    //         "/category/get-sub-category-dropdown?category_id=" +
+    //         $("#category_id").val()+"&type=sub_category",
+    //     data: {},
+    //     contentType: "html",
+    //     success: function (result) {
+    //         console.log(result)
+    //         $("#sub_category_id").empty().append(result).change();
+    //         $("#sub_category_id").selectpicker("refresh");
 
+    //         if (sub_category_id) {
+    //             $("#sub_category_id").selectpicker("val", sub_category_id);
+    //             sub_category_id = null;
+    //         }
+    //     },
+    // });
+})
 $(document).on("change", "#category_id", function () {
     $.ajax({
         method: "get",
         url:
             "/category/get-sub-category-dropdown?category_id=" +
-            $("#category_id").val(),
+            $("#category_id").val()+"&type=sub_category",
         data: {},
         contentType: "html",
         success: function (result) {
@@ -531,6 +623,7 @@ $(document).on("submit", "form#quick_add_unit_form", function (e) {
                         $("select.unit_id").empty().append(data_html);
                         $("select.unit_id").selectpicker("refresh");
                         $("select#multiple_units").change();
+                        
                     },
                 });
             } else {
@@ -705,7 +798,6 @@ $(document).on("change", "#purchase_price", function () {
 });
 $(document).on("change", "#sku", function () {
     let sku = $(this).val();
-
     $.ajax({
         method: "get",
         url: "/product/check-sku/" + sku,
@@ -713,6 +805,7 @@ $(document).on("change", "#sku", function () {
         success: function (result) {
             if (!result.success) {
                 swal("Error", result.msg, "error");
+                $("#sku").val("");
             }
         },
     });
@@ -789,7 +882,6 @@ $(document).on("click", ".add_raw_material_row", function () {
 $(document).on("click", ".add_discount_row", function () {
     let row_id = parseInt($("#raw_discount_index").val());
     $("#raw_discount_index").val(row_id + 1);
-
     $.ajax({
         method: "get",
         url: "/product/get-raw-discount",
@@ -797,7 +889,7 @@ $(document).on("click", ".add_discount_row", function () {
         success: function (result) {
             $("#consumption_table_discount > tbody").prepend(result);
             $(".selectpicker").selectpicker("refresh");
-            $(".datepicker").datepicker("refresh");
+            $(".datepicker").datepicker({refresh:"refresh",todayHighlight: true});
 
             // $(".raw_material_unit_id").selectpicker("refresh");
         },
@@ -882,4 +974,10 @@ $(document).on("change", "#sell_price", function () {
         swal(LANG.warning, LANG.sell_price_less_than_purchase_price, "warning");
         return;
     }
+});
+$(document).on("change","#is_discount_permenant",function () {
+    $(".discount_start_date").prop('disabled', (i, v) => !v);
+    $(".discount_start_date").val(null);
+    $(".discount_end_date").prop('disabled', (i, v) => !v);
+    $(".discount_end_date").val(null);
 });

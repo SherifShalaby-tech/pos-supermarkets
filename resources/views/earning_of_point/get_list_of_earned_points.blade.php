@@ -8,7 +8,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h4>@lang('lang.list_of_earn_point_by_transactions')</h4>
+                <h4 class="print-title">@lang('lang.list_of_earn_point_by_transactions')</h4>
             </div>
             <div class="card-body">
 

@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12" style="text-align: center;">
-            <h2 class="mb-4">@lang('lang.list_of_employees_in_forfeit_leave')</h2>
+            <h2 class="mb-4 print-title">@lang('lang.list_of_employees_in_forfeit_leave')</h2>
         </div>
     </div>
     <div class="row" id="sales">

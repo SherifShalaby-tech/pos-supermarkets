@@ -229,14 +229,14 @@
                                     @if ($line->product_discount_type != 'surplus')
                                         {{ @num_format($line->sub_total + $line->product_discount_amount) }}
                                     @else
-                                        {{ @num_format($line->sub_total) }}
+                                        {{  @num_format($line->sub_total) }}
                                     @endif
                                 </td>
                             @endif
-                            <td style="text-align:left;vertical-align:bottom">{{ @num_format($line->quantity) }}</td>
+                            <td style="text-align:left;vertical-align:bottom">{{ $line->quantity }}</td>
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center !important;vertical-align:bottom">
-                                    {{ @num_format($line->sell_price) }}</td>
+                                    {{ ($line->sell_price) }}</td>
                             @endif
                             <td style="width: 40% !important;padding: 0 5px 0 10px !important;">
                                 @if (!empty($line->variation))
@@ -365,7 +365,7 @@
                                 </th>
                             </tr>
                         @endif
-                        @if (!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
+                        @if (!empty($transaction->deliveryman_id))
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->delivery_cost) }}

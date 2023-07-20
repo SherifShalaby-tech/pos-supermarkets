@@ -3,6 +3,14 @@
 
 @section('content')
     <div class="container-fluid">
+        <div class="card-header d-flex align-items-center">
+            @if($_SERVER["QUERY_STRING"]=="type=product_tax")
+                <h4 class="print-title">@lang('lang.product_taxes')</h4>
+            @else
+                <h4 class="print-title">@lang('lang.general_tax')</h4>
+            @endif
+            
+        </div>
         <a style="color: white" data-href="{{ action('TaxController@create') }}?type={{ $type }}"
             data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
             @lang('lang.add')</a>

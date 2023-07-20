@@ -394,7 +394,7 @@ class InternalStockRequestController extends Controller
                     max="' . $current_stock . '"
                     name="qty[' . $row->index . ']" required value="0" style="width: 100px !important; border: 1px solid #999">';
                     $html .= '<span class="error stock_error hide">' . __('lang.quantity_should_not_greater_than') . '
-                    ' . $this->productUtil->num_uf($current_stock) . '</span>
+                    ' . $current_stock. '</span>
                     <input type="hidden" class="current_stock" name="current_stock" value="' . $current_stock . '">';
 
                     return $html;
@@ -422,7 +422,7 @@ class InternalStockRequestController extends Controller
                         $current_stock = $current_stock_query->qty_available;
                     }
 
-                    return $this->productUtil->num_uf($current_stock);
+                    return $current_stock;
                 })
 
                 ->rawColumns([

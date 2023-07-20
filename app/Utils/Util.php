@@ -52,13 +52,13 @@ class Util
         $thousand_separator = ',';
         $decimal_separator = '.';
 
-        $currency_precision =  2;
+        $currency_precision =  !empty(System::getProperty('numbers_length_after_dot')) ? System::getProperty('numbers_length_after_dot') : 2;
 
         if ($is_quantity) {
-            $currency_precision = 2;
+            $currency_precision = !empty(System::getProperty('numbers_length_after_dot')) ? System::getProperty('numbers_length_after_dot') : 2;
         }
 
-        $formatted = number_format($input_number, $currency_precision, $decimal_separator, $thousand_separator);
+        $formatted = number_format((float)$input_number, $currency_precision, $decimal_separator, $thousand_separator);
 
         if ($add_symbol) {
             $currency_symbol_placement = !empty($business_details) ? $business_details->currency_symbol_placement : session('business.currency_symbol_placement');

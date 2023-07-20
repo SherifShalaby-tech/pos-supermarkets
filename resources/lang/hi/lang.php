@@ -996,6 +996,7 @@ return [
     'start_time' => 'समय शुरू',
     'end_time' => 'अंतिम समय',
     'edited_by' => 'द्वारा सम्पादन',
+    'edited_at' => 'पर संपादित किया गया',
     'out_of_stock' => 'स्टॉक ख़त्म',
 
     'new_price' => 'नई कीमत',

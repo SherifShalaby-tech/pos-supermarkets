@@ -90,7 +90,7 @@
                                                     </td>
                                                     <td>
                                                         @if (isset($line->quantity))
-                                                            {{ @num_format($line->quantity) }}@else{{ 1 }}
+                                                            {{ ($line->quantity) }}@else{{ 1 }}
                                                         @endif
                                                     </td>
                                                     <td>
@@ -99,7 +99,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        {{ @num_format($line->sub_total) }}
+                                                        {{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}
                                                     </td>
                                                 </tr>
                                             @endforeach

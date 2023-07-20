@@ -7,6 +7,9 @@
         <div class="col-md-12  no-print">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
+                    <h4 class="print-title">@lang('lang.product_classes')</h4>
+                </div>
+                <div class="card-header d-flex align-items-center"> 
                     @can('product_module.product_class.create_and_edit')
                         <a style="color: white" data-href="{{ action('ProductClassController@create') }}"
                             data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
@@ -22,6 +25,8 @@
                                     <th>@lang('lang.name')</th>
                                     <th>@lang('lang.description')</th>
                                     <th>@lang('lang.sort')</th>
+                                    <th>@lang('lang.products_count')</th>
+                                    <th>@lang('lang.categories_count')</th>
                                     <th>@lang('lang.active')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
@@ -34,6 +39,8 @@
                                         <td>{{ $product_class->name }}</td>
                                         <td>{{ $product_class->description }}</td>
                                         <td>{{ $product_class->sort }}</td>
+                                        <td>{{$product_class->products_count}}</td>
+                                        <td>{{$product_class->categories_count}}</td>
                                         <td>
                                             @if ($product_class->status == 1)
                                                 @lang('lang.yes')

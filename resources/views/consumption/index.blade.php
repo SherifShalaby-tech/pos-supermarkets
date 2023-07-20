@@ -3,12 +3,18 @@
 
 @section('content')
 <div class="container-fluid">
-    @can('product_module.consumption.create_and_edit')
-    <a style="color: white" href="{{action('ConsumptionController@create')}}" class="btn btn-info"><i
-            class="dripicons-plus"></i>
-        @lang('lang.add_manual_consumption')</a>
-
-    @endcan
+    <div class="row">
+        <div class="col-md-8">
+            @can('product_module.consumption.create_and_edit')
+            <a style="color: white" href="{{action('ConsumptionController@create')}}" class="btn btn-info"><i
+                    class="dripicons-plus"></i>
+                @lang('lang.add_manual_consumption')</a>
+            @endcan
+        </div>
+        <div class="col-md-4">
+            <div class="print-title  pt-2" ><h1>@lang('lang.list_view_the_consumption_of_raw_material')</h1></div>
+        </div>
+    </div>
 
     <div class="card mt-3">
         <div class="col-md-12">

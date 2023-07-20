@@ -9,6 +9,13 @@
     <section class="">
         <div class="col-md-22">
             <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    @if (request()->segment(1) == 'raw-material')
+                    <h3 class="print-title">@lang('lang.view_all_stock_for_raw_material')</h3>
+                    @else
+                    <h3 class="print-title">@lang('lang.add_stock_list')</h3>
+                    @endif
+                </div>
                 <div class="card-body">
                     <form action="">
                         <input type="hidden" name="is_raw_material" id="is_raw_material"
@@ -122,7 +129,7 @@
                 paging: true,
                 info: false,
                 bAutoWidth: false,
-                order: [],
+                order: [[2, 'desc']],
                 language: {
                     url: dt_lang_url,
                 },
@@ -135,9 +142,9 @@
                 buttons: buttons,
                 processing: true,
                 serverSide: true,
-                aaSorting: [
-                    [2, 'desc']
-                ],
+                // aaSorting: [
+                //     [2, 'desc']
+                // ],
                 "ajax": {
                     "url": "/add-stock",
                     "data": function(d) {
@@ -153,7 +160,7 @@
                     }
                 },
                 columnDefs: [{
-                    "targets": [0, 3],
+                    "targets": [0, 3, 9, 8],
                     "orderable": false,
                     "searchable": false
                 }],

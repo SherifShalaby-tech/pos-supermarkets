@@ -6,6 +6,16 @@
 
     <div class="col-md-12  no-print">
         <div class="card">
+            <div class="card-header d-flex align-items-center">
+                <h4 class="print-title">@lang('lang.sub_categories')</h4>
+            </div>
+            <div class="card-header d-flex align-items-center">
+                @can('product_module.product_class.create_and_edit')
+                <a style="color: white" data-href="{{ action('CategoryController@create') }}?type=sub_category"
+                    data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
+                    @lang('lang.add_sub_category')</a>
+                @endcan
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="category_table" class="table dataTable">
@@ -13,6 +23,7 @@
                             <tr>
                                 <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
+                                <th>@lang('lang.path')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -22,7 +33,8 @@
                                 <td><img src="@if(!empty($category->getFirstMediaUrl('category'))){{$category->getFirstMediaUrl('category')}}@else{{asset('images/default.jpg')}}@endif"
                                     alt="photo" width="50" height="50"></td>
                                 <td>{{$category->name}}</td>
-
+                                <td> <a href='/product-class'>{{$category->mainCategory->productClass->name ?? null}}</a> / <a href='/category'>{{$category->mainCategory->name}} </a> /
+                                    {{$category->name}} </td>
                                 <td>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm dropdown-toggle"
@@ -36,7 +48,7 @@
                                             @can('product_module.category.delete')
                                             <li>
 
-                                                <a data-href="{{action('CategoryController@edit', $category->id)}}"
+                                                <a data-href="{{action('CategoryController@edit', $category->id)}}?type=sub_category"
                                                     data-container=".view_modal" class="btn btn-modal"><i
                                                         class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                                             </li>

@@ -200,16 +200,16 @@
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:left;vertical-align:bottom">
                                     @if ($line->product_discount_type != 'surplus')
-                                        {{ @num_format($line->sub_total + $line->product_discount_amount) }}
+                                        {{ $line->sub_total + $line->product_discount_amount }}
                                     @else
                                         {{ @num_format($line->sub_total) }}
                                     @endif
                                 </td>
                             @endif
-                            <td style="text-align:left;vertical-align:bottom">{{ @num_format($line->quantity) }}</td>
+                            <td style="text-align:left;vertical-align:bottom">{{ $line->quantity }}</td>
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center !important;vertical-align:bottom">
-                                    {{ @num_format($line->sell_price) }}</td>
+                                    {{ $line->sell_price }}</td>
                             @endif
                             <td style="width: 40% !important;padding: 0 5px 0 10px !important;">
                                 @if (!empty($line->variation))
@@ -227,7 +227,7 @@
                     @if (empty($print_gift_invoice))
                         <tr>
                             <th colspan="2" style="text-align:left">
-                                {{ @num_format($transaction->grand_total + $transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
+                                {{ ($transaction->grand_total + $transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
                                 {{ $transaction->received_currency->symbol }}
                             </th>
                             <th colspan="2" style="text-align:right">{{ __('lang.total', [], 'ar') }} <br>
@@ -236,7 +236,7 @@
                         @if ($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount') > 0)
                             <tr>
                                 <th colspan="2" style="text-align:left">
-                                    {{ @num_format($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
+                                    {{ ($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
                                     {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.discount', [], 'ar') }} <br>
@@ -307,7 +307,7 @@
                                 </th>
                             </tr>
                         @endif
-                        @if (!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
+                        @if (!empty($transaction->deliveryman_id))
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->delivery_cost) }}

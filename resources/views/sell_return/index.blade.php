@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h4>@lang('lang.sale_return')</h4>
+                    <h3 class="print-title">@lang('lang.sale_return')</h3>
                 </div>
                 <div class="card-body">
                     <form action="">
@@ -199,7 +199,8 @@
                     },
                     {
                         data: "method",
-                        name: "transaction_payments.method"
+                        name: "transaction_payments.method",
+                        searchable: false,
                     },
                     {
                         data: "received_currency_symbol",

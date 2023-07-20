@@ -41,7 +41,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('status', __('lang.status') . ':*', []) !!}
-                                        {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('status', ['received' => __('lang.received'), 'partially_received' => __('lang.partially_received'),], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -123,7 +123,7 @@
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control quantity  quantity_{{$loop->index}}" min=1 name="add_stock_lines[{{$loop->index}}][quantity]" required
-                                                        value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif" index_id="{{$loop->index}}">
+                                                        value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif" index_id="{{$loop->index}}">
                                                 </td>
                                                 <td>
                                                     {{$product->product->units->pluck('name')[0]??''}}
@@ -147,29 +147,33 @@
                                                 </td>
                                                 <td>
                                                     <span
-                                                            class="sub_total_span">{{ @num_format($product->sub_total) }}</span>
-                                                        <input type="hidden" class="form-control sub_total"
-                                                            name="add_stock_lines[{{ $loop->index }}][sub_total]"
-                                                            value="{{ $product->sub_total }}">
+{{--                                                        class="sub_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}--}}
+                                                        class="sub_total_span">{{ number_format($product->sub_total,2) }}
+                                                    </span>
+                                                    <input type="hidden" class="form-control sub_total"
+                                                        name="add_stock_lines[{{ $loop->index }}][sub_total]"
+{{--                                                            value="{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}">--}}
+                                                        value="{{ number_format($product->sub_total,2) }}">
 
                                                 </td>
                                                  @php
-                                                        $current_stock = App\Models\ProductStore::where('product_id', $product->product_id)
-                                                            ->where('store_id', $add_stock->store_id)
-                                                            ->sum('qty_available');
-                                                    @endphp
-                                                    <td>
-                                                        <input type="hidden" name="current_stock" class="current_stock"
-                                                            value="@if (isset($current_stock)) {{ $current_stock }}@else{{ 0 }} @endif">
-                                                        <span class="current_stock_text">
-                                                            @if (isset($current_stock))
-                                                                {{ @num_format($current_stock) }}@else{{ 0 }}
-                                                            @endif
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div class="i-checks"><input name="add_stock_lines[{{$loop->index}}][stock_pricechange]" id="active" type="checkbox" class="" checked value="1"></div>
-                                                    </td>
+
+                                                           $current_stock = App\Models\ProductStore::where('product_id', $product->product_id)
+                                                               ->where('store_id', $add_stock->store_id)
+                                                               ->sum('qty_available');
+                                                @endphp
+                                                <td>
+                                                    <input type="hidden" name="current_stock" class="current_stock"
+                                                        value="@if (isset($current_stock)) {{ number_format($current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }}@else{{ 0 }} @endif">
+                                                    <span class="current_stock_text">
+                                                        @if (isset($current_stock))
+                                                            {{ number_format($current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }}@else{{ 0 }}
+                                                        @endif
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="i-checks"><input name="add_stock_lines[{{$loop->index}}][stock_pricechange]" id="active" type="checkbox" class="" checked value="1"></div>
+                                                </td>
                                                 <td rowspan="2">
                                                     <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$loop->index}}"><i
                                                             class="fa fa-times"></i></button>
@@ -178,13 +182,13 @@
                                             <tr class="row_details_{{$loop->index}}">
                                                 <td> {!! Form::text('add_stock_lines[' . $loop->index . '][batch_number]', $product->batch_number, ['class' => 'form-control', 'placeholder' => __('lang.batch_number')]) !!}</td>
                                                     <td>
-                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][manufacturing_date]', !empty($product->manufacturing_date) ? @format_date($product->manufacturing_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.manufacturing_date'), 'readonly']) !!}
+                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][manufacturing_date]', !empty($product->manufacturing_date) ? @format_date($product->manufacturing_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.manufacturing_date')]) !!}
                                                     </td>
                                                     <td>
-                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][expiry_date]', !empty($product->expiry_date) ? @format_date($product->expiry_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.expiry_date'), 'readonly']) !!}
+                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][expiry_date]', !empty($product->expiry_date) ? @format_date($product->expiry_date) : null, ['class' => 'form-control datepicker expiry_date', 'placeholder' => __('lang.expiry_date')]) !!}
                                                     </td>
                                                     <td>
-                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][expiry_warning]', $product->expiry_warning, ['class' => 'form-control', 'placeholder' => __('lang.days_before_the_expiry_date')]) !!}
+                                                        {!! Form::text('add_stock_lines[' . $loop->index . '][expiry_warning]', $product->expiry_warning, ['class' => 'form-control days_before_the_expiry_date', 'placeholder' => __('lang.days_before_the_expiry_date')]) !!}
                                                     </td>
                                                     <td>
                                                         {!! Form::text('add_stock_lines[' . $loop->index . '][convert_status_expire]', $product->convert_status_expire, ['class' => 'form-control', 'placeholder' => __('lang.convert_status_expire')]) !!}
@@ -291,7 +295,19 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
-                                        {!! Form::select('source_id', $users, $add_stock->source_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
+                                        <select name="source_id" id="source_id" class="selectpicker form-control" data-live-search ="true" style="width: 80%" required>
+                                            @foreach ($users as $key => $val)
+                                            @if ($add_stock->source_id == $key)
+                                                <option value="{{ $key }}" selected>{{ $val }}</option>
+                                            @else
+                                                <option value="{{ $key }}">{{ $val }}</option>
+                                            @endif
+                                                {{-- <option value="{{ $key }}" @selected(old('user') == $key)>
+                                                    {{ $val }}
+                                                </option> --}}
+                                            @endforeach
+                                        </select>
+                                        {{-- {!! Form::select('source_id', $users, $add_stock->source_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!} --}}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -304,7 +320,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('payment_status', __('lang.payment_status') . ':*', []) !!}
-                                        {!! Form::select('payment_status', $payment_status_array, $add_stock->payment_status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('payment_status', $payment_status_array, $add_stock->payment_status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%','id' => 'payment_status', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
 
@@ -481,7 +497,35 @@
         });
 
         //payment related script
+        $(document).ready(function() {
+            var payment_status = $("#payment_status").val();
+            if (payment_status === 'paid' || payment_status === 'partial') {
+                $('.not_cash_fields').addClass('hide');
+                $('#method').change();
+                $('#method').attr('required', true);
+                $('#paid_on').attr('required', true);
+                $('.payment_fields').removeClass('hide');
 
+            } else {
+                $('.payment_fields').addClass('hide');
+            }
+            if (payment_status === 'pending' || payment_status === 'partial') {
+                $('.due_fields').removeClass('hide');
+            } else {
+                $('.due_fields').addClass('hide');
+            }
+            if (payment_status === 'pending') {
+                $('.not_cash_fields').addClass('hide');
+                $('.not_cash').attr('required', false);
+                $('#method').attr('required', false);
+                $('#paid_on').attr('required', false);
+            } else {
+                $('#method').attr('required', true);
+            }
+            if (payment_status === 'paid') {
+                $('.due_fields').addClass('hide');
+            }
+        })
         $('#payment_status').change(function() {
             var payment_status = $(this).val();
 
@@ -491,6 +535,7 @@
                 $('#method').attr('required', true);
                 $('#paid_on').attr('required', true);
                 $('.payment_fields').removeClass('hide');
+
             } else {
                 $('.payment_fields').addClass('hide');
             }
@@ -524,8 +569,21 @@
         });
 
         $(document).ready(function() {
-            $('#payment_status').change();
-            $('#source_type').change();
+                $.ajax({
+                    method: 'get',
+                    url: '/add-stock/get-source-by-type-dropdown/{{$add_stock->source_type}}' ,
+                    data: {},
+                    success: function(result) {
+                        // console.log(result);
+                        $("#source_id").empty().append(result);
+                        $("#source_id").selectpicker("refresh");
+
+                        var sourceId = {{$add_stock->source_id}};
+                        $("#source_id").val(sourceId);
+                        $("#source_id").selectpicker("refresh");
+                    },
+                });
+            // $('#source_type').change();
         })
         $('#source_type').change(function() {
             if ($(this).val() !== '') {

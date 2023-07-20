@@ -16,6 +16,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="well">
+                    <input type="hidden" value="{{$extract_due}}" name="extract_due"/>
                       <strong>@lang('lang.customer_name'): </strong>{{ $customer_details->name }}<br>
                       <strong>@lang('lang.mobile'): </strong>{{ $customer_details->mobile_number }}<br><br>
                     </div>
@@ -39,6 +40,7 @@
                         {!! Form::label('amount', __('lang.amount'). ':*', []) !!} <br>
                         {!! Form::text('amount', @num_format($customer_details->total_invoice - $customer_details->total_paid), ['class' => 'form-control', 'placeholder'
                         => __('lang.amount')]) !!}
+                        <input type="hidden" value="@num_format($customer_details->total_invoice - $customer_details->total_paid)" name="balance"/>
                     </div>
                 </div>
 
@@ -122,6 +124,7 @@
     $('.selectpicker').selectpicker('refresh');
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
+        todayHighlight: true,
     });
     $('#add_payment_form #method').change(function(){
         var method = $(this).val();

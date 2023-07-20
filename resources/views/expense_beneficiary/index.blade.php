@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h4>@lang('lang.add_expense_beneficiary')</h4>
+                    <h3 class="print-title">@lang('lang.add_expense_beneficiary')</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -38,13 +38,13 @@
                                             {{$expense_beneficiary->expense_category->name ?? ''}}
                                         </td>
                                         <td>
-                                            @can('account_management.expense_beneficiaries.create_and_edit')
+                                            @can('expense.expense_beneficiaries.create_and_edit')
                                             <a data-href="{{action('ExpenseBeneficiaryController@edit', $expense_beneficiary->id)}}"
                                                 data-container=".view_modal"
                                                 class="btn btn-danger btn-modal text-white edit_job"><i
                                                     class="fa fa-pencil-square-o"></i></a>
                                             @endcan
-                                            @can('account_management.expense_beneficiaries.delete')
+                                            @can('expense.expense_beneficiaries.delete')
                                             <a data-href="{{action('ExpenseBeneficiaryController@destroy', $expense_beneficiary->id)}}"
                                                 data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                                 class="btn btn-danger text-white delete_item"><i

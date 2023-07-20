@@ -3,21 +3,34 @@
 
 @section('content')
     <div class="container-fluid">
-        @if (empty($page))
-            @can('product_module.product.create_and_edit')
-                <a style="color: white" href="{{ action('ProductController@create') }}" class="btn btn-info"><i
-                        class="dripicons-plus"></i>
-                    @lang('lang.add_product')</a>
-            @endcan
-            <a style="color: white" href="{{ action('ProductController@getImport') }}" class="btn btn-primary"><i
-                    class="fa fa-arrow-down"></i>
-                @lang('lang.import')</a>
-        @else
-            <a style="color: white" href="{{ action('AddStockController@getImport') }}" class="btn btn-primary"><i
-                    class="fa fa-arrow-down"></i>
-                @lang('lang.import')</a>
-        @endif
+        <div class="row">
+            <div class="col-md-10">
+            @if (empty($page))
+                @can('product_module.product.create_and_edit')
+                    <a style="color: white" href="{{ action('ProductController@create') }}" class="btn btn-info"><i
+                            class="dripicons-plus"></i>
+                        @lang('lang.add_product')</a>
+                @endcan
+                <a style="color: white" href="{{ action('ProductController@getImport') }}" class="btn btn-primary"><i
+                        class="fa fa-arrow-down"></i>
+                    @lang('lang.import')</a>
+            @else
+                <a style="color: white" href="{{ action('AddStockController@getImport') }}" class="btn btn-primary"><i
+                        class="fa fa-arrow-down"></i>
+                    @lang('lang.import')</a>
+            @endif
+            </div>
+            <div class="col-md-2">
+                @if (request()->segment(1) == 'product')
+                <div class="print-title pt-1" ><h3>@lang('lang.product_lists')</h3></div>
+                @endif
+                @if (request()->segment(1) == 'product-stocks')
+                <div class="print-title pt-2" ><h3>@lang('lang.product_stocks')</h3></div>
+                @endif
+            </div>
+        </div>
         <div class="card mt-3">
+
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-3">
@@ -178,6 +191,18 @@
 ]) !!}
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {{-- <label>
+                                Don't show zero stocks
+                            </label> --}}
+                            {!! Form::label('show_zero_stocks',"Don't show zero stocks" . ':') !!}
+                            {!! Form::checkbox('show_zero_stocks', 1, false, ['class' => ' form-control  show_zero_stocks','data-live-search' => 'true',
+                            ], request()->show_zero_stocks ? true : false) !!}
+
+
+                        </div>
+                    </div>
                     <input type="hidden" name="product_id" id="product_id" value="">
                     <div class="col-md-3">
                         <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
@@ -187,9 +212,9 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <button type="button" value="0"
+                <button type="button" value="1"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.image')</button>
-                <button type="button" value="3" class="badge badge-pill badge-primary column-toggle">
+                <button type="button" value="4" class="badge badge-pill badge-primary column-toggle">
                     @if (session('system_mode') == 'restaurant')
                         @lang('lang.category')
                     @else
@@ -197,70 +222,78 @@
                     @endif
                 </button>
                 @if (session('system_mode') != 'restaurant')
-                    <button type="button" value="4"
+                    <button type="button" value="6"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
-                    <button type="button" value="5"
+                    <button type="button" value="7"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.sub_category')</button>
                 @endif
-                <button type="button" value="6"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
-                <button type="button" value="7"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
                 <button type="button" value="8"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
                 <button type="button" value="9"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
+                <button type="button" value="10"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
+                <button type="button" value="11"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
                 @if (session('system_mode') != 'restaurant')
-                    <button type="button" value="10"
+                    <button type="button" value="12"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
                 @endif
-                <button type="button" value="11"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
-                <button type="button" value="12"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
                 <button type="button" value="13"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
                 <button type="button" value="14"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
+                <button type="button" value="15"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
+                <button type="button" value="16"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.grade')</button>
                 @if (empty($page))
-                    <button type="button" value="15"
+                    <button type="button" value="17"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
                 @endif
                 @if (!empty($page))
-                    <button type="button" value="16"
+                    <button type="button" value="18"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock_value')</button>
                 @endif
-                <button type="button" value="17"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
-                <button type="button" value="18"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
                 <button type="button" value="19"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
                 <button type="button" value="20"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
+                <button type="button" value="21"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+                <button type="button" value="22"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.discount')</button>
                 @can('product_module.purchase_price.view')
-                    <button type="button" value="21"
+                    <button type="button" value="23"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
                 @endcan
-                <button type="button" value="21"
+                <button type="button" value="24"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.supplier')</button>
-                <button type="button" value="21"
+                <button type="button" value="25"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.active')</button>
-                <button type="button" value="22"
+                <button type="button" value="26"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.created_by')</button>
-                <button type="button" value="23"
+                <button type="button" value="28"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.edited_by')</button>
             </div>
         </div>
 
 
     </div>
+    <div class="col-sm-2"></div>
+    <div class="col-sm-4 pt-4">
+        <a data-href="{{ action('ProductController@multiDeleteRow') }}" id="delete_all"
+        data-check_password="{{ action('UserController@checkPassword', Auth::user()->id) }}"
+        class="btn btn-danger text-white delete_all"><i class="fa fa-trash"></i>
+            @lang('lang.delete_all')</a>
+    </div>
     <div class="table-responsive">
         <table id="product_table" class="table" style="width: auto">
             <thead>
                 <tr>
+                    <th>@lang('lang.show_at_the_main_pos_page')</th>
                     <th>@lang('lang.image')</th>
-                    <th style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@lang('lang.name')&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    <th style="">@lang('lang.name')</th>
                     <th>@lang('lang.product_code')</th>
                     <th>
                         @if (session('system_mode') == 'restaurant')
@@ -269,6 +302,8 @@
                             @lang('lang.class')
                         @endif
                     </th>
+                    
+                    <th>@lang('lang.select_to_delete')</th>
                     @if (session('system_mode') != 'restaurant')
                         <th>@lang('lang.category')</th>
                         <th>@lang('lang.sub_category')</th>
@@ -296,7 +331,9 @@
                     <th>@lang('lang.supplier')</th>
                     <th>@lang('lang.active')</th>
                     <th>@lang('lang.created_by')</th>
+                    <th>@lang('lang.date_of_creation')</th>
                     <th>@lang('lang.edited_by')</th>
+                    <th>@lang('lang.edited_at')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
@@ -318,6 +355,8 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
+                    <td></td>
                     <th style="text-align: right">@lang('lang.total')</th>
                     <td></td>
                     <td></td>
@@ -325,41 +364,218 @@
                 </tr>
             </tfoot>
         </table>
+
     </div>
 @endsection
+@push('javascripts')
+    <script>
+        $(document).on('click', '#delete_all', function() {
+            var checkboxes = document.querySelectorAll('input[name="product_selected_delete"]');
+            var selected_delete_ids = [];
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    selected_delete_ids.push(checkboxes[i].value);
+                }
+            }
+            if (selected_delete_ids.length ==0){
+                swal({
+                    title: 'Warning',
+                    text: LANG.sorry_you_should_select_products_to_continue_delete,
+                    icon: 'warning',
+                })
+            }else{
+                swal({
+                    title: 'Are you sure?',
+                    text: LANG.all_transactions_related_to_this_products_will_be_deleted,
+                    icon: 'warning',
+                }).then(willDelete => {
+                    if (willDelete) {
+                        var check_password = $(this).data('check_password');
+                        var href = $(this).data('href');
+                        var data = $(this).serialize();
 
+                        swal({
+                            title: 'Please Enter Your Password',
+                            content: {
+                                element: "input",
+                                attributes: {
+                                    placeholder: "Type your password",
+                                    type: "password",
+                                    autocomplete: "off",
+                                    autofocus: false,
+                                },
+                            },
+                            inputAttributes: {
+                                autocapitalize: 'off',
+                                autoComplete: 'off',
+                            },
+                            focusConfirm: true
+                        }).then((result) => {
+                            if (result) {
+                                $.ajax({
+                                    url: check_password,
+                                    method: 'POST',
+                                    data: {
+                                        value: result
+                                    },
+                                    dataType: 'json',
+                                    success: (data) => {
+
+                                        if (data.success == true) {
+                                            swal(
+                                                'Success',
+                                                'Correct Password!',
+                                                'success'
+                                            );
+                                            $.ajax({
+                                                method: 'POST',
+                                                url: "{{ action("ProductController@multiDeleteRow") }}",
+                                                dataType: 'json',
+                                                data: {
+                                                    "ids": selected_delete_ids
+                                                },
+                                                success: function(result) {
+                                                    if (result.success == true) {
+                                                        swal(
+                                                            'Success',
+                                                            result.msg,
+                                                            'success'
+                                                        );
+                                                        setTimeout(() => {
+                                                            location
+                                                                .reload();
+                                                        }, 1500);
+                                                        location.reload();
+                                                    } else {
+                                                        swal(
+                                                            'Error',
+                                                            result.msg,
+                                                            'error'
+                                                        );
+                                                    }
+                                                },
+                                            });
+
+                                        } else {
+                                            swal(
+                                                'Failed!',
+                                                'Wrong Password!',
+                                                'error'
+                                            )
+
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+
+
+
+
+
+
+
+        });
+        $(document).on('click', '.delete_product', function(e) {
+            e.preventDefault();
+            swal({
+                title: 'Are you sure?',
+                text: "@lang('lang.all_transactions_related_to_this_product_will_be_deleted')",
+                icon: 'warning',
+            }).then(willDelete => {
+                if (willDelete) {
+                    var check_password = $(this).data('check_password');
+                    var href = $(this).data('href');
+                    var data = $(this).serialize();
+
+                    swal({
+                        title: 'Please Enter Your Password',
+                        content: {
+                            element: "input",
+                            attributes: {
+                                placeholder: "Type your password",
+                                type: "password",
+                                autocomplete: "off",
+                                autofocus: true,
+                            },
+                        },
+                        inputAttributes: {
+                            autocapitalize: 'off',
+                            autoComplete: 'off',
+                        },
+                        focusConfirm: true
+                    }).then((result) => {
+                        if (result) {
+                            $.ajax({
+                                url: check_password,
+                                method: 'POST',
+                                data: {
+                                    value: result
+                                },
+                                dataType: 'json',
+                                success: (data) => {
+
+                                    if (data.success == true) {
+                                        swal(
+                                            'Success',
+                                            'Correct Password!',
+                                            'success'
+                                        );
+
+                                        $.ajax({
+                                            method: 'DELETE',
+                                            url: href,
+                                            dataType: 'json',
+                                            data: data,
+                                            success: function(result) {
+                                                if (result.success ==
+                                                    true) {
+                                                    swal(
+                                                        'Success',
+                                                        result.msg,
+                                                        'success'
+                                                    );
+                                                    setTimeout(() => {
+                                                        location
+                                                            .reload();
+                                                    }, 1500);
+                                                    location.reload();
+                                                } else {
+                                                    swal(
+                                                        'Error',
+                                                        result.msg,
+                                                        'error'
+                                                    );
+                                                }
+                                            },
+                                        });
+
+                                    } else {
+                                        swal(
+                                            'Failed!',
+                                            'Wrong Password!',
+                                            'error'
+                                        )
+
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+@endpush
 @section('javascript')
     <script>
         $(document).ready(function() {
-            $('.column-toggle').each(function(i, obj) {
-                if (i > 0) {
-                    i = i + 2;
-                }
-                @if (session('system_mode') != 'restaurant')
-                    @if (empty($page))
-                        if (i > 15) {
-                            i = i + 1;
-                        }
-                    @else
-                        if (i > 14) {
-                            i = i + 1;
-                        }
-                    @endif
-                @else
-                    @if (empty($page))
-                        if (i > 12) {
-                            i = i + 1;
-                        }
-                    @else
-                        if (i > 11) {
-                            i = i + 1;
-                        }
-                    @endif
-                @endif
-                $(obj).val(i)
-            });
             product_table = $('#product_table').DataTable({
-                
                 lengthChange: true,
                 paging: true,
                 info: false,
@@ -398,14 +614,22 @@
                         d.customer_type_id = $('#customer_type_id').val();
                         d.active = $('#active').val();
                         d.created_by = $('#created_by').val();
+                        d.created_at = $('#dat').val();
+                        d.show_zero_stocks = $('#show_zero_stocks').val();
+
                     }
                 },
                 columnDefs: [{
                     "targets": [0, 3],
                     "orderable": false,
-                    "searchable": false
+                    "searchable": true
                 }],
-                columns: [{
+                columns: [
+                    {
+                        data: 'show_at_the_main_pos_page',
+                        name: 'show_at_the_main_pos_page'
+                    },
+                    {
                         data: 'image',
                         name: 'image'
                     },
@@ -420,6 +644,12 @@
                     {
                         data: 'product_class',
                         name: 'product_classes.name'
+                    },
+                    {
+                        data: "selection_checkbox_delete",
+                        name: "selection_checkbox_delete",
+                        searchable: false,
+                        orderable: false,
                     },
                     @if (session('system_mode') != 'restaurant')
                         {
@@ -504,7 +734,7 @@
                     @endcan
                     {
                         data: 'supplier_name',
-                        name: 'supplier_name',
+                        name: 'supplier',
                         searchable: false
                     },
                     {
@@ -516,8 +746,16 @@
                         name: 'users.name'
                     },
                     {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                    {
                         data: 'edited_by_name',
                         name: 'edited.name'
+                    },
+                    {
+                        data: 'updated_at',
+                        name: 'updated_at'
                     },
                     {
                         data: 'action',
@@ -569,49 +807,53 @@
 
 
 
-        var hidden_column_array = $.cookie('column_visibility') ? JSON.parse($.cookie('column_visibility')) : [];
         $(document).ready(function() {
+            var hiddenColumnArray = JSON.parse('{!! addslashes(json_encode(Cache::get("key_" . auth()->id(), []))) !!}');
 
-            $.each(hidden_column_array, function(index, value) {
+            $.each(hiddenColumnArray, function(index, value) {
                 $('.column-toggle').each(function() {
-                    if ($(this).val() == value) {
-                        toggleColumnVisibility(value, $(this));
+                if ($(this).val() == value) {
+                    // alert(value)
+                    toggleColumnVisibility(value, $(this));
+                }
+                });
+            });
+
+            $(document).on('click', '.column-toggle', function() {
+                var column_index = parseInt($(this).val());
+                toggleColumnVisibility(column_index, $(this));
+
+                if (hiddenColumnArray.includes(column_index)) {
+                hiddenColumnArray.splice(hiddenColumnArray.indexOf(column_index), 1);
+                } else {
+                hiddenColumnArray.push(column_index);
+                }
+
+                hiddenColumnArray = [...new Set(hiddenColumnArray)]; // Remove duplicates
+
+                // Update the columnVisibility cache data
+                $.ajax({
+                url: '/update-column-visibility', // Replace with your route or endpoint for updating cache data
+                method: 'POST',
+                data: { columnVisibility: hiddenColumnArray },
+                    success: function() {
+                        console.log('Column visibility updated successfully.');
                     }
                 });
-
             });
+
+            function toggleColumnVisibility(column_index, this_btn) {
+                var column = product_table.column(column_index);
+                column.visible(!column.visible());
+
+                if (column.visible()) {
+                $(this_btn).addClass('badge-primary').removeClass('badge-warning');
+                } else {
+                $(this_btn).removeClass('badge-primary').addClass('badge-warning');
+                }
+            }
         });
 
-        $(document).on('click', '.column-toggle', function() {
-            let column_index = parseInt($(this).val());
-            toggleColumnVisibility(column_index, $(this));
-            if (hidden_column_array.includes(column_index)) {
-                hidden_column_array.splice(hidden_column_array.indexOf(column_index), 1);
-            } else {
-                hidden_column_array.push(column_index);
-            }
-
-            //unique array javascript
-            hidden_column_array = $.grep(hidden_column_array, function(v, i) {
-                return $.inArray(v, hidden_column_array) === i;
-            });
-
-            $.cookie('column_visibility', JSON.stringify(hidden_column_array));
-        })
-
-        function toggleColumnVisibility(column_index, this_btn) {
-            column = product_table.column(column_index);
-            column.visible(!column.visible());
-
-            if (column.visible()) {
-                $(this_btn).addClass('badge-primary')
-                $(this_btn).removeClass('badge-warning')
-            } else {
-                $(this_btn).removeClass('badge-primary')
-                $(this_btn).addClass('badge-warning')
-
-            }
-        }
         $(document).on('change', '.filter_product', function() {
             product_table.ajax.reload();
         })
@@ -619,6 +861,15 @@
             $('.filter_product').val('');
             $('.filter_product').selectpicker('refresh');
             $('#product_id').val('');
+            $('.show_zero_stocks').val(1);
+            product_table.ajax.reload();
+        });
+        $(document).on('change', '.show_zero_stocks', function() {
+            if(this.checked) {
+                $('.show_zero_stocks').val(0);
+            }else{
+                $('.show_zero_stocks').val(1);
+            }
             product_table.ajax.reload();
         });
 
@@ -725,6 +976,23 @@
                             });
                         }
                     });
+                }
+            });
+        });
+        $(document).on('change', '.show_at_the_main_pos_page', function(e) {
+            $.ajax({
+                type: "GET",
+                url: "/product/toggle-appearance-pos/"+$(this).data('id'),
+                data:{
+                    check:$(this).is(":checked")?'yes':'no'
+                },
+                // dataType: "dataType",
+                success: function (response) {
+                    if(response){
+                        $(this).removeAttr('checked');
+                        $(this).attr('checked', false);
+                        swal(response.success,response.msg,response.status);
+                    }
                 }
             });
         });

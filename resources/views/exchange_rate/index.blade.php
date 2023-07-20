@@ -7,6 +7,9 @@
         <div class="col-md-12  no-print">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
+                    <h4 class="print-title">@lang('lang.exchange_rate')</h4>
+                </div>
+                <div class="card-header d-flex align-items-center">
                     @can('settings.exchange_rate.create_and_edit')
                         <a style="color: white" data-href="{{ action('ExchangeRateController@create') }}"
                             data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
@@ -32,7 +35,7 @@
                                     <tr>
                                         <td>{{ $exchange_rate->received_currency->currency }}({{ $exchange_rate->received_currency->code }})
                                         </td>
-                                        <td>{{ number_format($exchange_rate->conversion_rate,env('Conversion_Rate',4)) }}</td>
+                                        <td>{{ rtrim(number_format($exchange_rate->conversion_rate, 8, '.', ''), '0') }}</td>
                                         <td>{{ $exchange_rate->default_currency->currency }}({{ $exchange_rate->default_currency->code }})
                                         </td>
                                         <td>{{ $exchange_rate->created_by_user->name }}</td>

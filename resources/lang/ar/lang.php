@@ -30,6 +30,7 @@ return [
     'under_processing' => 'تحت التصنيع',
     'path' => 'مسار القسم الفرعي',
     'delete_all' => 'حذف جماعي',
+    'numbers_length_after_dot' => 'الكسور',
 
     'received' => 'استلام',
     'underManufacturing' => 'تحت التصنيع',
@@ -40,11 +41,6 @@ return [
     'manufactured_cost'=>'التكلفة',
     'manufactured_unit_cost_sell'=>'تكلفة الوحده للبيع ',
     'manufactured_unit_cost_purchase'=>'تكلفة الوحده للشراء ',
-
-
-
-
-
 
     'have_weight'=>'يعتمد علي الميزان',
     'type_Debt' => 'سداد دين',
@@ -106,6 +102,7 @@ return [
     'image' => 'صورة',
     'parent_category' => 'القسم الرئيسي',
     'sub_category' => 'قسم فرعي',
+    'add_sub_category' => 'اضافة قسم فرعى',
     'brand' => 'علامة تجارية',
     'add_brand' => 'أضف علامة التجارية',
     'add_unit' => 'أضف وحدة',
@@ -218,7 +215,11 @@ return [
     'edit_supplier' => 'تعديل المورد',
     'postal_code' => 'رمز بريدي',
     'state' => 'الحالة',
+    'deleted_by' => 'حذف بواسطة',
     'country' => 'دولة',
+    'avg_purchase_price' => 'متوسط سعر الشراء',
+    'date_of_expired_stock' => 'تاريخ انتهاء صلاحية المخزون',
+    'current_stock_expired' => 'المخزون المنتهي الصلاحية',
     'view_all_supplier' => 'عرض كل الموردين',
     'product_classification_tree' => 'شجرة تصنيف المنتج',
     'print_barcode' => 'طباعة الباركود',
@@ -228,7 +229,36 @@ return [
     'product_name' => 'اسم المنتج',
     'paper_size' => 'حجم الورق',
     'variations' => 'الاختلافات',
+    'remove_damage' => 'ازالة منتج تالف',
+    'product_damage' => 'توالف المنتج المزالة',
+    'product_expiry' => 'المنتجات منتهية الصلاحية المزالة',
+    'quantity_of_expired_stock_removed' => 'كميه المخزون التالف المحذوف',
+    'value_of_the_removed_stocks' => 'قيمه المخزون التالف ',
+    'removed_expiry' => 'ازالة منتج منتهي الصلاحية',
 
+    'date_of_the_removal' => 'تاريخ الحذف',
+    'add_new_convolutions' => 'اضافه تلافيات جديده',
+    'expired_stock' => 'المخزون المنتهي الصلاحيه',
+
+    'date_of_the_expiry_of_the_expired_stock' => ' تاريخ انتهاء المخزون المنتهي',
+    'date_of_purchase_of_the_expired_stock' => 'تاريخ شراء المخزون المنتهي',
+    'quantity_to_be_removed' => 'الكميه المراد حذفها',
+    'value_of_removed_stock' => 'قيمه المخزون المحذوف',
+
+    'date_of_purchase_of_the_expired_stock_removed' => 'تاريخ شراء المخزون التالف المحذوف',
+
+
+    'salary' => 'الراتب',
+    'paid_leave' => 'إجازة مدفوعة',
+    'paid_annual_leave' => 'إجازة سنوية مدفوعة',
+    'payment_type' => 'طريقة الدفع',
+    'wages_and_compensations' => 'الأجور ',
+    'commission_%' => 'عمولة٪',
+    'commission' => 'عمولة',
+    'annual_bonus' => 'مكافأة سنوية',
+    'annual_incentive' => 'حوافز سنوية',
+    'recognition' => 'مكافأة تقديرية',
+    'other_reward' => 'مكافآت أخرى',
 
     'create_new_purchase_order' => 'إنشاء أمر شراء جديد',
     'purchase_order' => 'أمر شراء',
@@ -261,8 +291,7 @@ return [
     'payment_status' => 'حالة السداد',
     'due_date' => 'تاريخ الاستحقاق',
     'notify_me' => 'أعلمني، بلغني',
-    'payment_date' => 'فترة الحساب',
-    'payment_type' => 'طريقة الدفع',
+    'payment_date' => 'تاريخ السداد',
     'upload_documents' => 'تحميل المستندات',
     'ref_number' => 'رقم المرجع',
     'bank_deposit_date' => 'تاريخ الإيداع المصرفي',
@@ -533,7 +562,7 @@ return [
     'leave_details' => 'تفاصيل الإجازة',
     'number_of_days' => 'عدد الأيام',
     'on_duty' => 'في الخدمة',
-    'wages_and_compensations' => 'الأجور ',
+
     'list_of_wages_and_compensations' => 'قائمة الأجور',
     'type_of_payment' => 'طريقة الدفع',
     'acount_period_start_date' => 'تاريخ بدء فترة الحساب',
@@ -543,7 +572,7 @@ return [
     'other_payment' => 'مدفوعات أخرى',
     'notes' => 'ملاحظات',
     'account_period' => 'فترة الحساب',
-    'payment_type' => 'طريقة الدفع',
+
     'reasons_of_deductibles' => 'أسباب الخصومات',
     'paid' => 'دُفعت',
     'list_of_wages_and_compensations' => 'قائمة الأجور ',
@@ -658,7 +687,7 @@ return [
     'quotation_status' => 'حالة عرض السعر',
     'create_invoice' => 'إنشاء فاتورة',
     'view_all_invoices' => 'عرض جميع الفواتير',
-    'all_invoices' => 'كل الفاتورة',
+    'all_invoices' => 'كل الفواتير',
     'validity_days' => 'الصلاحية',
 
     'add_transfer' => 'أضف تحويل',
@@ -841,6 +870,10 @@ return [
     'cash_in_adjustment' => 'تسوية النقدية',
     'view_cash_in_adjustment' => 'عرض تسوية النقدية',
     'add_cash_in_adjustment' => 'إضافة تسوية النقدية',
+
+    'view_product_in_adjustment' => 'عرض تسوية المنتج',
+    'add_product_in_adjustment' => 'إضافة تسوية المنتج',
+    'product_in_adjustment' => 'تسوية المنتج',
     'adjustment_value' => 'قيمة التعديل',
     'title_of_creator' => 'لقب الخالق',
     'receiver_title' => 'عنوان المتلقي',
@@ -939,7 +972,7 @@ return [
     'commission_customer_types' => 'أنواع العملاء العمولة',
     'commission_stores' => 'مخازن Comission',
     'commission_cashiers' => 'أمين الصندوق',
-    'commission_%' => 'عمولة٪',
+
     'send_credentials' => 'إرسال أوراق الاعتماد',
     'pay_now' => 'ادفع الآن',
     'pending' => 'قيد الانتظار',
@@ -1033,10 +1066,11 @@ return [
     'default_purchase_price_percentage_info' => 'أضف النسبة المئوية لسعر شراء صفحة المنتج لسعر البيع ، افتراضيًا 75',
     'source_of_payment' => ' اسم الموظف',
     'source_type' => 'مصدر الأموال',
-    'other_payments' => 'خصومات أخرى',
+    'other_payments' => 'مصروفات أخرى',
     'start_time' => 'وقت البدء',
     'end_time' => 'وقت النهاية',
     'edited_by' => 'تحرير بواسطة',
+    'edited_at' => 'تاريخ التحرير',
     'out_of_stock' => 'إنتهى من المخزن',
 
     'new_price' => 'سعر جديد',
@@ -1114,7 +1148,7 @@ return [
     'remaining_qty_sufficient_for' => 'الكمية المتبقية كافية لـ',
     'value_of_current_stock' => 'قيمة المخزون الحالي',
     'add_stock_for_raw_material' => 'إضافة مخزون المواد الأولية',
-    'view_all_stock_for_raw_material' => 'عرض جميع المواد الأولية للمخزون المضافة',
+    'view_all_stock_for_raw_material' => ' عرض جميع المواد الأولية المضافة للمخزون',
     'shut_down' => 'اغلق',
     'edit_consumption' => 'تحرير الاستهلاك',
     'price_based_on_raw_material' => 'السعر يعتمد على تكلفة المواد الأولية',
@@ -1128,7 +1162,7 @@ return [
     'setting' => 'جلسة',
     'store_pos' => 'تخزين نقاط البيع',
     'add_consumption_for_others' => 'أضف تعويضات للآخرين',
-    'other_expenses' => 'مصروفات أخرى',
+    'other_expenses' => 'مصروفات ',
     'tutorials' => 'فيديوهات تعليمية',
 
     'tutorial' => 'فيديوهات تعليمي',
@@ -1286,7 +1320,6 @@ return [
     'all_supplier_service' => 'جميع خدمات الموردين',
     'service_provider' => 'مقدم الخدمة',
     'commissions' => 'اللجان',
-    'commission' => 'عمولة',
     'sales_per_employee' => 'المبيعات لكل موظف',
     'employee_commission' => 'عمولة الموظف',
     'cancel_service' => 'إلغاء الخدمة',
@@ -1327,6 +1360,61 @@ return [
     'wrong_gift_card_amount'=>'الحد القصي لمبلغ الدفع لهذة البطاقة هو :amount',
 
     'discount_category'=>'الاسم المختصر للخصم',
-    'category_discount'=>'فئة',
+    'category_discount'=>'فئة الخصم',
+    'new_batch'=>'رقم التشغيلة الجديدة',
+    'watsapp_numbers'=>'رقم واتساب للتواصل',
 
+    'actual_stock' => 'المخزون الفعلي',
+    'shortage' => 'النقص',
+    'value_of_shortage' => 'قيمة النقص',
+    'total_shortage_value' => 'اجمالي قيمة النقص',
+
+    'adjustment_save' =>'سيؤدي هذا إلى تغيير مخزون المنتج ، يرجى إدخال كلمة مرور المسؤول للتأكيد',
+
+
+    'permenant'=>'دائم',
+    'old_stock' => 'المخون القديم',
+    'new_stock' => 'المخزون الجديد',
+
+    'productions'=>"الانتاج",
+    'product_lists'=>'قائمة المنتجات',
+    'products_under_manufacturing'=>'قائمة المنتجات تحت التصنيع',
+    'products_manufactured'=>'قائمة المنتجات المصنعة',
+    'manufacturers_list'=>'قائمة المصنعين',
+    'raw_materials_list'=>'قائمة المنتجات الاولية',
+    'view_all_remove_stock_list'=>'قائمة الأزالة من المخزون',
+    'all_return_purchase' => ' مشتريات المرتجعات',
+    'add_stock_list'=>'قائمة الاضافة للمخزون',
+    'all_customers'=>'كل العملاء',
+    'product_classes'=>'الفئات',
+    'product_categories'=>'الاقسام',
+    'sub_categories'=>'الاقسام الفرعية',
+    'brands'=>'العلامات التجارية',
+    'colors'=>'الوان',
+    'grades'=>'درجات',
+    'units'=>'الوحدات',
+    'taxes'=>'الضرائب',
+
+    'coupons'=>'قسائم',
+    'product_taxes'=>'ضريبة المنتج',
+
+    'net_profit' => 'صافي الربح',
+    'walk-in-customer' => 'عميل عادي',
+    'cancel_add_stock_payment' => 'الغاء دفع المخزون',
+    'add_to_customer_balance' => 'اضافة الى حساب العميل',
+    'select_class_value' =>'.من فضلك اختار فئة',
+    'products_count' => 'عدد المنتجات',
+
+    'Discount_from_the_cost_of_delivery'=>'المبلغ المخصوم من تكلفة الدليفري',
+    'The_actual_delivery_cost'=>'القيمة الفعلية لتكلفة الدليفري',
+    'categories_count' => 'عدد الاقسام',
+
+    'extract_customer_due'=>'استخراج رصيد المستحق',
+    'amount_greater_than_balance'=>'المبلغ اكبر من الرصيد الحالى',
+    'quick_pay' => 'دفع سريع',
+    'added_to_pos_window'=>'اظهار فى شاشة البيع الرئيسية',
+    'show_at_the_main_pos_page'=>'اظهار فى شاشة البيع الرئيسية',
+    'Cant_Add_More_Than_40_Products'=>'لا يمكن اضافة اكثر من 40 منتج الى شاشة البيع الرئيسية',
+    'hide_from_pos_window'=>'تم الاخفاء من شاشة البيع الرئيسية',
+    'select_to_delete'=>'حدد للحذف',
 ];

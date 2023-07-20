@@ -5,7 +5,7 @@
     <div class="col-md-12  no-print">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h4>@lang('lang.product_report')</h4>
+                <h3 class="print-title">@lang('lang.product_report')</h3>
             </div>
             <form action="">
                 <div class="col-md-12">
@@ -101,7 +101,7 @@
                                         <td> {{ @num_format($transaction->sold_qty) }}</td>
                                         <td> {{ @num_format($transaction->sold_amount - $transaction->purchased_amount) }}
                                         </td>
-                                        <td> {{ @num_format($transaction->in_stock) }}</td>
+                                        <td> {{preg_match('/\.\d*[1-9]+/', (string)$transaction->in_stock) ? $transaction->in_stock : @num_format($transaction->in_stock) }}</td>
                                         <td>
                                             @php
                                                 $product_id = (string) $transaction->id;
