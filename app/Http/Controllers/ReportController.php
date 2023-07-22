@@ -1123,7 +1123,7 @@ class ReportController extends Controller
             $add_stock_query->where('product_id', $request->product_id);
         }
 
-        $add_stocks = $add_stock_query->select(
+        $add_stocks = $add_stock_query ->groupBy('product_id')->select(
             DB::raw('COUNT(transactions.id) as total_count'),
             DB::raw('SUM(final_total) as total_amount'),
             DB::raw('SUM(transaction_payments.amount) as total_paid'),
@@ -1131,7 +1131,7 @@ class ReportController extends Controller
         )->first();
 
         $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell')
@@ -1174,7 +1174,7 @@ class ReportController extends Controller
         )->first();
 
         $sale_return_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell_return')
@@ -1217,7 +1217,7 @@ class ReportController extends Controller
         )->first();
 
         $purchase_return_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'purchase_return')
