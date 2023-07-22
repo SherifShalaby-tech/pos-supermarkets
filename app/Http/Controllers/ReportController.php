@@ -1092,7 +1092,6 @@ class ReportController extends Controller
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
         $add_stock_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
             ->where('transactions.type', 'add_stock')
@@ -1123,7 +1122,7 @@ class ReportController extends Controller
             $add_stock_query->where('product_id', $request->product_id);
         }
 
-        $add_stocks = $add_stock_query ->groupBy('product_id')->select(
+        $add_stocks = $add_stock_query->select(
             DB::raw('COUNT(transactions.id) as total_count'),
             DB::raw('SUM(final_total) as total_amount'),
             DB::raw('SUM(transaction_payments.amount) as total_paid'),
