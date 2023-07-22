@@ -796,6 +796,7 @@ return [
     'friday' => 'الجمعة',
     'saturday' => 'السبت',
     'monthly_sale_report' => 'تقرير البيع الشهري',
+    'monthly_sale_and_purchase_report' => 'تقرير البيع والشراء الشهري',
     'monthly_purchase_report' => 'تقرير الشراء الشهري',
     'daily_purchase_report' => 'تقرير الشراء اليومي',
     'sale_report' => 'تقرير البيع',

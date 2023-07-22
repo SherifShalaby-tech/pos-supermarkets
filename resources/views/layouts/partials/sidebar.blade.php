@@ -715,7 +715,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-monthly-sale-report') active @endif">
                             <a
-                                href="{{action('ReportController@getMonthlySaleReport')}}">{{__('lang.monthly_sale_report')}}</a>
+                                href="{{action('ReportController@getMonthlySaleReport')}}">{{__('lang.monthly_sale_and_purchase_report')}}</a>
                         </li>
                         @endcan
                         @can('reports.daily_purchase_report.view')
@@ -725,13 +725,13 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 href="{{action('ReportController@getDailyPurchaseReport')}}">{{__('lang.daily_purchase_report')}}</a>
                         </li>
                         @endcan
-                        @can('reports.monthly_purchase_report.view')
+                        {{-- @can('reports.monthly_purchase_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-monthly-purchase-report') active @endif">
                             <a
                                 href="{{action('ReportController@getMonthlyPurchaseReport')}}">{{__('lang.monthly_purchase_report')}}</a>
                         </li>
-                        @endcan
+                        @endcan --}}
                         @can('reports.sale_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-sale-report') active @endif">
