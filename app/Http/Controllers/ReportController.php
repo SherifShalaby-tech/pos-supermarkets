@@ -492,13 +492,13 @@ class ReportController extends Controller
                 })
                 ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     if (!empty($row->return_parent)) {
-                        $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                        $final_total = number_format($row->final_total - $row->return_parent->final_total,2,'.',',');
                     } else {
-                        $final_total = $this->commonUtil->num_f($row->final_total);
+                        $final_total = number_format($row->final_total,2,'.',',');
                     }
 //                    $final_total = preg_match('/\.\d*[1-9]+/', (string)$final_total) ? $final_total : number_format($final_total,  2, '.', ',');
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
                 })
                 ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
                     $amount_paid = 0;
@@ -790,17 +790,17 @@ class ReportController extends Controller
                     $final_total =  $row->final_total;
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
 //                    $final_total = preg_match('/\.\d*[1-9]+/', (string)$final_total) ? $final_total : number_format($final_total,  2, '.', ',');
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($final_total,2,'.',',') . '</span>';
                 })
                 ->addColumn('paid_amount', function ($row) use ($default_currency_id) {
                     $amount_paid =  $row->transaction_payments->sum('amount');
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($amount_paid,2,'.',',') . '</span>';
                 })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $due =  $row->final_total - $row->transaction_payments->sum('amount');
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . number_format($due,2,'.',',') . '</span>';
                 })
                 ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);
@@ -1123,7 +1123,7 @@ class ReportController extends Controller
             $add_stock_query->where('product_id', $request->product_id);
         }
 
-        $add_stocks = $add_stock_query->select(
+        $add_stocks = $add_stock_query ->groupBy('product_id')->select(
             DB::raw('COUNT(transactions.id) as total_count'),
             DB::raw('SUM(final_total) as total_amount'),
             DB::raw('SUM(transaction_payments.amount) as total_paid'),
@@ -1131,7 +1131,7 @@ class ReportController extends Controller
         )->first();
 
         $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell')
@@ -1174,7 +1174,7 @@ class ReportController extends Controller
         )->first();
 
         $sale_return_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell_return')
@@ -1217,7 +1217,7 @@ class ReportController extends Controller
         )->first();
 
         $purchase_return_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'purchase_return')
@@ -1532,8 +1532,8 @@ class ReportController extends Controller
             $query->where('p.id', $request->product_id);
         }
         $transactions = $query->select(
-            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * p.sell_price, 0)) as sold_amount"),
-            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * p.purchase_price, 0)) as purchased_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * tsl.sell_price, 0)) as sold_amount"),
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity * pl.purchase_price, 0)) as purchased_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
             DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
@@ -1707,28 +1707,56 @@ class ReportController extends Controller
                 $total_discount_query->where('store_id', $store_id);
             }
             $total_discount[] = $total_discount_query->sum('discount_amount');
+            //
+            $total_discount_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            if (!empty($store_id)) {
+                $total_discount_query_purchase->where('store_id', $store_id);
+            }
+            $total_discount_purchase[] = $total_discount_query_purchase->sum('discount_amount');
+            //
 
             $total_tax_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
             if (!empty($store_id)) {
                 $total_tax_query->where('store_id', $store_id);
             }
             $total_tax[] = $total_tax_query->sum('total_tax');
+            ///
+            $total_tax_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            if (!empty($store_id)) {
+                $total_tax_query_purchase->where('store_id', $store_id);
+            }
+            $total_tax_purchase[] = $total_tax_query_purchase->sum('total_tax');
+            //
 
             $shipping_cost_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
             if (!empty($store_id)) {
                 $shipping_cost_query->where('store_id', $store_id);
             }
             $shipping_cost[] = $shipping_cost_query->sum('delivery_cost');
-
+            //
+            $shipping_cost_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            if (!empty($store_id)) {
+                $shipping_cost_query_purchase->where('store_id', $store_id);
+            }
+            $shipping_cost_purchase[] = $shipping_cost_query_purchase->sum('delivery_cost');
+            ///
             $total_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
             if (!empty($store_id)) {
                 $total_query->where('store_id', $store_id);
             }
             $total[] = $total_query->sum('final_total');
-
+            //
+            $total_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            if (!empty($store_id)) {
+                $total_query_purchase->where('store_id', $store_id);
+            }
+            $total_purchase[] = $total_query_purchase->sum('final_total');
+            ///
+            $total_net_profit[]=$total_query->sum('final_total')-$total_query_purchase->sum('final_total');
             $start = strtotime("+1 month", $start);
         }
         $stores = Store::getDropdown();
+        ///////
 
         return view('reports.monthly_sale_report', compact(
             'year',
@@ -1736,7 +1764,12 @@ class ReportController extends Controller
             'total_tax',
             'shipping_cost',
             'total',
-            'stores'
+            'stores',
+            'total_discount_purchase',
+            'total_tax_purchase',
+            'shipping_cost_purchase',
+            'total_purchase',
+            'total_net_profit'
         ));
     }
     /**
