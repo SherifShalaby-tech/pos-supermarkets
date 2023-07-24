@@ -1418,4 +1418,5 @@ return [
     'Cant_Add_More_Than_40_Products'=>'لا يمكن اضافة اكثر من 40 منتج الى شاشة البيع الرئيسية',
     'hide_from_pos_window'=>'تم الاخفاء من شاشة البيع الرئيسية',
     'select_to_delete'=>'حدد للحذف',
+    'remove_from_expenses' => "عدم الاضافة الى المصروفات",
 ];
