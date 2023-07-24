@@ -836,7 +836,7 @@
         $(document).ready(function() {
             var total = 0;
             // Call the updateTotal function when the checkbox state changes
-            $(document).on('change', '.product_selected_expensess', function() {
+            $(document).on('change', '.product_selected_expenses', function() {
                 updateTotal();
             });
             // function to update the total value in the HTML element
@@ -847,7 +847,7 @@
                 $("#product_table tbody tr").each(function() {
                     var shortage_val = parseFloat($(this).find(".shortage_value").text());
                     var isRowSelected = $(this).find(".product_selected_expenses").prop("checked");
-                    if (!isRowSelected) {
+                    if (isRowSelected) {
                         var shortage_val = parseFloat($(this).find(".shortage_value").text());
                         if (!isNaN(shortage_val)) {
                             expenses_sum += shortage_val;
