@@ -349,8 +349,6 @@ class ProductInAdjustmentsController extends Controller
 
 
 
-
-
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -487,7 +485,7 @@ class ProductInAdjustmentsController extends Controller
         $store_pos = StorePos::where('user_id', $user_id)->first();
        
         
-            if($request->total_shortage_value){
+            if($request->total_shortage_value || $request->expenses_total_shortage_value){
                 $ProductInAdjustment = ProductInAdjustment::create([
                     'total_shortage_value'=>$request->total_shortage_value,
                     'created_by'=> $user_id,
@@ -510,8 +508,8 @@ class ProductInAdjustmentsController extends Controller
                 }
           
                 Transaction::create([
-                    'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
-                    'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'grand_total' => $this->commonUtil->num_uf($request->expenses_total_shortage_value),
+                    'final_total' => $this->commonUtil->num_uf($request->expenses_total_shortage_value),
                     'store_id' => $store_pos->store_id,
                     'type' => 'expense',
                     'status' => 'final',

@@ -1434,4 +1434,5 @@ return [
     'hide_from_pos_window'=>'Hide From Pos Window',
     'select_to_delete'=>'Select To Delete',
     'monthly_sale_and_purchase_report' => 'Monthly Sale And Purchase Report',
+    'remove_from_expenses' => " Add to expenses",
 ];
