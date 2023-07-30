@@ -1,4 +1,8 @@
 <style>
+    @page {
+        size: 80mm; /* Set the page size to 80mm */
+        margin: 0; /* Optionally set margins for the printed page */
+    }
     @media print {
         * {
             font-size: 14px;

@@ -1005,6 +1005,7 @@ return [
     'default_purchase_price_percentage_info' => 'Ürün sayfası satın alma fiyatı satış fiyatının yüzdesini ekleyin, varsayılan olarak 75\'tir.',
     'source_of_payment' => 'Ödeme Kaynağı',
     'source_type' => 'kaynak tipi',
+    'given_to' => 'Verilen',
     'other_payments' => 'Diğer Ödemeler',
     'start_time' => 'Başlangıç ​​saati',
     'end_time' => 'Bitiş zamanı',
