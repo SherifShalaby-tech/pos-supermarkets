@@ -1066,6 +1066,7 @@ return [
     'default_purchase_price_percentage_info' => 'أضف النسبة المئوية لسعر شراء صفحة المنتج لسعر البيع ، افتراضيًا 75',
     'source_of_payment' => ' اسم الموظف',
     'source_type' => 'مصدر الأموال',
+    'given_to' => 'ستُعطى إلى :',
     'other_payments' => 'مصروفات أخرى',
     'start_time' => 'وقت البدء',
     'end_time' => 'وقت النهاية',

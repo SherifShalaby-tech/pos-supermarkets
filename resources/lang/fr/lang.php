@@ -991,6 +991,7 @@ return [
     'default_purchase_price_percentage_info' => 'Ajouter le pourcentage du prix d\'achat de la page produit du prix de vente, par défaut, il est de 75',
     'source_of_payment' => 'Source de paiement',
     'source_type' => 'Type de Source',
+    'given_to' =>  'donner à',
     'other_payments' => 'Autres paiements',
     'start_time' => 'Heure de début',
     'end_time' => 'Heure de fin',
