@@ -132,6 +132,7 @@
                                 @if($total_purchase[$key] > 0)
                                 <strong>{{trans("lang.grand_total")}}</strong><br>
                                 <span>{{@num_format($total_purchase[$key])}}</span><br>
+                                <span>{{@num_format($total_p[$key])}}</span><br>
                                 @endif
                             </td>
                             @endforeach
