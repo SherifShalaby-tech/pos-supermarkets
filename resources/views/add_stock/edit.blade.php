@@ -100,13 +100,13 @@
                                             @foreach ($add_stock->add_stock_lines as $product)
                                             <tr class="product_row">
                                                 <td class="row_number"></td>
-                                                <td><img src="@if(!empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                                <td><img src="@if(!empty($product->product) && !empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                                                     alt="photo" width="50" height="50"></td>
                                                 <td>
-                                                    @if($product->variation->name != "Default")
+                                                    @if(!empty($product->variation) && $product->variation->name != "Default")
                                                     <b>{{$product->variation->name}} {{$product->sub_sku}}</b>
                                                     @else
-                                                    {{$product->product->name}}
+                                                    {{!empty($product->product) ?$product->product->name:__('lang.deleted')}}
                                                     @endif
                                                      <input type="hidden"
                                                             name="add_stock_lines[{{ $loop->index }}][add_stock_line_id]"
@@ -119,14 +119,14 @@
                                                             value="{{ $product->variation_id }}">
                                                 </td>
                                                 <td>
-                                                    {{$product->variation->sub_sku}}
+                                                    {{!empty($product->variation) ?$product->variation->sub_sku:''}}
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control quantity  quantity_{{$loop->index}}" min=1 name="add_stock_lines[{{$loop->index}}][quantity]" required
                                                         value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif" index_id="{{$loop->index}}">
                                                 </td>
                                                 <td>
-                                                    {{$product->product->units->pluck('name')[0]??''}}
+                                                    {{!empty($product->product)?$product->product->units->pluck('name')[0]??'':''}}
                                                 </td>
                                                 <td>
                                                      <input type="text" class="form-control purchase_price purchase_price_{{$loop->index}}"
