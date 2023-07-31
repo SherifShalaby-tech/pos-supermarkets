@@ -37,6 +37,7 @@ use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -956,5 +957,13 @@ class AddStockController extends Controller
         }
 
         return $this->commonUtil->createDropdownHtml($array, __('lang.please_select'));
+    }
+
+
+    public function updateStockColumnVisibility(Request $request)
+    {
+        $stockColumnVisibility = $request->input('stockColumnVisibility');
+        Cache::forever('key_' . auth()->id(), $stockColumnVisibility);
+        return response()->json(['success' => true]);
     }
 }

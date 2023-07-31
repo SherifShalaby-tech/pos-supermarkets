@@ -688,50 +688,52 @@
             newWin.close();
         }
 
-        var hidden_column_array = $.cookie('column_visibility') ? JSON.parse($.cookie('column_visibility')) : [];
         $(document).ready(function() {
+            var hiddenColumnArray = JSON.parse('{!! addslashes(json_encode(Cache::get("key_" . auth()->id(), []))) !!}');
 
-            $.each(hidden_column_array, function(index, value) {
+            $.each(hiddenColumnArray, function(index, value) {
                 $('.column-toggle').each(function() {
-                    if ($(this).val() == value) {
-                        toggleColumnVisibility(value, $(this));
+                if ($(this).val() == value) {
+                    // alert(value)
+                    toggleColumnVisibility(value, $(this));
+                }
+                });
+            });
+
+            $(document).on('click', '.column-toggle', function() {
+                var column_index = parseInt($(this).val());
+                toggleColumnVisibility(column_index, $(this));
+
+                if (hiddenColumnArray.includes(column_index)) {
+                hiddenColumnArray.splice(hiddenColumnArray.indexOf(column_index), 1);
+                } else {
+                hiddenColumnArray.push(column_index);
+                }
+
+                hiddenColumnArray = [...new Set(hiddenColumnArray)]; // Remove duplicates
+
+                // Update the columnVisibility cache data
+                $.ajax({
+                url: '/update-column-visibility', // Replace with your route or endpoint for updating cache data
+                method: 'POST',
+                data: { columnVisibility: hiddenColumnArray },
+                    success: function() {
+                        console.log('Column visibility updated successfully.');
                     }
                 });
-
             });
+
+            function toggleColumnVisibility(column_index, this_btn) {
+                var column = product_table.column(column_index);
+                column.visible(!column.visible());
+
+                if (column.visible()) {
+                $(this_btn).addClass('badge-primary').removeClass('badge-warning');
+                } else {
+                $(this_btn).removeClass('badge-primary').addClass('badge-warning');
+                }
+            }
         });
-
-        $(document).on('click', '.column-toggle', function() {
-            let column_index = parseInt($(this).val());
-            toggleColumnVisibility(column_index, $(this));
-            if (hidden_column_array.includes(column_index)) {
-                hidden_column_array.splice(hidden_column_array.indexOf(column_index), 1);
-            } else {
-                hidden_column_array.push(column_index);
-            }
-
-            //unique array javascript
-            hidden_column_array = $.grep(hidden_column_array, function(v, i) {
-                return $.inArray(v, hidden_column_array) === i;
-            });
-
-            $.cookie('column_visibility', JSON.stringify(hidden_column_array));
-        })
-
-        function toggleColumnVisibility(column_index, this_btn) {
-            column = product_table.column(column_index);
-            console.log(column_index);
-            column.visible(!column.visible());
-
-            if (column.visible()) {
-                $(this_btn).addClass('badge-primary')
-                $(this_btn).removeClass('badge-warning')
-            } else {
-                $(this_btn).removeClass('badge-primary')
-                $(this_btn).addClass('badge-warning')
-
-            }
-        }
         $(document).on('change', '.filter_product', function() {
             product_table.ajax.reload();
         })
