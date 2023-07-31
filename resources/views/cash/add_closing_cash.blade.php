@@ -170,7 +170,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
+                            {!! Form::label('source_type', __('lang.given_to', ['value' => __('lang.user')]), ['id'=> 'source_type_label']) !!} <br>
                             {!! Form::select('source_type', ['user' => __('lang.user'), 'safe' => __('lang.safe')], 'user', ['class' => 'selectpicker form-control', 'required', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                         </div>
                     </div>
@@ -230,6 +230,19 @@
     });
     $('#source_type').change();
     $(document).on('change', '#source_type', function() {
+        var selectedValue = $('#source_type').find(":selected").val();
+        if(selectedValue == "safe"){
+            var langKey = "@lang('lang.given_to') (@lang('lang.safe'))";
+        }
+        else if(selectedValue == "user"){
+            var langKey = "@lang('lang.given_to') (@lang('lang.user'))";
+
+        }
+        else{
+            var langKey = "@lang('lang.given_to')";
+        }
+        $('#source_type_label').html(langKey);
+
         if ($(this).val() !== '') {
             $.ajax({
                 method: 'get',

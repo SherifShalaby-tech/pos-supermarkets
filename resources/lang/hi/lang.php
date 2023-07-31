@@ -992,6 +992,7 @@ return [
     'default_purchase_price_percentage_info' => 'उत्पाद पृष्ठ खरीद मूल्य बिक्री मूल्य का प्रतिशत जोड़ें, डिफ़ॉल्ट रूप से यह 75 . है',
     'source_of_payment' => 'भुगतान का स्रोत',
     'source_type' => 'स्रोत प्रकार',
+    'given_to' => 'को दें :',
     'other_payments' => 'अन्य भुगतान',
     'start_time' => 'समय शुरू',
     'end_time' => 'अंतिम समय',

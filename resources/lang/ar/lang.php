@@ -1067,6 +1067,7 @@ return [
     'default_purchase_price_percentage_info' => 'أضف النسبة المئوية لسعر شراء صفحة المنتج لسعر البيع ، افتراضيًا 75',
     'source_of_payment' => ' اسم الموظف',
     'source_type' => 'مصدر الأموال',
+    'given_to' => 'ستُعطى إلى :',
     'other_payments' => 'مصروفات أخرى',
     'start_time' => 'وقت البدء',
     'end_time' => 'وقت النهاية',
@@ -1418,5 +1419,9 @@ return [
     'Cant_Add_More_Than_40_Products'=>'لا يمكن اضافة اكثر من 40 منتج الى شاشة البيع الرئيسية',
     'hide_from_pos_window'=>'تم الاخفاء من شاشة البيع الرئيسية',
     'select_to_delete'=>'حدد للحذف',
+<<<<<<< HEAD
     'selling_price_for_this_product_is_changed'=>'تم تغيير سعر البيع لهذا المنتج',
+=======
+    'remove_from_expenses' => " اضافة الى المصروفات",
+>>>>>>> e1d9eb97388bef9f810405f6842ead95081bf714
 ];

@@ -993,6 +993,7 @@ return [
     'default_purchase_price_percentage_info' => 'Productpagina aankoopprijs percentage van verkoopprijs toevoegen, standaard is dit 75',
     'source_of_payment' => 'Bron van betaling',
     'source_type' => 'Bron Type',
+    'given_to' => 'Gegeven Aan :',
     'other_payments' => 'Andere betalingen',
     'start_time' => 'Starttijd',
     'end_time' => 'Eindtijd',

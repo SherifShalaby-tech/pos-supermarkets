@@ -14,11 +14,11 @@ class TransactionSellLine extends Model
      *
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class);
+        return $this->belongsTo(Transaction::class,'transaction_id');
     }
     public function product()
     {
