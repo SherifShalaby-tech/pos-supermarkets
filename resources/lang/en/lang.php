@@ -1435,9 +1435,7 @@ return [
     'hide_from_pos_window'=>'Hide From Pos Window',
     'select_to_delete'=>'Select To Delete',
     'monthly_sale_and_purchase_report' => 'Monthly Sale And Purchase Report',
-<<<<<<< HEAD
+
     'selling_price_for_this_product_is_changed'=>'Selling Price For This Product Is Changed',
-=======
     'remove_from_expenses' => " Add to expenses",
->>>>>>> e1d9eb97388bef9f810405f6842ead95081bf714
 ];
