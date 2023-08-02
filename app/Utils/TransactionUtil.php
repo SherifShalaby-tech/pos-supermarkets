@@ -179,7 +179,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->stock_line_id = !empty($line['stock_id']) ? $line['stock_id'] : null;
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
-            } 
+            }
             else {
                 $transaction_sell_line = new TransactionSellLine();
                 $transaction_sell_line->transaction_id = $transaction->id;
@@ -253,7 +253,7 @@ class TransactionUtil extends Util
                 ->groupBy('add_stock_lines.id')
                 ->get();
             }
-            
+
             foreach ($add_stock_lines as $line) {
                 if ($qty_difference == 0) {
                     return true;
@@ -1206,11 +1206,10 @@ class TransactionUtil extends Util
             'block_for_days' => 0,
             'tax_id' => $request->tax_id_hidden ?? null,
             'tax_method' => $request->tax_method ?? null,
-            'tax_rate' => $request->tax_rate ?? 0,
+//            'tax_rate' => $request->tax_rate ?? 0,
             'total_tax' => $this->num_uf($request->total_tax),
             'total_item_tax' => $this->num_uf($request->total_item_tax),
-            'sale_note' => $request->sale_note,
-            'staff_note' => $request->staff_note,
+
             'customer_size_id' => $request->customer_size_id_hidden ?? null,
             'fabric_name' => $request->fabric_name ?? null,
             'fabric_squatch' => $request->fabric_squatch ?? null,

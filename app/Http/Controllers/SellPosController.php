@@ -217,8 +217,6 @@ class SellPosController extends Controller
 //            'tax_rate' => $request->tax_rate ?? 0,
             'total_tax' => $this->commonUtil->num_uf($request->total_tax),
             'total_item_tax' => $this->commonUtil->num_uf($request->total_item_tax),
-            'sale_note' => $request->sale_note,
-            'staff_note' => $request->staff_note,
             'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
             'delivery_zone_id' => !empty($request->delivery_zone_id) ? $request->delivery_zone_id : null,
             'manual_delivery_zone' => !empty($request->manual_delivery_zone) ? $request->manual_delivery_zone : null,
