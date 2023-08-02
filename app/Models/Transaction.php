@@ -10,7 +10,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Transaction extends Model  implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
-    protected $appends = ['source_name','total_purschase'];
+    protected $appends = ['source_name'];
     protected $guarded = [];
 
     protected $casts = [

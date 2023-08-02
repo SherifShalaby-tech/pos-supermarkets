@@ -991,6 +991,31 @@ $(document).on("change", ".sell_price", function () {
     if (sell_price < purchase_price) {
         swal(LANG.warning, LANG.sell_price_less_than_purchase_price, "warning");
         return;
+    }else{
+    //change price
+    swal({
+        title: "",
+        text: LANG.change_price_permenatly,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        showCancelButton: true,
+        confirmButtonText: 'Save',
+    })
+    .then((isConfirm) => {
+        if (isConfirm) {
+           $.ajax({
+            type: "post",
+            url: "/pos/change-selling-price/"+$(this).data('variation_id'),
+            data: {sell_price:sell_price},
+            success: function (response) {
+                swal("Success", response.msg, "success");
+            }
+           });
+        } else {
+            swal("Success", LANG.price_changed_only_for_this_transaction, "success");
+        }
+    });
     }
 });
 $(document).on("change", ".quantity, .sell_price", function () {
@@ -1538,7 +1563,7 @@ $(document).ready(function () {
 
                         reset_pos_form();
                         getFilterProductRightSide();
-                        get_recent_transactions();
+                        // get_recent_transactions();
                     } else {
                         toastr.error(result.msg);
                     }
@@ -1805,136 +1830,7 @@ $(document).ready(function () {
                 });
         },
     });
-    recent_transaction_table = $("#recent_transaction_table").DataTable({
-        lengthChange: true,
-        paging: true,
-        info: false,
-        bAutoWidth: false,
-        language: {
-            url: dt_lang_url,
-        },
-        lengthMenu: [
-            [10, 25, 50, 75, 100, 200, 500, -1],
-            [10, 25, 50, 75, 100, 200, 500, "All"],
-        ],
-        dom: "lBfrtip",
-        stateSave: true,
-        buttons: buttons,
-        processing: true,
-        serverSide: true,
-        aaSorting: [[0, "desc"]],
-        initComplete: function () {
-            $(this.api().table().container())
-                .find("input")
-                .parent()
-                .wrap("<form>")
-                .parent()
-                .attr("autocomplete", "off");
-        },
-        ajax: {
-            url: "/pos/get-recent-transactions",
-            data: function (d) {
-                d.start_date = $("#rt_start_date").val();
-                d.end_date = $("#rt_end_date").val();
-                d.method = $("#rt_method").val();
-                d.created_by = $("#rt_created_by").val();
-                d.customer_id = $("#rt_customer_id").val();
-                d.deliveryman_id = $("#rt_deliveryman_id").val();
-            },
-        },
-        columnDefs: [
-            {
-                targets: [13],
-                orderable: false,
-                searchable: false,
-            },
-        ],
-        columns: [
-            { data: "transaction_date", name: "transaction_date" },
-            { data: "invoice_no", name: "invoice_no" },
-            {
-                data: "received_currency_symbol",
-                name: "received_currency_symbol",
-                searchable: false,
-            },
-            { data: "final_total", name: "final_total" },
-            { data: "customer_type_name", name: "customer_types.name" },
-            { data: "customer_name", name: "customers.name" },
-            { data: "mobile_number", name: "customers.mobile_number" },
-            { data: "method", name: "transaction_payments.method" },
-            { data: "ref_number", name: "transaction_payments.ref_number" },
-            { data: "status", name: "transactions.status" },
-            { data: "payment_status", name: "transactions.payment_status" },
-            { data: "deliveryman_name", name: "deliveryman.employee_name" },
-            { data: "created_by", name: "users.name" },
-            { data: "canceled_by", name: "canceled_by" },
-            { data: "action", name: "action" },
-        ],
-        createdRow: function (row, data, dataIndex) {},
-        footerCallback: function (row, data, start, end, display) {
-            var intVal = function (i) {
-                return typeof i === "string"
-                    ? i.replace(/[\$,]/g, "") * 1
-                    : typeof i === "number"
-                    ? i
-                    : 0;
-            };
-
-            this.api()
-                .columns(".currencies", {
-                    page: "current",
-                })
-                .every(function () {
-                    var column = this;
-                    let currencies_html = "";
-                    $.each(currency_obj, function (key, value) {
-                        currencies_html += `<h6 class="footer_currency" data-is_default="${value.is_default}"  data-currency_id="${value.currency_id}">${value.symbol}</h6>`;
-                        $(column.footer()).html(currencies_html);
-                    });
-                });
-
-            this.api()
-                .columns(".sum", { page: "current" })
-                .every(function () {
-                    var column = this;
-                    var currency_total = [];
-                    $.each(currency_obj, function (key, value) {
-                        currency_total[value.currency_id] = 0;
-                    });
-                    column.data().each(function (group, i) {
-                        b = $(group).text();
-                        currency_id = $(group).data("currency_id");
-
-                        $.each(currency_obj, function (key, value) {
-                            if (currency_id == value.currency_id) {
-                                currency_total[value.currency_id] += intVal(b);
-                            }
-                        });
-                    });
-                    var footer_html = "";
-                    $.each(currency_obj, function (key, value) {
-                        footer_html += `<h6 class="currency_total currency_total_${
-                            value.currency_id
-                        }" data-currency_id="${
-                            value.currency_id
-                        }" data-is_default="${
-                            value.is_default
-                        }" data-conversion_rate="${
-                            value.conversion_rate
-                        }" data-base_conversion="${
-                            currency_total[value.currency_id] *
-                            value.conversion_rate
-                        }" data-orig_value="${
-                            currency_total[value.currency_id]
-                        }">${__currency_trans_from_en(
-                            currency_total[value.currency_id],
-                            false
-                        )}</h6>`;
-                    });
-                    $(column.footer()).html(footer_html);
-                });
-        },
-    });
+  
     draft_table = $("#draft_table").DataTable({
         lengthChange: true,
         paging: true,
@@ -2114,7 +2010,8 @@ $(document).on("shown.bs.modal", "#contact_details_modal", function () {
     getCustomerPointDetails();
 });
 $(document).on("shown.bs.modal", "#recentTransaction", function () {
-    recent_transaction_table.ajax.reload();
+    // recent_transaction_table.ajax.reload();
+    get_recent_transactions();
 });
 $(document).on("click", "#view-draft-btn", function () {
     $("#draftTransaction").modal("show");
@@ -2145,12 +2042,143 @@ $(document).ready(function () {
         "change",
         "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by, #rt_method, #rt_deliveryman_id",
         function () {
-            get_recent_transactions();
+            // get_recent_transactions();
         }
     );
 });
 function get_recent_transactions() {
-    recent_transaction_table.ajax.reload();
+    // recent_transaction_table.ajax.reload();
+     $('#recent_transaction_table').DataTable().clear().destroy();
+    recent_transaction_table = $("#recent_transaction_table").DataTable({
+        lengthChange: true,
+        paging: true,
+        info: false,
+        bAutoWidth: false,
+        language: {
+            url: dt_lang_url,
+        },
+        lengthMenu: [
+            [10, 25, 50, 75, 100, 200, 500, -1],
+            [10, 25, 50, 75, 100, 200, 500, "All"],
+        ],
+        dom: "lBfrtip",
+        stateSave: true,
+        buttons: buttons,
+        processing: true,
+        serverSide: true,
+        aaSorting: [[0, "desc"]],
+        initComplete: function () {
+            $(this.api().table().container())
+                .find("input")
+                .parent()
+                .wrap("<form>")
+                .parent()
+                .attr("autocomplete", "off");
+        },
+        ajax: {
+            url: "/pos/get-recent-transactions",
+            data: function (d) {
+                d.start_date = $("#rt_start_date").val();
+                d.end_date = $("#rt_end_date").val();
+                d.method = $("#rt_method").val();
+                d.created_by = $("#rt_created_by").val();
+                d.customer_id = $("#rt_customer_id").val();
+                d.deliveryman_id = $("#rt_deliveryman_id").val();
+            },
+        },
+        columnDefs: [
+            {
+                targets: [13],
+                orderable: false,
+                searchable: false,
+            },
+        ],
+        columns: [
+            { data: "transaction_date", name: "transaction_date" },
+            { data: "invoice_no", name: "invoice_no" },
+            {
+                data: "received_currency_symbol",
+                name: "received_currency_symbol",
+                searchable: false,
+            },
+            { data: "final_total", name: "final_total" },
+            { data: "customer_type_name", name: "customer_types.name" },
+            { data: "customer_name", name: "customers.name" },
+            { data: "mobile_number", name: "customers.mobile_number" },
+            { data: "method", name: "transaction_payments.method" },
+            { data: "ref_number", name: "transaction_payments.ref_number" },
+            { data: "status", name: "transactions.status" },
+            { data: "payment_status", name: "transactions.payment_status" },
+            { data: "deliveryman_name", name: "deliveryman.employee_name" },
+            { data: "created_by", name: "users.name" },
+            { data: "canceled_by", name: "canceled_by" },
+            { data: "action", name: "action" },
+        ],
+        createdRow: function (row, data, dataIndex) {},
+        footerCallback: function (row, data, start, end, display) {
+            var intVal = function (i) {
+                return typeof i === "string"
+                    ? i.replace(/[\$,]/g, "") * 1
+                    : typeof i === "number"
+                    ? i
+                    : 0;
+            };
+
+            this.api()
+                .columns(".currencies", {
+                    page: "current",
+                })
+                .every(function () {
+                    var column = this;
+                    let currencies_html = "";
+                    $.each(currency_obj, function (key, value) {
+                        currencies_html += `<h6 class="footer_currency" data-is_default="${value.is_default}"  data-currency_id="${value.currency_id}">${value.symbol}</h6>`;
+                        $(column.footer()).html(currencies_html);
+                    });
+                });
+
+            this.api()
+                .columns(".sum", { page: "current" })
+                .every(function () {
+                    var column = this;
+                    var currency_total = [];
+                    $.each(currency_obj, function (key, value) {
+                        currency_total[value.currency_id] = 0;
+                    });
+                    column.data().each(function (group, i) {
+                        b = $(group).text();
+                        currency_id = $(group).data("currency_id");
+
+                        $.each(currency_obj, function (key, value) {
+                            if (currency_id == value.currency_id) {
+                                currency_total[value.currency_id] += intVal(b);
+                            }
+                        });
+                    });
+                    var footer_html = "";
+                    $.each(currency_obj, function (key, value) {
+                        footer_html += `<h6 class="currency_total currency_total_${
+                            value.currency_id
+                        }" data-currency_id="${
+                            value.currency_id
+                        }" data-is_default="${
+                            value.is_default
+                        }" data-conversion_rate="${
+                            value.conversion_rate
+                        }" data-base_conversion="${
+                            currency_total[value.currency_id] *
+                            value.conversion_rate
+                        }" data-orig_value="${
+                            currency_total[value.currency_id]
+                        }">${__currency_trans_from_en(
+                            currency_total[value.currency_id],
+                            false
+                        )}</h6>`;
+                    });
+                    $(column.footer()).html(footer_html);
+                });
+        },
+    });
 }
 
 $(document).on("change", "#customer_id", function () {
@@ -2419,7 +2447,7 @@ $(document).on("submit", "form#add_payment_form", function (e) {
                 swal("Error", result.msg, "error");
             }
             $(".view_modal").modal("hide");
-            get_recent_transactions();
+            // get_recent_transactions();
         },
     });
 });
