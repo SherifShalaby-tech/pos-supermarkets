@@ -129,10 +129,11 @@
                                 <strong>{{trans("lang.delivery_cost")}}</strong><br>
                                 <span>{{@num_format($shipping_cost_purchase[$key])}}</span><br><br>
                                 @endif
-                                @if($total_purchase[$key] > 0)
+                                @if($total_p[$key] > 0)
                                 <strong>{{trans("lang.grand_total")}}</strong><br>
-                                <span>{{@num_format($total_purchase[$key])}}</span><br>
+                                {{-- <span>{{@num_format($total_purchase[$key])}}</span><br> --}}
                                 <span>{{@num_format($total_p[$key])}}</span><br>
+                                {{-- <span>{{$total_p[$key]}}</span><br> --}}
                                 @endif
                             </td>
                             @endforeach
@@ -141,6 +142,10 @@
                             <td></td>
                             @foreach($total_net_profit as $key => $net_profit)
                             <td>
+                                <strong>{{trans("lang.assest")}}</strong><br>
+                                <span>{{@num_format($total_purchase[$key])}}</span><br>
+                                <br>
+                                <strong>{{trans("lang.wins")}}</strong><br>
                                 <strong>{{@num_format($net_profit)}}</strong>
                             </td>
                             @endforeach

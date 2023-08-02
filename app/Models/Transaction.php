@@ -10,25 +10,25 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Transaction extends Model  implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
-    protected $appends = ['source_name','total_purschase'];
+    protected $appends = ['source_name'];
     protected $guarded = [];
 
     protected $casts = [
         'commissioned_employees' => 'array'
     ];
 
-    public function getTotalPurschaseAttribute (){
-        $total_query_id = $this->id;
-        $total_query_sell = TransactionSellLine::whereHas('transaction',function($q) use($total_query_id){
-                $q->where('transaction_id', $total_query_id);
-            });
-            $purchase_price = $total_query_sell->purchase_price;
-            $quantity = $total_query_sell->quantity;
-            $quantity_returned = $total_query_sell->quantity_returned;
-            $total_purschase[] = $purchase_price * ($quantity - $quantity_returned);
-            // return $TotalPurschase[] = $total_query_sell->sum((int)'purchase_price' * ((int)'quantity' - (int)'quantity_returned'));
-            return $total_purschase;
-    }
+    // public function getTotalPurschaseAttribute (){
+    //     $total_query_id = $this->id;
+    //     $total_query_sell = TransactionSellLine::whereHas('transaction',function($q) use($total_query_id){
+    //             $q->where('transaction_id', $total_query_id);
+    //         });
+    //         $purchase_price = $total_query_sell->purchase_price;
+    //         $quantity = $total_query_sell->quantity;
+    //         $quantity_returned = $total_query_sell->quantity_returned;
+    //         $total_purschase[] = $purchase_price * ($quantity - $quantity_returned);
+    //         // return $TotalPurschase[] = $total_query_sell->sum((int)'purchase_price' * ((int)'quantity' - (int)'quantity_returned'));
+    //         return $total_purschase;
+    // }
 
     public function getSourceNameAttribute()
     {
