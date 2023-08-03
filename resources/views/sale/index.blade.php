@@ -193,7 +193,7 @@
                                     <th>@lang('lang.service')</th>
                                     <th>@lang('lang.canceled_by')</th>
                                 @endif
-                                <th>@lang('lang.commissions')</th>
+                                <th>@lang('lang.commission')</th>
                                 <th>@lang('lang.products')</th>
                                 <th>@lang('lang.sku')</th>
                                 <th>@lang('lang.sub_sku')</th>
