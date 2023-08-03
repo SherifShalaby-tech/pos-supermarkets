@@ -1798,12 +1798,22 @@ class ReportController extends Controller
             ->whereDate('transaction_date', '<=', $end_date)->get(['id'])->pluck('id');
             $total_x=TransactionSellLine::whereHas('transaction',function($q) use($term){
                     $q->whereIn('id',$term);
-                });
+                })->get();
             if (!empty($store_id)) {
                 $total_x->where('store_id', $store_id);
             };
             // $total_p[] =$total_x->sum('purchase_price')*($total_x->sum('quantity')- $total_x->sum('quantity_returned'));
-            $total_p[] = $total_x->sum('purchase_price')*($total_x->sum('quantity')- $total_x->sum('quantity_returned'));
+
+            $total_p[] = $total_x->sum('quantity')- $total_x->sum('quantity_returned') * $total_x->sum('purchase_price');
+//
+            // $cost_purchase_price = DB::raw('SUM( (transaction_sell_lines.quantity_returned - transaction_sell_lines.quantity) * transaction_sell_lines.purchase_price ) ');
+
+            // $total_p[] =Transaction::join('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+            // ->where('transactions.type', 'sell')
+            // ->where('transactions.status', 'final')
+            // ->select(DB::raw('SUM( (transaction_sell_lines.quantity_returned - transaction_sell_lines.quantity)* transaction_sell_lines.purchase_price )
+            //  as cost_purchase_price '));
+
             // $trans = Transaction::get();
             // foreach($trans as $i=>$tran){
             //   $t = $tran->id;
@@ -1822,8 +1832,8 @@ class ReportController extends Controller
 
             ///
             // $total_net_profit[] = $total_query->sum('final_total') - $total_query_purchase->sum('final_total');
-            $total_net_profit[] = $total_query->sum('final_total') -
-            ($total_x->sum('purchase_price') * ($total_x->sum('quantity')-$total_x->sum('quantity_returned')));
+            $total_net_profit[] = $total_query->sum('final_total') -  ($total_x->sum('quantity')- $total_x->sum('quantity_returned') * $total_x->sum('purchase_price'));
+            // ($total_x->sum('purchase_price') * ($total_x->sum('quantity')-$total_x->sum('quantity_returned')));
             $start = strtotime("+1 month", $start);
         }
         $stores = Store::getDropdown();
