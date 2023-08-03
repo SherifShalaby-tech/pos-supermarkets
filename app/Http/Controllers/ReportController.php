@@ -1092,7 +1092,7 @@ class ReportController extends Controller
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
         $add_stock_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+            // ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
             ->where('transactions.type', 'add_stock')
@@ -1131,11 +1131,11 @@ class ReportController extends Controller
         )->first();
 
         $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+            // ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell')
-            ->where('transactions.payment_status', 'paid')
+            // ->where('transactions.payment_status', 'paid')
             ->where('transactions.status', 'final');
 
         if (!empty($request->start_date)) {
@@ -1174,11 +1174,11 @@ class ReportController extends Controller
         )->first();
 
         $sale_return_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+            // ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell_return')
-            ->where('transactions.payment_status', 'paid')
+            // ->where('transactions.payment_status', 'paid')
             ->where('transactions.status', 'final');
 
         if (!empty($request->start_date)) {
@@ -1217,11 +1217,11 @@ class ReportController extends Controller
         )->first();
 
         $purchase_return_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+            // ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'purchase_return')
-            ->where('transactions.payment_status', 'paid')
+            // ->where('transactions.payment_status', 'paid')
             ->where('transactions.status', 'final');
 
         if (!empty($request->start_date)) {
@@ -1532,8 +1532,8 @@ class ReportController extends Controller
             $query->where('p.id', $request->product_id);
         }
         $transactions = $query->select(
-            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * p.sell_price, 0)) as sold_amount"),
-            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * p.purchase_price, 0)) as purchased_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * tsl.sell_price, 0)) as sold_amount"),
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity * pl.purchase_price, 0)) as purchased_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
             DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
@@ -1707,28 +1707,137 @@ class ReportController extends Controller
                 $total_discount_query->where('store_id', $store_id);
             }
             $total_discount[] = $total_discount_query->sum('discount_amount');
+            //
+            $total_discount_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            if (!empty($store_id)) {
+                $total_discount_query_purchase->where('store_id', $store_id);
+            }
+            $total_discount_purchase[] = $total_discount_query_purchase->sum('discount_amount');
+
+            ///
+
+
+
+
+            //
 
             $total_tax_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
             if (!empty($store_id)) {
                 $total_tax_query->where('store_id', $store_id);
             }
             $total_tax[] = $total_tax_query->sum('total_tax');
+            ///
+            $total_tax_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            if (!empty($store_id)) {
+                $total_tax_query_purchase->where('store_id', $store_id);
+            }
+            $total_tax_purchase[] = $total_tax_query_purchase->sum('total_tax');
+            //
 
             $shipping_cost_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
             if (!empty($store_id)) {
                 $shipping_cost_query->where('store_id', $store_id);
             }
             $shipping_cost[] = $shipping_cost_query->sum('delivery_cost');
-
-            $total_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            //
+            $shipping_cost_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            if (!empty($store_id)) {
+                $shipping_cost_query_purchase->where('store_id', $store_id);
+            }
+            $shipping_cost_purchase[] = $shipping_cost_query_purchase->sum('delivery_cost');
+            ///
+            $total_query = Transaction::where('type', 'sell')
+                ->where('status', 'final')
+                ->whereDate('transaction_date', '>=', $start_date)
+                ->whereDate('transaction_date', '<=', $end_date);
             if (!empty($store_id)) {
                 $total_query->where('store_id', $store_id);
             }
+
             $total[] = $total_query->sum('final_total');
 
+
+            // $trans = Transaction::where('type', 'sell')->get();
+            // $total_query_sell = TransactionSellLine::whereHas('transaction',function($q) use($total_query){
+            //     $q->where('transaction_id', $total_query->id);
+            // });
+            // dd( $total_query);
+            // $newtotal[] = $total_query_sell->sum((int)'purchase_price' * ((int)'quantity' - (int)'quantity_returned'));
+            //  $total_query_sell = TransactionSellLine::where('transaction_id',$total_query->id);
+            // $purchase_price = $total_query_sell->purchase_price;
+            // $quantity = $total_query_sell->quantity;
+            // $quantity_returned = $total_query_sell->quantity_returned;
+            //  $newtotal[] = $purchase_price * ($quantity - $quantity_returned);
+            //  $newtotal[] = $total_query_sell->sum('purchase_price');
+            // $newtotal[] = Transaction::$newtotal;
+
+
+
+            //
+            $total_query_purchase = Transaction::where('type', 'add_stock')
+            ->where('status', 'received')
+            ->whereDate('transaction_date', '>=', $start_date)
+            ->whereDate('transaction_date', '<=', $end_date);
+            if (!empty($store_id)) {
+                $total_query_purchase->where('store_id', $store_id);
+            }
+            $total_purchase[] = $total_query_purchase->sum('final_total');
+
+            // foreach($total_query as $i=>$t){
+            //     $tt=$t;
+            // }
+            // $total_x =Transaction::where('type', 'sell')
+            // ->whereDate('transaction_date', '>=', $start_date)
+            // ->whereDate('transaction_date', '<=', $end_date)
+            // ->whereHas('transaction_sell_line',function($q) use($total){
+            //      $q->where('transaction_id',$total);
+            // });
+            $term=Transaction::where('type', 'sell')
+            ->where('status', 'final')
+            ->whereDate('transaction_date', '>=', $start_date)
+            ->whereDate('transaction_date', '<=', $end_date)->get(['id'])->pluck('id');
+            $total_x=TransactionSellLine::whereHas('transaction',function($q) use($term){
+                    $q->whereIn('id',$term);
+                })->get();
+            if (!empty($store_id)) {
+                $total_x->where('store_id', $store_id);
+            };
+            // $total_p[] =$total_x->sum('purchase_price')*($total_x->sum('quantity')- $total_x->sum('quantity_returned'));
+
+            $total_p[] = $total_x->sum('quantity')- $total_x->sum('quantity_returned') * $total_x->sum('purchase_price');
+//
+            // $cost_purchase_price = DB::raw('SUM( (transaction_sell_lines.quantity_returned - transaction_sell_lines.quantity) * transaction_sell_lines.purchase_price ) ');
+
+            // $total_p[] =Transaction::join('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+            // ->where('transactions.type', 'sell')
+            // ->where('transactions.status', 'final')
+            // ->select(DB::raw('SUM( (transaction_sell_lines.quantity_returned - transaction_sell_lines.quantity)* transaction_sell_lines.purchase_price )
+            //  as cost_purchase_price '));
+
+            // $trans = Transaction::get();
+            // foreach($trans as $i=>$tran){
+            //   $t = $tran->id;
+            // }
+            // dd($trans);
+            // $total_x = TransactionSellLine::whereHas('transaction',function($q) use($t,$i,$trans){
+            //     $q->where('transaction_id',$t);
+            // });
+            // dd($total_query_purchase);
+            // $total_purchase[] = $total_query_purchase->sum('purchase_price')*($total_query_purchase->sum('quantity')-$total_query_purchase->sum('quantity_returned'))
+            // ;
+            // foreach($total_purchase as $i=>$x){
+            //     $xx = $i;
+            //   }
+            // dd($xx);
+
+            ///
+            // $total_net_profit[] = $total_query->sum('final_total') - $total_query_purchase->sum('final_total');
+            $total_net_profit[] = $total_query->sum('final_total') -  ($total_x->sum('quantity')- $total_x->sum('quantity_returned') * $total_x->sum('purchase_price'));
+            // ($total_x->sum('purchase_price') * ($total_x->sum('quantity')-$total_x->sum('quantity_returned')));
             $start = strtotime("+1 month", $start);
         }
         $stores = Store::getDropdown();
+        ///////
 
         return view('reports.monthly_sale_report', compact(
             'year',
@@ -1736,7 +1845,13 @@ class ReportController extends Controller
             'total_tax',
             'shipping_cost',
             'total',
-            'stores'
+            'stores',
+            'total_discount_purchase',
+            'total_tax_purchase',
+            'shipping_cost_purchase',
+            'total_purchase',
+            'total_net_profit',
+            'total_p'
         ));
     }
     /**

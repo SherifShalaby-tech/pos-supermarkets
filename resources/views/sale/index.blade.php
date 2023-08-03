@@ -473,6 +473,20 @@
                 sales_table.ajax.reload();
                 get_total_details();
             });
+            $('#sales_table').on('column-visibility.dt', function (e, settings, column, state) {
+                // Here, you can use cookies or local storage to save the column visibility state
+                // Example using local storage:
+                var savedColumnPreferences = JSON.parse(localStorage.getItem('columnPreferences')) || {};
+                savedColumnPreferences[column] = state;
+                localStorage.setItem('columnPreferences', JSON.stringify(savedColumnPreferences));
+            });
+
+            // Restore column visibility preferences on page load
+            var savedColumnPreferences = JSON.parse(localStorage.getItem('columnPreferences')) || {};
+            for (var column in savedColumnPreferences) {
+                var columnIdx = dataTable.column(column).index();
+                dataTable.column(columnIdx).visible(savedColumnPreferences[column]);
+            }
         })
         $('.time_picker').focusout(function(event) {
             sales_table.ajax.reload();

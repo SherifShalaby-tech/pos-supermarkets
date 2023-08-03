@@ -12,6 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
+    'wins' => 'الارباح',
+    'assest' => 'الاصول',
     'manufacturers' => 'المصنعين',
     'add_manufacturer' => 'اضافة مصنع جديد',
     'edit_manufacturer' => 'تعديل مصنع',
@@ -796,6 +798,7 @@ return [
     'friday' => 'الجمعة',
     'saturday' => 'السبت',
     'monthly_sale_report' => 'تقرير البيع الشهري',
+    'monthly_sale_and_purchase_report' => 'تقرير البيع والشراء الشهري',
     'monthly_purchase_report' => 'تقرير الشراء الشهري',
     'daily_purchase_report' => 'تقرير الشراء اليومي',
     'sale_report' => 'تقرير البيع',
@@ -1418,4 +1421,6 @@ return [
     'Cant_Add_More_Than_40_Products'=>'لا يمكن اضافة اكثر من 40 منتج الى شاشة البيع الرئيسية',
     'hide_from_pos_window'=>'تم الاخفاء من شاشة البيع الرئيسية',
     'select_to_delete'=>'حدد للحذف',
+    'selling_price_for_this_product_is_changed'=>'تم تغيير سعر البيع لهذا المنتج',
+    'remove_from_expenses' => " اضافة الى المصروفات",
 ];

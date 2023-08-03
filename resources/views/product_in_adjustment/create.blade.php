@@ -256,6 +256,7 @@
                 <tr class="input-row">
                     <th></th>
                     <th></th>
+                    <th>@lang('lang.remove_from_expenses')</th>
                     <th>@lang('lang.image')</th>
                     <th style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@lang('lang.name')&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                     <th>@lang('lang.product_code')</th>
@@ -309,6 +310,7 @@
                 <tr>
                     <td></td>
                     <td></td>
+                    <td></td>   
                     <th style="text-align: right">@lang('lang.total')</th>
                     <td></td>
                     <td></td>
@@ -338,6 +340,7 @@
     </div>
     <input type="hidden" id="des" value="{{\App\Models\System::getProperty('numbers_length_after_dot')}}" />
     <input hidden value="" name="total_shortage_value" id="total_shortage_value">
+     <input hidden value="" name="expenses_total_shortage_value" id="expenses_total_shortage_value">
     <button data-check_password="{{ action('UserController@checkAdminPassword',2 ) }}" class="btn btn-primary check_pass">Save</button>
     <button data-check_password="{{ action('UserController@checkAdminPassword',2 ) }}" class="check_pass btn btn-primary"  onclick="printTable()" >Print Table</button>
 
@@ -441,6 +444,14 @@
                             return '<span hidden type="text" readonly="readonly" class="variation_id" name="variation_id" />'+data+'</span>';
                         },
                         // visible: false
+                        searchable: false,
+                        sortable: false
+                    },
+                    {
+                        name: 'product_selected_expenses',
+                        'render': function (data, type, val, meta){
+                            return '<input type="checkbox" class="product_selected_expenses" name="product_selected_expenses" />';
+                        },
                         searchable: false,
                         sortable: false
                     },
@@ -677,50 +688,52 @@
             newWin.close();
         }
 
-        var hidden_column_array = $.cookie('column_visibility') ? JSON.parse($.cookie('column_visibility')) : [];
         $(document).ready(function() {
+            var hiddenColumnArray = JSON.parse('{!! addslashes(json_encode(Cache::get("key_" . auth()->id(), []))) !!}');
 
-            $.each(hidden_column_array, function(index, value) {
+            $.each(hiddenColumnArray, function(index, value) {
                 $('.column-toggle').each(function() {
-                    if ($(this).val() == value) {
-                        toggleColumnVisibility(value, $(this));
+                if ($(this).val() == value) {
+                    // alert(value)
+                    toggleColumnVisibility(value, $(this));
+                }
+                });
+            });
+
+            $(document).on('click', '.column-toggle', function() {
+                var column_index = parseInt($(this).val());
+                toggleColumnVisibility(column_index, $(this));
+
+                if (hiddenColumnArray.includes(column_index)) {
+                hiddenColumnArray.splice(hiddenColumnArray.indexOf(column_index), 1);
+                } else {
+                hiddenColumnArray.push(column_index);
+                }
+
+                hiddenColumnArray = [...new Set(hiddenColumnArray)]; // Remove duplicates
+
+                // Update the columnVisibility cache data
+                $.ajax({
+                url: '/update-column-visibility', // Replace with your route or endpoint for updating cache data
+                method: 'POST',
+                data: { columnVisibility: hiddenColumnArray },
+                    success: function() {
+                        console.log('Column visibility updated successfully.');
                     }
                 });
-
             });
+
+            function toggleColumnVisibility(column_index, this_btn) {
+                var column = product_table.column(column_index);
+                column.visible(!column.visible());
+
+                if (column.visible()) {
+                $(this_btn).addClass('badge-primary').removeClass('badge-warning');
+                } else {
+                $(this_btn).removeClass('badge-primary').addClass('badge-warning');
+                }
+            }
         });
-
-        $(document).on('click', '.column-toggle', function() {
-            let column_index = parseInt($(this).val());
-            toggleColumnVisibility(column_index, $(this));
-            if (hidden_column_array.includes(column_index)) {
-                hidden_column_array.splice(hidden_column_array.indexOf(column_index), 1);
-            } else {
-                hidden_column_array.push(column_index);
-            }
-
-            //unique array javascript
-            hidden_column_array = $.grep(hidden_column_array, function(v, i) {
-                return $.inArray(v, hidden_column_array) === i;
-            });
-
-            $.cookie('column_visibility', JSON.stringify(hidden_column_array));
-        })
-
-        function toggleColumnVisibility(column_index, this_btn) {
-            column = product_table.column(column_index);
-            console.log(column_index);
-            column.visible(!column.visible());
-
-            if (column.visible()) {
-                $(this_btn).addClass('badge-primary')
-                $(this_btn).removeClass('badge-warning')
-            } else {
-                $(this_btn).removeClass('badge-primary')
-                $(this_btn).addClass('badge-warning')
-
-            }
-        }
         $(document).on('change', '.filter_product', function() {
             product_table.ajax.reload();
         })
@@ -824,24 +837,37 @@
 
         $(document).ready(function() {
             var total = 0;
-
+            // Call the updateTotal function when the checkbox state changes
+            $(document).on('change', '.product_selected_expenses', function() {
+                updateTotal();
+            });
             // function to update the total value in the HTML element
             function updateTotal() {
                 // loop through all the valid rows and calculate the sum of their shortage values
                 var sum = 0;
+                var expenses_sum = 0 ;
                 $("#product_table tbody tr").each(function() {
                     var shortage_val = parseFloat($(this).find(".shortage_value").text());
+                    var isRowSelected = $(this).find(".product_selected_expenses").prop("checked");
+                    if (isRowSelected) {
+                        var shortage_val = parseFloat($(this).find(".shortage_value").text());
+                        if (!isNaN(shortage_val)) {
+                            expenses_sum += shortage_val;
+                        }
+                    }
                     if (!isNaN(shortage_val)) {
                         sum += shortage_val;
                     }
                 });
                 total = sum;
-                
+                expenses_total = expenses_sum;
                 // update the total value in the HTML element
                 const totalElement = document.getElementById('total');
                 const totalElementinput = document.getElementById('total_shortage_value');
+                const expenses_total_shortage_value = document.getElementById('expenses_total_shortage_value');
                 totalElement.textContent = total.toFixed(2);
                 totalElementinput.value = total.toFixed(2);
+                expenses_total_shortage_value.value = expenses_total.toFixed(2);
             }
 
             // function to calculate the end value for each row and update the total
@@ -896,6 +922,7 @@
             // Initialize an empty array to store the selected data
             var selectedData = [];
             var total_shortage_value = document.getElementById('total_shortage_value').value;
+            var expenses_total_shortage_value = document.getElementById('expenses_total_shortage_value').value;
             // Loop through each row in the table
             table.rows().every(function() {
                 var rowData = this.row().data();
@@ -948,7 +975,8 @@
                 type: 'POST',
                 url: '/product-in-adjustment-store',
                 data: {selected_data: selectedData,
-                    total_shortage_value: total_shortage_value},
+                    total_shortage_value: total_shortage_value,
+                    expenses_total_shortage_value : expenses_total_shortage_value},
                 success: function(response) {
                 console.log('Data sent successfully');
                 location.reload();

@@ -11,21 +11,24 @@ class Transaction extends Model  implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
     protected $appends = ['source_name'];
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'commissioned_employees' => 'array'
     ];
+
+    // public function getTotalPurschaseAttribute (){
+    //     $total_query_id = $this->id;
+    //     $total_query_sell = TransactionSellLine::whereHas('transaction',function($q) use($total_query_id){
+    //             $q->where('transaction_id', $total_query_id);
+    //         });
+    //         $purchase_price = $total_query_sell->purchase_price;
+    //         $quantity = $total_query_sell->quantity;
+    //         $quantity_returned = $total_query_sell->quantity_returned;
+    //         $total_purschase[] = $purchase_price * ($quantity - $quantity_returned);
+    //         // return $TotalPurschase[] = $total_query_sell->sum((int)'purchase_price' * ((int)'quantity' - (int)'quantity_returned'));
+    //         return $total_purschase;
+    // }
 
     public function getSourceNameAttribute()
     {
@@ -64,6 +67,10 @@ class Transaction extends Model  implements HasMedia
     public function transaction_sell_lines()
     {
         return $this->hasMany(TransactionSellLine::class);
+    }
+    public function transaction_sell_line()
+    {
+        return $this->hasOne(TransactionSellLine::class);
     }
     public function sell_return()
     {

@@ -1434,4 +1434,8 @@ return [
     'Cant_Add_More_Than_40_Products'=>"Can't Add More Than 40 Products",
     'hide_from_pos_window'=>'Hide From Pos Window',
     'select_to_delete'=>'Select To Delete',
+    'monthly_sale_and_purchase_report' => 'Monthly Sale And Purchase Report',
+
+    'selling_price_for_this_product_is_changed'=>'Selling Price For This Product Is Changed',
+    'remove_from_expenses' => " Add to expenses",
 ];
