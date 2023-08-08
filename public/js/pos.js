@@ -992,30 +992,30 @@ $(document).on("change", ".sell_price", function () {
         swal(LANG.warning, LANG.sell_price_less_than_purchase_price, "warning");
         return;
     }else{
-    //change price
-    swal({
-        title: "",
-        text: LANG.change_price_permenatly,
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-        showCancelButton: true,
-        confirmButtonText: 'Save',
-    })
-    .then((isConfirm) => {
-        if (isConfirm) {
-           $.ajax({
-            type: "post",
-            url: "/pos/change-selling-price/"+$(this).data('variation_id'),
-            data: {sell_price:sell_price},
-            success: function (response) {
-                swal("Success", response.msg, "success");
+        //change price
+        swal({
+            title: "",
+            text: LANG.change_price_permenatly,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+        })
+        .then((isConfirm) => {
+            if (isConfirm) {
+            $.ajax({
+                type: "post",
+                url: "/pos/change-selling-price/"+$(this).data('variation_id'),
+                data: {sell_price:sell_price},
+                success: function (response) {
+                    swal("Success", response.msg, "success");
+                }
+            });
+            } else {
+                swal("Success", LANG.price_changed_only_for_this_transaction, "success");
             }
-           });
-        } else {
-            swal("Success", LANG.price_changed_only_for_this_transaction, "success");
-        }
-    });
+        });
     }
 });
 $(document).on("change", ".quantity, .sell_price", function () {
