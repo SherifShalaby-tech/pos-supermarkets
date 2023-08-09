@@ -1533,6 +1533,7 @@ class ReportController extends Controller
         }
         $transactions = $query->select(
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * tsl.sell_price, 0)) as sold_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * tsl.purchase_price, 0)) as purchase_cost"),
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity * pl.purchase_price, 0)) as purchased_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
@@ -2037,10 +2038,12 @@ class ReportController extends Controller
         }
 
         $transactions = $query->select(
+            'sale_note',
             DB::raw("SUM(IF(transactions.type='sell', final_total, 0)) as sold_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
             'p.name as product_name'
+
         )->groupBy('p.id')->get();
 
         $stores = Store::getDropdown();

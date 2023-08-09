@@ -197,6 +197,7 @@
                                 <th>@lang('lang.products')</th>
                                 <th>@lang('lang.sku')</th>
                                 <th>@lang('lang.sub_sku')</th>
+                                <th>@lang('lang.sale_note')</th>
                                 <th>@lang('lang.files')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
@@ -403,6 +404,10 @@
                         data: "sub_sku",
                         name: "variations.sub_sku",
                         visible: false
+                    },
+                    {
+                        data: "sale_note",
+                        name: "sale_note",
                     },
                     {
                         data: "files",

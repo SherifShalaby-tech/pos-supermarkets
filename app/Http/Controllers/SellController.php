@@ -151,7 +151,7 @@ class SellController extends Controller
                 }else{
                     $query->where('deliveryman_id', request()->deliveryman_id);
                 }
-                
+
             }
             if (!empty(request()->payment_status)) {
                 $query->where('payment_status', request()->payment_status);
@@ -195,6 +195,7 @@ class SellController extends Controller
                 'transactions.payment_status',
                 'transactions.status',
                 'transactions.id',
+                'transactions.sale_note',
                 'transactions.transaction_date',
                 'transactions.service_fee_value',
                 'transactions.invoice_no',
@@ -244,6 +245,9 @@ class SellController extends Controller
 
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
                     return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+                })
+                ->editColumn('sale_note', function($row) {
+                        return $row->sale_note;
                 })
                 ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
                     $amount_paid = 0;

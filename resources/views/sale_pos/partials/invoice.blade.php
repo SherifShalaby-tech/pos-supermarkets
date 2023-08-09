@@ -125,7 +125,8 @@ if (empty($invoice_lang)) {
                     {{ $transaction->customer->mobile_number }} <br>
                 @endif
                 @if (!empty($transaction->sale_note))
-                    @lang('lang.sale_note', [], $invoice_lang): {{ $transaction->sale_note }} <br>
+{{--                    @lang('lang.sale_note', [], $invoice_lang): --}}
+                    {{ $transaction->sale_note }} <br>
                 @endif
             </p>
             @if (session('system_mode') == 'garments')
@@ -242,7 +243,7 @@ if (empty($invoice_lang)) {
                                     {{ $transaction->received_currency->symbol }}
                                 </th>
                             </tr>
-                            
+
                             @if ($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->whereNotNull('discount_category')->sum('product_discount_amount') > 0)
                             <tr>
                                 <th style="font-size: 16px;" colspan="3">@lang('lang.category_discount')</th>
@@ -261,8 +262,8 @@ if (empty($invoice_lang)) {
                             @endforeach
                             @endif
 
-                            
-                           
+
+
                         @endif
                         @if ($transaction->total_item_tax != 0)
                             <tr>
