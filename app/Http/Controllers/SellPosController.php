@@ -1913,11 +1913,14 @@ class SellPosController extends Controller
     }
     public function changeSellingPrice($variation_id){
         try {
+
             $stockLines=AddStockLine::where('sell_price','>',0)->where('variation_id',$variation_id)
-            ->latest()->first();
+            ->get();
             if(!empty($stockLines)){
-                $stockLines->sell_price =request()->sell_price;
-                $stockLines->save();
+                $updateData = ['sell_price'=>request()->sell_price];
+                AddStockLine::where('sell_price','>',0)->where('variation_id',$variation_id)->update($updateData);
+                // $stockLines->sell_price =request()->sell_price;
+                // $stockLines->save();
             }else{
                 $variation=Variation::find($variation_id);
                 $variation->default_sell_price=request()->sell_price;
