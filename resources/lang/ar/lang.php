@@ -12,6 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
+    'wins' => 'الارباح',
+    'assest' => 'الاصول',
     'manufacturers' => 'المصنعين',
     'add_manufacturer' => 'اضافة مصنع جديد',
     'edit_manufacturer' => 'تعديل مصنع',

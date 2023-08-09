@@ -99,7 +99,7 @@
                                         <td> {{ @num_format($transaction->purchased_qty) }}</td>
                                         <td> {{ @num_format($transaction->sold_amount) }}</td>
                                         <td> {{ @num_format($transaction->sold_qty) }}</td>
-                                        <td> {{ @num_format($transaction->sold_amount - $transaction->purchased_amount) }}
+                                        <td> {{ @num_format($transaction->sold_amount - $transaction->purchase_cost) }}
                                         </td>
                                         <td> {{preg_match('/\.\d*[1-9]+/', (string)$transaction->in_stock) ? $transaction->in_stock : @num_format($transaction->in_stock) }}</td>
                                         <td>
