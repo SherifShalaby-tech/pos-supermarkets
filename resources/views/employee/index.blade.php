@@ -273,8 +273,6 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-
-                                                
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>

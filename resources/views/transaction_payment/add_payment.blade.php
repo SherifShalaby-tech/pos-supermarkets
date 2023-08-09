@@ -113,8 +113,7 @@
 
         
         $('#add_payment_form').submit(function(e) {
-            e.preventDefault();
-
+            e.preventDefault()
             var formData = new FormData($(this)[0]);
 
             $.ajax({
