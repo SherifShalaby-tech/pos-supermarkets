@@ -704,7 +704,7 @@ class HomeController extends Controller
         $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;
 
         //excluding taxes from profit as its not part of profit
-        $expense_query = Transaction::where('type', 'expense')->where('payment_status' , 'paid');
+        $expense_query = Transaction::where('type', 'expense');
         if (!empty($start_date)) {
             $expense_query->whereDate('transaction_date', '>=', $start_date);
         }
