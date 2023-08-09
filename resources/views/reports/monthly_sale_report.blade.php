@@ -91,23 +91,23 @@
                         </tr>
                         <tr  class="sale-row">
                             <td><h5>@lang('lang.sales')</h5></td>
-                            @foreach($total_discount as $key => $discount)
+                            @foreach($total_discount_sell as $key => $discount)
                             <td>
                                 @if($discount > 0)
                                 <strong>{{trans("lang.product_discount")}}</strong><br>
                                 <span>{{@num_format($discount)}}</span><br><br>
                                 @endif
-                                @if($total_tax[$key] > 0)
+                                @if($total_tax_sell[$key] > 0)
                                 <strong>{{trans("lang.product_tax")}}</strong><br>
                                 <span>{{@num_format($total_tax[$key])}}</span><br><br>
                                 @endif
-                                @if($shipping_cost[$key] > 0)
+                                @if($shipping_cost_sell[$key] > 0)
                                 <strong>{{trans("lang.delivery_cost")}}</strong><br>
-                                <span>{{@num_format($shipping_cost[$key])}}</span><br><br>
+                                <span>{{@num_format($shipping_cost_sell[$key])}}</span><br><br>
                                 @endif
-                                @if($total[$key] > 0)
+                                @if($total_sell[$key] > 0)
                                 <strong>{{trans("lang.grand_total")}}</strong><br>
-                                <span>{{@num_format($total[$key])}}</span><br>
+                                <span>{{@num_format($total_sell[$key])}}</span><br>
                                 @endif
                             </td>
                             @endforeach
@@ -115,24 +115,28 @@
 
                         <tr class="purchase-row">
                             <td><h5>@lang('lang.purchases')</h5></td>
-                            @foreach($total_discount_purchase as $key => $discount)
+                            @foreach($total_discount_addstock as $key => $discount)
                             <td>
                                 @if($discount > 0)
                                 <strong>{{trans("lang.product_discount")}}</strong><br>
                                 <span>{{@num_format($discount)}}</span><br><br>
                                 @endif
-                                @if($total_tax_purchase[$key] > 0)
+                                @if($total_tax_addstock[$key] > 0)
                                 <strong>{{trans("lang.product_tax")}}</strong><br>
-                                <span>{{@num_format($total_tax_purchase[$key])}}</span><br><br>
+                                <span>{{@num_format($total_tax_addstock[$key])}}</span><br><br>
                                 @endif
-                                @if($shipping_cost_purchase[$key] > 0)
+                                @if($shipping_cost_addstock[$key] > 0)
                                 <strong>{{trans("lang.delivery_cost")}}</strong><br>
-                                <span>{{@num_format($shipping_cost_purchase[$key])}}</span><br><br>
+                                <span>{{@num_format($shipping_cost_addstock[$key])}}</span><br><br>
                                 @endif
-                                @if($total_purchase[$key] > 0)
+                                @if($current_stock[$key] > 0)
+                                <strong>{{trans("lang.stock")}}</strong><br>
+                                <span>{{@num_format($current_stock[$key])}}</span><br><br>
+                                @endif
+                                @if($total_addstock[$key] > 0)
                                 <strong>{{trans("lang.grand_total")}}</strong><br>
-                                <span>{{@num_format($total_purchase[$key])}}</span><br>
-                                <span>{{@num_format($total_p[$key])}}</span><br>
+                                <span>{{@num_format($total_addstock[$key])}}</span><br>
+                                {{-- <span>{{@num_format($total_p[$key])}}</span><br> --}}
                                 @endif
                             </td>
                             @endforeach
