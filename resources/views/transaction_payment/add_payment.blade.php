@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+<div class="modal-dialog" id="payment_modal" role="document">
     <div class="modal-content">
 
         {!! Form::open(['url' => action('TransactionPaymentController@store'), 'method' => 'post', 'id' => 'add_payment_form', 'enctype' => 'multipart/form-data']) !!}
@@ -96,8 +96,8 @@
         </div>
 
         <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">@lang('lang.save')</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.close')</button>
+            <button type="button" id="submit_form_button" class="btn btn-primary">@lang('lang.save')</button>
+            <button type="button"id="close_modal_button" class="btn btn-default" data-dismiss="modal">@lang('lang.close')</button>
         </div>
 
         {!! Form::close() !!}
@@ -106,6 +106,38 @@
 </div><!-- /.modal-dialog -->
 
 <script>
+    $(document).ready(function() {
+        $('#submit_form_button').click(function() {
+            $('#add_payment_form').submit();
+        });
+
+        
+        $('#add_payment_form').submit(function(e) {
+            e.preventDefault();
+
+            var formData = new FormData($(this)[0]);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Handle success response here
+                    console.log(response);
+                  
+                    $('#add_payment_form')[0].reset();
+                    $('#close_modal_button').click();
+                    $('#sales_table').DataTable().ajax.reload();
+                },
+                error: function(error) {
+                    // Handle error response here
+                    console.log(error);
+                }
+            });
+        });
+    });
     $('#source_type').change(function() {
         if ($(this).val() !== '') {
             $.ajax({
