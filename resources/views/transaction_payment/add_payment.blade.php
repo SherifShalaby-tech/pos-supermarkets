@@ -97,7 +97,7 @@
 
         <div class="modal-footer">
             <button type="button" id="submit_form_button" class="btn btn-primary">@lang('lang.save')</button>
-            <button type="button"id="close_modal_button" class="btn btn-default" data-dismiss="modal">@lang('lang.close')</button>
+            <button type="button" id="close_modal_button" class="btn btn-default" data-dismiss="modal">@lang('lang.close')</button>
         </div>
 
         {!! Form::close() !!}
@@ -127,7 +127,7 @@
                     console.log(response);
                   
                     $('#add_payment_form')[0].reset();
-                    $('#close_modal_button').click();
+                    $('#payment_modal').click();
                     $('#sales_table').DataTable().ajax.reload();
                 },
                 error: function(error) {
