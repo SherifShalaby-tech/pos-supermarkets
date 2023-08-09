@@ -1421,4 +1421,5 @@ return [
     'select_to_delete'=>'حدد للحذف',
     'selling_price_for_this_product_is_changed'=>'تم تغيير سعر البيع لهذا المنتج',
     'remove_from_expenses' => " اضافة الى المصروفات",
+    'total_rows'=>'عدد الموظفين',
 ];

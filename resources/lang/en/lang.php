@@ -1438,4 +1438,5 @@ return [
 
     'selling_price_for_this_product_is_changed'=>'Selling Price For This Product Is Changed',
     'remove_from_expenses' => " Add to expenses",
+    'total_rows'=>'Total Employees Number',
 ];
