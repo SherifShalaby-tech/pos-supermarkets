@@ -1720,35 +1720,13 @@ class ReportController extends Controller
                 return $transaction->add_stock_lines->sum('quantity');
             });
             ///
-
-
-
-
-            //
-
-            // $total_tax_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
-            // if (!empty($store_id)) {
-            //     $total_tax_query->where('store_id', $store_id);
-            // }
             $total_tax_sell[] = $total_sell_query->sum('total_tax');
             ///
-            // $total_tax_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
-            // if (!empty($store_id)) {
-            //     $total_tax_query_purchase->where('store_id', $store_id);
-            // }
+   
             $total_tax_addstock[] = $total_addstock_query->sum('total_tax');
             //
-
-            // $shipping_cost_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
-            // if (!empty($store_id)) {
-            //     $shipping_cost_query->where('store_id', $store_id);
-            // }
             $shipping_cost_sell[] = $total_sell_query->sum('delivery_cost');
             //
-            // $shipping_cost_query_purchase = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
-            // if (!empty($store_id)) {
-            //     $shipping_cost_query_purchase->where('store_id', $store_id);
-            // }
             $shipping_cost_addstock[] = $total_addstock_query->sum('delivery_cost');
             ///
             // $total_query = Transaction::where('type', 'sell')
@@ -1806,10 +1784,7 @@ class ReportController extends Controller
             //     });
 
 
-            $term=Transaction::where('type', 'sell')
-                ->where('status', 'final')
-                ->whereDate('transaction_date', '>=', $start_date)
-                ->whereDate('transaction_date', '<=', $end_date)->with('transaction_sell_lines');
+            $term=$total_sell_query->with('transaction_sell_lines');
                 $total_net_profit[] = $total_sell_query->sum('final_total')-$term->get()
                 ->sum(function ($transaction) {
                     return $transaction->transaction_sell_lines->sum('purchase_price')*$transaction->transaction_sell_lines->sum('quantity')-$transaction->transaction_sell_lines->sum('quantity_returned');
@@ -1839,7 +1814,7 @@ class ReportController extends Controller
 
             // $total_net_profit[] = $total_sell_query->sum('final_total') -
             // ($total_x->sum('purchase_price') * ($total_x->sum('quantity')-$total_x->sum('quantity_returned')));
-            // $start = strtotime("+1 month", $start);
+            $start = strtotime("+1 month", $start);
         }
         $stores = Store::getDropdown();
         ///////
@@ -1857,7 +1832,7 @@ class ReportController extends Controller
             'shipping_cost_addstock',
             'total_addstock',
             'total_net_profit',
-            'total_p'
+            // 'total_p'
         ));
     }
     /**
