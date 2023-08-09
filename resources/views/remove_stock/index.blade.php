@@ -112,7 +112,7 @@
                     <td><a data-href="{{action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $remove_stock->id, 'collection_name' => 'remove_stock'])}}"
                             data-container=".view_modal" class="btn btn-modal">@lang('lang.view')</a></td>
                     <td>
-                        @if(!empty($remove_stock->add_stock_id)){{App\Models\Transaction::find($remove_stock->add_stock_id)->invoice_no
+                        @if(App\Models\Transaction::find($remove_stock->add_stock_id)){{App\Models\Transaction::find($remove_stock->add_stock_id)->invoice_no
                         }}@endif
                     </td>
                     <td>
