@@ -79,6 +79,7 @@
                                 <th class="sum">@lang('lang.sold_amount')</th>
                                 <th class="sum">@lang('lang.sold_qty')</th>
                                 <th class="sum">@lang('lang.in_stock')</th>
+                                <th >@lang('lang.sale_note')</th>
                             </tr>
                         </thead>
 
@@ -89,7 +90,7 @@
                                 <td> {{@num_format($transaction->sold_amount)}}</td>
                                 <td> {{@num_format($transaction->sold_qty)}}</td>
                                 <td> {{preg_match('/\.\d*[1-9]+/', (string)$transaction->in_stock) ? $transaction->in_stock : @num_format($transaction->in_stock) }}</td>
-
+                                <td> {{$transaction->sale_note}}</td>
                             </tr>
 
                             @endforeach

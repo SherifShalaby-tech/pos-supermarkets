@@ -212,6 +212,14 @@
                         <h4>@lang('lang.staff_note'):</h4>
                         <p>{{ $sale->staff_note }}</p>
                     </div>
+                    <div class="col-md-12">
+                        <h4>@lang('lang.payment_note'):</h4>
+                        @foreach($sale->transaction_payments as $payment )
+                            @if(isset($payment->payment_note))
+                                <p> - {{ $payment->payment_note }}</p>
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <table class="table table-bordered">
