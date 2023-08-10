@@ -461,9 +461,13 @@
                             .reduce(function (a, b) {
                                 return intVal(a) + intVal(b);
                             }, 0);
+                        totalRows = api.page.info().recordsDisplay;
                 
                     $(api.column(5).footer()).html(
                             total2
+                            );
+                            $(api.column(0).footer()).html(
+                                "{{__('lang.total_rows')}}: " + totalRows
                             );
                 },
             });
