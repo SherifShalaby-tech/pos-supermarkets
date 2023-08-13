@@ -107,11 +107,14 @@
 
 <script>
     $(document).ready(function() {
+        var pageTitle = window.location.pathname;
+        console.log(pageTitle);
+      
         $('#submit_form_button').click(function() {
             $('#add_payment_form').submit();
         });
 
-        
+        if(pageTitle!=="/pos/create"){
         $('#add_payment_form').submit(function(e) {
             e.preventDefault();
 
@@ -137,6 +140,7 @@
                 }
             });
         });
+        }
     });
     $('#source_type').change(function() {
         if ($(this).val() !== '') {

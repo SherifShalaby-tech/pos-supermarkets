@@ -129,10 +129,6 @@
                                 <strong>{{trans("lang.delivery_cost")}}</strong><br>
                                 <span>{{@num_format($shipping_cost_addstock[$key])}}</span><br><br>
                                 @endif
-                                @if($current_stock[$key] > 0)
-                                <strong>{{trans("lang.stock")}}</strong><br>
-                                <span>{{@num_format($current_stock[$key])}}</span><br><br>
-                                @endif
                                 @if($total_addstock[$key] > 0)
                                 <strong>{{trans("lang.grand_total")}}</strong><br>
                                 <span>{{@num_format($total_addstock[$key])}}</span><br>

@@ -1716,10 +1716,10 @@ class ReportController extends Controller
                 $total_addstock_query->where('store_id', $store_id);
             }
             $total_discount_addstock[] = $total_addstock_query->sum('discount_amount');
-            $current_stock[] = $total_addstock_query->get()
-            ->sum(function ($transaction) {
-                return $transaction->add_stock_lines->sum('quantity');
-            });
+            // $current_stock[] = $total_addstock_query->get()
+            // ->sum(function ($transaction) {
+            //     return $transaction->add_stock_lines->sum('quantity');
+            // });
             ///
             $total_tax_sell[] = $total_sell_query->sum('total_tax');
             ///
@@ -1730,101 +1730,25 @@ class ReportController extends Controller
             //
             $shipping_cost_addstock[] = $total_addstock_query->sum('delivery_cost');
             ///
-            // $total_query = Transaction::where('type', 'sell')
-            //     ->where('status', 'final')
-            //     ->whereDate('transaction_date', '>=', $start_date)
-            //     ->whereDate('transaction_date', '<=', $end_date);
-            // if (!empty($store_id)) {
-            //     $total_query->where('store_id', $store_id);
-            // }
 
             $total_sell[] = $total_sell_query->sum('final_total');
 
-
-            // $trans = Transaction::where('type', 'sell')->get();
-            // $total_query_sell = TransactionSellLine::whereHas('transaction',function($q) use($total_query){
-            //     $q->where('transaction_id', $total_query->id);
-            // });
-            // dd( $total_query);
-            // $newtotal[] = $total_query_sell->sum((int)'purchase_price' * ((int)'quantity' - (int)'quantity_returned'));
-            //  $total_query_sell = TransactionSellLine::where('transaction_id',$total_query->id);
-            // $purchase_price = $total_query_sell->purchase_price;
-            // $quantity = $total_query_sell->quantity;
-            // $quantity_returned = $total_query_sell->quantity_returned;
-            //  $newtotal[] = $purchase_price * ($quantity - $quantity_returned);
-            //  $newtotal[] = $total_query_sell->sum('purchase_price');
-            // $newtotal[] = Transaction::$newtotal;
-
-
-
             //
-            // $total_query_purchase = Transaction::where('type', 'add_stock')
-            // ->where('status', 'received')
-            // ->whereDate('transaction_date', '>=', $start_date)
-            // ->whereDate('transaction_date', '<=', $end_date);
-            // if (!empty($store_id)) {
-            //     $total_query_purchase->where('store_id', $store_id);
-            // }
             $total_addstock[] = $total_addstock_query->sum('final_total');
-
-            // foreach($total_query as $i=>$t){
-            //     $tt=$t;
-            // }
-            // $total_x =Transaction::where('type', 'sell')
-            // ->whereDate('transaction_date', '>=', $start_date)
-            // ->whereDate('transaction_date', '<=', $end_date)
-            // ->whereHas('transaction_sell_line',function($q) use($total){
-            //      $q->where('transaction_id',$total);
-            // });
-
-            // $term=Transaction::where('type', 'sell')
-            // ->where('status', 'final')
-            // ->whereDate('transaction_date', '>=', $start_date)
-            // ->whereDate('transaction_date', '<=', $end_date)->get(['id'])->pluck('id');
-            // $total_x=TransactionSellLine::whereHas('transaction',function($q) use($term){
-            //         $q->whereIn('id',$term);
-            //     });
-
-
             $term=$total_sell_query->with('transaction_sell_lines');
-                $total_net_profit[] = $total_sell_query->sum('final_total')-$term->get()
+                $total_net_profit[] = $term->get()
                 ->sum(function ($transaction) {
-                    return $transaction->transaction_sell_lines->sum('purchase_price')*$transaction->transaction_sell_lines->sum('quantity')-$transaction->transaction_sell_lines->sum('quantity_returned');
+                    return $transaction->transaction_sell_lines->sum('sell_price')*($transaction->transaction_sell_lines->sum('quantity')-$transaction->transaction_sell_lines->sum('quantity_returned'));
+                })-$term->get()
+                ->sum(function ($transaction) {
+                    return $transaction->transaction_sell_lines->sum('purchase_price')*($transaction->transaction_sell_lines->sum('quantity')-$transaction->transaction_sell_lines->sum('quantity_returned'));
                 });
-            // if (!empty($store_id)) {
-            //     $total_x->where('store_id', $store_id);
-            // };
-            // $total_p[] = $total_x->sum('purchase_price')*($total_x->sum('quantity')- $total_x->sum('quantity_returned'));
-            // $trans = Transaction::get();
-            // foreach($trans as $i=>$tran){
-            //   $t = $tran->id;
-            // }
-            // dd($trans);
-            // $total_x = TransactionSellLine::whereHas('transaction',function($q) use($t,$i,$trans){
-            //     $q->where('transaction_id',$t);
-            // });
-            // dd($total_query_purchase);
-            // $total_purchase[] = $total_query_purchase->sum('purchase_price')*($total_query_purchase->sum('quantity')-$total_query_purchase->sum('quantity_returned'))
-            // ;
-            // foreach($total_purchase as $i=>$x){
-            //     $xx = $i;
-            //   }
-            // dd($xx);
-
-            ///
-            // $total_net_profit[] = $total_query->sum('final_total') - $total_query_purchase->sum('final_total');
-
-
-            // $total_net_profit[] = $total_sell_query->sum('final_total') -
-
-            // ($total_x->sum('purchase_price') * ($total_x->sum('quantity')-$total_x->sum('quantity_returned')));
             $start = strtotime("+1 month", $start);
         }
         $stores = Store::getDropdown();
         ///////
 
         return view('reports.monthly_sale_report', compact(
-            'current_stock',
             'year',
             'total_discount_sell',
             'total_tax_sell',
