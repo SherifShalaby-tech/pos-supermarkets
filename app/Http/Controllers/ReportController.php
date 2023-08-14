@@ -1731,17 +1731,21 @@ class ReportController extends Controller
             $shipping_cost_addstock[] = $total_addstock_query->sum('delivery_cost');
             ///
 
-            $total_sell[] = $total_sell_query->sum('final_total');
+            $total_sell[] = $total_sell_query->sum('grand_total');
 
             //
             $total_addstock[] = $total_addstock_query->sum('final_total');
             $term=$total_sell_query->with('transaction_sell_lines');
                 $total_net_profit[] = $term->get()
                 ->sum(function ($transaction) {
-                    return $transaction->transaction_sell_lines->sum('sell_price')*($transaction->transaction_sell_lines->sum('quantity')-$transaction->transaction_sell_lines->sum('quantity_returned'));
+                    return $transaction->transaction_sell_lines->sum(function ($line) {
+                        return $line->sell_price * ($line->quantity - $line->quantity_returned);
+                    });
                 })-$term->get()
                 ->sum(function ($transaction) {
-                    return $transaction->transaction_sell_lines->sum('purchase_price')*($transaction->transaction_sell_lines->sum('quantity')-$transaction->transaction_sell_lines->sum('quantity_returned'));
+                    return $transaction->transaction_sell_lines->sum(function ($line) {
+                        return $line->purchase_price * ($line->quantity - $line->quantity_returned);
+                    });
                 });
             $start = strtotime("+1 month", $start);
         }
