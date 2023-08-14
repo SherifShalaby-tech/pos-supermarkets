@@ -55,6 +55,8 @@ class TransactionPaymentController extends Controller
      */
     public function addPayment($transaction_id)
     {
+
+        
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $transaction = Transaction::find($transaction_id);
         $users = User::Notview()->pluck('name', 'id');
