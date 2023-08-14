@@ -66,6 +66,7 @@
                         $pre_year = $year - 1;
                         @endphp
                         <tr>
+                            <th></th>
                             <th><a href="{{url('report/get-monthly-sale-report?year='.$pre_year)}}"><i
                                         class="fa fa-arrow-left"></i> {{trans('lang.previous')}}</a></th>
                             <th colspan="10" class="text-center">{{$year}}</th>
