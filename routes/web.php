@@ -103,7 +103,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('barcode/print-barcode', 'BarcodeController@printBarcode');
     Route::resource('barcode', BarcodeController::class);
 
-    Route::get('customer/get-referral-row', 'CustomerController@getReferralRow');
+    Route::get('customer/get-referral-row', 'Cuadd-paymentstomerController@getReferralRow');
     Route::get('customer/get-referred-by-details-html', 'CustomerController@getReferredByDetailsHtml');
     Route::get('customer/get-dropdown', 'CustomerController@getDropdown');
     Route::get('customer/get-details-by-transaction-type/{customer_id}/{type}', 'CustomerController@getDetailsByTransactionType');
