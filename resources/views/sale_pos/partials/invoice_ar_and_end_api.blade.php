@@ -134,7 +134,7 @@
 
         </div>
         <div style="width: 70%; float:left;">
-            <p style="padding: 0 7px;">@lang('lang.date', [], 'en'): 25/10/2022
+            <p style="padding: 0 7px; font-weight: bold;">@lang('lang.date', [], 'en'): 25/10/2022
                 {{ __('lang.date', [], 'ar') }}<br>
                 @lang('lang.reference', [], 'en'): 125474
                 {{ __('lang.reference', [], 'ar') }}<br>

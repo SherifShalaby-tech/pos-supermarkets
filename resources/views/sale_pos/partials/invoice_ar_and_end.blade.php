@@ -110,7 +110,7 @@
 
         </div>
         <div style="width: 70%; float:left;">
-            <p style="padding: 0 7px;">@lang('lang.date', [], 'en'): {{ $transaction->transaction_date }}
+            <p style="padding: 0 7px;  font-weight: bold;">@lang('lang.date', [], 'en'): {{ $transaction->transaction_date }}
                 {{ __('lang.date', [], 'ar') }}<br>
                 @lang('lang.reference', [], 'en'): {{ $transaction->invoice_no }}
                 {{ __('lang.reference', [], 'ar') }}<br>
