@@ -383,16 +383,16 @@ class ProductInAdjustmentsController extends Controller
                             target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.product.delete')) {
+                        // if (auth()->user()->can('product_module.product.delete')) {
 
-                            $html .=
-                                '<li>
-                            <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
-                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
-                                class="btn text-red delete_product"><i class="fa fa-trash"></i>
-                                ' . __('lang.delete') . '</a>
-                        </li>';
-                        }
+                        //     $html .=
+                        //         '<li>
+                        //     <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+                        //         data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                        //         class="btn text-red delete_product"><i class="fa fa-trash"></i>
+                        //         ' . __('lang.delete') . '</a>
+                        // </li>';
+                        // }
 
                         $html .= '</ul></div>';
 
