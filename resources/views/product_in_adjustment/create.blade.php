@@ -188,7 +188,7 @@
         <div class="row">
             <div class="col-md-12">
                 
-                <button type="button" value="14" class="badge badge-pill badge-primary column-toggle">
+                <button type="button" value="15" class="badge badge-pill badge-primary column-toggle">
                     @if (session('system_mode') == 'restaurant')
                         @lang('lang.category')
                     @else
@@ -196,56 +196,56 @@
                     @endif
                 </button>
                 @if (session('system_mode') != 'restaurant')
-                    <button type="button" value="15"
-                        class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
                     <button type="button" value="16"
+                        class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
+                    <button type="button" value="17"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.sub_category')</button>
                 @endif
-                <button type="button" value="17"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
                 <button type="button" value="18"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
-                <button type="button" value="12"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
                 <button type="button" value="19"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
+                <button type="button" value="13"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
+                <button type="button" value="20"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
                 @if (session('system_mode') != 'restaurant')
-                    <button type="button" value="20"
+                    <button type="button" value="21"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
                 @endif
-                <button type="button" value="21"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
                 <button type="button" value="22"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
                 <button type="button" value="23"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
                 <button type="button" value="24"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
+                <button type="button" value="25"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.grade')</button>
                 @if (empty($page))
-                    <button type="button" value="5"
+                    <button type="button" value="6"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
                 @endif
                 @if (!empty($page))
-                    <button type="button" value="25"
+                    <button type="button" value="26"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock_value')</button>
                 @endif
-                <button type="button" value="26"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
                 <button type="button" value="27"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
                 <button type="button" value="28"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
                 <button type="button" value="29"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+                <button type="button" value="30"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.discount')</button>
                 @can('product_module.purchase_price.view')
-                    <button type="button" value="10"
+                    <button type="button" value="11"
                         class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
-                    <button type="button" value="9"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.avg_purchase_price')</button>
+                    {{-- <button type="button" value="9"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.avg_purchase_price')</button> --}}
                 @endcan
-                <button type="button" value="30"
-                    class="badge badge-pill badge-primary column-toggle">@lang('lang.supplier')</button>
                 <button type="button" value="31"
+                    class="badge badge-pill badge-primary column-toggle">@lang('lang.supplier')</button>
+                <button type="button" value="32"
                     class="badge badge-pill badge-primary column-toggle">@lang('lang.active')</button>
             </div>
         </div>
