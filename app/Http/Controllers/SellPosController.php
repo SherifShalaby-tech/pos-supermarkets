@@ -1052,7 +1052,22 @@ class SellPosController extends Controller
             }
             //Check for weighing scale barcode
             $weighing_barcode = request()->get('weighing_scale_barcode');
+            if (empty($variation_id) && !empty($weighing_barcode)) {
 
+                $product_details = $this->__parseWeighingBarcode($weighing_barcode);
+
+                if ($product_details['success']) {
+                    $product_id = $product_details['product_id'];
+                    $variation_id = $product_details['variation_id'];
+                    $quantity = $product_details['qty'];
+                    $edit_quantity = $quantity;
+                } else {
+                    $output['success'] = false;
+                    $output['msg'] = $product_details['msg'];
+                    return $output;
+                }
+
+            }
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id, $store_id, $batch_number_id);
@@ -1068,24 +1083,14 @@ class SellPosController extends Controller
 
                 $have_weight = System::getProperty('weight_product'.$store_pos_id);
 
-                $quantity =  $have_weight? (float)$have_weight: 1;
-                $edit_quantity = !$products->first()->have_weight ? $request->input('edit_quantity') : $quantity;
-
-                if (empty($variation_id) && !empty($weighing_barcode) && $products->first()->have_weight != 1) {
-
-                    $product_details = $this->__parseWeighingBarcode($weighing_barcode);
-                    if ($product_details['success']) {
-                        $product_id = $product_details['product_id'];
-                        $variation_id = $product_details['variation_id'];
-                        $quantity = $product_details['qty'];
-                        $edit_quantity = $quantity;
-                    } else {
-                        $output['success'] = false;
-                        $output['msg'] = $product_details['msg'];
-                        return $output;
-                    }
-
+                if (empty($edit_quantity)){
+                    $quantity =  $have_weight? (float)$have_weight: 1;
+                    $edit_quantity = !$products->first()->have_weight ? $request->input('edit_quantity') : $quantity;
                 }
+
+//                dd($edit_quantity);
+
+
                 $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
                 $product_all_discounts_categories = $this->productUtil->getProductAllDiscountCategories($product_id);
                 // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
@@ -1095,11 +1100,13 @@ class SellPosController extends Controller
                         'sale_promotion_details', 'product_discount_details',
                         'product_all_discounts_categories',
                         'edit_quantity', 'is_direct_sale', 'dining_table_id',
-                        'exchange_rate'))->render();
+                        'exchange_rate','edit_quantity'))->render();
 
                 $output['success'] = true;
                 $output['html_content'] = $html_content;
-            } else {
+            }
+            else
+            {
                 $output['success'] = false;
                 $output['msg'] = __('lang.sku_no_match');
             }
@@ -1260,6 +1267,7 @@ class SellPosController extends Controller
 
             //Get quantity decimal
             $decimal_part = '0.' . substr($scale_barcode, $scale_setting['product_sku_length'] + $scale_setting['qty_length'] + 2, $scale_setting['qty_length_decimal'] + 1);
+
             //Find the variation id
             $result = $this->productUtil->filterProduct($sku, ['sub_sku'], 'like')->first();
 
@@ -1283,7 +1291,8 @@ class SellPosController extends Controller
             } else {
                 $error_msg = trans("lang.sku_not_match", ['sku' => $sku]);
             }
-        } else {
+        }
+        else {
             $error_msg = trans("lang.prefix_did_not_match");
         }
 
@@ -1938,6 +1947,6 @@ class SellPosController extends Controller
             ];
         }
         return $output;
-    } 
-    
+    }
+
 }
