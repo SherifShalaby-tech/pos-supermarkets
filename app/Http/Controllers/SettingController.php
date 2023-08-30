@@ -409,6 +409,7 @@ class SettingController extends Controller
     public function postWeighingScaleSetting(Request $request)
     {
         try {
+//            dd($request->weighing_scale_setting);
             System::updateOrCreate(
                 ['key' => 'weighing_scale_setting'],
                 ['value' => json_encode($request->weighing_scale_setting), 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
