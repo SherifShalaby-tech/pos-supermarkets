@@ -54,4 +54,12 @@ class System extends Model
 
         return $languages;
     }
+    public static function getFonts()
+    {
+        return [
+            'max' => __('lang.max'),
+            'min' => __('lang.min'),
+            'avg' => __('lang.avg'),
+        ];
+    }
 }
