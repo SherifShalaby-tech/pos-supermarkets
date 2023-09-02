@@ -1072,6 +1072,7 @@ return [
     'default_purchase_price_percentage_info' => 'Add product page purchase price percentage of sell price, by default it is 75',
     'source_of_payment' => 'Source of Payment',
     'source_type' => 'Source Type',
+    'given_to' => 'Given To :',
     'other_payments' => 'Other Payments',
     'start_time' => 'Start Time',
     'end_time' => 'End Time',
@@ -1437,4 +1438,10 @@ return [
     'max'=>'Max',
     'min'=>'Min',
     'avg'=>'Avg',
+    'monthly_sale_and_purchase_report' => 'Monthly Sale And Purchase Report',
+
+    'selling_price_for_this_product_is_changed'=>'Selling Price For This Product Is Changed',
+    'remove_from_expenses' => " Add to expenses",
+    'total_rows'=>'Total Employees Number',
+    'wins'=>'profits',
 ];

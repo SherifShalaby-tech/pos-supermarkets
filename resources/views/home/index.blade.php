@@ -56,8 +56,9 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
         </div>
         @if (strtolower(session('user.job_title')) != 'deliveryman')
             <div class="container-fluid">
+                @if(auth()->user()->can('superadmin') || auth()->user()->is_admin)
                 <div class="row">
-                    @if(auth()->user()->can('superadmin') || auth()->user()->is_admin)
+                    
                         <!-- Count item widget-->
                         <div class="col-sm-2">
                             <div class="wrapper count-title text-center">
@@ -120,30 +121,58 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                     <div class="count-number purchase_return-data">
                                         {{ @num_format(0) }}</div>
                                 </div>
-                            </div>
+                        </div>
                         <!-- Count item widget-->
                         <div class="col-sm-2">
-                                <div class="wrapper count-title text-center">
-                                    <div class="icon"><i class="dripicons-trophy" style="color: #297ff9"></i>
-                                    </div>
-                                    <div class="name"><strong
-                                            style="color: #297ff9">@lang('lang.profit')</strong>
-                                    </div>
-                                    <div class="count-number profit-data">{{ @num_format(0) }}
-                                    </div>
+                            <div class="wrapper count-title text-center">
+                                <div class="icon"><i class="dripicons-trophy" style="color: #297ff9"></i>
                                 </div>
-                                <div class="wrapper count-title text-center" style="margin-top: 20px;">
-                                    <div class="icon"><i class="dripicons-trophy" style="color: #3f6dad"></i>
-                                    </div>
-                                    <div class="name"><strong
-                                            style="color: #3f6dad">@lang('lang.net_profit')</strong>
-                                    </div>
-                                    <div class="count-number net_profitt-data">{{ @num_format(0) }}
-                                    </div>
+                                <div class="name"><strong
+                                        style="color: #297ff9">@lang('lang.profit')</strong>
+                                </div>
+                                <div class="count-number profit-data">{{ @num_format(0) }}
                                 </div>
                             </div>
+                        </div>
                        
-                        @endif
+                    
+                    {{-- </div> --}}
+                    @endif
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="wrapper count-title text-center" style="margin-top: 20px;">
+                            <div class="icon"><i class="dripicons-trophy" style="color: #3f6dad"></i>
+                            </div>
+                            <div class="name"><strong
+                                    style="color: #3f6dad">@lang('lang.net_profit')</strong>
+                            </div>
+                            <div class="count-number net_profitt-data">{{ @num_format(0) }}
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="wrapper count-title text-center" style="margin-top: 20px;">
+                            <div class="icon"><i class="dripicons-trophy" style="color: #3f6dad"></i>
+                            </div>
+                            <div class="name"><strong
+                                    style="color: #3f6dad">@lang('lang.expense')</strong>
+                            </div>
+                            <div class="count-number expense-data">{{ @num_format(0) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="wrapper count-title text-center" style="margin-top: 20px;">
+                            <div class="icon"><i class="dripicons-trophy" style="color: #3f6dad"></i>
+                            </div>
+                            <div class="name"><strong
+                                    style="color: #3f6dad">@lang('lang.purchase')</strong>
+                            </div>
+                            <div class="count-number purchase-data">{{ @num_format(0) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -225,6 +254,8 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     let purchase_return_string = '<div>';
                     let profit_string = '<div>';
                     let net_profit_string = '<div>';
+                    let expense_string = '<div>';
+                    let purchase_string = '<div>';
                     result.forEach(element => {
                         currenct_stock_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
                                             data-currency_id="${element.currency.currency_id}"
@@ -328,6 +359,28 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                             <span
                                                 class="total">${__currency_trans_from_en(element.data.net_profit, false)}</span>
                                         </h3>`;
+                                        expense_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.expense}"
+                                            data-orig_value="${element.data.expense}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.expense, false)}</span>
+                                        </h3>`;
+                                        purchase_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.purchase}"
+                                            data-orig_value="${element.data.purchase}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.purchase, false)}</span>
+                                        </h3>`;
 
                     });
                     currenct_stock_string += `</div>`;
@@ -339,6 +392,8 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     total_tax_string += `</div>`;
                     profit_string += `</div>`;
                     net_profit_string += '</div>';
+                    expense_string += '</div>';
+                    purchase_string += '</div>';
                     $(".revenue-data").html(revenue_string);
 
 
@@ -367,6 +422,14 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     $('.net_profitt-data').hide();
                     $(".net_profitt-data").html(net_profit_string);
                     $('.net_profitt-data').show(500);
+
+                    $('.expense-data').hide();
+                    $(".expense-data").html(expense_string);
+                    $('.expense-data').show(500);
+
+                    $('.purchase-data').hide();
+                    $(".purchase-data").html(purchase_string);
+                    $('.purchase-data').show(500);
                 },
             });
             getChartAndTableSection(start_date, end_date, store_id);

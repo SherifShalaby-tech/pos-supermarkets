@@ -991,6 +991,7 @@ return [
     'default_purchase_price_percentage_info' => 'درصد قیمت خرید صفحه محصول را به قیمت فروش اضافه کنید، به طور پیش فرض 75 است',
     'source_of_payment' => 'منبع پرداخت',
     'source_type' => 'نوع منبع',
+    'given_to' => 'دادن به :',
     'other_payments' => 'سایر پرداخت ها',
     'start_time' => 'زمان شروع',
     'end_time' => 'زمان پایان',

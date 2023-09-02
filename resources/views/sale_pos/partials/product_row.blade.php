@@ -98,8 +98,6 @@
                     <span class="dripicons-minus"></span>
                 </button>
             </span>
-
-                // qty
                 <input type="number" class="form-control quantity  qty numkey input-number" step="any"
                        autocomplete="off" style="width: 50px;" @isset($check_unit) @if($check_unit->name == "قطعه" || $check_unit->name == "Piece") oninput="this.value = Math.round(this.value);" @endif @endisset id="quantity" 
                        @if(!$product->is_service)max="{{$product->qty_available}}"@endif
@@ -115,7 +113,7 @@
 
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 14% @else 15% @endif">
-            <input type="text" class="form-control sell_price"
+            <input type="text" class="form-control sell_price" data-variation_id="{{$product->variation_id}}"
                    name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
                    @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @elseif(env('IS_SUB_BRANCH',false)) readonly @endif
                    value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif ">

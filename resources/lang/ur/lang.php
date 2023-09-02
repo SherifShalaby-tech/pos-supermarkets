@@ -992,6 +992,7 @@ return [
     'default_purchase_price_percentage_info' => 'پروڈکٹ کا صفحہ خرید قیمت فروخت کی قیمت کا فیصد شامل کریں، بطور ڈیفالٹ یہ 75 ہے۔',
     'source_of_payment' => 'ادائیگی کا ذریعہ',
     'source_type' => 'ماخذ کی قسم',
+    'given_to' => 'کو دیا گیا',
     'other_payments' => 'دیگر ادائیگیاں',
     'start_time' => 'وقت آغاز',
     'end_time' => 'اختتامی وقت',
