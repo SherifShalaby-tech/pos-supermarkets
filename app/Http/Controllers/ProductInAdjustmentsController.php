@@ -349,8 +349,6 @@ class ProductInAdjustmentsController extends Controller
 
 
 
-
-
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -385,16 +383,16 @@ class ProductInAdjustmentsController extends Controller
                             target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.product.delete')) {
+                        // if (auth()->user()->can('product_module.product.delete')) {
 
-                            $html .=
-                                '<li>
-                            <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
-                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
-                                class="btn text-red delete_product"><i class="fa fa-trash"></i>
-                                ' . __('lang.delete') . '</a>
-                        </li>';
-                        }
+                        //     $html .=
+                        //         '<li>
+                        //     <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+                        //         data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                        //         class="btn text-red delete_product"><i class="fa fa-trash"></i>
+                        //         ' . __('lang.delete') . '</a>
+                        // </li>';
+                        // }
 
                         $html .= '</ul></div>';
 
@@ -487,7 +485,7 @@ class ProductInAdjustmentsController extends Controller
         $store_pos = StorePos::where('user_id', $user_id)->first();
        
         
-            if($request->total_shortage_value){
+            if($request->total_shortage_value || $request->expenses_total_shortage_value){
                 $ProductInAdjustment = ProductInAdjustment::create([
                     'total_shortage_value'=>$request->total_shortage_value,
                     'created_by'=> $user_id,
@@ -510,8 +508,8 @@ class ProductInAdjustmentsController extends Controller
                 }
           
                 Transaction::create([
-                    'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
-                    'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'grand_total' => $this->commonUtil->num_uf($request->expenses_total_shortage_value),
+                    'final_total' => $this->commonUtil->num_uf($request->expenses_total_shortage_value),
                     'store_id' => $store_pos->store_id,
                     'type' => 'expense',
                     'status' => 'final',

@@ -116,7 +116,7 @@ if (empty($invoice_lang)) {
             <p>{{ $transaction->store->phone_number }} </p>
 
         </div>
-        <div style="width: 70%; float:left;">
+        <div style="width: 70%; float:left; font-weight: bold;">
             <p>@lang('lang.date', [], $invoice_lang): {{ $transaction->transaction_date }}<br>
                 @lang('lang.reference', [], $invoice_lang): {{ $transaction->invoice_no }}<br>
                 @if (!empty($transaction->customer) && $transaction->customer->is_default == 0)
@@ -125,7 +125,8 @@ if (empty($invoice_lang)) {
                     {{ $transaction->customer->mobile_number }} <br>
                 @endif
                 @if (!empty($transaction->sale_note))
-                    @lang('lang.sale_note', [], $invoice_lang): {{ $transaction->sale_note }} <br>
+{{--                    @lang('lang.sale_note', [], $invoice_lang): --}}
+                    {{ $transaction->sale_note }} <br>
                 @endif
             </p>
             @if (session('system_mode') == 'garments')
@@ -242,7 +243,7 @@ if (empty($invoice_lang)) {
                                     {{ $transaction->received_currency->symbol }}
                                 </th>
                             </tr>
-                            
+
                             @if ($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->whereNotNull('discount_category')->sum('product_discount_amount') > 0)
                             <tr>
                                 <th style="font-size: {{$font}};" colspan="3">@lang('lang.category_discount')</th>
@@ -250,9 +251,11 @@ if (empty($invoice_lang)) {
                             @foreach ($transaction->transaction_sell_lines as $line)
                                 @if(!empty($line->discount_category))
                                 <tr>
+
                                     <th style="font-size: {{$font}};" colspan="3">{{$line->discount_category}}</th>
                                     <th style="font-size: {{$font}}; text-align:right;">
                                         {{ @num_format($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->where('discount_category',$line->discount_category)->sum('product_discount_amount')) }}
+
                                         {{ $transaction->received_currency->symbol }}
                                     </th>
                                 </tr>
@@ -260,8 +263,8 @@ if (empty($invoice_lang)) {
                             @endforeach
                             @endif
 
-                            
-                           
+
+
                         @endif
                         @if ($transaction->total_item_tax != 0)
                             <tr>

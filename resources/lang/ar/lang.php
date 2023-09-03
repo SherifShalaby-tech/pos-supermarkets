@@ -12,6 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
+    'wins' => 'الارباح',
+    'assest' => 'الاصول',
     'manufacturers' => 'المصنعين',
     'add_manufacturer' => 'اضافة مصنع جديد',
     'edit_manufacturer' => 'تعديل مصنع',
@@ -254,7 +256,7 @@ return [
     'payment_type' => 'طريقة الدفع',
     'wages_and_compensations' => 'الأجور ',
     'commission_%' => 'عمولة٪',
-    'commission' => 'عمولة',
+    'commission' => 'العمولة',
     'annual_bonus' => 'مكافأة سنوية',
     'annual_incentive' => 'حوافز سنوية',
     'recognition' => 'مكافأة تقديرية',
@@ -796,6 +798,7 @@ return [
     'friday' => 'الجمعة',
     'saturday' => 'السبت',
     'monthly_sale_report' => 'تقرير البيع الشهري',
+    'monthly_sale_and_purchase_report' => 'تقرير البيع والشراء الشهري',
     'monthly_purchase_report' => 'تقرير الشراء الشهري',
     'daily_purchase_report' => 'تقرير الشراء اليومي',
     'sale_report' => 'تقرير البيع',
@@ -1066,6 +1069,7 @@ return [
     'default_purchase_price_percentage_info' => 'أضف النسبة المئوية لسعر شراء صفحة المنتج لسعر البيع ، افتراضيًا 75',
     'source_of_payment' => ' اسم الموظف',
     'source_type' => 'مصدر الأموال',
+    'given_to' => 'ستُعطى إلى :',
     'other_payments' => 'مصروفات أخرى',
     'start_time' => 'وقت البدء',
     'end_time' => 'وقت النهاية',
@@ -1421,4 +1425,7 @@ return [
     'max'=>'كبير',
     'min'=>'صغير',
     'avg'=>'متوسط',
+    'selling_price_for_this_product_is_changed'=>'تم تغيير سعر البيع لهذا المنتج',
+    'remove_from_expenses' => " اضافة الى المصروفات",
+    'total_rows'=>'عدد الموظفين',
 ];

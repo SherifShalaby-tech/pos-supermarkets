@@ -55,15 +55,18 @@ class TransactionPaymentController extends Controller
      */
     public function addPayment($transaction_id)
     {
+
+        
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $transaction = Transaction::find($transaction_id);
         $users = User::Notview()->pluck('name', 'id');
-
+        $balance = $this->transactionUtil->getCustomerBalanceExceptTransaction($transaction->customer_id,$transaction_id)['balance'];
         return view('transaction_payment.add_payment')->with(compact(
             'payment_type_array',
             'transaction_id',
             'transaction',
-            'users'
+            'users',
+            'balance'
         ));
     }
     /**
