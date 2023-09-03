@@ -251,11 +251,9 @@ if (empty($invoice_lang)) {
                             @foreach ($transaction->transaction_sell_lines as $line)
                                 @if(!empty($line->discount_category))
                                 <tr>
-
                                     <th style="font-size: {{$font}};" colspan="3">{{$line->discount_category}}</th>
                                     <th style="font-size: {{$font}}; text-align:right;">
                                         {{ @num_format($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->where('discount_category',$line->discount_category)->sum('product_discount_amount')) }}
-
                                         {{ $transaction->received_currency->symbol }}
                                     </th>
                                 </tr>
@@ -436,7 +434,10 @@ if (empty($invoice_lang)) {
                     </tr>
                     @if (!empty($transaction->terms_and_conditions))
                         <tr>
-                            <td class="centered" colspan="3">{!! $transaction->terms_and_conditions->description !!}</td>
+                            @php
+                             $terms_and_conditions=str_replace("\n", '', strip_tags( $transaction->terms_and_conditions->description));
+                            @endphp
+                            <td  class="centered" colspan="3" style="text-align: justify;">{!! $terms_and_conditions !!}</td>
                         </tr>
                     @endif
                     <tr>
