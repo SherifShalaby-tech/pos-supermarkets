@@ -1369,6 +1369,7 @@ class TransactionUtil extends Util
             }
         }
        $total_due= $this->getCustomerBalance($transaction->customer_id)['balance'];
+
                 $font='16px';
                 $line_height1='20px';
                 $line_height2='24px';
@@ -1386,10 +1387,12 @@ class TransactionUtil extends Util
                 $font='12px';
                 $line_height1='15px';
                 $line_height2='21px';
+
             }else{
                 $font='16px';
                 $line_height1='20px';
                 $line_height2='24';
+
             }
         }
         

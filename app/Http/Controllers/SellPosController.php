@@ -1028,6 +1028,7 @@ class SellPosController extends Controller
      */
     public function addProductRow(Request $request)
     {
+//        dd($request);
         if ($request->ajax()) {
             $weighing_scale_barcode = $request->input('weighing_scale_barcode');
             $batch_number_id = $request->input('batch_number_id');

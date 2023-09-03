@@ -247,6 +247,14 @@ $(document).ready(function () {
                             ._trigger("select", "autocompleteselect", ui);
                         $(this).autocomplete("close");
                     } else if (ui.content.length == 0) {
+                        get_label_product_row(
+                            null,
+                            null,
+                            null,
+                            1,
+                            0,
+                            $("#search_product").val()
+                        );
                         // swal("Product not found");
                     }
                 },
@@ -415,7 +423,7 @@ function get_label_product_row(
                 customer_id: customer_id,
                 currency_id: currency_id,
                 edit_quantity: edit_quantity,
-                weighing_scale_barcode: weighing_scale_barcode,
+                weighing_scale_barcode: $("#search_product").val(),
                 dining_table_id: $("#dining_table_id").val(),
                 is_direct_sale: $("#is_direct_sale").val(),
                 batch_number_id:add_stock_lines_id
@@ -1830,7 +1838,7 @@ $(document).ready(function () {
                 });
         },
     });
-  
+
     draft_table = $("#draft_table").DataTable({
         lengthChange: true,
         paging: true,
