@@ -1369,7 +1369,26 @@ class TransactionUtil extends Util
             }
         }
        $total_due= $this->getCustomerBalance($transaction->customer_id)['balance'];
-
+       $font='16px';
+       $line_height1='10px';
+       $line_height2='24';
+       $font_size_at_invoice=System::getProperty('font_size_at_invoice');
+        if (!empty($font_size_at_invoice)){
+            if($font_size_at_invoice == 'max'){
+                $font='16px';
+                $line_height1='20px';
+                $line_height2='24px';
+            }else if($font_size_at_invoice == 'min'){
+                $font='9px';
+                $line_height1='10px';
+                $line_height2='17px';
+            }else if($font_size_at_invoice == 'avg'){
+                $font='12px';
+                $line_height1='15px';
+                $line_height2='21px';
+            }
+        }
+        
         if ($invoice_lang == 'ar_and_en') {
             $html_content = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
                 'transaction',
@@ -1383,7 +1402,8 @@ class TransactionUtil extends Util
                 'payment_types',
                 'invoice_lang',
                 'total_due',
-                'print_gift_invoice'
+                'print_gift_invoice',
+                'font','line_height1','line_height2'
             ))->render();
         }
 
