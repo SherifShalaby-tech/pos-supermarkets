@@ -249,7 +249,7 @@ if (empty($invoice_lang)) {
                                 <th style="font-size: {{$font}};" colspan="3">@lang('lang.category_discount')</th>
                             </tr>
                             @foreach ($transaction->transaction_sell_lines as $line)
-                                @if(!empty($line->discount_category))
+                                @if(!isset($line->discount_category) && !isset($line->product_discount_amount))
                                 <tr>
                                     <th style="font-size: {{$font}};" colspan="3">{{$line->discount_category}}</th>
                                     <th style="font-size: {{$font}}; text-align:right;">
