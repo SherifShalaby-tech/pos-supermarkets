@@ -669,11 +669,11 @@ function calculate_sub_totals() {
         }
         // console.log(quantity)
         // console.log(quantity)
-        __write_number($(tr).find(".sub_total"), sub_total);
+        __write_number($(tr).find(".sub_total"), roundToNearestQuarter(sub_total));
         let product_discount = calculate_product_discount(tr);
         product_discount_total += product_discount;
         sub_total -= product_discount;
-        grand_total += sub_total;
+        grand_total += roundToNearestQuarter(sub_total);
         $(".grand_total_span").text(
             __currency_trans_from_en(grand_total, false)
         );
@@ -683,14 +683,14 @@ function calculate_sub_totals() {
             total_coupon_discount += coupon_discount;
         }
         if (sub_total <= coupon_discount) {
-            total_coupon_discount += sub_total;
+            total_coupon_discount += roundToNearestQuarter(sub_total);
         }
 
         __write_number($(tr).find(".sub_total"), sub_total);
         $(tr)
             .find(".sub_total_span")
-            .text(__currency_trans_from_en(sub_total, false));
-        total += sub_total;
+            .text(__currency_trans_from_en(roundToNearestQuarter(sub_total), false));
+        total += roundToNearestQuarter(sub_total);
 
         item_count++;
 
@@ -705,7 +705,7 @@ function calculate_sub_totals() {
 
         if (main_tax_type == "product_tax") {
             if (main_tax_id == tax_id) {
-                let item_tax = (sub_total * tax_rate) / 100;
+                let item_tax = (roundToNearestQuarter(sub_total) * tax_rate) / 100;
                 item_tax = item_tax / exchange_rate;
                 __write_number($(tr).find(".item_tax"), item_tax);
                 total_item_tax += item_tax;
@@ -811,6 +811,10 @@ function calculate_sub_totals() {
 
     $(".final_total_span").text(__currency_trans_from_en(total, false));
 }
+
+function roundToNearestQuarter(number) {
+    return Math.round(number * 4) / 4;
+}
 function hasManyDigits(num, digits) {
     const str = num.toString();
     const decimalIndex = str.indexOf('.');
@@ -845,7 +849,7 @@ function calculate_product_discount(tr) {
         discount = quantity * value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     if(exchange_rate==0){
         exchange_rate=1;
@@ -867,7 +871,7 @@ function calculate_promotion_discount(tr) {
         discount = value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     discount = discount / exchange_rate;
     $(tr).find(".promotion_discount_amount").val(discount);
@@ -914,7 +918,7 @@ function calculate_coupon_discount(tr) {
         discount = value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     discount = discount / exchange_rate;
     $(tr).find(".coupon_discount_amount").val(discount);
