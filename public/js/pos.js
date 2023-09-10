@@ -634,6 +634,7 @@ function calculate_sub_totals() {
         let price_hidden = __read_number($(tr).find(".price_hidden"));
         let sub_total = 0;
         if (sell_price > price_hidden) {
+            
             let price_discount = (sell_price - price_hidden);
 
             $(tr).find(".product_discount_type").val("surplus");
@@ -841,6 +842,7 @@ function calculate_product_discount(tr) {
     let type = $(tr).find(".product_discount_type").val();
     let quantity = $(tr).find(".quantity").val();
     let sub_total = __read_number($(tr).find(".sub_total"));
+    if(quantity % 1 == 0){
     if (type == "fixed" || type == "surplus") {
         discount = quantity * value;
     }
@@ -855,6 +857,7 @@ function calculate_product_discount(tr) {
         discount = 0;
     }
      __write_number($(tr).find(".product_discount_amount"), discount);
+    }
     return discount;
 }
 function calculate_promotion_discount(tr) {
