@@ -496,7 +496,7 @@ class SellPosController extends Controller
 
         $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang);
 
-
+        
         $output = [
             'success' => true,
             'html_content' => $html_content,

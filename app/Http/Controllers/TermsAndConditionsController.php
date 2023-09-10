@@ -38,7 +38,30 @@ class TermsAndConditionsController extends Controller
             'tac'
         ));
     }
+    public function makeDefault($id,Request $request){
+        // return $request->isChecked;
+        try{
+        $term=TermsAndCondition::find($id);
+        if($request->isChecked=="true"){
+            TermsAndCondition::query()->update(['default'=>'0']);
+            $term->update(['default'=>'1']);
+        }else{
+            $term->update(['default'=>'0']);
+        }
+        $output = [
+            'success' => true,
+            'msg' => __('lang.success')
+        ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
+        return $output;
+    }
     /**
      * Show the form for creating a new resource.
      *

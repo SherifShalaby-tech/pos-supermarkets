@@ -256,11 +256,14 @@
                                                 id="item-quantity">0</span>
 
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <span class="totals-title">{{ __('lang.total') }}</span><span
                                                     id="subtotal">0.00</span>
+                                                <br>
+                                                <span class="totals-title">{{ __('lang.total_before_discount') }}</span><span
+                                                    id="total_before_discount">0.00</span>
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 @if(auth()->user()->can('sp_module.sales_promotion.view')
                                                         || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
                                                         || auth()->user()->can('sp_module.sales_promotion.delete'))
@@ -349,20 +352,22 @@
                             } else {
                                 $toc_hidden = array_key_first($tac);
                             }
+                            $term=App\Models\TermsAndCondition::where('default','1')->first();
+
                         @endphp
                         <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
                             value="{{ $toc_hidden }}">
                         <div class="row table_room_hide">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
+                                    <div class="col-md-4 pl-4">
+                                        <div class="form-group ">
                                             {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
                                             <select name="terms_and_condition_id" id="terms_and_condition_id"
                                                 class="form-control selectpicker" data-live-search="true">
                                                 <option value="">@lang('lang.please_select')</option>
                                                 @foreach ($tac as $key => $item)
-                                                    <option value="{{ $key }}">{{ $item }}</option>
+                                                    <option value="{{ $key }}" {{$term->id==$key?'selected':''}}>{{ $item }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

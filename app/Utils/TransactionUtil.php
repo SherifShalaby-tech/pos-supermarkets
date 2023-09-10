@@ -1370,26 +1370,26 @@ class TransactionUtil extends Util
         }
        $total_due= $this->getCustomerBalance($transaction->customer_id)['balance'];
 
-                $font='16px';
+                $font='18px';
                 $line_height1='20px';
                 $line_height2='24px';
        $font_size_at_invoice=System::getProperty('font_size_at_invoice');
         if (!empty($font_size_at_invoice)){
             if($font_size_at_invoice == 'max'){
-                $font='16px';
+                $font='18px';
                 $line_height1='20px';
                 $line_height2='24px';
             }else if($font_size_at_invoice == 'min'){
-                $font='9px';
+                $font='11px';
                 $line_height1='10px';
                 $line_height2='17px';
             }else if($font_size_at_invoice == 'avg'){
-                $font='12px';
+                $font='14px';
                 $line_height1='15px';
                 $line_height2='21px';
 
             }else{
-                $font='16px';
+                $font='18px';
                 $line_height1='20px';
                 $line_height2='24';
 
