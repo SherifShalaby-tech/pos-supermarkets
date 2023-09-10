@@ -367,7 +367,7 @@
                                                 class="form-control selectpicker" data-live-search="true">
                                                 <option value="">@lang('lang.please_select')</option>
                                                 @foreach ($tac as $key => $item)
-                                                    <option value="{{ $key }}" {{$term->id==$key?'selected':''}}>{{ $item }}</option>
+                                                    <option value="{{ $key }}" {{!empty($term)&&$term->id==$key?'selected':''}}>{{ $item }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
