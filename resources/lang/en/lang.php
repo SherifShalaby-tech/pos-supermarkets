@@ -1444,4 +1444,5 @@ return [
     'remove_from_expenses' => " Add to expenses",
     'total_rows'=>'Total Employees Number',
     'wins'=>'profits',
+    'total_before_discount'=>'Total Before discount',
 ];

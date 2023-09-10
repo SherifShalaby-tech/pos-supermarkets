@@ -627,6 +627,7 @@ function calculate_sub_totals() {
     var sales_promotion_cost = __read_number($("#sales_promotion-cost"));
     let item_quantity=0;
     var exchange_rate = __read_number($("#exchange_rate"));
+    let total_before_discount=0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         item_quantity+=quantity;
@@ -673,6 +674,7 @@ function calculate_sub_totals() {
         __write_number($(tr).find(".sub_total"), roundToNearestQuarter(sub_total));
         let product_discount = calculate_product_discount(tr);
         product_discount_total += product_discount;
+        total_before_discount =sub_total;
         sub_total -= product_discount;
         grand_total += roundToNearestQuarter(sub_total);
         $(".grand_total_span").text(
@@ -690,9 +692,11 @@ function calculate_sub_totals() {
         __write_number($(tr).find(".sub_total"), sub_total);
         $(tr)
             .find(".sub_total_span")
-            .text(__currency_trans_from_en(roundToNearestQuarter(sub_total), false));
+            .text(__currency_trans_from_en(sub_total, false));
+        total += sub_total;
+        
+//             .text(__currency_trans_from_en(roundToNearestQuarter(sub_total), false));
         total += roundToNearestQuarter(sub_total);
-
         item_count++;
 
         calculate_promotion_discount(tr);
@@ -718,6 +722,7 @@ function calculate_sub_totals() {
     });
     // $("#subtotal").text(total);
     // $(".subtotal").text(total);
+    $('.#total_before_discount').text(__currency_trans_from_en(total_before_discount, false));
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $(".subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
@@ -846,7 +851,7 @@ function calculate_product_discount(tr) {
     let type = $(tr).find(".product_discount_type").val();
     let quantity = $(tr).find(".quantity").val();
     let sub_total = __read_number($(tr).find(".sub_total"));
-    if(quantity % 1 == 0){
+    // if(quantity % 1 == 0){
     if (type == "fixed" || type == "surplus") {
         discount = quantity * value;
     }
@@ -861,7 +866,7 @@ function calculate_product_discount(tr) {
         discount = 0;
     }
      __write_number($(tr).find(".product_discount_amount"), discount);
-    }
+    // }
     return discount;
 }
 function calculate_promotion_discount(tr) {

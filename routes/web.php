@@ -394,6 +394,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::post('terms-and-conditions/update-invoice-tac-setting', 'TermsAndConditionsController@updateInvoiceTacSetting');
     Route::get('terms-and-conditions/get-details/{id}', 'TermsAndConditionsController@getDetails');
+    Route::get('make-default/{id}', 'TermsAndConditionsController@makeDefault');
     Route::resource('terms-and-conditions', TermsAndConditionsController::class);
 
     Route::get('notification/mark-as-read/{id}', 'NotificationController@markAsRead');
