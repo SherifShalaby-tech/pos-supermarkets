@@ -694,10 +694,10 @@ function calculate_sub_totals() {
             .find(".sub_total_span")
             .text(__currency_trans_from_en(sub_total, false));
         total += sub_total;
-        
-            // .text(__currency_trans_from_en(roundToNearestQuarter(sub_total), false));
-        total += roundToNearestQuarter(sub_total);
 
+            // .text(__currency_trans_from_en(roundToNearestQuarter(sub_total), false));
+
+        total += roundToNearestQuarter(sub_total);
         item_count++;
 
         calculate_promotion_discount(tr);
