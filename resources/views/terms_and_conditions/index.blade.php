@@ -51,7 +51,7 @@
                         <tr>
                             <th>@lang('lang.name')</th>
                             <th>@lang('lang.description')</th>
-                            <th>@lang('lang.default')</th>
+                            <th>@lang('lang.show')</th>
                             <th>@lang('lang.name_of_creator')</th>
                             <th class="notexport">@lang('lang.action')</th>
                         </tr>

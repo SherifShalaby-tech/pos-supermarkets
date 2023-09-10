@@ -227,7 +227,7 @@ if (empty($invoice_lang)) {
                                 </td>
                             @endif
                             @if(isset($line->discount_category) && isset($line->product_discount_amount) && $line->product_discount_amount>0)
-                            <td style="text-align:center;vertical-align:bottom; width: 20%;">{{$line->discount_category}} ({{@num_format($line->product_discount_amount) }})</td>
+                            <td style="text-align:center;vertical-align:bottom; width: 20%;">({{@num_format($line->product_discount_amount) }})</td>
                             @endif
                         </tr>
                     @endforeach
