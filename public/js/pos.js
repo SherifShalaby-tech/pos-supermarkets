@@ -83,6 +83,9 @@ function getFilterCheckboxValue(class_name) {
     });
     return val;
 }
+function roundToNearestQuarter(number) {
+    return Math.round(number * 4) / 4;
+}
 $(document).on("click", ".filter-by", function () {
     let type = $(this).data("type");
     let id = $(this).data("id");
@@ -693,11 +696,8 @@ function calculate_sub_totals() {
         $(tr)
             .find(".sub_total_span")
             .text(__currency_trans_from_en(sub_total, false));
-        total += sub_total;
-
-            // .text(__currency_trans_from_en(roundToNearestQuarter(sub_total), false));
-
-        total += roundToNearestQuarter(sub_total);
+        total +=  roundToNearestQuarter(sub_total);
+        console.log(total)
         item_count++;
 
         calculate_promotion_discount(tr);
@@ -723,7 +723,7 @@ function calculate_sub_totals() {
     });
     // $("#subtotal").text(total);
     // $(".subtotal").text(total);
-    $("#total_before_discount").text(__currency_trans_from_en(total_before_discount, false));
+    $('#total_before_discount').text(__currency_trans_from_en(total_before_discount, false));
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $(".subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
@@ -852,7 +852,7 @@ function calculate_product_discount(tr) {
         discount = quantity * value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     if(exchange_rate==0){
         exchange_rate=1;
@@ -874,7 +874,7 @@ function calculate_promotion_discount(tr) {
         discount = value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     discount = discount / exchange_rate;
     $(tr).find(".promotion_discount_amount").val(discount);
@@ -921,7 +921,7 @@ function calculate_coupon_discount(tr) {
         discount = value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     discount = discount / exchange_rate;
     $(tr).find(".coupon_discount_amount").val(discount);
