@@ -1429,4 +1429,5 @@ return [
     'remove_from_expenses' => " اضافة الى المصروفات",
     'total_rows'=>'عدد الموظفين',
     'total_before_discount'=>'المجموع قبل الخصم',
+    'show'=>'اظهار',
 ];

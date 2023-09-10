@@ -1445,4 +1445,5 @@ return [
     'total_rows'=>'Total Employees Number',
     'wins'=>'profits',
     'total_before_discount'=>'Total Before discount',
+    'show'=>'Show',
 ];

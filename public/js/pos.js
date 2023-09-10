@@ -677,7 +677,8 @@ function calculate_sub_totals() {
         __write_number($(tr).find(".sub_total"), sub_total);
         let product_discount = calculate_product_discount(tr);
         product_discount_total += product_discount;
-        total_before_discount=sub_total;
+
+        total_before_discount+=sub_total;
         sub_total -= product_discount;
         grand_total += sub_total;
         $(".grand_total_span").text(
