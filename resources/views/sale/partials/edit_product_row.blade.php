@@ -70,6 +70,7 @@ $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
             <input type="hidden" name="transaction_sell_line[{{ $loop->index }}][coupon_discount_amount]"
                 class="coupon_discount_amount" value="{{ $product->coupon_discount_amount }}">
             <!-- after calculation actual discounted amount for row product row -->
+            <input type="hidden" class="edit-quantity" value="{{$product->product_discount_amount}}" />
         </td>
         <td style="width: 15%">
             <div class="input-group">
