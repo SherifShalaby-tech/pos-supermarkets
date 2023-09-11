@@ -86,6 +86,7 @@ class CustomerController extends Controller
         foreach ($customers as $customer) {
             $balances[$customer->id] = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
         }
+        // return $balances;
         return DataTables::of($customers)->with('balances', $balances) 
         ->addColumn('customer_type', function ($row) {
             if(!empty($row->customer_type)){
@@ -111,15 +112,16 @@ class CustomerController extends Controller
             return $row->address;
          })
          ->addColumn('balance', function ($row){
-            $balances = request('balances');
-            if (isset($balances[$row->id])) {
+            $balance = $this->transactionUtil->getCustomerBalance($row->id)['balance'];
+
+            if (isset($balance)) {
                 $class='';
-                if ($balances[$row->id] < 0) {
+                if ($balance < 0) {
                     $class= "text-red";
                 }
-                return "<span class='".$class."'>".$balances[$row->id]."</span>";
+                return "<span class='".$class."'>".$balance."</span>";
             }else{
-                return '0';
+                return $balance;
             }
          })
          ->addColumn('purchases', function ($row) {
@@ -162,7 +164,7 @@ class CustomerController extends Controller
                 if (auth()->user()->can('customer_module.customer.view')) {
                     $html .=
                         '<li>
-                        <a data-href="' . action('CustomerController@show', $row->id) . '">
+                        <a href="' . action('CustomerController@show', $row->id) . '">
                         <i class="dripicons-document"></i>
                             ' .__('lang.view') . '</a>
                             </li>';
@@ -172,15 +174,16 @@ class CustomerController extends Controller
                 if (auth()->user()->can('customer_module.customer.create_and_edit')) {
                     $html .=
                     '<li>
-                    <a data-href="' . action('CustomerController@edit', $row->id) . '"
+                    <a href="' . action('CustomerController@edit', $row->id) . '"
                         ><i class="dripicons-document-edit"></i>
                         ' .__('lang.edit') . '</a>
                         </li>';
                     $html .= '<li class="divider"></li>';
                 }
+                $balance = $this->transactionUtil->getCustomerBalance($row->id)['balance'];
+
                 if (auth()->user()->can('customer_module.add_payment.create_and_edit')) {
-                    $balances = request('balances');
-                    if (isset($balances[$row->id]) && $balances[$row->id] < 0){
+                    if (isset($balance) && $balance < 0){
                     $html .=
                     '<li>
                     <a data-href="' . action('TransactionPaymentController@getCustomerDue', $row->id) . '"
@@ -191,20 +194,31 @@ class CustomerController extends Controller
                     }
                 }
                 if (auth()->user()->can('customer_module.add_payment.create_and_edit')) {
+                    if (isset($balance) && $balance > 0){
                     $html .=
                     '<li>
                     <a data-href="' . action('TransactionPaymentController@getCustomerDue', ['customer_id'=>$row->id,'extract_due'=>'true']) . '"
-                        ><i class="fa fa-money"></i>
+                    class="btn-modal" data-container=".view_modal"><i class="fa fa-money"></i>
                         ' .__('lang.extract_customer_due') . '</a>
                         </li>';
                     $html .= '<li class="divider"></li>';
+                    }
                 }
                 if (auth()->user()->can('adjustment.customer_balance_adjustment.create_and_edit')) {
                     $html .=
                     '<li>
-                    <a data-href="' . action('CustomerBalanceAdjustmentController@create', ['customer_id' => $row->id]) . '"
+                    <a href="' . action('CustomerBalanceAdjustmentController@create', ['customer_id' => $row->id]) . '"
                         ><i class="fa fa-adjust"></i>
                         ' .__('lang.adjust_customer_balance') . '</a>
+                        </li>';
+                    $html .= '<li class="divider"></li>';
+                }
+                if (auth()->user()->can('adjustment.customer_point_adjustment.create_and_edit')) {
+                    $html .=
+                    '<li>
+                    <a href="' . action('CustomerPointAdjustmentController@create', ['customer_id' => $row->id]). '"
+                        ><i class="fa fa-adjust"></i>
+                        ' .__('lang.adjust_customer_points') . '</a>
                         </li>';
                     $html .= '<li class="divider"></li>';
                 }
@@ -212,7 +226,7 @@ class CustomerController extends Controller
                     if (auth()->user()->can('customer_module.customer_sizes.create_and_edit')) {
                         $html .=
                         '<li>
-                        <a data-href="' .action('CustomerSizeController@add', $row->id). '"
+                        <a href="' .action('CustomerSizeController@add', $row->id). '"
                             ><i class="fa fa-plus"></i>
                             ' .__('lang.add_size') . '</a>
                             </li>';
@@ -221,7 +235,7 @@ class CustomerController extends Controller
                     if (auth()->user()->can('customer_module.customer_sizes.view')) {
                         $html .=
                         '<li>
-                        <a data-href="' .action('CustomerController@show', $row->id). '"
+                        <a href="' .action('CustomerController@show', $row->id). '"
                             ><i class="fa fa-user-secret"></i>
                             ' .__('lang.view_sizes') . '</a>
                             </li>';
