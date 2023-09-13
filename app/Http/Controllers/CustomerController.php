@@ -82,12 +82,12 @@ class CustomerController extends Controller
 
         $customers = $query->groupBy('customers.id')->get();
 
-        $balances = [];
-        foreach ($customers as $customer) {
-            $balances[$customer->id] = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
-        }
+        // $balances = [];
+        // foreach ($customers as $customer) {
+        //     $balances[$customer->id] = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
+        // }
         // return $balances;
-        return DataTables::of($customers)->with('balances', $balances) 
+        return DataTables::of($customers)
         ->addColumn('customer_type', function ($row) {
             if(!empty($row->customer_type)){
                 return $row->customer_type->name;
@@ -258,7 +258,7 @@ class CustomerController extends Controller
                 return $html;
             }
         )
-        ->rawColumns(['image','balance','action','purchases','discount','points']) 
+        ->rawColumns(['created_by','mobile_number','address','customer_type','customer_name','image','balance','action','purchases','discount','points']) 
         ->make(true);
         }
         return view('customer.index');
