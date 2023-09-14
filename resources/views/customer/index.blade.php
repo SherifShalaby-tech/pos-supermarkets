@@ -72,6 +72,7 @@
                 // stateSave: true,
                 buttons: buttons,
                 processing: true,
+                // searching: true,
                 serverSide: true,
                 aaSorting: [
                     [2, 'asc']
@@ -80,8 +81,8 @@
                     "url": "/customer",
                 },
                 columnDefs: [{
-                    "targets": [0, 3],
-                    "orderable": false,
+                    "targets": [0,2, 3],
+                    "orderable": true,
                     "searchable": true
                 }],
                 columns: [

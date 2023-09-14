@@ -158,7 +158,13 @@ class HomeController extends Controller
         $end = strtotime(date("Y") . '-12-31');
         while ($start < $end) {
             $start_date = date("Y") . '-' . date('m', $start) . '-' . '01';
-            $end_date = date("Y") . '-' . date('m', $start) . '-' . '31';
+            if(in_array(date('m', $start), [4, 6, 9, 11])){
+                $end_date = date("Y") . '-' . date('m', $start) . '-' . '30';
+                } elseif (date('m', $start) == 2) {
+                    $end_date = date("Y") . '-' . date('m', $start) . '-' . '29';
+                } else {
+                    $end_date = date("Y") . '-' . date('m', $start) . '-' . '31';
+                }
 
             $sale_amount =  $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
             $purchase_amount = $this->getPurchaseAmount($start_date, $end_date, $store_id, $store_pos_id);
