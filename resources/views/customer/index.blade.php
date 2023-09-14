@@ -72,7 +72,7 @@
                 // stateSave: true,
                 buttons: buttons,
                 processing: true,
-                searching: true,
+                // searching: true,
                 serverSide: true,
                 aaSorting: [
                     [2, 'asc']

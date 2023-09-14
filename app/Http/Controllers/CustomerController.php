@@ -80,7 +80,7 @@ class CustomerController extends Controller
                 DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
             );
 
-        $customers = $query->groupBy('customers.id')->get();
+        $customers = $query->groupBy('customers.id');
 
         // $balances = [];
         // foreach ($customers as $customer) {
@@ -103,8 +103,10 @@ class CustomerController extends Controller
                 return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
             }
         })
-        ->editColumn('created_by', '{{$created_by_name}}')
-        ->editColumn('customer_name', '{{$customer_name}}')
+        // ->editColumn('customer_name', '{{$customer_name}}')
+        ->addColumn('customer_name', function ($row) {
+            return $row->name;
+         })
         ->addColumn('mobile_number', function ($row) {
            return $row->mobile_number;
         })
@@ -149,8 +151,10 @@ class CustomerController extends Controller
             'customer_name',
             'mobile_number',
             'address',
-            'balance','purchases','discount','points','joining_date'
+            'balance','purchases','discount','points','joining_date','action'
         ])
+        ->editColumn('created_by', '{{$created_by_name}}')
+
         ->addColumn(
             'action',
             function ($row) {
@@ -258,7 +262,6 @@ class CustomerController extends Controller
                 return $html;
             }
         )
-        ->rawColumns(['created_by','mobile_number','address','customer_type','customer_name','image','balance','action','purchases','discount','points']) 
         ->make(true);
         }
         return view('customer.index');
