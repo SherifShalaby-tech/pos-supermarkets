@@ -26,7 +26,7 @@ class Customer extends Model implements HasMedia
     }
     public function customer_type()
     {
-        return $this->belongsTo(CustomerType::class);
+        return $this->belongsTo(CustomerType::class,'customer_type_id');
     }
 
     public function created_by_user()

@@ -81,7 +81,7 @@
                     "url": "/customer",
                 },
                 columnDefs: [{
-                    "targets": [0,2, 3],
+                    // "targets": [0,2, 3],
                     "orderable": true,
                     "searchable": true
                 }],

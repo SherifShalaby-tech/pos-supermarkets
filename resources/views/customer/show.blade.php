@@ -95,19 +95,19 @@
 
                                         <div class="col-md-12">
                                             <b>@lang('lang.customer_type'):</b> <span
-                                                class="customer_customer_type_span">{{ $customer->customer_type->name }}</span>
+                                                class="customer_customer_type_span">{{ $customer->customer_type->name??'' }}</span>
                                         </div>
                                         <div class="col-md-12">
                                             <b>@lang('lang.mobile'):</b> <span
-                                                class="customer_mobile_span">{{ $customer->mobile_number }}</span>
+                                                class="customer_mobile_span">{{ $customer->mobile_number??'' }}</span>
                                         </div>
                                         <div class="col-md-12">
                                             <b>@lang('lang.address'):</b> <span
-                                                class="customer_address_span">{{ $customer->address }}</span>
+                                                class="customer_address_span">{{ $customer->address??'' }}</span>
                                         </div>
                                         <div class="col-md-12">
                                             <b>@lang('lang.email'):</b> <span
-                                                class="customer_email_span">{{ $customer->email }}</span>
+                                                class="customer_email_span">{{ $customer->email??'' }}</span>
                                         </div>
                                         <div class="col-md-12">
                                             <b>@lang('lang.balance'):</b> <span
