@@ -110,9 +110,13 @@ class CustomerController extends Controller
         ->addColumn('mobile_number', function ($row) {
            return $row->mobile_number;
         })
+        // ->addColumn('balance', function ($row) {
+        //     return $row->address;
+        //  })
         ->addColumn('address', function ($row) {
             return $row->address;
          })
+       
          ->addColumn('balance', function ($row){
             $balance = $this->transactionUtil->getCustomerBalance($row->id)['balance'];
 
@@ -121,20 +125,23 @@ class CustomerController extends Controller
                 if ($balance < 0) {
                     $class= "text-red";
                 }
+                $balance=ceil($balance* 100) / 100;
                 return "<span class='".$class."'>".$balance."</span>";
             }else{
                 return $balance;
             }
          })
          ->addColumn('purchases', function ($row) {
+            $purchase=ceil($row->total_purchase - $row->total_return* 100) / 100;
             return $html =
             '<a data-href="' . action('CustomerController@show', $row->id) . '?show=purchases"
-           class="btn">'.$row->total_purchase - $row->total_return.'</a>';
+           class="btn">'.$purchase.'</a>';
          })
          ->addColumn('discount', function ($row) {
+            $discount=ceil($row->total_sp_discount + $row->total_product_discount + $row->total_coupon_discount* 100) / 100;
             return $html =
             '<a data-href="' . action('CustomerController@show', $row->id) . '?show=discounts"
-           class="btn">'.$row->total_sp_discount + $row->total_product_discount + $row->total_coupon_discount.'</a>';
+           class="btn">'.$discount.'</a>';
          })
          ->addColumn('points', function ($row) {
             return $html =
