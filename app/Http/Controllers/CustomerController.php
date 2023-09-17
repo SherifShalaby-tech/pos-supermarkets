@@ -66,27 +66,30 @@ class CustomerController extends Controller
      */
     public function index()
     {
+        // return request()->enddate;
         if (request()->ajax()) {
         $query = Customer::leftjoin('transactions', 'customers.id', 'transactions.customer_id')
-        ->leftjoin('users', 'customers.created_by', 'users.id')
-            ->select(
-                'customers.*',
-                'customers.name as customer_name',
-                'users.name as created_by_name',
-                DB::raw('SUM(IF(transactions.type="sell_return", final_total, 0)) as total_return'),
-                DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_purchase'),
-                DB::raw('SUM(IF(transactions.type="sell", total_sp_discount, 0)) as total_sp_discount'),
-                DB::raw('SUM(IF(transactions.type="sell", total_product_discount, 0)) as total_product_discount'),
-                DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
-            );
+        ->leftjoin('users', 'customers.created_by', 'users.id');
+        if (!empty(request()->startdate)) {
+            $query->where('transactions.transaction_date','>=', request()->startdate. ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->enddate)) {
+            $query->where('transactions.transaction_date','<=', request()->enddate. ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        $query->select(
+            'customers.*',
+            'customers.name as customer_name',
+            'users.name as created_by_name',
+            DB::raw('SUM(IF(transactions.type="sell_return", final_total, 0)) as total_return'),
+            DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_purchase'),
+            DB::raw('SUM(IF(transactions.type="sell", total_sp_discount, 0)) as total_sp_discount'),
+            DB::raw('SUM(IF(transactions.type="sell", total_product_discount, 0)) as total_product_discount'),
+            DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
+        );
+
+       
 
         $customers = $query->groupBy('customers.id');
-
-        // $balances = [];
-        // foreach ($customers as $customer) {
-        //     $balances[$customer->id] = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
-        // }
-        // return $balances;
         return DataTables::of($customers)
         ->addColumn('customer_type', function ($row) {
             if(!empty($row->customer_type)){
@@ -103,10 +106,8 @@ class CustomerController extends Controller
                 return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
             }
         })
-        // ->editColumn('customer_name', '{{$customer_name}}')
-        ->addColumn('customer_name', function ($row) {
-            return $row->name;
-         })
+        ->editColumn('customer_name', '{{$customer_name}}')
+        // ->editColumn('customer_name',"{{name}}")
         ->addColumn('mobile_number', function ($row) {
            return $row->mobile_number;
         })
@@ -133,33 +134,20 @@ class CustomerController extends Controller
          })
          ->addColumn('purchases', function ($row) {
             $purchase=ceil($row->total_purchase - $row->total_return* 100) / 100;
-            return $html =
-            '<a data-href="' . action('CustomerController@show', $row->id) . '?show=purchases"
-           class="btn">'.$purchase.'</a>';
+            return $purchase;
+       
          })
          ->addColumn('discount', function ($row) {
             $discount=ceil($row->total_sp_discount + $row->total_product_discount + $row->total_coupon_discount* 100) / 100;
-            return $html =
-            '<a data-href="' . action('CustomerController@show', $row->id) . '?show=discounts"
-           class="btn">'.$discount.'</a>';
+            return $discount;
          })
          ->addColumn('points', function ($row) {
-            return $html =
-            '<a data-href="' . action('CustomerController@show', $row->id) . '?show=points"
-           class="btn">'.$row->total_rp.'</a>';
+            return $row->total_rp;
          })
          ->addColumn('joining_date', function ($row) {
             return $row->created_at->format('Y-m-d');
          })
-        ->rawColumns([
-            'customer_type',
-            'image',
-            'created_by',
-            'customer_name',
-            'mobile_number',
-            'address',
-            'balance','purchases','discount','points','joining_date','action'
-        ])
+      
         ->editColumn('created_by', '{{$created_by_name}}')
 
         ->addColumn(
@@ -269,6 +257,14 @@ class CustomerController extends Controller
                 return $html;
             }
         )
+          ->rawColumns([
+            'customer_type',
+            'image',
+            'created_by',
+            'mobile_number',
+            'address',
+            'balance','purchases','discount','points','joining_date','action'
+        ])
         ->make(true);
         }
         return view('customer.index');

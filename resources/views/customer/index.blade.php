@@ -11,6 +11,33 @@
             @lang('lang.customer')</a>
 
     </div>
+    <div class="row">
+        <div class="col-sm-12">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('start_date', __('lang.start_date'), []) !!}
+                                {!! Form::date('startdate', request()->start_date, ['class' => 'form-control','id'=>'startdate']) !!}
+                            </div>
+                        </div>
+                
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('end_date', __('lang.end_date'), []) !!}
+                                {!! Form::date('enddate', request()->end_date, ['class' => 'form-control ','id'=>'enddate']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-success mt-4 filter_product">@lang('lang.filter')</button>
+
+                            <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
+                        
+                        </div> 
+                    </div>
+                </div>
+        </div>
+    </div>
     <div class="table-responsive">
         <table id="store_table" class="table" style="width: auto">
             <thead>
@@ -73,12 +100,19 @@
                 buttons: buttons,
                 processing: true,
                 // searching: true,
-                serverSide: true,
-                aaSorting: [
-                    [2, 'asc']
-                ],
+                // serverSide: true,
+                aaSorting: [[2, 'asc']],
+                // bPaginate: false,
+                // bFilter: false,
+                // bInfo: false,
+                bSortable: true,
+                bRetrieve: true,
                 "ajax": {
                     "url": "/customer",
+                    "data": function(d) {
+                        d.startdate = $('#startdate').val();
+                        d.enddate = $('#enddate').val();
+                    }
                 },
                 columnDefs: [{
                     // "targets": [0,2, 3],
@@ -112,15 +146,39 @@
                     },
                     {
                         data: 'purchases',
-                        name: 'purchases'
+                        name: 'purchases',
+                        render: function (data, type, row) {
+                            if (type === 'display' && row.id !== null) {
+                                var url = '{{ url("customer") }}/' + row.id + '?show=purchases';
+                                return '<a href="' + url + '">' + data + '</a>';
+                            } else {
+                                return data;
+                            }
+                        }
                     },
                     {
                         data: 'discount',
-                        name: 'discount'
+                        name: 'discount',
+                        render: function (data, type, row) {
+                            if (type === 'display' && row.id !== null) {
+                                var url = '{{ url("customer") }}/' + row.id + '?show=discounts';
+                                return '<a href="' + url + '">' + data + '</a>';
+                            } else {
+                                return data;
+                            }
+                        }
                     },
                     {
                         data: 'points',
-                        name: 'points'
+                        name: 'points',
+                        render: function (data, type, row) {
+                            if (type === 'display' && row.id !== null) {
+                                var url = '{{ url("customer") }}/' + row.id + '?show=points';
+                                return '<a href="' + url + '">' + data + '</a>';
+                            } else {
+                                return data;
+                            }
+                        }
                     },
                     {
                         data: 'created_by',
@@ -267,6 +325,17 @@
                     });
                 }
             });
+
+            
+        });
+        $(document).on('click', '.filter_product', function() {
+            store_table.ajax.reload();
+        })
+        $(document).on('click', '.clear_filters', function(e) {
+            // e.preventDefault();
+            $('#startdate').val('');
+            $('#enddate').val('');
+            store_table.ajax.reload();
         });
     </script>
 @endsection
