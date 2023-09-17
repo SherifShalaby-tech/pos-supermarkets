@@ -1473,6 +1473,8 @@ class SellPosController extends Controller
                 ->editColumn('status', function ($row) {
                     if ($row->status == 'canceled') {
                         return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
+                    } elseif ($row->status == 'final' && $row->payment_status == 'pending') {
+                        return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
                     } else {
                         return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
                     }
