@@ -86,18 +86,24 @@ class CustomerController extends Controller
                 ->selectRaw('SUM(IF(type="sell", total_sp_discount, 0)) as total_sp_discount')
                 ->selectRaw('SUM(IF(type="sell", total_product_discount, 0)) as total_product_discount')
                 ->selectRaw('SUM(IF(type="sell", total_coupon_discount, 0)) as total_coupon_discount')
+                ->when(!empty(request()->startdate), function ($query) {
+                    return $query->where('transactions.transaction_date', '>=', request()->startdate . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+                })
+                ->when(!empty(request()->enddate), function ($query) {
+                    return $query->where('transactions.transaction_date', '>=', request()->enddate . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+                })
                 ->groupBy('customer_id'),
             'transaction_totals',
             'customers.id',
             '=',
             'transaction_totals.customer_id'
         );
-        if (!empty(request()->startdate)) {
-            $query->where('transactions.transaction_date','>=', request()->startdate. ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->enddate)) {
-            $query->where('transactions.transaction_date','<=', request()->enddate. ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
+        // if (!empty(request()->startdate)) {
+        //     $query->where('transactions.transaction_date','>=', request()->startdate. ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        // }
+        // if (!empty(request()->enddate)) {
+        //     $query->where('transactions.transaction_date','<=', request()->enddate. ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        // }
         $query->select(
             'customers.*',
             'customers.name as customer_name',
