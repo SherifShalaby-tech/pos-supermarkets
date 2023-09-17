@@ -1430,4 +1430,6 @@ return [
     'total_rows'=>'عدد الموظفين',
     'total_before_discount'=>'المجموع قبل الخصم',
     'show'=>'اظهار',
+    'added_balance' => 'الارصدة المضافة',
+
 ];
