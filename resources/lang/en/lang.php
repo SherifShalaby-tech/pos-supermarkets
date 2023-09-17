@@ -1446,4 +1446,5 @@ return [
     'wins'=>'profits',
     'total_before_discount'=>'Total Before discount',
     'show'=>'Show',
+    'added_balance' => 'Added Balance',
 ];
