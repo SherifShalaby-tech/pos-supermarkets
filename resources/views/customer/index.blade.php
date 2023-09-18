@@ -51,7 +51,7 @@
                     <th>@lang('lang.purchases')</th>
                     <th>@lang('lang.discount')</th>
                     <th>@lang('lang.points')</th>
-                    <th>@lang('lang.added_balance')</th>
+                    {{-- <th>@lang('lang.added_balance')</th> --}}
                     <th>@lang('lang.created_by')</th>
                     <th>@lang('lang.joining_date')</th>
                     <th class="notexport">@lang('lang.action')</th>
@@ -62,7 +62,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td></td>
+                    {{-- <td></td> --}}
                     <td></td>
                     <td></td>
                     <td></td>
@@ -182,10 +182,10 @@
                             }
                         }
                     },
-                    {
-                        data: 'total_balance_adjustment',
-                        name: 'total_balance_adjustment'
-                    },
+                    // {
+                    //     data: 'total_balance_adjustment',
+                    //     name: 'total_balance_adjustment'
+                    // },
                     {
                         data: 'created_by',
                         name: 'users.name'
