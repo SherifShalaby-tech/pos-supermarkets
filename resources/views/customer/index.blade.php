@@ -29,6 +29,17 @@
                             </div>
                         </div>
                         <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('customer_type_id', __('lang.customer_type') . ':', []) !!}
+                                {!! Form::select('customer_type_id', $customer_types, request()->customer_type_id, [
+                                        'class' => 'form-control filter_product
+                                                            selectpicker',
+                                        'data-live-search' => 'true',
+                                        'placeholder' => __('lang.all'),
+                                ]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <button type="button" class="btn btn-success mt-4 filter_product">@lang('lang.filter')</button>
 
                             <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
@@ -102,7 +113,7 @@
                 buttons: buttons,
                 processing: true,
                 // searching: true,
-                // serverSide: true,
+                serverSide: true,
                 aaSorting: [[2, 'asc']],
                 // bPaginate: false,
                 // bFilter: false,
@@ -114,11 +125,17 @@
                     "data": function(d) {
                         d.startdate = $('#startdate').val();
                         d.enddate = $('#enddate').val();
+                        d.customer_type_id = $('#customer_type_id').val()
                     }
                 },
                 columnDefs: [{
                     // "targets": [0,2, 3],
                     "orderable": true,
+                    "searchable": true
+                },
+                {
+                    "targets": [6], // Column 6 (purchases)
+                    "orderable": true, // Enable sorting for the "purchases" column
                     "searchable": true
                 }],
                 columns: [

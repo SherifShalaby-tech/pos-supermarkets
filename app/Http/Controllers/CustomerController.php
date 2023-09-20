@@ -66,71 +66,50 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        // return request()->enddate;
+        
         if (request()->ajax()) {
-        // $query = Customer::
-        // leftjoin('users', 'customers.created_by', 'users.id')
-        // ->leftJoinSub(
-        //     DB::table('customer_balance_adjustments')
-        //         ->select('customer_id', DB::raw('SUM(add_new_balance) as total_balance_adjustment'))
-        //         ->groupBy('customer_id'),
-        //     'balance_adjustments',
-        //     'customers.id',
-        //     '=',
-        //     'balance_adjustments.customer_id'
-        // )
-        // ->leftJoinSub(
-        //     DB::table('transactions')
-        //         ->select('customer_id', DB::raw('SUM(IF(type="sell_return", final_total, 0)) as total_return'))
-        //         ->selectRaw('SUM(IF(type="sell", final_total, 0)) as total_purchase')
-        //         ->selectRaw('SUM(IF(type="sell", total_sp_discount, 0)) as total_sp_discount')
-        //         ->selectRaw('SUM(IF(type="sell", total_product_discount, 0)) as total_product_discount')
-        //         ->selectRaw('SUM(IF(type="sell", total_coupon_discount, 0)) as total_coupon_discount')
-        //         // ->when(!empty(request()->startdate), function ($query) {
-        //         //     return $query->where('transactions.transaction_date', '>=', request()->startdate . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        //         // })
-        //         // ->when(!empty(request()->enddate), function ($query) {
-        //         //     return $query->where('transactions.transaction_date', '>=', request()->enddate . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        //         // })
-        //         ->groupBy('customer_id'),
-        //     'transaction_totals',
-        //     'customers.id',
-        //     '=',
-        //     'transaction_totals.customer_id'
-        // );
+       
          $query = Customer::
                 leftjoin('transactions', 'customers.id', 'transactions.customer_id')
                 ->leftjoin('users', 'customers.created_by', 'users.id')
-                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
-                ->select(
-                    'customers.*',
-                    'users.name as created_by_name',
-                    'customer_types.name as customer_type_name',
-                    DB::raw('SUM(IF(transactions.type="sell_return", final_total, 0)) as total_return'),
-                    DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_purchase'),
-                    DB::raw('SUM(IF(transactions.type="sell", total_sp_discount, 0)) as total_sp_discount'),
-                    DB::raw('SUM(IF(transactions.type="sell", total_product_discount, 0)) as total_product_discount'),
-                    DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
-                );
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id');
+                
         if (!empty(request()->startdate)) {
             $query->where('transactions.transaction_date','>=', request()->startdate. ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
         }
         if (!empty(request()->enddate)) {
             $query->where('transactions.transaction_date','<=', request()->enddate. ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
         }
-        // $query->select(
-        //     'customers.*',
-        //     'customers.name as customer_name',
-        //     'users.name as created_by_name',
-        //     'transaction_totals.total_return',
-        //     'transaction_totals.total_purchase',
-        //     'transaction_totals.total_sp_discount',
-        //     'transaction_totals.total_product_discount',
-        //     'transaction_totals.total_coupon_discount',
-        //     'balance_adjustments.total_balance_adjustment'
-        // );
+        if (!empty(request()->customer_type_id)) {
+            $query->where('customer_types.id',request()->customer_type_id);
+        }
+        
+        $query->select(
+            'customers.*',
+            'users.name as created_by_name',
+            'customer_types.name as customer_type_name',
+            DB::raw('SUM(IF(transactions.type="sell_return", final_total, 0)) as total_return'),
+            DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_purchase'),
+            DB::raw('SUM(IF(transactions.type="sell", total_sp_discount, 0)) as total_sp_discount'),
+            DB::raw('SUM(IF(transactions.type="sell", total_product_discount, 0)) as total_product_discount'),
+            DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
+           
+        );
 
-       
+        $query->addSelect(DB::raw('(SUM(IF(transactions.type="sell", final_total, 0)) - SUM(IF(transactions.type="sell_return", final_total, 0))) as purchases'));
+
+        // Check if there is a request to sort by the "purchases" column
+        if (!empty(request()->input('order'))) {
+            $order = request()->input('order')[0];
+            $columnIndex = $order['column'];
+            $columnName = request()->input('columns')[$columnIndex]['data'];
+            $columnDirection = $order['dir'];
+        
+            if ($columnName == 'purchases') {
+                // Use the alias "purchases" for sorting
+                $query->orderBy('purchases', $columnDirection);
+            }
+        }
 
          $customers = $query->groupBy('customers.id');
         return DataTables::of($customers)
@@ -149,14 +128,11 @@ class CustomerController extends Controller
                 return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
             }
         })
-        // ->editColumn('customer_name', '{{$customer_name}}')
         ->editColumn('customer_name','{{$name}}')
         ->addColumn('mobile_number', function ($row) {
            return $row->mobile_number;
         })
-        // ->addColumn('balance', function ($row) {
-        //     return $row->address;
-        //  })
+       
         ->addColumn('address', function ($row) {
             return $row->address;
          })
@@ -176,7 +152,7 @@ class CustomerController extends Controller
             }
          })
          ->addColumn('purchases', function ($row) {
-            $purchase=ceil($row->total_purchase - $row->total_return* 100) / 100;
+            $purchase=number_format(($row->total_purchase - $row->total_return) ,2);
             return $purchase;
        
          })
@@ -190,9 +166,7 @@ class CustomerController extends Controller
          ->addColumn('joining_date', function ($row) {
             return $row->created_at->format('Y-m-d');
          })
-        //  ->addColumn('total_balance_adjustment', function ($row) {
-        //     return $row->total_balance_adjustment;
-        //  })
+       
       
         ->editColumn('created_by', '{{$created_by_name}}')
 
@@ -313,7 +287,8 @@ class CustomerController extends Controller
         ])
         ->make(true);
         }
-        return view('customer.index');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        return view('customer.index')->with(compact('customer_types'));
     }
 
     /**
