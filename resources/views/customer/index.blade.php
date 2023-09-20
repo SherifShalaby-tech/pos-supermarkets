@@ -32,10 +32,11 @@
                             <div class="form-group">
                                 {!! Form::label('customer_type_id', __('lang.customer_type') . ':', []) !!}
                                 {!! Form::select('customer_type_id', $customer_types, request()->customer_type_id, [
-                                        'class' => 'form-control filter_product
+                                        'class' => 'form-control 
                                                             selectpicker',
                                         'data-live-search' => 'true',
                                         'placeholder' => __('lang.all'),
+                                        'id'=>'customer_type_id'
                                 ]) !!}
                             </div>
                         </div>
@@ -358,6 +359,7 @@
             // e.preventDefault();
             $('#startdate').val('');
             $('#enddate').val('');
+            $('#customer_type_id').val('')
             store_table.ajax.reload();
         });
     </script>
