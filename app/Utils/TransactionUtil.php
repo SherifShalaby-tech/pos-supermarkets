@@ -1356,7 +1356,7 @@ class TransactionUtil extends Util
      * @param array $payment_types
      * @return void
      */
-    public function getInvoicePrint($transaction, $payment_types, $transaction_invoice_lang = null)
+    public function getInvoicePrint($transaction, $payment_types,$last_due, $transaction_invoice_lang = null)
     {
         $print_gift_invoice = request()->print_gift_invoice;
 
@@ -1402,6 +1402,7 @@ class TransactionUtil extends Util
                 'payment_types',
                 'print_gift_invoice',
                 'total_due',
+                'last_due'
             ))->render();
         } else {
             $html_content = view('sale_pos.partials.invoice')->with(compact(
@@ -1410,7 +1411,7 @@ class TransactionUtil extends Util
                 'invoice_lang',
                 'total_due',
                 'print_gift_invoice',
-                'font','line_height1','line_height2'
+                'font','line_height1','line_height2','last_due'
             ))->render();
         }
 

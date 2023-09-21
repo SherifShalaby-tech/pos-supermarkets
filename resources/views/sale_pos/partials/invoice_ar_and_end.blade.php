@@ -334,6 +334,17 @@
                             </tr>
                         @endif
                         <tr>
+                            <th style="font-size: 20px;" colspan="2">@lang('lang.balance', [], $invoice_lang)</th>
+                            <th style="font-size: {{$font}}; text-align:right;" colspan="2">
+                                {{-- @if ($transaction->delivery_cost_given_to_deliveryman) --}}
+                                    {{-- {{ @num_format($transaction->final_total + $transaction->delivery_cost) }} --}}
+                                {{-- @else --}}
+                                    {{ @num_format($last_due) }}
+                                {{-- @endif --}}
+                                {{ $transaction->received_currency->symbol }}
+                            </th>
+                        </tr>
+                        <tr>
                             <th colspan="2" style="text-align:left">
                                 @if ($transaction->delivery_cost_given_to_deliveryman)
                                     {{ @num_format($transaction->final_total + $transaction->delivery_cost) }}
@@ -410,12 +421,12 @@
                                 </td>
                             </tr>
                         @endif
-                        @if(env('SHOW_DUE',false) && $transaction->customer_id !=  env('DEFAULT_CUSTMER',1) && $total_due < 0)
+                        @if( $total_due != 0)
                             <tr>
-                                <td style="padding: 7px;width:30%">{{ __('lang.total_due', [], 'ar') }} <br>
+                                <td style="padding: 7px;width:30%">{{ __('lang.remaining_balance', [], 'ar') }} <br>
                                     {{ __('lang.total_due', [], 'en') }}</td>
                                 <td colspan="2" style="font-size: 16px; padding: 5px;width:40%; text-align: right;">
-                                    {{ @num_format($total_due*-1) }}
+                                    {{ @num_format($total_due) }}
                                     {{ $transaction->received_currency->symbol }}
                                 </td>
                             </tr>
