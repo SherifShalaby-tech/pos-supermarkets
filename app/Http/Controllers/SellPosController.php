@@ -108,6 +108,7 @@ class SellPosController extends Controller
         if (!$lastExecutionDate || $lastExecutionDate < $currentDate) {
             // Call the function or perform the desired task
             $this->notificationUtil->checkExpiary();
+            $this->notificationUtil->quantityAlert();
             // Store the current date as the last execution date
             Cache::put('last_execution_date', $currentDate, 1440); // 1440 minutes = 1 day
         }
@@ -193,6 +194,7 @@ class SellPosController extends Controller
     {
         // return $request->terms_and_condition_id;
         // try {
+        $last_due = ($this->transactionUtil->getCustomerBalance($request->customer_id)['balance']) ;
         $transaction_data = [
             'store_id' => $request->store_id,
             'customer_id' => $request->customer_id,
@@ -250,7 +252,7 @@ class SellPosController extends Controller
             'shared_commission' => !empty($request->shared_commission) ? 1 : 0,
             'created_by' => Auth::user()->id,
         ];
-
+        
         $transaction_data['dining_room_id'] = null;
         if (!empty($request->dining_table_id)) {
             $dining_table = DiningTable::find($request->dining_table_id);
@@ -267,7 +269,8 @@ class SellPosController extends Controller
             $transaction_data['validity_days'] = !empty($request->validity_days) ? $request->validity_days : 0;
         }
         $transaction = Transaction::create($transaction_data);
-
+        
+       
         $this->transactionUtil->createOrUpdateTransactionSellLine($transaction, $request->transaction_sell_line);
 
         foreach ($request->transaction_sell_line as $sell_line) {
@@ -319,7 +322,7 @@ class SellPosController extends Controller
             if ($request->add_to_deposit > 0) {
                 $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
             }
-            $customer->added_balance = $request->add_to_customer_balance;
+            $customer->added_balance = $customer->added_balance + $request->add_to_customer_balance;
             if($request->add_to_customer_balance > 0){
                 $register = CashRegister::where('store_id', $request->store_id)->where('store_pos_id',$request->store_pos_id)->where('user_id',Auth::user()->id)->where('closed_at', null)->where('status','open')->first();
                 $this->cashRegisterUtil->createCashRegisterTransaction($register,$request->add_to_customer_balance, 'cash_in','debit', $request->customer_id,$request->notes ,null, 'customer_balance');
@@ -457,7 +460,7 @@ class SellPosController extends Controller
                 $this->notificationUtil->sendSellInvoiceToCustomer($transaction->id, $request->emails);
             }
             if ($request->action == 'print') {
-                $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
+                $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types,$last_due);
 
                 $output = [
                     'success' => true,
@@ -472,7 +475,7 @@ class SellPosController extends Controller
         }
 
         if (!empty($transaction->dining_table_id)) {
-            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang);
+            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types,$last_due, $request->invoice_lang);
 
             $output = [
                 'success' => true,
@@ -494,7 +497,7 @@ class SellPosController extends Controller
         }
 
 
-        $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang);
+        $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types,$last_due, $request->invoice_lang);
 
         
         $output = [

@@ -344,6 +344,19 @@ if (empty($invoice_lang)) {
                                 </th>
                             </tr>
                         @endif
+                        @if($last_due != 0)
+                            <tr>
+                                <th style="font-size: 20px;" colspan="2">@lang('lang.balance', [], $invoice_lang)</th>
+                                <th style="font-size: {{$font}}; text-align:right;" colspan="2">
+                                    {{-- @if ($transaction->delivery_cost_given_to_deliveryman) --}}
+                                        {{-- {{ @num_format($transaction->final_total + $transaction->delivery_cost) }} --}}
+                                    {{-- @else --}}
+                                        {{ @num_format($last_due) }}
+                                    {{-- @endif --}}
+                                    {{ $transaction->received_currency->symbol }}
+                                </th>
+                            </tr>
+                        @endif
                         <tr>
                             <th style="font-size: 20px;" colspan="2">@lang('lang.grand_total', [], $invoice_lang)</th>
                             <th style="font-size: {{$font}}; text-align:right;" colspan="2">
@@ -418,11 +431,11 @@ if (empty($invoice_lang)) {
                             @endif
                         @endif
 
-                        @if(env('SHOW_DUE',false) && $transaction->customer_id !=  env('DEFAULT_CUSTMER',1) && $total_due < 0)
+                        @if( $total_due != 0)
                             <tr>
-                                <td style="font-size: {{$font}}; padding: 5px;width:30%">@lang('lang.total_due', [], $invoice_lang)</td>
+                                <td style="font-size: {{$font}}; padding: 5px;width:30%">@lang('lang.remaining_balance', [], $invoice_lang)</td>
                                 <td colspan="2" style="font-size: {{$font}}; padding: 5px;width:40%; text-align: right;">
-                                    {{ @num_format($total_due*-1) }}
+                                    {{ @num_format($total_due) }}
                                     {{ $transaction->received_currency->symbol }}
                                 </td>
                             </tr>

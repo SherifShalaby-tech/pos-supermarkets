@@ -7,6 +7,7 @@ use App\Models\AddStockLine;
 use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Notification as ModelsNotification;
+use App\Models\Product;
 use App\Models\ProductStore;
 use App\Models\Supplier;
 use App\Models\System;
@@ -509,6 +510,36 @@ class NotificationUtil extends Util
                     $ps->expired_qauntity = $ps->expired_qauntity + $item->remaining_qty;
                     $ps->save();
                     $item->update(['expired_qauntity' => $item->remaining_qty]);
+                }
+            }
+        }
+    }
+    public function quantityAlert(){
+        $query = Product::leftjoin('product_stores', 'products.id', 'product_stores.product_id')
+        ->select(DB::raw('SUM(qty_available) as qty'), 'products.*')
+        ->havingRaw('qty < alert_quantity');
+
+        $items = $query->groupBy('products.id')->get();
+
+        $users = User::where(function ($q) {
+            $q->where('is_superadmin', 1);
+            $q->orWhere('is_admin', 1);
+        })->get();
+
+        foreach($items as $item){
+            foreach ($users as $user) {
+                $notification_data = [
+                    'user_id' => $user->id,
+                    'product_id' => $item->id,
+                    'qty_available' => $item->qty,
+                    'alert_quantity' => $item->alert_quantity,
+                    'type' => 'quantity_alert',
+                    'status' => 'unread',
+                    'created_by' => 1,
+                ];
+                $notification_exist = ModelsNotification::where('user_id', $user->id)->where('type', 'quantity_alert')->where('product_id',$item->id )->where('status', 'unread')->first();
+                if(empty($notification_exist)){
+                    $this->createNotification($notification_data);
                 }
             }
         }
