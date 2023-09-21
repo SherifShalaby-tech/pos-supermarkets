@@ -344,17 +344,19 @@ if (empty($invoice_lang)) {
                                 </th>
                             </tr>
                         @endif
-                        <tr>
-                            <th style="font-size: 20px;" colspan="2">@lang('lang.balance', [], $invoice_lang)</th>
-                            <th style="font-size: {{$font}}; text-align:right;" colspan="2">
-                                {{-- @if ($transaction->delivery_cost_given_to_deliveryman) --}}
-                                    {{-- {{ @num_format($transaction->final_total + $transaction->delivery_cost) }} --}}
-                                {{-- @else --}}
-                                    {{ @num_format($last_due) }}
-                                {{-- @endif --}}
-                                {{ $transaction->received_currency->symbol }}
-                            </th>
-                        </tr>
+                        @if($last_due != 0)
+                            <tr>
+                                <th style="font-size: 20px;" colspan="2">@lang('lang.balance', [], $invoice_lang)</th>
+                                <th style="font-size: {{$font}}; text-align:right;" colspan="2">
+                                    {{-- @if ($transaction->delivery_cost_given_to_deliveryman) --}}
+                                        {{-- {{ @num_format($transaction->final_total + $transaction->delivery_cost) }} --}}
+                                    {{-- @else --}}
+                                        {{ @num_format($last_due) }}
+                                    {{-- @endif --}}
+                                    {{ $transaction->received_currency->symbol }}
+                                </th>
+                            </tr>
+                        @endif
                         <tr>
                             <th style="font-size: 20px;" colspan="2">@lang('lang.grand_total', [], $invoice_lang)</th>
                             <th style="font-size: {{$font}}; text-align:right;" colspan="2">
