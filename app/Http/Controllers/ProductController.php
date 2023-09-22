@@ -1275,18 +1275,22 @@ class ProductController extends Controller
             //     }
             // }
 
-
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                // Clear the media collection only once, before the loop
+                $product->clearMediaCollection('product');
+                
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-                    if (strlen($imageData) > 300){
-                        $product->clearMediaCollection('product');
-                        $extention = explode(";",explode("/",$imageData)[1])[0];
-                        $image = rand(1,1500)."_image.".$extention;
-                        $filePath = public_path('uploads/' . $image);
-                        $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-                        $product->addMedia($filePath)->toMediaCollection('product');
-                    }
+                    $extention = explode(";", explode("/", $imageData)[1])[0];
+                    $image = rand(1, 1500) . "_image." . $extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+                    $product->addMedia($filePath)->toMediaCollection('product');
                 }
+            }
+            
+            if (strlen($request->input('image')) == 0) {
+                // You can clear the media collection here if needed
+                // $product->clearMediaCollection('product');
             }
             if (!empty($request->supplier_id)) {
                 SupplierProduct::updateOrCreate(
