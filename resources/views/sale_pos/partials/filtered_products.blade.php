@@ -4,7 +4,7 @@
             @php
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
-                        $stockLines=\App\Models\AddStockLine::where('variation_id',$Variation->id)->whereColumn('quantity',">",'quantity_sold')->first();
+                        $stockLines=\App\Models\AddStockLine::where('variation_id',$Variation->id)->first();
                         $default_sell_price=$stockLines?$stockLines->sell_price : $Variation->default_sell_price;
 
                     }

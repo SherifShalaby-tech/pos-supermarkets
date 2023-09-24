@@ -460,7 +460,7 @@ class SellPosController extends Controller
                 $this->notificationUtil->sendSellInvoiceToCustomer($transaction->id, $request->emails);
             }
             if ($request->action == 'print') {
-                $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types,$last_due);
+                $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types,null,$last_due);
 
                 $output = [
                     'success' => true,
@@ -475,7 +475,7 @@ class SellPosController extends Controller
         }
 
         if (!empty($transaction->dining_table_id)) {
-            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types,$last_due, $request->invoice_lang);
+            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types,$request->invoice_lang,$last_due);
 
             $output = [
                 'success' => true,
@@ -497,7 +497,7 @@ class SellPosController extends Controller
         }
 
 
-        $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types,$last_due, $request->invoice_lang);
+        $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang,$last_due);
 
         
         $output = [
