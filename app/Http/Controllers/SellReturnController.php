@@ -475,7 +475,6 @@ class SellReturnController extends Controller
                             if(isset($line->stock_line_id)){
                                 $stock = AddStockLine::where('id',$line->stock_line_id)->first();
                                 $stock->update([
-                                    'quantity' =>  $stock->quantity + $old_quantity,
                                     'quantity_sold' =>  $stock->quantity - $old_quantity
                                 ]);
                             }
