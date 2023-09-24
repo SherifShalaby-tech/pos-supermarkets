@@ -879,7 +879,7 @@ class SellPosController extends Controller
             'variations.id as variation_id',
             'variations.name as variation_name',
             'variations.sub_sku',
-            'product_stores.qty_available',
+            'product_stores.qty_available as qty_available',
             'product_stores.block_qty',
         );
 
