@@ -467,6 +467,9 @@ class SellReturnController extends Controller
 
                         $line = TransactionSellLine::find($sell_line['transaction_sell_line_id']);
                         $old_quantity = $line->quantity_returned;
+                        // $line->quantity = $line->quantity-$sell_line['quantity'];
+                        // $line->sub_total = $sell_line['sub_total'];
+                        // $line->sell_price = $sell_line['sub_total'];
                         $line->quantity_returned = $sell_line['quantity'];
                         $line->save();
                         $product = Product::find($line->product_id);
