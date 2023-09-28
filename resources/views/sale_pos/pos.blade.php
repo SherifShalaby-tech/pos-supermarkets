@@ -1,453 +1,1199 @@
 @extends('layouts.app')
 @section('title', __('lang.pos'))
-
 @section('content')
+
+    <style>
+        .first-head {
+            width: fit-content;
+        }
+
+        .first-head .btn {
+            border: none;
+            border-radius: 16px;
+            color: #999;
+            font-weight: 200;
+            font-size: 16px;
+        }
+
+        .terms .dropdown-menu {
+            margin: 15px 0 0;
+        }
+
+        .terms {
+            width: 100% !important;
+
+        }
+
+
+        .terms .btn {
+            border: none;
+            border-radius: 16px;
+            color: #999;
+            font-weight: 200;
+            font-size: 16px;
+            width: 100%
+        }
+
+        .terms .dropdown-menu {
+            width: 100% margin: 15px 0 0;
+        }
+
+        .label {
+            font-weight: 700;
+            color: #000
+        }
+    </style>
     @php
-    $watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
+        $watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
     @endphp
+
+    <section class=" grid grid-cols-5 p-0">
+        <audio id="mysoundclip1" preload="auto">
+            <source src="{{ asset('audio/beep-timber.mp3') }}">
+            </source>
+        </audio>
+        <audio id="mysoundclip2" preload="auto">
+            <source src="{{ asset('audio/beep-07.mp3') }}">
+            </source>
+        </audio>
+        <audio id="mysoundclip3" preload="auto">
+            <source src="{{ asset('audio/beep-long.mp3') }}">
+            </source>
+        </audio>
+
+        {{-- Navbar --}}
+        <div class=" col-span-5 d-flex flex-column flex-lg-row justify-content-between align-items-center py-2 px-4"
+            style="background-color: #A0D8A1;">
+            <div>
+                <a id="toggle-btn" href="#" class="menu-btn">
+                    <div class=" rounded-lg px-2 d-flex justify-content-center align-items-center"
+                        style="background-color: white;border-radius: 6px;width: 30px;height: 30px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5em"
+                            viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                            <path
+                                d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <div class="d-flex justify-content-start flex-grow-1 align-items-center">
+
+                <a href="{{ action('SellController@create') }}" id="commercial_invoice_btn" data-toggle="tooltip"
+                    data-title="@lang('lang.add_sale')"
+                    class="btn no-print font-weight-bold d-flex justify-content-center align-items-center py-0 mr-1 mr-lg-4"
+                    style="color: black;background-color: white; font-size: 20px">
+                    {{-- <i class="fas fa-receipt"></i> --}}
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                        viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                        <style>
+                            svg {
+                                fill: #000
+                            }
+                        </style>
+                        <path
+                            d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM80 64h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16s7.2-16 16-16zm16 96H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V256c0-17.7 14.3-32 32-32zm0 32v64H288V256H96zM240 416h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16s7.2-16 16-16z" />
+                    </svg>
+                    {{-- <i class="fa-file-invoice"></i> --}}
+                    <span class=" ml-1">Invoices</span>
+                </a>
+
+
+
+                <a href="#"
+                    class="btn btn-sm hide font-weight-bold d-flex justify-content-center align-items-center py-0 px-3 mr-1 mr-lg-4"
+                    id="power_off_btn" style="color: white;background-color: #21912A; font-size: 20px">
+                    <svg class="bag" xmlns="http://www.w3.org/2000/svg" height="1em"
+                        viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                        <style>
+                            .bag {
+                                fill: #ffffff
+                            }
+                        </style>
+                        <path
+                            d="M160 112c0-35.3 28.7-64 64-64s64 28.7 64 64v48H160V112zm-48 48H48c-26.5 0-48 21.5-48 48V416c0 53 43 96 96 96H352c53 0 96-43 96-96V208c0-26.5-21.5-48-48-48H336V112C336 50.1 285.9 0 224 0S112 50.1 112 112v48zm24 48a24 24 0 1 1 0 48 24 24 0 1 1 0-48zm152 24a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z" />
+                    </svg>
+                    <span class="ml-1">POS</span>
+                </a>
+
+                {{-- <div class="inline" style="width: 30px;height: 30px;"> --}}
+                <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $watsapp_numbers }}" id="contact_us_btn"
+                    data-toggle="tooltip" data-title="@lang('lang.contact_us')"
+                    style="background-image:  url('{{ asset('images/watsapp.jpg') }}');background-size: 30px;width:30px"
+                    class="btn no-print mr-1 mr-lg-4">
+                </a>
+                {{-- </div> --}}
+
+                @php
+                    $config_languages = config('constants.langs');
+                    $languages = [];
+                    foreach ($config_languages as $key => $value) {
+                        $languages[$key] = $value['full_name'];
+                    }
+                @endphp
+
+                <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false"
+                    class=" dropdown-item  mr-1 mr-lg-4 d-flex justify-content-center align-items-center"
+                    style="color: black;background-color: white; font-size: 20px;width: 30px;height: 30px; border-radius: 8px;"><i
+                        class="dripicons-web"></i>
+
+                </a>
+                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                    @foreach ($languages as $key => $lang)
+                        <li>
+                            <a href="{{ action('GeneralController@switchLanguage', $key) }}" class="btn btn-link">
+                                {{ $lang }}</a>
+                        </li>
+                    @endforeach
+
+                </ul>
+
+                @include('layouts.partials.notification_list')
+
+                <li class=" mr-1 mr-lg-4 d-flex justify-content-center align-items-center"
+                    style="color: black;background-color: white; font-size: 20px;width: 30px;height: 30px; border-radius: 8px;list-style: none">
+                    <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false" class=" dropdown-item d-flex justify-content-center align-items-center">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                            viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                            <path
+                                d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
+                        </svg>
+
+                    </a>
+                    <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                        @php
+                            $employee = App\Models\Employee::where('user_id', Auth::user()->id)->first();
+                        @endphp
+                        <li style="text-align: center">
+                            <img src="@if (!empty($employee->getFirstMediaUrl('employee_photo'))) {{ $employee->getFirstMediaUrl('employee_photo') }}@else{{ asset('images/default.jpg') }} @endif"
+                                style="width: 60px; border: 2px solid #fff; padding: 4px; border-radius: 50%;" />
+                        </li>
+                        <li>
+                            <a href="{{ action('UserController@getProfile') }}"><i class="dripicons-user"></i>
+                                @lang('lang.profile')</a>
+                        </li>
+                        @can('settings.general_settings.view')
+                            <li>
+                                <a href="{{ action('SettingController@getGeneralSetting') }}"><i class="dripicons-gear"></i>
+                                    @lang('lang.settings')</a>
+                            </li>
+                        @endcan
+                        <li>
+                            <a href="{{ url('my-transactions/' . date('Y') . '/' . date('m')) }}"><i
+                                    class="dripicons-swap"></i>
+                                @lang('lang.my_transactions')</a>
+                        </li>
+                        @if (Auth::user()->role_id != 5)
+                            <li>
+                                <a href="{{ url('my-holidays/' . date('Y') . '/' . date('m')) }}"><i
+                                        class="dripicons-vibrate"></i>
+                                    @lang('lang.my_holidays')</a>
+                            </li>
+                        @endif
+
+                        <li>
+                            <a href="#" id="logout-btn"><i class="dripicons-power"></i>
+                                @lang('lang.logout')
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <a class=" dropdown-item  mr-1 mr-lg-4 d-flex justify-content-center align-items-center"
+                    style="color: black;background-color: white; font-size: 20px;width: 30px;height: 30px; border-radius: 8px;"
+                    id="btnFullscreen" title="Full Screen">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em"
+                        viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                        <path
+                            d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V64zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32H96v64c0 17.7 14.3 32 32 32s32-14.3 32-32V352c0-17.7-14.3-32-32-32H32zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H352V64zM320 320c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32s32-14.3 32-32V384h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H320z" />
+                    </svg>
+                </a>
+
+
+            </div>
+        </div>
+
+        <div class="p-4 row">
+            <div class="col-lg-10 ">
+                <div class="bg-white mb-4 py-2 d-flex flex-column flex-lg-row justify-content-between align-items-center"
+                    style="border-radius: 8px;width: 100%">
+
+                    <div class="col-lg-2 d-flex justify-content-center align-items-center">
+                        <div class="form-group mb-2 mb-lg-0 "
+                            style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 4px 6px;
+                                    width: fit-content;">
+                            {{-- {!! Form::label('store_id', __('lang.store') . ':*', []) !!} --}}
+                            {!! Form::select('store_id', $stores, $store_pos->store_id, [
+                                'class' => 'selectpicker first-head',
+                                'data-live-search' => 'true',
+                                'required',
+                                'placeholder' => __('lang.please_select'),
+                            ]) !!}
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 d-flex justify-content-center align-items-center">
+                        <div class="form-group mb-2 mb-lg-0 "
+                            style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 4px 6px;
+                                    width: fit-content;">
+                            {{-- {!! Form::label('store_pos_id', __('lang.pos') . ':*', []) !!} --}}
+                            {!! Form::select('store_pos_id', $store_poses, $store_pos->id, [
+                                'class' => 'selectpicker first-head',
+                                'data-live-search' => 'true',
+                                'required',
+                                'placeholder' => __('lang.please_select'),
+                            ]) !!}
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 d-flex justify-content-center align-items-center">
+                        <div class="form-group mb-2 mb-lg-0 "
+                            style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 4px 6px;
+                                    width: fit-content;">
+                            <input type="hidden" name="setting_invoice_lang" id="setting_invoice_lang"
+                                value="{{ !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en' }}">
+                            {{-- {!! Form::label('invoice_lang', __('lang.invoice_lang') . ':', []) !!} --}}
+                            {!! Form::select(
+                                'invoice_lang',
+                                $languages + ['ar_and_en' => 'Arabic and English'],
+                                !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en',
+                                ['class' => 'first-head selectpicker', 'data-live-search' => 'true'],
+                            ) !!}
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 d-flex justify-content-center align-items-center">
+                        <div class="form-group mb-2 mb-lg-0 "
+                            style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                                box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 4px 6px;
+                                    width: fit-content;">
+                            <input type="hidden" name="exchange_rate" id="exchange_rate" value="1">
+                            <input type="hidden" name="default_currency_id" id="default_currency_id"
+                                value="{{ !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : '' }}">
+                            {{-- {!! Form::label('received_currency_id', __('lang.received_currency') . ':', []) !!} --}}
+                            {!! Form::select(
+                                'received_currency_id',
+                                $exchange_rate_currencies,
+                                !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : null,
+                                ['class' => 'first-head selectpicker', 'data-live-search' => 'true'],
+                            ) !!}
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 d-flex justify-content-center align-items-center">
+                        <button type="button"
+                            class="btn btn-link btn-sm d-flex justify-content-center align-items-center"
+                            style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                                box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 10px 8px;
+                                    width: 50%;"
+                            data-toggle="modal" data-target="#delivery-cost-modal">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" height="2em"
+                                viewBox="0 0 640 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                <path
+                                    d="M280 32c-13.3 0-24 10.7-24 24s10.7 24 24 24h57.7l16.4 30.3L256 192l-45.3-45.3c-12-12-28.3-18.7-45.3-18.7H64c-17.7 0-32 14.3-32 32v32h96c88.4 0 160 71.6 160 160c0 11-1.1 21.7-3.2 32h70.4c-2.1-10.3-3.2-21-3.2-32c0-52.2 25-98.6 63.7-127.8l15.4 28.6C402.4 276.3 384 312 384 352c0 70.7 57.3 128 128 128s128-57.3 128-128s-57.3-128-128-128c-13.5 0-26.5 2.1-38.7 6L418.2 128H480c17.7 0 32-14.3 32-32V64c0-17.7-14.3-32-32-32H459.6c-7.5 0-14.7 2.6-20.5 7.4L391.7 78.9l-14-26c-7-12.9-20.5-21-35.2-21H280zM462.7 311.2l28.2 52.2c6.3 11.7 20.9 16 32.5 9.7s16-20.9 9.7-32.5l-28.2-52.2c2.3-.3 4.7-.4 7.1-.4c35.3 0 64 28.7 64 64s-28.7 64-64 64s-64-28.7-64-64c0-15.5 5.5-29.7 14.7-40.8zM187.3 376c-9.5 23.5-32.5 40-59.3 40c-35.3 0-64-28.7-64-64s28.7-64 64-64c26.9 0 49.9 16.5 59.3 40h66.4C242.5 268.8 190.5 224 128 224C57.3 224 0 281.3 0 352s57.3 128 128 128c62.5 0 114.5-44.8 125.8-104H187.3zM128 384a32 32 0 1 0 0-64 32 32 0 1 0 0 64z" />
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div style="border-radius: 8px;width: 100%"
+                    class="bg-white py-2 d-flex flex-column flex-lg-row justify-content-between align-items-start">
+                    <div class="col-lg-3">
+                        {{-- {!! Form::label('customer_id', __('lang.customer'), []) !!} --}}
+                        <div class="form-group mb-4 input-group my-group d-flex flex-row justify-content-center"
+                            style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    width: 90%;
+                                    margin: auto">
+                            {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, [
+                                'class' => 'selectpicker first-head',
+                                'data-live-search' => 'true',
+                                'style' => 'width: 80%',
+                                'id' => 'customer_id',
+                                'required',
+                            ]) !!}
+                            <span class="input-group-btn">
+                                @can('customer_module.customer.create_and_edit')
+                                    <a style="background-color: #F9C751;
+                                     width: 100%;
+                                     height: 100%;
+                                      border-radius: 16px;
+                                      padding: 6px 6px;
+                                      "
+                                        class="d-flex justify-content-center align-items-center top-0 right-0"
+                                        data-href="{{ action('CustomerController@create') }}?quick_add=1"
+                                        data-container=".view_modal">
+                                        <svg class="plus" xmlns="http://www.w3.org/2000/svg" height="2em"
+                                            viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                            <style>
+                                                .plus {
+                                                    fill: #ffffff
+                                                }
+                                            </style>
+                                            <path
+                                                d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                                        </svg>
+                                    </a>
+                                @endcan
+                            </span>
+
+
+
+
+                        </div>
+
+                        <div class="form-group input-group my-group d-flex justify-content-between mb-3"
+                            style="background-color: white; border: none;
+                            border: 1px solid #bbb;
+                                    border-radius: 16px;
+                                    color: white;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    width: 90%;
+                                    margin: auto">
+
+
+                            <label
+                                style="background-color: #21912A;
+                                                width: fit-content;
+                                                height: 100%;
+                                                border-radius: 16px;
+                                                padding: 10px 12px;
+                                                margin-bottom: 0;
+                                                font-weight: 600;
+                                                "
+                                for="customer_type_name">
+                                @lang('lang.customer_type'):
+                            </label>
+                            <span style="color: #000; padding-right: 30px"
+                                class="customer_type_name d-flex justify-content-start align-items-center"></span>
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-3">
+                        <div class="form-group first-head mb-4 input-group my-group" style="width: 100%">
+                            <button type="button"
+                                style="background-color: #E6E6E6;
+                                border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 10px 6px;
+                                    width: 90%;
+                                    margin: auto"
+                                data-toggle="modal" data-target="#contact_details_modal">@lang('lang.details')
+                            </button>
+                        </div>
+
+
+                        <div class="form-group input-group my-group d-flex justify-content-between mb-3"
+                            style="background-color: white; border: none;
+                            border: 1px solid #bbb;
+                                    border-radius: 16px;
+                                    color: white;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    width: 90%;
+                                    margin: auto">
+                            <label for="customer_balance"
+                                style="background-color: #21912A;
+                                                width: fit-content;
+                                                height: 100%;
+                                                border-radius: 16px;
+                                                padding: 10px 20px;
+                                                margin-bottom: 0;
+                                                font-weight: 600;
+                                                ">@lang('lang.balance'):
+                            </label>
+                            <span style="color: #000; padding-right: 30px"
+                                class="customer_balance d-flex justify-content-start align-items-center">{{ @num_format(0) }}</span>
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <div class="form-group first-head mb-4 input-group my-group" style="width: 100%">
+
+                            <button type="button"
+                                style="background-color: #E6E6E6;
+                                border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 10px 6px;
+                                    width: 90%;
+                                    margin: auto"
+                                data-toggle="modal" data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')
+                            </button>
+
+                        </div>
+
+
+                        <div class="form-group input-group my-group d-flex justify-content-between mb-3"
+                            style="background-color: white; border: none;
+                            border: 1px solid #bbb;
+                                    border-radius: 16px;
+                                    color: white;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    width: 90%;
+                                    margin: auto">
+                            <label for="points"
+                                style="background-color: #21912A;
+                                                width: fit-content;
+                                                height: 100%;
+                                                border-radius: 16px;
+                                                padding: 10px 20px;
+                                                margin-bottom: 0;
+                                                font-weight: 600;
+                                                ">
+                                @lang('lang.points'):
+                            </label>
+                            <span style="color: #000; padding-right: 30px"
+                                class="customer_points_span d-flex justify-content-start align-items-center">{{ @num_format(0) }}</span>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-lg-3 d-flex justify-content-center align-items-center">
+
+                        <button type="button" id="print_and_draft"
+                            class="btn btn-link btn-sm d-flex justify-content-center align-items-center"
+                            style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                                box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 48px 8px;
+                                    width: 50%;
+                                    height: 100%">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1.5em"
+                                viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                <path
+                                    d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zM432 248a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
+                            </svg>
+                            < </button>
+                                <input type="hidden" id="print_and_draft_hidden" name="print_and_draft_hidden"
+                                    value="">
+
+                    </div>
+                </div>
+
+                <div class="bg-white rounded mt-4 p-2 d-flex flex-column justify-content-between align-items-center mb-3 mb-lg-0"
+                    style="border-radius: 8px;width: 100%">
+
+                    <div class="search-box input-group form-group input-group my-group d-flex justify-content-between"
+                        style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: white;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    width: 90%;
+                                    margin: auto;
+                                    width: 100%">
+                        <button type="button"
+                            style="background-color: #F9C751;
+                                                width: fit-content;
+                                                height: 100%;
+                                                border: none;
+                                                border-radius: 16px;
+                                                padding: 10px 20px;
+                                                margin-bottom: 0;
+                                                font-weight: 600;
+                                                color: white
+                                                "
+                            id="search_button">
+                            <i class="fa fa-search"></i>
+                        </button>
+
+
+                        <input type="text" name="search_product" id="search_product" placeholder="@lang('lang.enter_product_name_to_print_labels')"
+                            class="form-control ui-autocomplete-input" style="border: none; background-color: transparent"
+                            autocomplete="off">
+                        @if (isset($weighing_scale_setting['enable']) && $weighing_scale_setting['enable'])
+                            <button type="button" class="btn btn-default bg-white btn-flat" id="weighing_scale_btn"
+                                data-toggle="modal" data-target="#weighing_scale_modal" title="@lang('lang.weighing_scale')"><i
+                                    class="fa fa-balance-scale fa-lg"></i></button>
+                        @endif
+
+
+                        <button type="button" class="text-black btn-modal pr-3"
+                            style="
+                        background-color: transparent;
+                        border:none;
+                        outline: none;
+                        "
+                            data-href="{{ action('ProductController@create') }}?quick_add=1"
+                            data-container=".view_modal"><i class="fa fa-plus"></i></button>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+            <div class="col-lg-2" style="max-height: 305px;overflow-y: scroll;overflow-x: hidden">
+                @include('sale_pos.partials.right_side')
+            </div>
+        </div>
+
+        <div class="p-4 row justify-content-between flex-column-reverse flex-lg-row">
+
+            <div class="col-lg-10">
+
+                <div class="bg-white mb-4 py-2 d-flex flex-column flex-lg-row justify-content-between align-items-center"
+                    style="border-radius: 8px;width: 100%">
+                    <div class="table-responsive transaction-list">
+                        <table id="product_table" style="width: 100% "
+                            class="table table-hover table-striped order-list table-fixed">
+                            <thead>
+                                <tr>
+                                    <th class="text-center text-black"
+                                        style="width: @if (session('system_mode') != 'restaurant') 17% @else 20% @endif; font-size: 16px !important; font-weight: 700;">
+                                        @lang('lang.product')</th>
+                                    <th class="text-center text-black"
+                                        style="width: @if (session('system_mode') != 'restaurant') 17% @else 20% @endif; font-size: 16px !important; font-weight: 700;">
+                                        @lang('lang.quantity')</th>
+                                    <th class="text-center text-black"
+                                        style="width: @if (session('system_mode') != 'restaurant') 14% @else 15% @endif; font-size: 16px !important; font-weight: 700;">
+                                        @lang('lang.price')</th>
+                                    <th class="text-center text-black"
+                                        style="width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; font-size: 16px !important; font-weight: 700;">
+                                        @lang('lang.discount')</th>
+                                    <th class="text-center text-black"
+                                        style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 16px !important; font-weight: 700;">
+                                        @lang('lang.category_discount')</th>
+                                    <th class="text-center text-black"
+                                        style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 16px !important; font-weight: 700;">
+                                        @lang('lang.sub_total')</th>
+                                    @if (session('system_mode') != 'restaurant')
+                                        <th class="text-center text-black"
+                                            style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 16px !important; font-weight: 700;">
+                                            @lang('lang.current_stock')</th>
+                                    @endif
+                                    <th class="text-center text-black"
+                                        style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 16px !important; font-weight: 700;">
+                                        @lang('lang.action')</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class=" mb-4 py-2" style="border-radius: 8px;background-color: white">
+
+                    <div class="row align-items-center justify-content-between mx-auto mb-3" style="width: 80%;">
+
+                        <div class="col-lg-2 d-flex flex-column text-center mb-2 mb-lg-0">
+                            <span class="totals-title"
+                                style="color: #000;font-weight: 600;margin-bottom: 6px;">{{ __('lang.items') }}</span>
+                            <span id="item" class="border border-5 py-2 px-4 rounded">0</span>
+                        </div>
+
+                        <div class="col-lg-2 d-flex flex-column text-center  mb-2 mb-lg-0">
+                            <span class="totals-title "
+                                style="color: #000;font-weight: 600;margin-bottom: 6px;">{{ __('lang.quantity') }}</span>
+                            <span id="item-quantity" class="border border-5 py-2 px-4 rounded">0</span>
+                        </div>
+
+                        <div class="col-lg-2 d-flex flex-column text-center  mb-2 mb-lg-0">
+                            <span class="totals-title"
+                                style="color: #000;font-weight: 600;margin-bottom: 6px;">{{ __('lang.total') }}</span>
+                            <span id="subtotal" class="border border-5 py-2 px-4 rounded">0.00</span>
+                        </div>
+
+                        <div class="col-lg-2 d-flex flex-column text-center  mb-2 mb-lg-0">
+                            <span class="totals-title"
+                                style="color: #000;font-weight: 600;margin-bottom: 6px;">{{ __('lang.tax') }} </span>
+                            <span id="tax" class="border border-5 py-2 px-4 rounded">0.00</span>
+                        </div>
+
+                        <div class="col-lg-2 d-flex flex-column text-center  mb-2 mb-lg-0">
+                            <span class="totals-title"
+                                style="color: #000;font-weight: 600;margin-bottom: 6px;">{{ __('lang.delivery') }}</span>
+                            <span id="delivery-cost" class="border border-5 py-2 px-4 rounded">0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="row mx-auto mb-3" style="width: 80%">
+                        <div class="col-lg-7 d-flex justify-content-between pl-0  mb-3 mb-lg-0"
+                            style="background-color: white; border: none;
+                            border: 1px solid #bbb;
+                                    border-radius: 16px;
+                                    color: white;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    width: 90%;
+                                    margin: auto">
+                            <span class="totals-title"
+                                style="background-color: #21912A;
+                                                width: fit-content;
+                                                height: 100%;
+                                                border-radius: 16px;
+                                                padding: 10px 20px;
+                                                margin-bottom: 0;
+                                                font-weight: 600;
+                                                ">{{ __('lang.sales_promotion') }}</span>
+                            <span id="sales_promotion-cost_span" style="color: #000; padding-right: 30px;width: 45%"
+                                class="d-flex justify-content-start align-items-center">0.00</span>
+                            <input type="hidden" id="sales_promotion-cost" value="0">
+                        </div>
+
+                        <div class="col-lg-5 pl-lg-6 first-head " style="width: 100%; ">
+                            @if (auth()->user()->can('sp_module.sales_promotion.view') ||
+                                    auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
+                                    auth()->user()->can('sp_module.sales_promotion.delete'))
+                                <button type="button"
+                                    style="background-color: #E6E6E6;
+                                border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 10px 6px;
+                                    width: 100%;"
+                                    data-toggle="modal" data-target="#discount_modal">@lang('lang.random_discount')</button>
+                            @endif
+                            {{-- <span id="discount">0.00</span> --}}
+                        </div>
+                    </div>
+
+                    <div class="mx-auto" style="width: 80%">
+                        <div class="payment-amount table_room_hide  d-flex justify-content-between pl-0"
+                            style="background-color: white; border: none;
+                            border: 1px solid #bbb;
+                                    border-radius: 16px;
+                                    color: white;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    width: 100%;">
+
+                            <span
+                                style="background-color: #21912A;
+                                                width: fit-content;
+                                                height: 100%;
+                                                border-radius: 16px;
+                                                padding: 10px 20px;
+                                                margin-bottom: 0;
+                                                font-weight: 600;
+                                                ">{{ __('lang.grand_total') }}
+                            </span>
+                            <span style="color: #000; padding-right: 30px;width: 45%"
+                                class="d-flex justify-content-start align-items-center"
+                                class="final_total_span">0.00</span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2">
+
+                <div class="col-lg-12" style="height: 100%">
+                    <div class="card" style="height: 100%">
+
+                        <div class="card-body" style="padding: 0;height: 100%">
+                            <div class="col-lg-12 mt-1 table-container" style="height: 100%">
+                                <div class="filter-window" style="width: 100% !important; height: 100% !important">
+
+                                    <div class="category mt-3" style="height: 100%;width: 100%">
+                                        <div class="row ml-2 mr-2 px-2">
+                                            <div class="col-7">@lang('lang.choose_category')</div>
+                                            <div class="col-5 text-right">
+                                                <span class="btn btn-default btn-sm">
+                                                    <i class="dripicons-cross"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row ml-2 mt-3" style="height: 100%">
+                                            @foreach ($categories as $category)
+                                                <div class="col-lg-6 filter-by category-img text-center"
+                                                    data-id="{{ $category->id }}" data-type="category"
+                                                    style="height: 100%;">
+                                                    <img
+                                                        src="@if (!empty($category->getFirstMediaUrl('category'))) {{ $category->getFirstMediaUrl('category') }}@else{{ asset('images/default.jpg') }} @endif" />
+                                                    <p class="text-center">{{ $category->name }}</p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+
+                                    <div class="sub_category mt-3">
+                                        <div class="row ml-2 mr-2 px-2">
+                                            <div class="col-7">@lang('lang.choose_sub_category')</div>
+                                            <div class="col-5 text-right">
+                                                <span class="btn btn-default btn-sm">
+                                                    <i class="dripicons-cross"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row ml-2 mt-3">
+                                            @foreach ($sub_categories as $category)
+                                                <div class="col-lg-3 filter-by category-img text-center"
+                                                    data-id="{{ $category->id }}" data-type="sub_category">
+                                                    <img
+                                                        src="@if (!empty($category->getFirstMediaUrl('category'))) {{ $category->getFirstMediaUrl('category') }}@else{{ asset('images/default.jpg') }} @endif" />
+                                                    <p class="text-center">{{ $category->name }}</p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+
+                                    <div class="brand mt-3">
+                                        <div class="row ml-2 mr-2 px-2">
+                                            <div class="col-7">@lang('lang.choose_brand')</div>
+                                            <div class="col-5 text-right">
+                                                <span class="btn btn-default btn-sm">
+                                                    <i class="dripicons-cross"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row ml-2 mt-3">
+                                            @foreach ($brands as $brand)
+                                                <div class="col-lg-3 filter-by brand-img text-center"
+                                                    data-id="{{ $brand->id }}" data-type="brand">
+                                                    <img
+                                                        src="@if (!empty($brand->getFirstMediaUrl('brand'))) {{ $brand->getFirstMediaUrl('brand') }}@else{{ asset('images/default.jpg') }} @endif" />
+                                                    <p class="text-center">{{ $brand->name }}</p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <table id="filter-product-table" class="table no-shadow product-list"
+                                    style="width: 100%; border: 0px">
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        <div class="p-4 mx-3 mb-3" style="background-color: white;border-radius: 6px">
+            @php
+                $default_invoice_toc = App\Models\System::getProperty('invoice_terms_and_conditions');
+                if (!empty($default_invoice_toc)) {
+                    $toc_hidden = $default_invoice_toc;
+                } else {
+                    $toc_hidden = array_key_first($tac);
+                }
+            @endphp
+            <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
+                value="{{ $toc_hidden }}">
+            <div class=" row justify-content-between mx-auto" style="width: 80%;">
+                <div class="col-lg-6 mb-3 mb-lg-0">
+
+                    {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), [
+                        'class' => 'label',
+                    ]) !!}
+                    <div
+                        style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 4px 6px;
+                                    width: 100%;">
+
+                        <select name="terms_and_condition_id" id="terms_and_condition_id" style="width: 100%"
+                            class=" selectpicker terms" data-live-search="true">
+                            <option value="">@lang('lang.please_select')</option>
+                            @foreach ($tac as $key => $item)
+                                <option value="{{ $key }}">{{ $item }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="tac_description_div"><span></span></div>
+                <div class="col-lg-6">
+                    {!! Form::label('commissioned_employees', __('lang.commissioned_employees'), ['class' => 'label']) !!}
+                    <div class="form-group"
+                        style="background-color: #E6E6E6; border: none;
+                                    border-radius: 16px;
+                                    color: #999;
+                                    box-shadow: 0 8px 6px -5px #bbb inset;
+                                    padding: 4px 6px;
+                                    width: 100%;">
+                        {!! Form::select('commissioned_employees[]', $employees, false, [
+                            'class' => ' selectpicker terms',
+                            'style' => 'width:100%',
+                            'data-live-search' => 'true',
+                            'multiple',
+                            'id' => 'commissioned_employees',
+                        ]) !!}
+                    </div>
+                </div>
+
+                <div class="col-lg-4 hide shared_commission_div">
+                    <div class="i-checks" style="margin-top: 37px;">
+                        <input id="shared_commission" name="shared_commission" type="checkbox" value="1"
+                            class="form-control-custom">
+                        <label for="shared_commission"><strong>
+                                @lang('lang.shared_commission')
+                            </strong></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 mx-3" style="background-color: white;border-radius: 6px">
+            <div class="mx-auto d-flex flex-column flex-lg-row justify-content-between align-items-center"
+                style="width: 80%;">
+
+                <div class="col-lg-2">
+                    <div class="mb-3">
+                        <button data-method="cash"
+                            style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" class="py-2 px-4" data-toggle="modal" data-target="#add-payment"
+                            data-backdrop="static" data-keyboard="false" id="cash-btn"><i class="fa fa-money"></i>
+                            @lang('lang.pay')</button>
+                    </div>
+                    <div class="mb-3 mb-lg-0">
+                        <button
+                            style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" class="py-2 px-4" id="recent-transaction-btn">
+                            <i class="dripicons-clock"></i>
+                            @lang('lang.recent_transactions')
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="mb-3">
+                        <button data-method="coupon"
+                            style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" class="py-2 px-4" data-toggle="modal" data-target="#coupon_modal"
+                            id="coupon-btn"><i class="fa fa-tag"></i>
+                            @lang('lang.coupon')</button>
+                    </div>
+                    <div class="mb-3 mb-lg-0">
+                        <button data-method="online-order"
+                            style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" class="py-2 px-4" id="view-online-order-btn"
+                            data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><img
+                                src="{{ asset('images/online_order.png') }}" style="height: 25px; width: 35px;"
+                                alt="icon">
+                            @lang('lang.online_orders') <span class="badge badge-danger online-order-badge">0</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="mb-3">
+
+                        @if (session('system_mode') != 'restaurant')
+                            <button data-method="paypal"
+                                style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                                type="button" class="py-2 px-2 payment-btn" data-toggle="modal"
+                                data-target="#add-payment" data-backdrop="static" data-keyboard="false"
+                                id="paypal-btn"><i class="fa fa-paypal"></i>
+                                @lang('lang.other_online_payments')</button>
+                        @endif
+                    </div>
+                    <div class="mb-3 mb-lg-0">
+                        <button data-method="pay-later"
+                            style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" class="py-2 px-4 payment-btn" id="pay-later-btn"><i
+                                class="fa fa-hourglass-start"></i>
+                            @lang('lang.pay_later')</button>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="mb-3">
+                        <button data-method="draft"
+                            style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" data-toggle="modal" data-target="#sale_note_modal"class="py-2 px-4"><i
+                                class="dripicons-flag"></i>
+                            @lang('lang.draft')</button>
+                    </div>
+                    <div class="mb-3 mb-lg-0">
+                        <button data-method="draft"
+                            style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" class="py-2 px-4" id="view-draft-btn"
+                            data-href="{{ action('SellPosController@getDraftTransactions') }}"><i
+                                class="dripicons-flag"></i>
+                            @lang('lang.view_draft')</button>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="mb-3">
+                        <button
+                            style="background-color: #D70007;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" class="py-2 px-4" id="cancel-btn" onclick="return confirmCancel()"><i
+                                class="fa fa-close"></i>
+                            @lang('lang.cancel')</button>
+                    </div>
+                    <div>
+                        <button data-method="cash"
+                            style="background-color: #21912A;border: none;outline: none;color: white; border-radius: 6px;width:100%;"
+                            type="button" class="py-2 px-4" id="quick-pay-btn"><i class="fa fa-money"></i>
+                            @lang('lang.quick_pay')</button>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+
+
+
+
     <section class="forms pos-section no-print">
         <div class="container-fluid">
-
             <div class="row">
-                <audio id="mysoundclip1" preload="auto">
-                    <source src="{{ asset('audio/beep-timber.mp3') }}">
-                    </source>
-                </audio>
-                <audio id="mysoundclip2" preload="auto">
-                    <source src="{{ asset('audio/beep-07.mp3') }}">
-                    </source>
-                </audio>
-                <audio id="mysoundclip3" preload="auto">
-                    <source src="{{ asset('audio/beep-long.mp3') }}">
-                    </source>
-                </audio>
-                <div class="@if (session('system_mode') == 'pos') col-md-7 @else col-md-6 @endif">
-                    {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' => true, 'class' => 'pos-form', 'id' => 'add_pos_form']) !!}
+
+                <div class="@if (session('system_mode') == 'pos') col-lg-7 @else col-lg-6 @endif">
+                    {!! Form::open([
+                        'url' => action('SellPosController@store'),
+                        'method' => 'post',
+                        'files' => true,
+                        'class' => 'pos-form',
+                        'id' => 'add_pos_form',
+                    ]) !!}
                     <div class="card">
                         <div class="card-body" style="padding: 0px 10px; !important">
                             <input type="hidden" name="default_customer_id" id="default_customer_id"
                                 value="@if (!empty($walk_in_customer)) {{ $walk_in_customer->id }} @endif">
                             <input type="hidden" name="row_count" id="row_count" value="0">
-                            <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden" value="">
+                            <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"
+                                value="">
                             <input type="hidden" name="enable_the_table_reservation" id="enable_the_table_reservation"
                                 value="{{ App\Models\System::getProperty('enable_the_table_reservation') }}">
                             <div class="row">
-                                <div class="col-md-12 main_settings">
+
+
+
+                                {{-- <div class="col-lg-12 main_settings">
                                     <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                {!! Form::label('store_id', __('lang.store') . ':*', []) !!}
-                                                {!! Form::select('store_id', $stores, $store_pos->store_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        <div class="col-lg-2">
+                                            <div class="col-lg-1" style="padding: 0 !important;">
+                                                <div class="form-group" style="margin-top: 31px;">
+                                                    <select class="form-control" name="tax_id" id="tax_id">
+                                                        <option value="">No Tax</option>
+                                                        @foreach ($taxes as $tax)
+                                                            <option data-rate="{{ $tax['rate'] }}"
+                                                                @if (!empty($transaction) && $transaction->tax_id == $tax['id']) selected @endif
+                                                                value="{{ $tax['id'] }}">{{ $tax['name'] }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <input type="hidden" name="tax_id_hidden" id="tax_id_hidden"
+                                                        value="">
+                                                    <input type="hidden" name="tax_method" id="tax_method"
+                                                        value="">
+                                                    <input type="hidden" name="tax_rate" id="tax_rate" value="0">
+                                                    <input type="hidden" name="tax_type" id="tax_type" value="">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                {!! Form::label('store_pos_id', __('lang.pos') . ':*', []) !!}
-                                                {!! Form::select('store_pos_id', $store_poses, $store_pos->id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="setting_invoice_lang" id="setting_invoice_lang"
-                                                    value="{{ !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en' }}">
-                                                {!! Form::label('invoice_lang', __('lang.invoice_lang') . ':', []) !!}
-                                                {!! Form::select('invoice_lang', $languages + ['ar_and_en' => 'Arabic and English'], !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en', ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" name="exchange_rate" id="exchange_rate" value="1">
-                                                <input type="hidden" name="default_currency_id" id="default_currency_id"
-                                                    value="{{ !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : '' }}">
-                                                {!! Form::label('received_currency_id', __('lang.received_currency') . ':', []) !!}
-                                                {!! Form::select('received_currency_id', $exchange_rate_currencies, !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-1" style="padding: 0 !important;">
-                                            <div class="form-group" style="margin-top: 31px;">
-                                                <select class="form-control" name="tax_id" id="tax_id">
-                                                    <option value="">No Tax</option>
-                                                    @foreach ($taxes as $tax)
-                                                        <option data-rate="{{ $tax['rate'] }}"
-                                                            @if (!empty($transaction) && $transaction->tax_id == $tax['id']) selected @endif
-                                                            value="{{ $tax['id'] }}">{{ $tax['name'] }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <input type="hidden" name="tax_id_hidden" id="tax_id_hidden" value="">
-                                                <input type="hidden" name="tax_method" id="tax_method" value="">
-                                                <input type="hidden" name="tax_rate" id="tax_rate" value="0">
-                                                <input type="hidden" name="tax_type" id="tax_type" value="">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <button type="button" class="btn btn-link btn-sm"
-                                                style="margin-top: 30px; padding: 0px !important;" data-toggle="modal"
-                                                data-target="#delivery-cost-modal"><img
-                                                    src="{{ asset('images/delivery.jpg') }}" alt="delivery"
-                                                    style="height: 35px; width: 40px;"></button>
-                                        </div>
-                                        @if (session('system_mode') == 'restaurant')
-                                            <div class="col-md-1">
-                                                <button type="button" style="padding: 0px !important;"
-                                                    data-href="{{ action('DiningRoomController@getDiningModal') }}"
-                                                    data-container="#dining_model"
-                                                    class="btn btn-modal pull-right mt-4"><img
-                                                        src="{{ asset('images/black-table.jpg') }}" alt="black-table"
-                                                        style="width: 40px; height: 33px; margin-top: 7px;"></button>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-md-12 main_settings">
-                                    <div class="row table_room_hide">
-                                        <div class="col-md-3">
-                                            {!! Form::label('customer_id', __('lang.customer'), []) !!}
-                                            <div class="input-group my-group">
-                                                {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'id' => 'customer_id', 'required']) !!}
-                                                <span class="input-group-btn">
-                                                    @can('customer_module.customer.create_and_edit')
-                                                        <a class="btn-modal btn btn-default bg-white btn-flat"
-                                                            data-href="{{ action('CustomerController@create') }}?quick_add=1"
-                                                            data-container=".view_modal"><i
-                                                                class="fa fa-plus-circle text-primary fa-lg"></i></a>
-                                                    @endcan
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-primary" style="margin-top: 30px;"
-                                                data-toggle="modal"
-                                                data-target="#contact_details_modal">@lang('lang.details')</button>
-                                        </div>
 
-                                        <div class="col-md-2">
-                                            <label for="customer_type_name" style="margin-top: 40px;">@lang('lang.customer_type'):
-                                                <span class="customer_type_name"></span></label>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label for="customer_balance"
-                                                style="margin-top: 30px; margin-bottom: 0px;">@lang('lang.balance'):
-                                                <span class="customer_balance">{{ @num_format(0) }}</span></label>
-                                            <label for="points" style="margin: 0px;">@lang('lang.points'):
-                                                <span class="points"><span
-                                                        class="customer_points_span">{{ @num_format(0) }}</span></span></label>
-                                        </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-danger btn-xs pull-right"
-                                                    style="margin-top: 38px;" data-toggle="modal"
-                                                    data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
-                                            </div>
-                                        <div class="col-md-1">
-                                            <button type="button" class="btn btn-danger btn-xs  pull-right"
-                                                style="margin-top: 38px;" id="print_and_draft"><i
-                                                    class="dripicons-print"></i></button>
-                                            <input type="hidden" id="print_and_draft_hidden" name="print_and_draft_hidden"
-                                                value="">
-                                        </div>
-                                    </div>
-                                    <div class="row table_room_show hide">
-                                        <div class="col-md-4">
-                                            <div class=""
-                                                style="padding: 5px 5px; background:#0082ce; color: #fff; font-size: 20px; font-weight: bold; text-align: center; border-radius: 5px;">
-                                                <span class="room_name"></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label for=""
-                                                style="font-size: 20px !important; font-weight: bold; text-align: center; margin-top: 3px;">@lang('lang.table'):
-                                                <span class="table_name"></span></label>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="input-group my-group">
-                                                {!! Form::select('service_fee_id', $service_fees, null, ['class' => 'form-control', 'placeholder' => __('lang.select_service'), 'id' => 'service_fee_id']) !!}
-                                            </div>
-                                        </div>
-                                        <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden"
-                                            value="">
-                                        <input type="hidden" name="service_fee_rate" id="service_fee_rate" value="0">
-                                        <input type="hidden" name="service_fee_value" id="service_fee_value" value="0">
-                                    </div>
-                                    <div class="col-md-12" style="margin-top: 10px;">
-                                        <div class="search-box input-group">
-                                            <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
-                                                    class="fa fa-search"></i></button>
-                                            <input type="text" name="search_product" id="search_product"
-                                                placeholder="@lang('lang.enter_product_name_to_print_labels')" class="form-control ui-autocomplete-input"
-                                                autocomplete="off">
-                                            @if (isset($weighing_scale_setting['enable']) && $weighing_scale_setting['enable'])
-                                                <button type="button" class="btn btn-default bg-white btn-flat"
-                                                    id="weighing_scale_btn" data-toggle="modal"
-                                                    data-target="#weighing_scale_modal" title="@lang('lang.weighing_scale')"><i
-                                                        class="fa fa-balance-scale text-primary fa-lg"></i></button>
+
+
+                                            @if (session('system_mode') == 'restaurant')
+                                                <div class="col-lg-1">
+                                                    <button type="button" style="padding: 0px !important;"
+                                                        data-href="{{ action('DiningRoomController@getDiningModal') }}"
+                                                        data-container="#dining_model"
+                                                        class="btn btn-modal pull-right mt-4"><img
+                                                            src="{{ asset('images/black-table.jpg') }}" alt="black-table"
+                                                            style="width: 40px; height: 33px; margin-top: 7px;"></button>
+                                                </div>
                                             @endif
-                                            <button type="button" class="btn btn-success btn-lg btn-modal"
-                                                data-href="{{ action('ProductController@create') }}?quick_add=1"
-                                                data-container=".view_modal"><i class="fa fa-plus"></i></button>
+
+
+
+
                                         </div>
                                     </div>
-                                    <div class="col-md-12" style="margin-top: 5px; padding: 0px; ">
-                                        <div class="table-responsive transaction-list">
-                                            <table id="product_table" style="width: 100% "
-                                                class="table table-hover table-striped order-list table-fixed">
-                                                <thead>
-                                                    <tr>
-                                                        <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 17% @else 20% @endif; font-size: 12px !important;">
-                                                            @lang('lang.product')</th>
-                                                        <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 17% @else 20% @endif; font-size: 12px !important;">
-                                                            @lang('lang.quantity')</th>
-                                                        <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 14% @else 15% @endif; font-size: 12px !important;">
-                                                            @lang('lang.price')</th>
-                                                        <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; font-size: 12px !important;">
-                                                            @lang('lang.discount')</th>
-                                                        <th
-                                                        style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
-                                                        @lang('lang.category_discount')</th>
-                                                        <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 12px !important;">
-                                                            @lang('lang.sub_total')</th>
-                                                        @if (session('system_mode') != 'restaurant')
-                                                            <th
-                                                                style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 12px !important;">
-                                                                @lang('lang.current_stock')</th>
+                                    <div class="col-lg-12 main_settings">
+
+                                        <div class="row table_room_show hide">
+                                            <div class="col-lg-4">
+                                                <div class=""
+                                                    style="padding: 5px 5px; background:#0082ce; color: #fff; font-size: 20px; font-weight: bold; text-align: center; border-radius: 5px;">
+                                                    <span class="room_name"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for=""
+                                                    style="font-size: 20px !important; font-weight: bold; text-align: center; margin-top: 3px;">@lang('lang.table'):
+                                                    <span class="table_name"></span></label>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="input-group my-group">
+                                                    {!! Form::select('service_fee_id', $service_fees, null, [
+                                                        'class' => 'form-control',
+                                                        'placeholder' => __('lang.select_service'),
+                                                        'id' => 'service_fee_id',
+                                                    ]) !!}
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden"
+                                                value="">
+                                            <input type="hidden" name="service_fee_rate" id="service_fee_rate"
+                                                value="0">
+                                            <input type="hidden" name="service_fee_value" id="service_fee_value"
+                                                value="0">
+                                        </div>
+
+
+
+
+
+
+                                        <div class="row" style="display: none;">
+                                            <div class="col-lg-2">
+                                                <div class="form-group">
+                                                    <input type="hidden" id="final_total" name="final_total" />
+                                                    <input type="hidden" id="grand_total" name="grand_total" />
+                                                    <input type="hidden" id="gift_card_id" name="gift_card_id" />
+                                                    <input type="hidden" id="coupon_id" name="coupon_id">
+                                                    <input type="hidden" id="total_tax" name="total_tax"
+                                                        value="0.00">
+                                                    <input type="hidden" id="total_item_tax" name="total_item_tax"
+                                                        value="0.00">
+                                                    <input type="hidden" id="status" name="status"
+                                                        value="final" />
+                                                    <input type="hidden" id="total_sp_discount" name="total_sp_discount"
+                                                        value="0" />
+                                                    <input type="hidden" id="total_pp_discount" name="total_pp_discount"
+                                                        value="0" />
+                                                    <input type="hidden" name="dining_table_id" id="dining_table_id"
+                                                        value="">
+                                                    <input type="hidden" name="dining_action_type"
+                                                        id="dining_action_type" value="">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="col-lg-12 table_room_show hide"
+                                            style="border-top: 2px solid #e4e6fc; margin-top: 10px;">
+                                            <div class="row">
+                                                <div class="col-lg-8"></div>
+                                                <div class="col-lg-4">
+                                                    <div class="row">
+                                                        <b>@lang('lang.total'): <span class="subtotal">0.00</span></b>
+                                                    </div>
+                                                    <div class="row">
+                                                        <b>@lang('lang.discount'): <span class="discount_span">0.00</span></b>
+                                                    </div>
+                                                    <div class="row">
+                                                        <b>@lang('lang.service'): <span
+                                                                class="service_value_span">0.00</span></b>
+                                                    </div>
+                                                    <div class="row">
+                                                        <b>@lang('lang.grand_total'): <span
+                                                                class="final_total_span">0.00</span></b>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row pt-4">
+                                                <div class="col-lg-8">
+                                                    <div class="row">
+                                                        <button type="button" name="action" value="print"
+                                                            id="dining_table_print" class="btn mr-2 text-white"
+                                                            style="background: orange;">@lang('lang.print')</button>
+                                                        <button type="button" name="action" value="save"
+                                                            id="dining_table_save"
+                                                            class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
+                                                        <button data-method="cash" style="background: #0082ce"
+                                                            type="button" class="btn mr-2 payment-btn text-white"
+                                                            data-toggle="modal" data-target="#add-payment"
+                                                            data-backdrop="static" data-keyboard="false"
+                                                            id="cash-btn">@lang('lang.pay_and_close')</button>
+                                                        @if (auth()->user()->can('sp_module.sales_promotion.view') ||
+    auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
+    auth()->user()->can('sp_module.sales_promotion.delete'))
+                                                            <button style="background-color: #d63031" type="button"
+                                                                class="btn mr-2 btn-md payment-btn text-white"
+                                                                data-toggle="modal"
+                                                                data-target="#discount_modal">@lang('lang.random_discount')</button>
                                                         @endif
-                                                        <th
-                                                            style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 12px !important;">
-                                                            @lang('lang.action')</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="display: none;">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <input type="hidden" id="final_total" name="final_total" />
-                                                <input type="hidden" id="grand_total" name="grand_total" />
-                                                <input type="hidden" id="gift_card_id" name="gift_card_id" />
-                                                <input type="hidden" id="coupon_id" name="coupon_id">
-                                                <input type="hidden" id="total_tax" name="total_tax" value="0.00">
-                                                <input type="hidden" id="total_item_tax" name="total_item_tax" value="0.00">
-                                                <input type="hidden" id="status" name="status" value="final" />
-                                                <input type="hidden" id="total_sp_discount" name="total_sp_discount"
-                                                    value="0" />
-                                                <input type="hidden" id="total_pp_discount" name="total_pp_discount"
-                                                    value="0" />
-                                                <input type="hidden" name="dining_table_id" id="dining_table_id" value="">
-                                                <input type="hidden" name="dining_action_type" id="dining_action_type"
-                                                    value="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <button style="background-color: #ff00;" type="button"
+                                                        class="btn text-white" id="cancel-btn"
+                                                        onclick="return confirmCancel()">
+                                                        @lang('lang.cancel')</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 totals table_room_hide"
-                                        style="border-top: 2px solid #e4e6fc; padding-top: 10px;">
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ __('lang.items') }}</span><span
-                                                    id="item">0</span>
-                                                <br>
-                                                <span class="totals-title  text-dark" style="font-weight:1000">{{ __('lang.quantity') }}</span><span
-                                                id="item-quantity">0</span>
+                                </div> --}}
 
-                                            </div>
-                                            <div class="col-sm-5">
-                                                <span class="totals-title">{{ __('lang.total') }}</span><span
-                                                    id="subtotal">0.00</span>
-                                                <br>
-                                                <span class="totals-title">{{ __('lang.total_before_discount') }}</span><span
-                                                    id="total_before_discount">0.00</span>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                @if(auth()->user()->can('sp_module.sales_promotion.view')
-                                                        || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
-                                                        || auth()->user()->can('sp_module.sales_promotion.delete'))
-                                                <button style="background-color: #d63031" type="button"
-                                                    class="btn btn-md payment-btn text-white" data-toggle="modal"
-                                                    data-target="#discount_modal"
-                                                    >@lang('lang.random_discount')</button>
-                                                    @endif
-                                                {{-- <span id="discount">0.00</span> --}}
-                                            </div>
 
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ __('lang.tax') }} </span><span
-                                                    id="tax">0.00</span>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <span class="totals-title">{{ __('lang.delivery') }}</span><span
-                                                    id="delivery-cost">0.00</span>
-                                            </div>
-                                            <div class="col-sm-4 red">
-                                                <span class="totals-title red">{{ __('lang.sales_promotion') }}</span><span
-                                                    id="sales_promotion-cost_span">0.00</span>
-                                                <input type="hidden" id="sales_promotion-cost" value="0">
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div class="col-md-12 table_room_show hide"
-                                        style="border-top: 2px solid #e4e6fc; margin-top: 10px;">
-                                        <div class="row">
-                                            <div class="col-md-8"></div>
-                                            <div class="col-md-4">
-                                                <div class="row">
-                                                    <b>@lang('lang.total'): <span class="subtotal">0.00</span></b>
-                                                </div>
-                                                <div class="row">
-                                                    <b>@lang('lang.discount'): <span class="discount_span">0.00</span></b>
-                                                </div>
-                                                <div class="row">
-                                                    <b>@lang('lang.service'): <span class="service_value_span">0.00</span></b>
-                                                </div>
-                                                <div class="row">
-                                                    <b>@lang('lang.grand_total'): <span class="final_total_span">0.00</span></b>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row pt-4">
-                                            <div class="col-md-8">
-                                                <div class="row">
-                                                    <button type="button" name="action" value="print"
-                                                        id="dining_table_print" class="btn mr-2 text-white"
-                                                        style="background: orange;">@lang('lang.print')</button>
-                                                    <button type="button" name="action" value="save" id="dining_table_save"
-                                                        class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
-                                                    <button data-method="cash" style="background: #0082ce" type="button"
-                                                        class="btn mr-2 payment-btn text-white" data-toggle="modal"
-                                                        data-target="#add-payment" data-backdrop="static" data-keyboard="false" id="cash-btn">@lang('lang.pay_and_close')</button>
-                                                        @if(auth()->user()->can('sp_module.sales_promotion.view')
-                                                        || auth()->user()->can('sp_module.sales_promotion.create_and_edit')
-                                                        || auth()->user()->can('sp_module.sales_promotion.delete'))
-                                                        <button style="background-color: #d63031" type="button"
-                                                        class="btn mr-2 btn-md payment-btn text-white" data-toggle="modal"
-                                                        data-target="#discount_modal"
-                                                        >@lang('lang.random_discount')</button>
-                                                        @endif
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <button style="background-color: #ff0000;" type="button"
-                                                    class="btn text-white" id="cancel-btn"
-                                                    onclick="return confirmCancel()">
-                                                    @lang('lang.cancel')</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
                             </div>
-                        </div>
-                        <div class="payment-amount table_room_hide">
-                            <h2>{{ __('lang.grand_total') }} <span class="final_total_span">0.00</span></h2>
-                        </div>
-                        @php
-                            $default_invoice_toc = App\Models\System::getProperty('invoice_terms_and_conditions');
-                            if (!empty($default_invoice_toc)) {
-                                $toc_hidden = $default_invoice_toc;
-                            } else {
-                                $toc_hidden = array_key_first($tac);
-                            }
-                            $term=App\Models\TermsAndCondition::where('default','1')->first();
 
-                        @endphp
-                        <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
-                            value="{{ $toc_hidden }}">
-                        <div class="row table_room_hide">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-4 pl-4">
-                                        <div class="form-group ">
-                                            {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
-                                            <select name="terms_and_condition_id" id="terms_and_condition_id"
-                                                class="form-control selectpicker" data-live-search="true">
-                                                <option value="">@lang('lang.please_select')</option>
-                                                @foreach ($tac as $key => $item)
-                                                    <option value="{{ $key }}" {{!empty($term)&&$term->id==$key?'selected':''}}>{{ $item }}</option
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="tac_description_div"><span></span></div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            {!! Form::label('commissioned_employees', __('lang.commissioned_employees'), []) !!}
-                                            {!! Form::select('commissioned_employees[]', $employees, false, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'multiple', 'id' => 'commissioned_employees']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 hide shared_commission_div">
-                                        <div class="i-checks" style="margin-top: 37px;">
-                                            <input id="shared_commission" name="shared_commission" type="checkbox" value="1"
-                                                class="form-control-custom">
-                                            <label for="shared_commission"><strong>
-                                                    @lang('lang.shared_commission')
-                                                </strong></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="payment-options row table_room_hide"
-                            style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
-                            {{-- <div class="column-5">
+                            <div class="payment-options row table_room_hide"
+                                style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
+                                {{-- <div class="column-5">
                                 <button data-method="card" style="background: #0984e3" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="credit-card-btn"><i class="fa fa-credit-card"></i> @lang('lang.card')</button>
                             </div> --}}
-                            <div class="column-5">
-                                <button data-method="cash" style="background: #0094ce" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" data-backdrop="static" data-keyboard="false"
-                                    id="cash-btn" ><i class="fa fa-money"></i>
-                                    @lang('lang.pay')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="cash" style="background: #478299" type="button"
-                                    class="btn btn-custom" 
-                                    id="quick-pay-btn" ><i class="fa fa-money"></i>
-                                    @lang('lang.quick_pay')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="coupon" style="background: #00cec9" type="button"
-                                    class="btn btn-custom" data-toggle="modal" data-target="#coupon_modal"
-                                    id="coupon-btn"><i class="fa fa-tag"></i>
-                                    @lang('lang.coupon')</button>
-                            </div>
-                            @if (session('system_mode') != 'restaurant')
-                                <div class="column-5">
-                                    <button data-method="paypal" style="background-color: #213170" type="button"
-                                        class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment" data-backdrop="static" data-keyboard="false"
-                                        id="paypal-btn"><i class="fa fa-paypal"></i>
-                                        @lang('lang.other_online_payments')</button>
-                                </div>
-                            @endif
-                            <div class="column-5">
-                                <button data-method="draft" style="background-color: #e28d02" type="button"
-                                    data-toggle="modal" data-target="#sale_note_modal" class="btn btn-custom"><i
-                                        class="dripicons-flag"></i>
-                                    @lang('lang.draft')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="draft" style="background-color: #0952a5" type="button"
-                                    class="btn btn-custom" id="view-draft-btn"
-                                    data-href="{{ action('SellPosController@getDraftTransactions') }}"><i
-                                        class="dripicons-flag"></i>
-                                    @lang('lang.view_draft')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="online-order" style="background-color: #69a509" type="button"
-                                    class="btn btn-custom" id="view-online-order-btn"
-                                    data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><img
-                                        src="{{ asset('images/online_order.png') }}" style="height: 25px; width: 35px;"
-                                        alt="icon">
-                                    @lang('lang.online_orders') <span
-                                        class="badge badge-danger online-order-badge">0</span></button>
-                            </div>
-                            {{-- <div class="column-5">
+
+
+
+                                {{-- <div class="column-5">
                                 <button data-method="cheque" style="background-color: #fd7272" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="cheque-btn"><i class="fa fa-money"></i> @lang('lang.cheque')</button>
@@ -458,323 +1204,231 @@
                                     id="bank-transfer-btn"><i class="fa fa-building-o"></i>
                                     @lang('lang.bank_transfer')</button>
                             </div> --}}
-                            <div class="column-5">
-                                <button data-method="pay-later" style="background-color: #cf2929" type="button"
-                                    class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
-                                    @lang('lang.pay_later')</button>
-                            </div>
-                            {{-- <div class="column-5">
+
+
+                                {{-- <div class="column-5">
                                 <button data-method="gift_card" style="background-color: #5f27cd" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="gift-card-btn"><i class="fa fa-credit-card-alt"></i>
                                     @lang('lang.gift_card')</button>
                             </div> --}}
-                            {{-- <div class="column-5">
+                                {{-- <div class="column-5">
                                 <button data-method="deposit" style="background-color: #b33771" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="deposit-btn"><i class="fa fa-university"></i>
                                     @lang('lang.use_the_balance')</button>
                             </div> --}}
-                            <div class="column-5">
-                                <button style="background-color: #ff0000;" type="button" class="btn btn-custom"
-                                    id="cancel-btn" onclick="return confirmCancel()"><i class="fa fa-close"></i>
-                                    @lang('lang.cancel')</button>
-                            </div>
-                            <div class="column-5">
-                                <button style="background-color: #ffc107;" type="button" class="btn btn-custom"
-                                    id="recent-transaction-btn"><i class="dripicons-clock"></i>
-                                    @lang('lang.recent_transactions')</button>
+
                             </div>
                         </div>
+
+                        @include('sale_pos.partials.payment_modal')
+                        @include('sale_pos.partials.discount_modal')
+                        {{-- @include('sale_pos.partials.tax_modal') --}}
+                        @include('sale_pos.partials.delivery_cost_modal')
+                        @include('sale_pos.partials.coupon_modal')
+                        @include('sale_pos.partials.contact_details_modal')
+                        @include('sale_pos.partials.weighing_scale_modal')
+                        @include('sale_pos.partials.non_identifiable_item_modal')
+                        @include('sale_pos.partials.customer_sizes_modal')
+                        @include('sale_pos.partials.sale_note')
+
+                        {!! Form::close() !!}
                     </div>
 
-                    @include('sale_pos.partials.payment_modal')
-                    @include('sale_pos.partials.discount_modal')
-                    {{-- @include('sale_pos.partials.tax_modal') --}}
-                    @include('sale_pos.partials.delivery_cost_modal')
-                    @include('sale_pos.partials.coupon_modal')
-                    @include('sale_pos.partials.contact_details_modal')
-                    @include('sale_pos.partials.weighing_scale_modal')
-                    @include('sale_pos.partials.non_identifiable_item_modal')
-                    @include('sale_pos.partials.customer_sizes_modal')
-                    @include('sale_pos.partials.sale_note')
+                    <!-- product list -->
+                    <div class="@if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-lg-5 @else col-lg-6 @endif">
 
-                    {!! Form::close() !!}
-                </div>
 
-                <!-- product list -->
-                <div class="@if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-md-5 @else col-md-6 @endif">
-                    <!-- navbar-->
-                    <header class="header">
-                        <nav class="navbar">
-                            <div class="container-fluid">
-                                <div class="navbar-holder d-flex align-items-center justify-content-between">
-                                    <a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-bars">
-                                        </i></a>
-                                    <div class="navbar-header">
 
-                                        <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-                                            <li class="nav-item">
-                                                <a href="{{ action('SellController@create') }}"
-                                                    id="commercial_invoice_btn" data-toggle="tooltip"
-                                                    data-title="@lang('lang.add_sale')" class="btn no-print"><img
-                                                        src="{{ asset('images/396 Commercial Invoice Icon.png') }}"
-                                                        alt="" style="height: 40px; width: 35px;">
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a target="_blank" href="https://api.whatsapp.com/send?phone={{$watsapp_numbers}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
-                                                    style="background-image:  url('{{asset('images/watsapp.jpg')}}');background-size: 40px;" class="btn no-print">
-                                                </a>
-                                            </li>
-                                            <li class="nav-item"><button class="btn-danger btn-sm hide"
-                                                    id="power_off_btn"><i class="fa fa-power-off"></i></button></li>
-                                            <li class="nav-item"><a id="btnFullscreen" title="Full Screen"><i
-                                                        class="dripicons-expand"></i></a></li>
-                                            @include('layouts.partials.notification_list')
-                                            @php
-                                                $config_languages = config('constants.langs');
-                                                $languages = [];
-                                                foreach ($config_languages as $key => $value) {
-                                                    $languages[$key] = $value['full_name'];
-                                                }
-                                            @endphp
-                                            <li class="nav-item">
-                                                <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false"
-                                                    class="nav-link dropdown-item"><i class="dripicons-web"></i>
-                                                    <span>{{ __('lang.language') }}</span> <i
-                                                        class="fa fa-angle-down"></i></a>
-                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
-                                                    user="menu">
-                                                    @foreach ($languages as $key => $lang)
-                                                        <li>
-                                                            <a href="{{ action('GeneralController@switchLanguage', $key) }}"
-                                                                class="btn btn-link">
-                                                                {{ $lang }}</a>
-                                                        </li>
-                                                    @endforeach
+                    </div>
 
-                                                </ul>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false"
-                                                    class="nav-link dropdown-item"><i class="dripicons-user"></i>
-                                                    <span>{{ ucfirst(Auth::user()->name) }}</span> <i
-                                                        class="fa fa-angle-down"></i>
-                                                </a>
-                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
-                                                    user="menu">
-                                                    @php
-                                                        $employee = App\Models\Employee::where('user_id', Auth::user()->id)->first();
-                                                    @endphp
-                                                    <li style="text-align: center">
-                                                        <img src="@if (!empty($employee->getFirstMediaUrl('employee_photo'))) {{ $employee->getFirstMediaUrl('employee_photo') }}@else{{ asset('images/default.jpg') }} @endif"
-                                                            style="width: 60px; border: 2px solid #fff; padding: 4px; border-radius: 50%;" />
-                                                    </li>
-                                                    <li>
-                                                        <a href="{{ action('UserController@getProfile') }}"><i
-                                                                class="dripicons-user"></i> @lang('lang.profile')</a>
-                                                    </li>
-                                                    @can('settings.general_settings.view')
-                                                        <li>
-                                                            <a href="{{ action('SettingController@getGeneralSetting') }}"><i
-                                                                    class="dripicons-gear"></i> @lang('lang.settings')</a>
-                                                        </li>
-                                                    @endcan
-                                                    <li>
-                                                        <a
-                                                            href="{{ url('my-transactions/' . date('Y') . '/' . date('m')) }}"><i
-                                                                class="dripicons-swap"></i>
-                                                            @lang('lang.my_transactions')</a>
-                                                    </li>
-                                                    @if (Auth::user()->role_id != 5)
-                                                        <li>
-                                                            <a
-                                                                href="{{ url('my-holidays/' . date('Y') . '/' . date('m')) }}"><i
-                                                                    class="dripicons-vibrate"></i>
-                                                                @lang('lang.my_holidays')</a>
-                                                        </li>
-                                                    @endif
+                    <!-- recent transaction modal -->
+                    <div id="recentTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                        class="modal text-left">
 
-                                                    <li>
-                                                        <a href="#" id="logout-btn"><i class="dripicons-power"></i>
-                                                            @lang('lang.logout')
-                                                        </a>
-                                                        <form id="logout-form" action="{{ route('logout') }}"
-                                                            method="POST" style="display: none;">
-                                                            @csrf
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
+                        <div class="modal-dialog modal-xl" role="document" style="max-width: 65%;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">@lang('lang.recent_transactions')</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
                                 </div>
-                        </nav>
-                    </header>
-                    @include('sale_pos.partials.right_side')
-                </div>
+                                <div class="modal-body">
 
-                <!-- recent transaction modal -->
-                <div id="recentTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal text-left">
 
-                    <div class="modal-dialog modal-xl" role="document" style="max-width: 65%;">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">@lang('lang.recent_transactions')</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="col-md-12 modal-filter">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('start_date', __('lang.start_date'), []) !!}
-                                                {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'rt_start_date']) !!}
+
+                                    <div class="col-lg-12 modal-filter">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('start_date', __('lang.start_date'), []) !!}
+                                                    {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'rt_start_date']) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('end_date', __('lang.end_date'), []) !!}
-                                                {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'rt_end_date']) !!}
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('end_date', __('lang.end_date'), []) !!}
+                                                    {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'rt_end_date']) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('rt_customer_id', __('lang.customer'), []) !!}
-                                                {!! Form::select('rt_customer_id', $customers, false, ['class' => 'form-control selectpicker', 'id' => 'rt_customer_id', 'data-live-search' => 'true', 'placeholder' => __('lang.all')]) !!}
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('rt_customer_id', __('lang.customer'), []) !!}
+                                                    {!! Form::select('rt_customer_id', $customers, false, [
+                                                        'class' => 'form-control selectpicker',
+                                                        'id' => 'rt_customer_id',
+                                                        'data-live-search' => 'true',
+                                                        'placeholder' => __('lang.all'),
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('rt_method', __('lang.payment_type'), []) !!}
-                                                {!! Form::select('rt_method', $payment_types, request()->method, ['class' => 'form-control', 'placeholder' => __('lang.all'), 'data-live-search' => 'true', 'id' => 'rt_method']) !!}
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('rt_method', __('lang.payment_type'), []) !!}
+                                                    {!! Form::select('rt_method', $payment_types, request()->method, [
+                                                        'class' => 'form-control',
+                                                        'placeholder' => __('lang.all'),
+                                                        'data-live-search' => 'true',
+                                                        'id' => 'rt_method',
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('rt_created_by', __('lang.cashier'), []) !!}
-                                                {!! Form::select('rt_created_by', $cashiers, false, ['class' => 'form-control selectpicker', 'id' => 'rt_created_by', 'data-live-search' => 'true', 'placeholder' => __('lang.all')]) !!}
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('rt_created_by', __('lang.cashier'), []) !!}
+                                                    {!! Form::select('rt_created_by', $cashiers, false, [
+                                                        'class' => 'form-control selectpicker',
+                                                        'id' => 'rt_created_by',
+                                                        'data-live-search' => 'true',
+                                                        'placeholder' => __('lang.all'),
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('rt_deliveryman_id', __('lang.deliveryman'), []) !!}
-                                                {!! Form::select('rt_deliveryman_id', $delivery_men, null, ['class' => 'form-control sale_filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true', 'id' => 'rt_deliveryman_id']) !!}
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('rt_deliveryman_id', __('lang.deliveryman'), []) !!}
+                                                    {!! Form::select('rt_deliveryman_id', $delivery_men, null, [
+                                                        'class' => 'form-control sale_filter',
+                                                        'placeholder' => __('lang.all'),
+                                                        'data-live-search' => 'true',
+                                                        'id' => 'rt_deliveryman_id',
+                                                    ]) !!}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        @include('sale_pos.partials.recent_transactions')
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                                    @include('sale_pos.partials.recent_transactions')
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">@lang('lang.close')</button>
                                 </div>
-                            </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                    <!-- draft transaction modal -->
+                    <div id="draftTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                        class="modal text-left">
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">@lang('lang.close')</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div>
-                <!-- draft transaction modal -->
-                <div id="draftTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal text-left">
-
-                    <div class="modal-dialog" role="document" style="width: 65%">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">@lang('lang.draft_transactions')</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="col-md-12 modal-filter">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('draft_start_date', __('lang.start_date'), []) !!}
-                                                {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'draft_start_date']) !!}
+                        <div class="modal-dialog" role="document" style="width: 65%">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">@lang('lang.draft_transactions')</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-lg-12 modal-filter">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('draft_start_date', __('lang.start_date'), []) !!}
+                                                    {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'draft_start_date']) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('draft_end_date', __('lang.end_date'), []) !!}
-                                                {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'draft_end_date']) !!}
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('draft_end_date', __('lang.end_date'), []) !!}
+                                                    {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'draft_end_date']) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('draft_deliveryman_id', __('lang.deliveryman'), []) !!}
-                                                {!! Form::select('draft_deliveryman_id', $delivery_men, null, ['class' => 'form-control sale_filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true', 'id' => 'draft_deliveryman_id']) !!}
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('draft_deliveryman_id', __('lang.deliveryman'), []) !!}
+                                                    {!! Form::select('draft_deliveryman_id', $delivery_men, null, [
+                                                        'class' => 'form-control sale_filter',
+                                                        'placeholder' => __('lang.all'),
+                                                        'data-live-search' => 'true',
+                                                        'id' => 'draft_deliveryman_id',
+                                                    ]) !!}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        @include('sale_pos.partials.view_draft')
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                                    @include('sale_pos.partials.view_draft')
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">@lang('lang.close')</button>
                                 </div>
-                            </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                    <!-- onlineOrder transaction modal -->
+                    <div id="onlineOrderTransaction" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true" class="modal text-left">
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">@lang('lang.close')</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div>
-                <!-- onlineOrder transaction modal -->
-                <div id="onlineOrderTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal text-left">
-
-                    <div class="modal-dialog" role="document" style="width: 65%">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">@lang('lang.online_order_transactions')</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="col-md-12 modal-filter">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('online_order_start_date', __('lang.start_date'), []) !!}
-                                                {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'online_order_start_date']) !!}
+                        <div class="modal-dialog" role="document" style="width: 65%">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">@lang('lang.online_order_transactions')</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-lg-12 modal-filter">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('online_order_start_date', __('lang.start_date'), []) !!}
+                                                    {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'online_order_start_date']) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('online_order_end_date', __('lang.end_date'), []) !!}
-                                                {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'online_order_end_date']) !!}
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('online_order_end_date', __('lang.end_date'), []) !!}
+                                                    {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'online_order_end_date']) !!}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        @include('sale_pos.partials.view_online_order')
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                                    @include('sale_pos.partials.view_online_order')
-                                </div>
-                            </div>
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">@lang('lang.close')</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div>
-                <div id="dining_model" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal text-left">
-                </div>
-                <div id="dining_table_action_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal fade text-left">
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">@lang('lang.close')</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                    <div id="dining_model" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                        class="modal text-left">
+                    </div>
+                    <div id="dining_table_action_modal" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true" class="modal fade text-left">
+                    </div>
                 </div>
             </div>
-        </div>
 
 
     </section>
@@ -784,7 +1438,6 @@
     <section class="invoice print_section print-only" id="receipt_section"> </section>
 @endsection
 @section('style')
-
     <style>
         .red {
             color: #a50d0d !important;
