@@ -1,0 +1,94 @@
+.height-responsive {
+    height: 30px;
+    font-size: 10px;
+}
+
+.font-responsive {
+    font-size: 10px;
+}
+
+@media (min-width:992px) {
+    .height-responsive {
+        height: 44px;
+        font-size: 16px;
+    }
+
+    .font-responsive {
+        font-size: 13px;
+    }
+}
+
+.first-head {
+    width: 100% !important;
+}
+
+.first-head .btn {
+    border: none;
+    border-radius: 16px;
+    color: #999;
+    font-weight: 200;
+    font-size: 10px;
+}
+
+.tax .btn-group {
+    background-color: transparent;
+}
+
+.tax .btn-group button {
+    background-color: transparent;
+}
+
+@media (min-width:992px) {
+    .first-head .btn {
+        border: none;
+        border-radius: 16px;
+        color: #999;
+        font-weight: 200;
+        font-size: 16px;
+    }
+}
+
+.walk-in-customer .btn {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 20px
+}
+
+.terms .dropdown-menu {
+    margin: 15px 0 0;
+}
+
+.terms {
+    width: 100% !important;
+
+}
+
+
+.terms .btn {
+    border: none;
+    border-radius: 16px;
+    color: #999;
+    font-weight: 200;
+    font-size: 16px;
+    width: 100%
+}
+
+.terms .dropdown-menu {
+    width: 100%;
+    margin: 15px 0 0;
+}
+
+.label {
+    font-weight: 700;
+    color: #000
+}
+
+.printer-responsive {
+    padding: 10px 8px;
+}
+
+@media (min-width:992px) {
+    .printer-responsive {
+        padding: 48px 8px;
+    }
+}

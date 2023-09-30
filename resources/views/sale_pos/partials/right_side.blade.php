@@ -1,91 +1,173 @@
+<style>
+    .filterLabel {
+
+        display: grid;
+        grid-template-columns: 1em auto;
+        gap: 0.5em;
+    }
+
+    .filterInput {
+        appearance: none;
+        background-color: transparent;
+        margin: 0;
+        font: inherit;
+        color: #21912A;
+        width: 1.15em;
+        height: 1.15em;
+        border: 0.15em solid #21912A;
+        border-radius: 0.15em;
+        transform: translateY(-0.075em);
+        display: grid;
+        place-content: center;
+        margin-top: 2px;
+    }
+
+    /*  */
+
+    .filterInput::before {
+        content: "";
+        width: 0.65em;
+        height: 0.65em;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em var(--form-control-color);
+
+        background-color: CanvasText;
+
+        transform-origin: bottom left;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+
+    .filterInput:checked::before {
+        transform: scale(1);
+        background-color: white;
+    }
+
+    .filterInput:checked {
+        background-color: #21912A
+    }
+</style>
+
 <div class="row">
     <br>
     <div class="col-md-12">
         <div class="filter-checkbox card" style="margin: 0px;">
-            @if (session('system_mode') != 'restaurant')
+            {{-- @if (session('system_mode') != 'restaurant')
                 <div class="card-header" style="padding: 5px 20px; color: #7c5cc4">
                     <i class="fa fa-filter"></i> @lang('lang.filter')
                 </div>
-            @endif
+            @endif --}}
             <div class="card-body" style="padding: 5px 20px">
-                <div class="row">
+
+
+                <div class="row p-2">
                     @if (session('system_mode') != 'restaurant')
-                        <div class="col-md-4">
-                            <label class="checkbox-inline">
-                                <input class="" type="checkbox" id="category-filter" />
+                        <div style="background-color: #E6E6E6;color: black;border-radius: 16px;width: 100%;box-shadow: 5px 8px 4px -5px #bbb inset;"
+                            class="d-flex mb-3 flex-column  px-2 pt-3">
+
+                            <label class="filterLabel">
+                                <input class="filterInput" type="checkbox" id="category-filter" />
                                 @lang('lang.category')
                             </label>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="checkbox-inline">
-                                <input class="" type="checkbox" id="sub-category-filter" />
+
+
+
+
+                            <label class="filterLabel">
+                                <input class="filterInput" type="checkbox" id="sub-category-filter" />
                                 @lang('lang.sub_category')
                             </label>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="checkbox-inline">
-                                <input class="" type="checkbox" id="brand-filter" />
+
+
+
+                            <label class="filterLabel">
+                                <input class="filterInput" type="checkbox" id="brand-filter" />
                                 @lang('lang.brand')
                             </label>
                         </div>
-                        <div class="col-md-6">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="selling_filter" value="best_selling">
+
+                        <div style="background-color: #E6E6E6;color: black;border-radius: 16px;width: 100%;box-shadow: 5px 8px 4px -5px #bbb inset;"
+                            class="d-flex mb-3 flex-column  px-2 pt-3">
+
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="selling_filter filterInput" value="best_selling">
                                 @lang('lang.best_selling')
                             </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="selling_filter" value="slow_moving_items">
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="selling_filter filterInput" value="slow_moving_items">
                                 @lang('lang.slow_moving_items')
                             </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="selling_filter" value="product_in_last_transactions">
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="selling_filter filterInput"
+                                    value="product_in_last_transactions">
                                 @lang('lang.product_in_last_transactions')
                             </label>
                         </div>
-                        <div class="col-md-4">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="price_filter" value="highest_price">
+
+                        <div style="background-color: #E6E6E6;color: black;border-radius: 16px;width: 100%;box-shadow: 5px 8px 4px -5px #bbb inset;"
+                            class="d-flex mb-3 flex-column  px-2 pt-3">
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="price_filter filterInput" value="highest_price">
                                 @lang('lang.highest_price')
                             </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="price_filter" value="lowest_price">
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="price_filter filterInput" value="lowest_price">
                                 @lang('lang.lowest_price')
                             </label>
                         </div>
-                        <div class="col-md-2">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="sorting_filter" value="a_to_z"> @lang('lang.a_to_z')
+
+
+                        <div style="background-color: #E6E6E6;color: black;border-radius: 16px;width: 100%;box-shadow: 5px 8px 4px -5px #bbb inset;"
+                            class="d-flex mb-3 flex-column  px-2 pt-3">
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="sorting_filter filterInput" value="a_to_z">
+                                @lang('lang.a_to_z')
                             </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="sorting_filter" value="z_to_a"> @lang('lang.z_to_a')
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="sorting_filter filterInput" value="z_to_a">
+                                @lang('lang.z_to_a')
                             </label>
                         </div>
-                        <div class="col-md-4">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="expiry_filter" value="nearest_expiry">
+                        {{--  --}}
+
+                        <div style="background-color: #E6E6E6;color: black;border-radius: 16px;width: 100%;box-shadow: 5px 8px 4px -5px #bbb inset;"
+                            class="d-flex mb-3 flex-column  px-2 pt-3">
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="expiry_filter filterInput" value="nearest_expiry">
                                 @lang('lang.nearest_expiry')
                             </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="expiry_filter" value="longest_expiry">
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="expiry_filter filterInput" value="longest_expiry">
                                 @lang('lang.longest_expiry')
                             </label>
                         </div>
                     @endif
-                    <div class="col-md-6 @if (session('system_mode') == 'restaurant') hide @endif">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="sale_promo_filter" value="items_in_sale_promotion">
-                            @lang('lang.items_in_sale_promotion')
-                        </label>
+
+
+
+                    <div class=" @if (session('system_mode') == 'restaurant') hide @endif">
+                        <div style="background-color: #E6E6E6;color: black;border-radius: 16px;width: 100%;box-shadow: 5px 8px 4px -5px #bbb inset;"
+                            class="d-flex mb-3 flex-column  px-2 pt-3">
+                            <label class="checkbox-inline filterLabel">
+                                <input type="checkbox" class="sale_promo_filter filterInput"
+                                    value="items_in_sale_promotion">
+                                @lang('lang.items_in_sale_promotion')
+                            </label>
+                        </div>
                     </div>
+
                     @if (session('system_mode') == 'restaurant')
-                        <div class="col-md-12 filter-btn-div">
-                            <div class="btn-group btn-group-toggle ml-2 btn-group-custom" data-toggle="buttons">
+                        <div style="width: 100%" class=" filter-btn-div">
+                            {{-- class="btn-group-custom" --}}
+                            <div class="btn-group btn-group-toggle  " data-toggle="buttons">
                                 <label class="btn btn-primary active filter-btn">
-                                    <input type="radio" checked autocomplete="off" name="restaurant_filter" value="all">
+                                    <input type="radio" checked autocomplete="off" name="restaurant_filter"
+                                        value="all">
                                     @lang('lang.all')
                                 </label>
                                 <label class="btn btn-primary filter-btn">
-                                    <input type="radio" autocomplete="off" name="restaurant_filter" value="promotions">
+                                    <input type="radio" autocomplete="off" name="restaurant_filter"
+                                        value="promotions">
                                     @lang('lang.promotions')
                                 </label>
                                 @foreach ($product_classes as $product_class)
@@ -99,84 +181,6 @@
                             </div>
                         </div>
                     @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body" style="padding: 0;">
-                <div class="col-md-12 mt-1 table-container">
-                    <div class="filter-window" style="width: 100% !important; height: 100% !important">
-                        <div class="category mt-3">
-                            <div class="row ml-2 mr-2 px-2">
-                                <div class="col-7">@lang('lang.choose_category')</div>
-                                <div class="col-5 text-right">
-                                    <span class="btn btn-default btn-sm">
-                                        <i class="dripicons-cross"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row ml-2 mt-3">
-                                @foreach ($categories as $category)
-                                    <div class="col-md-3 filter-by category-img text-center"
-                                        data-id="{{ $category->id }}" data-type="category">
-                                        <img
-                                            src="@if (!empty($category->getFirstMediaUrl('category'))) {{ $category->getFirstMediaUrl('category') }}@else{{ asset('images/default.jpg') }} @endif" />
-                                        <p class="text-center">{{ $category->name }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="sub_category mt-3">
-                            <div class="row ml-2 mr-2 px-2">
-                                <div class="col-7">@lang('lang.choose_sub_category')</div>
-                                <div class="col-5 text-right">
-                                    <span class="btn btn-default btn-sm">
-                                        <i class="dripicons-cross"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row ml-2 mt-3">
-                                @foreach ($sub_categories as $category)
-                                    <div class="col-md-3 filter-by category-img text-center"
-                                        data-id="{{ $category->id }}" data-type="sub_category">
-                                        <img
-                                            src="@if (!empty($category->getFirstMediaUrl('category'))) {{ $category->getFirstMediaUrl('category') }}@else{{ asset('images/default.jpg') }} @endif" />
-                                        <p class="text-center">{{ $category->name }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="brand mt-3">
-                            <div class="row ml-2 mr-2 px-2">
-                                <div class="col-7">@lang('lang.choose_brand')</div>
-                                <div class="col-5 text-right">
-                                    <span class="btn btn-default btn-sm">
-                                        <i class="dripicons-cross"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row ml-2 mt-3">
-                                @foreach ($brands as $brand)
-                                    <div class="col-md-3 filter-by brand-img text-center" data-id="{{ $brand->id }}"
-                                        data-type="brand">
-                                        <img
-                                            src="@if (!empty($brand->getFirstMediaUrl('brand'))) {{ $brand->getFirstMediaUrl('brand') }}@else{{ asset('images/default.jpg') }} @endif" />
-                                        <p class="text-center">{{ $brand->name }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    <table id="filter-product-table" class="table no-shadow product-list"
-                        style="width: 100%; border: 0px">
-                        <tbody>
-
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
