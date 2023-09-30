@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', __('lang.pos'))
 @section('content')
-
+    {{--  --}}
     <style>
         .first-head {
             width: fit-content;
