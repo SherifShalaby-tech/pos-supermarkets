@@ -1363,7 +1363,12 @@ class ProductUtil extends Util
         }
         // return $keep_lines_ids;
         if (!empty($keep_lines_ids)) {
-            $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)->whereNotIn('batch_number',$batch_numbers)->whereNotIn('id', $keep_lines_ids)->get();
+            $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)
+            ->where(function ($query) use ($batch_numbers, $keep_lines_ids) {
+                $query->whereNotIn('batch_number', $batch_numbers)
+                    ->orWhereNotIn('id', $keep_lines_ids);
+            })
+            ->get();
             foreach ($deleted_lines as $deleted_line) {
                 if ($deleted_line->quantity_sold != 0) {
                     $product_name = Product::find($deleted_line->product_id)->name ?? '';

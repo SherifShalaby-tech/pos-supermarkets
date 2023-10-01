@@ -1356,7 +1356,7 @@ class TransactionUtil extends Util
      * @param array $payment_types
      * @return void
      */
-    public function getInvoicePrint($transaction, $payment_types,$last_due, $transaction_invoice_lang = null)
+    public function getInvoicePrint($transaction, $payment_types, $transaction_invoice_lang = null,$last_due=null)
     {
         $print_gift_invoice = request()->print_gift_invoice;
 

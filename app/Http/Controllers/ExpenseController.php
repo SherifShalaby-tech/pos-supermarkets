@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
+use App\Models\Employee;
 use App\Models\ExpenseBeneficiary;
 use App\Models\ExpenseCategory;
 use App\Models\MoneySafe;
@@ -24,7 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Yajra\DataTables\Facades\DataTables;
 class ExpenseController extends Controller
 {
     /**
@@ -60,6 +61,7 @@ class ExpenseController extends Controller
      */
     public function index()
     {
+        if (request()->ajax()) {
         $expense_query = Transaction::leftjoin('users', 'transactions.created_by', 'users.id')
             ->leftjoin('employees', 'transactions.source_id', 'employees.user_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -93,17 +95,89 @@ class ExpenseController extends Controller
         }
         $expenses = $expense_query->select(
             'transactions.*',
-            'users.name as created_by',
+            'users.name as user_created_by',
         )
-            ->orderBy('transaction_date', 'desc')
-            ->get();
+            ->orderBy('transaction_date', 'desc');
 
+            return DataTables::of($expenses)
+            ->addColumn('expense_category', function ($row) {
+                return $row->expense_category->name??'';
+            })->addColumn('beneficiary', function ($row) {
+                return $row->expense_beneficiary->name??'';
+            })->addColumn('store', function ($row) {
+                return $row->store->name??'';
+            })
+            ->editColumn('final_total', '{{@num_format($final_total)}}')
+            ->editColumn('created_by', '{{ucfirst($user_created_by)}}')
+            ->editColumn('creation_date', '{{@format_date($transaction_date)}}')
+            ->addColumn('payment_date', function ($row) {
+                if(!empty($row->transaction_payments->first())){
+                    return ($row->transaction_payments->first()->paid_on??'');
+                }else{
+                    return '';
+                }
+            })
+            ->editColumn('next_payment_date', '{{@format_date($next_payment_date)}}')
+            ->addColumn('paid_by', function ($row) {
+                $store = '';
+                if (!empty($row->source_id)) {
+                    $employee = Employee::where('user_id', $row->source_id)->first();
+                }
+                if (!empty($employee)) {
+                    $store = implode(',', $employee->store->pluck('name')->toArray());
+                }
+                return $store;
+            })
+            ->addColumn('source_name', function ($row) {
+                    return $row->source_name??'';
+            })
+            ->addColumn(
+                'files',
+                function ($row) {
+                    $html =
+                    '<a data-href="' .action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $row->id, 'collection_name' => 'expense']) . '" data-container=".view_modal"
+                    class="btn btn-default btn-modal">' .__('lang.view') . '</a>';
+                    return $html;
+            })
+            ->addColumn(
+                'action',
+                function ($row) {
+                    $html=' <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                    data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">'.__('lang.action').'
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                    user="menu">';
+                    if(auth()->user()->can('expense.expenses.view')){
+                        $html .='<li><a href="' .action('ExpenseController@show', $row->id) . '"class="btn edit_job"><i
+                        class="fa fa-eye"></i>' .__('lang.view') . '</a></li>';
+                    }
+                    if(auth()->user()->can('expense.expenses.create_and_edit')){
+                        $html .='<li><a href="' .action('ExpenseController@edit', $row->id). '"class="btn edit_job"><i
+                        class="fa fa-eye"></i>' .__('lang.edit') . '</a></li>';
+                    }
+                    if(auth()->user()->can('expense.expenses.delete')){
+                        $html .='<li><a data-href="' .action('ExpenseController@destroy', $row->id) . '"data-check_password="'.action('UserController@checkPassword', Auth::user()->id) . '"
+                        class="btn delete_item text-red"><i
+                            class="fa fa-trash"></i>' .__('lang.delete') . '</a></li>';
+                    }
+                    $html .='</ul></button>';
+                    return $html;
+            })
+        
+        
+            ->rawColumns([
+            'expense_category','beneficiary','store','final_total','created_by'
+            ,'creation_date','payment_date','next_payment_date','paid_by','source_name','files','action'
+        ])
+        ->make(true);
+        }
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $expense_beneficiaries = ExpenseBeneficiary::pluck('name', 'id');
         $stores = Store::pluck('name', 'id');
-
         return view('expense.index')->with(compact(
-            'expenses',
             'expense_categories',
             'stores',
             'expense_beneficiaries'

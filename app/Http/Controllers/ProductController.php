@@ -1257,37 +1257,24 @@ class ProductController extends Controller
             }
 
 
-//            if ($request->images) {
-//                $product->clearMediaCollection('product');
-//                foreach ($request->images as $image) {
-//                    $product->addMedia($image)->toMediaCollection('product');
-//                }
-//            }
-            // return $request->cropImages;
-            // if ($request->has("cropImages") && count($request->cropImages) > 0) {
-            //     foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-            //         $product->clearMediaCollection('product');
-            //         $extention = explode(";",explode("/",$imageData)[1])[0];
-            //         $image = rand(1,1500)."_image.".$extention;
-            //         $filePath = public_path('uploads/' . $image);
-            //         $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-            //         $product->addMedia($filePath)->toMediaCollection('product');
-            //     }
-            // }
-
-
+            //////////////////////////
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                // Clear the media collection only once, before the loop
+                $product->clearMediaCollection('product');
+                
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-                    if (strlen($imageData) > 300){
-                        $product->clearMediaCollection('product');
-                        $extention = explode(";",explode("/",$imageData)[1])[0];
-                        $image = rand(1,1500)."_image.".$extention;
-                        $filePath = public_path('uploads/' . $image);
-                        $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-                        $product->addMedia($filePath)->toMediaCollection('product');
-                    }
+                    $extention = explode(";", explode("/", $imageData)[1])[0];
+                    $image = rand(1, 1500) . "_image." . $extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+                    $product->addMedia($filePath)->toMediaCollection('product');
                 }
             }
+
+            if (!isset($request->cropImages) || count($request->cropImages) == 0) {
+                $product->clearMediaCollection('product');
+            }
+            //////////////////////////////////////
             if (!empty($request->supplier_id)) {
                 SupplierProduct::updateOrCreate(
                     ['product_id' => $product->id],

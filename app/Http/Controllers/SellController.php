@@ -727,7 +727,6 @@ class SellController extends Controller
                             if(isset($transaction_sell_line->stock_line_id)){
                                 $stock = AddStockLine::where('id',$transaction_sell_line->stock_line_id)->first();
                                 $stock->update([
-                                    'quantity' =>  $stock->quantity + $transaction_sell_line->quantity,
                                     'quantity_sold' =>  $stock->quantity - $transaction_sell_line->quantity
                                 ]);
                             }
