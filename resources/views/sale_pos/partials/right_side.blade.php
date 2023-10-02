@@ -6,6 +6,7 @@
         gap: 0.5em;
     }
 
+    /*  */
     .filterInput {
         appearance: none;
         background-color: transparent;

@@ -2,6 +2,7 @@
     <tr class="product_row">
         @if (!empty($is_direct_sale))
             <td class="row_number"></td>
+            {{--  --}}
         @endif
         <td
             style="font-size: 12px; border:2px solid #dcdcdc;border-radius:5px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 19%; @else 20%; @endif height:40px">

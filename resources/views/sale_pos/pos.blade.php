@@ -5,7 +5,7 @@
 @section('style')
     <link rel="stylesheet" href="{{ url('css/pos.css') }}">
 @endsection
-
+{{--  --}}
 
 
 @php
