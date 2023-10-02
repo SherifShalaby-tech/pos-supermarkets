@@ -6,7 +6,6 @@
         gap: 0.5em;
     }
 
-    /*  */
     .filterInput {
         appearance: none;
         background-color: transparent;
@@ -49,7 +48,7 @@
     }
 </style>
 
-<div class="row">
+<div class="row font-responsive">
     <br>
     <div class="col-md-12">
         <div class="filter-checkbox card" style="margin: 0px;">

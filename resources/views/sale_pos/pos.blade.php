@@ -5,7 +5,7 @@
 @section('style')
     <link rel="stylesheet" href="{{ url('css/pos.css') }}">
 @endsection
-{{--  --}}
+
 
 
 @php
@@ -66,21 +66,12 @@
 
 
 
-            <a href="#"
-                class="btn btn-sm hide font-weight-bold d-flex justify-content-center align-items-center py-0 px-3 mr-1 mr-lg-2"
-                id="power_off_btn" style="color: white;background-color: #21912A; font-size: 14px">
-                <svg class="bag" xmlns="http://www.w3.org/2000/svg" height="1em"
-                    viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-                    <style>
-                        .bag {
-                            fill: #ffffff
-                        }
-                    </style>
-                    <path
-                        d="M160 112c0-35.3 28.7-64 64-64s64 28.7 64 64v48H160V112zm-48 48H48c-26.5 0-48 21.5-48 48V416c0 53 43 96 96 96H352c53 0 96-43 96-96V208c0-26.5-21.5-48-48-48H336V112C336 50.1 285.9 0 224 0S112 50.1 112 112v48zm24 48a24 24 0 1 1 0 48 24 24 0 1 1 0-48zm152 24a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z" />
-                </svg>
-                <span class="ml-1">POS</span>
-            </a>
+
+            <button
+                class="btn-danger btn btn-sm hide font-weight-bold d-flex justify-content-center align-items-center py-0 px-3 mr-1 mr-lg-2"
+                id="power_off_btn" style="color: white;font-size: 15px;width: 24px;height: 24px; border-radius: 8px;"><i
+                    class="fa fa-power-off"></i>
+            </button>
 
             {{-- <div class="inline" style="width: 30px;height: 30px;"> --}}
             <a target="_blank" href="https://api.whatsapp.com/send?phone={{ $watsapp_numbers }}" id="contact_us_btn"
@@ -188,14 +179,14 @@
         </div>
     </div>
 
-    <div class="p-1 d-flex">
+    <div class="p-1 d-flex flex-column flex-lg-row">
         <div class="col-lg-10 p-1">
 
             <div class="bg-white mb-2 py-2 d-flex flex-wrap justify-content-between align-items-center"
                 style="border-radius: 8px;width: 100%">
 
                 <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
-                    <div class="  height-responsive d-flex justify-content-center align-items-center"
+                    <div class="mb-2 mb-lg-0  height-responsive d-flex justify-content-center align-items-center"
                         style="background-color: #dedede; border: none;
                                     border-radius: 16px;
                                     color: #373737;
@@ -345,95 +336,98 @@
             </div>
 
             <div style="border-radius: 8px;width: 100%"
-                class="py-2 d-flex flex-column bg-white flex-lg-row justify-content-between align-items-start">
+                class="py-2 d-flex bg-white flex-row justify-content-between align-items-start">
+                <div class="col-6 d-flex flex-column flex-lg-row">
+                    <div class="col-lg-4 mb-2 mb-lg-0">
 
-                <div class="col-lg-2">
+                        <div class="col-12 form-group input-group my-group d-flex flex-row justify-content-center height-responsive"
+                            style="background-color: #dedede; border: none;
+                                        border-radius: 16px;
+                                        color: #373737;
+                                        box-shadow: 0 8px 6px -5px #bbb;
+                                        width: 100%;
+                                        margin: auto;
+                                        flex-wrap: nowrap;
+                                        padding-right:25px">
+                            {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, [
+                                'class' => 'selectpicker first-head  walk-in-customer walk-in-customer',
+                                'data-live-search' => 'true',
+                                'style' => 'width: 80%',
+                                'id' => 'customer_id',
+                                'required',
+                            ]) !!}
+                            <span class="input-group-btn">
+                                @can('customer_module.customer.create_and_edit')
+                                    <a style="background-color: #F9C751;
+                                        width: 100%;
+                                        height: 100%;
+                                        border-radius: 16px;
+                                        padding: 6px 6px;
+                                        "
+                                        class="d-flex justify-content-center align-items-center top-0 right-0"
+                                        data-href="{{ action('CustomerController@create') }}?quick_add=1"
+                                        data-container=".view_modal">
+                                        <svg class="plus" xmlns="http://www.w3.org/2000/svg" height="2em"
+                                            viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                            <style>
+                                                .plus {
+                                                    fill: #ffffff
+                                                }
+                                            </style>
+                                            <path
+                                                d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                                        </svg>
+                                    </a>
+                                @endcan
+                            </span>
 
-                    <div class="col-6 col-lg-12 form-group input-group my-group d-flex flex-row justify-content-center height-responsive"
-                        style="background-color: #dedede; border: none;
-                                    border-radius: 16px;
-                                    color: #373737;
-                                    box-shadow: 0 8px 6px -5px #bbb;
-                                    width: 100%;
-                                    margin: auto;
-                                    flex-wrap: nowrap;
-                                    padding-right:25px">
-                        {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, [
-                            'class' => 'selectpicker first-head  walk-in-customer walk-in-customer',
-                            'data-live-search' => 'true',
-                            'style' => 'width: 80%',
-                            'id' => 'customer_id',
-                            'required',
-                        ]) !!}
-                        <span class="input-group-btn">
-                            @can('customer_module.customer.create_and_edit')
-                                <a style="background-color: #F9C751;
-                                     width: 100%;
-                                     height: 100%;
-                                      border-radius: 16px;
-                                      padding: 6px 6px;
-                                      "
-                                    class="d-flex justify-content-center align-items-center top-0 right-0"
-                                    data-href="{{ action('CustomerController@create') }}?quick_add=1"
-                                    data-container=".view_modal">
-                                    <svg class="plus" xmlns="http://www.w3.org/2000/svg" height="2em"
-                                        viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-                                        <style>
-                                            .plus {
-                                                fill: #ffffff
-                                            }
-                                        </style>
-                                        <path
-                                            d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-                                    </svg>
-                                </a>
-                            @endcan
-                        </span>
+                        </div>
+                    </div>
 
+                    <div class="col-lg-4 mb-2 mb-lg-0">
+                        <div style="width: 100%"
+                            class="col-12 first-head p-0 input-group my-group d-flex flex-row justify-content-center height-responsive">
+                            <button type="button"
+                                style="background-color: #dedede;
+                                    border: none;
+                                        border-radius: 16px;
+                                        color: #373737;
+                                        box-shadow: 0 8px 6px -5px #bbb;
+                                        padding: 10px 6px;
+                                        width: 100%;"
+                                class="height-responsive d-flex justify-content-center align-items-center"
+                                data-toggle="modal" data-target="#contact_details_modal">@lang('lang.details')
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4 mb-2 mb-lg-0">
+                        <div style="width: 100%"
+                            class="col-12 first-head p-0  input-group my-group d-flex flex-row justify-content-center height-responsive">
+
+                            <button type="button"
+                                style="background-color: #dedede;
+                                    border: none;
+                                        border-radius: 16px;
+                                        color: #373737;
+                                        box-shadow: 0 8px 6px -5px #bbb;
+                                        padding: 10px 6px;
+                                        width: 100%;"
+                                class="height-responsive d-flex justify-content-center align-items-center"
+                                data-toggle="modal" data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')
+                            </button>
+
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-lg-2">
-                    <div style="width: 100%"
-                        class="col-6 col-lg-12 first-head p-0 input-group my-group d-flex flex-row justify-content-center height-responsive">
-                        <button type="button"
-                            style="background-color: #dedede;
-                                border: none;
-                                    border-radius: 16px;
-                                    color: #373737;
-                                    box-shadow: 0 8px 6px -5px #bbb;
-                                    padding: 10px 6px;
-                                    width: 100%;"
-                            class="height-responsive d-flex justify-content-center align-items-center"
-                            data-toggle="modal" data-target="#contact_details_modal">@lang('lang.details')
-                        </button>
-                    </div>
 
-                </div>
+                <div class="col-6 d-flex flex-column flex-lg-row">
+                    <div class="col-lg-4 mb-2 mb-lg-0">
 
-                <div class="col-lg-2">
-                    <div style="width: 100%"
-                        class="col-6 col-lg-12 first-head p-0  input-group my-group d-flex flex-row justify-content-center height-responsive">
-
-                        <button type="button"
-                            style="background-color: #dedede;
-                                border: none;
-                                    border-radius: 16px;
-                                    color: #373737;
-                                    box-shadow: 0 8px 6px -5px #bbb;
-                                    padding: 10px 6px;
-                                    width: 100%;"
-                            class="height-responsive d-flex justify-content-center align-items-center"
-                            data-toggle="modal" data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')
-                        </button>
-
-                    </div>
-                </div>
-
-                <div class="col-lg-2">
-
-                    <div class="col-6 col-lg-12 mb-0 ml-1 input-group my-group d-flex justify-content-between height-responsive text-center"
-                        style="background-color: white; border: none;
+                        <div class="col-lg-12 mb-0 ml-1 input-group my-group d-flex justify-content-between height-responsive text-center"
+                            style="background-color: white; border: none;
                             border: 1px solid #bbb;
                                     border-radius: 16px;
                                     color: white;
@@ -442,8 +436,8 @@
                                             flex-wrap: nowrap;font-size: 10px;padding:0">
 
 
-                        <label class="d-none justify-content-center align-items-center height-responsive"
-                            style="background-color: #21912A;
+                            <label class="d-none justify-content-center align-items-center height-responsive"
+                                style="background-color: #21912A;
                                                 width: 100%;
 
                                                 border-radius: 16px;
@@ -453,66 +447,69 @@
                                                 padding:0;
 
                                                 "
-                            for="customer_type_name">
-                            @lang('lang.customer_type'):
-                        </label>
-                        <span style="color: #000;width: 100%;"
-                            class="customer_type_name d-flex justify-content-center align-items-center height-responsive"></span>
+                                for="customer_type_name">
+                                @lang('lang.customer_type'):
+                            </label>
+                            <span style="color: #000;width: 100%;"
+                                class="customer_type_name d-flex justify-content-center align-items-center height-responsive"></span>
 
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-lg-2">
-                    <div class="col-6 col-lg-12 p-0 ml-1 input-group my-group d-flex flex-row justify-content-between height-responsive text-center"
-                        style="background-color: white; border: none;
+                    <div class="col-lg-4 mb-2 mb-lg-0">
+                        <div class="col-12 p-0 ml-1 input-group my-group d-flex flex-row justify-content-between height-responsive text-center"
+                            style="background-color: white; border: none;
                             border: 1px solid #bbb;
                                     border-radius: 16px;
                                     color: white;
                                     box-shadow: 0 8px 6px -5px #bbb;
                                     width: 100%;
                                ">
-                        <label
-                            class="d-flex justify-content-center justify-content-md-between align-items-center height-responsive"
-                            for="customer_balance"
-                            style="background-color: #21912A;
+                            <label
+                                class="d-flex justify-content-center justify-content-md-between align-items-center height-responsive"
+                                for="customer_balance"
+                                style="background-color: #21912A;
                                                 width: fit-content;
                                                 height: 100%;
                                                 border-radius: 16px;
-                                                padding: 10px 20px;
+                                                padding: 10px;
                                                 margin-bottom: 0;
                                                 font-weight: 600;
                                                 ">@lang('lang.balance'):
-                        </label>
-                        <span style="color: #000; padding-right: 30px"
-                            class="customer_balance d-flex justify-content-start align-items-center">{{ @num_format(0) }}</span>
+                            </label>
+                            <span style="color: #000; padding-right: 15px"
+                                class="customer_balance d-flex justify-content-start align-items-center">{{ @num_format(0) }}</span>
 
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-lg-2">
-                    <div class="col-6 col-lg-12 p-0 ml-1 input-group my-group d-flex flex-row justify-content-between height-responsive text-center"
-                        style="background-color: white; border: none;
+                    <div class="col-lg-4 mb-2 mb-lg-0">
+                        <div class="col-12 p-0 ml-1 input-group my-group d-flex flex-row justify-content-between height-responsive text-center"
+                            style="background-color: white; border: none;
                             border: 1px solid #bbb;
                                     border-radius: 16px;
                                     color: white;
                                     box-shadow: 0 8px 6px -5px #bbb ;
                                     width: 100%">
-                        <label for="points"
-                            class="d-flex justify-content-center justify-content-md-between align-items-center height-responsive"
-                            style="background-color: #21912A;
+                            <label for="points"
+                                class="d-flex justify-content-center justify-content-md-between align-items-center height-responsive"
+                                style="background-color: #21912A;
                                                 width: fit-content;
                                                 height: 100%;
                                                 border-radius: 16px;
-                                                padding: 10px 20px;
+                                                padding: 10px;
                                                 margin-bottom: 0;
                                                 font-weight: 600;
                                                 ">
-                            @lang('lang.points'):
-                        </label>
-                        <span style="color: #000; padding-right: 30px"
-                            class="customer_points_span d-flex justify-content-start align-items-center">{{ @num_format(0) }}</span>
+                                @lang('lang.points'):
+                            </label>
+                            <span style="color: #000; padding-right: 15px"
+                                class="customer_points_span d-flex justify-content-start align-items-center">{{ @num_format(0) }}</span>
+                        </div>
                     </div>
                 </div>
+
+
 
 
 
@@ -520,7 +517,7 @@
 
 
 
-            {{-- <div class="bg-white rounded mt-4 p-2 d-flex flex-column justify-content-between align-items-center mb-3 mb-lg-0"
+            <div class="bg-white rounded mt-2 p-2 d-flex flex-column justify-content-between align-items-center"
                 style="border-radius: 8px;width: 100%">
 
                 <div class="search-box input-group form-group input-group my-group d-flex justify-content-between"
@@ -568,7 +565,7 @@
                 </div>
 
 
-            </div> --}}
+            </div>
 
 
 
@@ -582,7 +579,7 @@
 
     <div class="p-2 d-flex justify-content-between flex-column-reverse flex-lg-row">
 
-        <div class="col-lg-10 p-1" style="margin-top: -180px">
+        <div class="col-lg-10 p-1 table-margin">
 
             <div class="bg-white mb-1 py-2 d-flex flex-column flex-lg-row justify-content-between align-items-center"
                 style="border-radius: 8px;width: 100%">
@@ -629,44 +626,50 @@
             </div>
 
 
-            <div class=" mb-2 py-2" style="border-radius: 8px;background-color: white">
+            <div class=" py-2" style="border-radius: 8px;background-color: white">
 
-                <div class="row align-items-center justify-content-between mx-auto mb-3" style="width: 80%;">
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mx-auto mb-3"
+                    style="width: 80%;">
 
-                    <div class="col-6 col-lg-1 flex-column d-flex align-items-center text-center mb-2 mb-lg-0">
-                        <span class="totals-title mr-2"
-                            style="color: #000;font-weight: 600;">{{ __('lang.items') }}</span>
-                        <span id="item" class="border border-5 px-2 py-2 rounded">0</span>
+                    <div
+                        class="col-md-6 d-flex align-items-center justify-content-between p-0 text-center font-responsive mb-2 mb-lg-0">
+                        <div class="col-2 flex-column d-flex align-items-center text-center mb-2 mb-lg-0">
+                            <span class="totals-title mr-2"
+                                style="color: #000;font-weight: 600;">{{ __('lang.items') }}</span>
+                            <span id="item" class="border border-5 px-2 py-2 rounded">0</span>
+                        </div>
+
+                        <div class="col-2 flex-column d-flex align-items-center text-center  mb-2 mb-lg-0">
+                            <span class="totals-title mr-2 "
+                                style="color: #000;font-weight: 600;">{{ __('lang.quantity') }}</span>
+                            <span id="item-quantity" class="border border-5 px-2 py-2 rounded">0</span>
+                        </div>
+
+                        <div class="col-2 flex-column d-flex align-items-center text-center  mb-2 mb-lg-0">
+                            <span class="totals-title mr-2"
+                                style="color: #000;font-weight: 600;">{{ __('lang.total') }}</span>
+                            <span id="subtotal" class="border border-5 px-1 py-2 rounded">0.00</span>
+                        </div>
+
+                        <div class="col-2 flex-column d-flex align-items-center text-center  mb-2 mb-lg-0">
+                            <span class="totals-title mr-2"
+                                style="color: #000;font-weight: 600;">{{ __('lang.tax') }}
+                            </span>
+                            <span id="tax" class="border border-5 px-1 py-2 rounded">0.00</span>
+                        </div>
+
+                        <div class="col-2 flex-column d-flex align-items-center text-center  mb-2 mb-lg-0">
+                            <span class="totals-title mr-2"
+                                style="color: #000;font-weight: 600;">{{ __('lang.delivery') }}</span>
+                            <span id="delivery-cost" class="border border-5 px-1 py-2 rounded">0.00</span>
+                        </div>
+
                     </div>
 
-                    <div class="col-6 col-lg-1 flex-column d-flex align-items-center text-center  mb-2 mb-lg-0">
-                        <span class="totals-title mr-2 "
-                            style="color: #000;font-weight: 600;">{{ __('lang.quantity') }}</span>
-                        <span id="item-quantity" class="border border-5 px-2 py-2 rounded">0</span>
-                    </div>
-
-                    <div class="col-6 col-lg-1 flex-column d-flex align-items-center text-center  mb-2 mb-lg-0">
-                        <span class="totals-title mr-2"
-                            style="color: #000;font-weight: 600;">{{ __('lang.total') }}</span>
-                        <span id="subtotal" class="border border-5 px-1 py-2 rounded">0.00</span>
-                    </div>
-
-                    <div class="col-6 col-lg-1 flex-column d-flex align-items-center text-center  mb-2 mb-lg-0">
-                        <span class="totals-title mr-2" style="color: #000;font-weight: 600;">{{ __('lang.tax') }}
-                        </span>
-                        <span id="tax" class="border border-5 px-1 py-2 rounded">0.00</span>
-                    </div>
-
-                    <div class="col-6 col-lg-1 flex-column d-flex align-items-center text-center  mb-2 mb-lg-0">
-                        <span class="totals-title mr-2"
-                            style="color: #000;font-weight: 600;">{{ __('lang.delivery') }}</span>
-                        <span id="delivery-cost" class="border border-5 px-1 py-2 rounded">0.00</span>
-                    </div>
-
-                    <div class="col-6 col-lg-7 d-flex align-items-center text-center  mb-2 mb-lg-0">
+                    <div class="col-md-6 d-flex align-items-center text-center  mb-2 mb-lg-0">
 
 
-                        <div class="col-6 mb-3 mb-lg-0">
+                        <div class="col-6 font-responsive" style="padding: 0">
                             @php
                                 $default_invoice_toc = App\Models\System::getProperty('invoice_terms_and_conditions');
                                 if (!empty($default_invoice_toc)) {
@@ -701,7 +704,7 @@
 
                         <div class="tac_description_div"><span></span></div>
 
-                        <div class="col-6">
+                        <div class="col-6 font-responsive" style="padding: 0;padding-left:2px">
                             {!! Form::label('commissioned_employees', __('lang.commissioned_employees'), ['class' => 'label mb-0']) !!}
                             <div class=""
                                 style="background-color: #dedede; border: none;
@@ -733,48 +736,50 @@
                     </div>
                 </div>
 
-                <div class="row mx-auto mb-1" style="width: 80%">
+                <div class="d-flex flex-column flex-lg-row mx-auto mb-1" style="width: 80%">
 
-                    <div class="col-4 d-flex justify-content-between pl-0 height-responsive"
-                        style="background-color: white; border: none;
+                    <div class="col-lg-6 d-flex justify-content-between align-items-center mb-1 mb-lg-0">
+                        <div class="col-8 d-flex justify-content-between pl-0 height-responsive"
+                            style="background-color: white; border: none;
                             border: 1px solid #bbb;
                                     border-radius: 16px;
                                     color: white;
                                     box-shadow: 0 8px 6px -5px #bbb ;
                                     width: 100%;">
-                        <span class="totals-title  height-responsive"
-                            style="background-color: #21912A;
+                            <span class="totals-title  height-responsive pl-2 pl-lg-0 promotion-padding"
+                                style="background-color: #21912A;
                                                 width: fit-content;
                                                 height: 100%;
                                                 border-radius: 16px;
-                                                padding: 10px 20px;
+
                                                 margin-bottom: 0;
                                                 font-weight: 600;
                                                 ">{{ __('lang.sales_promotion') }}</span>
-                        <span id="sales_promotion-cost_span" style="color: #000; padding-right: 30px;width: 45%"
-                            class="d-flex justify-content-start align-items-center  height-responsive">0.00</span>
-                        <input type="hidden" id="sales_promotion-cost" value="0">
-                    </div>
+                            <span id="sales_promotion-cost_span" style="color: #000; padding-right: 30px;width: 45%"
+                                class="d-flex justify-content-start align-items-center  height-responsive">0.00</span>
+                            <input type="hidden" id="sales_promotion-cost" value="0">
+                        </div>
 
-                    <div class="col-2 pl-lg-6 first-head height-responsive" style="width: 100%; ">
-                        @if (auth()->user()->can('sp_module.sales_promotion.view') ||
-                                auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
-                                auth()->user()->can('sp_module.sales_promotion.delete'))
-                            <button type="button"
-                                style="background-color: #dedede;
+                        <div class="col-4 pl-lg-6 first-head height-responsive" style="width: 100%; ">
+                            @if (auth()->user()->can('sp_module.sales_promotion.view') ||
+                                    auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
+                                    auth()->user()->can('sp_module.sales_promotion.delete'))
+                                <button type="button"
+                                    style="background-color: #dedede;
                                 border: none;
                                     border-radius: 16px;
                                     color: #373737;
                                     box-shadow: 0 8px 6px -5px #bbb ;
-                                    padding: 10px 6px;
                                     width: 100%;"
-                                class="height-responsive" data-toggle="modal"
-                                data-target="#discount_modal">@lang('lang.random_discount')</button>
-                        @endif
-                        {{-- <span id="discount">0.00</span> --}}
+                                    class="height-responsive" data-toggle="modal"
+                                    data-target="#discount_modal">@lang('lang.random_discount')</button>
+                            @endif
+                            {{-- <span id="discount">0.00</span> --}}
+                        </div>
                     </div>
 
-                    <div class="col-6 pl-lg-6 first-head height-responsive payment-amount table_room_hide d-flex justify-content-between pl-0 height-responsive"
+
+                    <div class="col-lg-6 pl-lg-6 first-head height-responsive payment-amount table_room_hide d-flex justify-content-between pl-0 height-responsive"
                         style="background-color: white; border: none;
                             border: 1px solid #bbb;
                                     border-radius: 16px;
@@ -807,10 +812,10 @@
             </div>
         </div>
 
-        <div class="col-lg-2 p-1">
+        <div class="col-lg-2 p-1" style="max-height: 355px">
 
             <div class="col-lg-12 p-1" style="height: 100%">
-                <div class="card" style="height: 100%">
+                <div class="card" style="height: 100%;margin-bottom:0 ">
 
                     <div class="card-body" style="padding: 0;height: 100%">
                         <div class="col-lg-12 mt-1 table-container" style="height: 100%">
@@ -825,7 +830,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="row ml-2 mt-3" style="height: 100%">
+                                    <div class="d-flex flex-wrap ml-2 mt-3">
                                         @foreach ($categories as $category)
                                             <div class="col-lg-6 filter-by category-img text-center"
                                                 data-id="{{ $category->id }}" data-type="category"
@@ -870,7 +875,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="row ml-2 mt-3">
+                                    <div class="d-flex flex-wrap ml-2 mt-3">
                                         @foreach ($brands as $brand)
                                             <div class="col-lg-3 filter-by brand-img text-center"
                                                 data-id="{{ $brand->id }}" data-type="brand">
@@ -902,10 +907,10 @@
 
     <div class="px-4 py-2 mx-3" style="background-color: white;border-radius: 6px;">
 
-        <div class="mx-auto d-flex flex-lg-row flex-column justify-content-between align-items-center"
+        <div class="mx-auto d-flex flex-lg-row flex-column justify-content-between align-items-center font-responsive"
             style="width: 80%;">
 
-            <div style="width: 100%" class="d-flex col-12 col-lg-2 flex-lg-column ">
+            <div style="width: 100%" class="d-flex col-lg-2 flex-lg-column p-0">
 
                 <div class="mb-2 height-responsive" style="width: 100%">
                     <button data-method="cash"
@@ -916,7 +921,7 @@
                         @lang('lang.pay')</button>
                 </div>
 
-                <div class="mb-2 height-responsive" style="width: 100%">
+                <div class="mb-2 height-responsive ml-1 ml-lg-0" style="width: 100%">
                     <button
                         style="background-color: #21912A;border: none;outline: none;box-shadow: 0 8px 6px -5px #bbb ;color: white; border-radius: 6px;width:100%;"
                         type="button" class=" height-responsive font-responsive" id="recent-transaction-btn">
@@ -926,7 +931,7 @@
                 </div>
             </div>
 
-            <div style="width: 100%" class="d-flex col-12 col-lg-2 flex-lg-column ">
+            <div style="width: 100%" class="d-flex col-lg-2 flex-lg-column p-0">
 
                 <div class="mb-2 height-responsive" style="width: 100%">
                     <button data-method="coupon"
@@ -935,12 +940,12 @@
                         data-target="#coupon_modal" id="coupon-btn"><i class="fa fa-tag"></i>
                         @lang('lang.coupon')</button>
                 </div>
-                <div class="mb-2 height-responsive" style="width: 100%">
+                <div class="mb-2 height-responsive ml-1 ml-lg-0" style="width: 100%">
                     <button data-method="online-order"
                         style="background-color: #21912A;border: none;outline: none;box-shadow: 0 8px 6px -5px #bbb ;color: white; border-radius: 6px;width:100%;"
                         type="button" class="height-responsive font-responsive" id="view-online-order-btn"
                         data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><img
-                            src="{{ asset('images/online_order.png') }}" style="height: 25px; width: 35px;"
+                            src="{{ asset('images/online_order.png') }}" style="height: 15px; width: 25px;"
                             alt="icon">
                         @lang('lang.online_orders') <span class="badge badge-danger online-order-badge">0</span>
                     </button>
@@ -948,7 +953,7 @@
 
             </div>
 
-            <div style="width: 100%" class="d-flex col-12 col-lg-2 flex-lg-column">
+            <div style="width: 100%" class="d-flex col-12 col-lg-2 flex-lg-column p-0">
 
                 <div class="mb-2 height-responsive" style="width: 100%">
 
@@ -961,7 +966,7 @@
                             @lang('lang.other_online_payments')</button>
                     @endif
                 </div>
-                <div class="mb-2 height-responsive" style="width: 100%">
+                <div class="mb-2 height-responsive ml-1 ml-lg-0" style="width: 100%">
                     <button data-method="pay-later"
                         style="background-color: #21912A;border: none;outline: none;box-shadow: 0 8px 6px -5px #bbb ;color: white; border-radius: 6px;width:100%;"
                         type="button" class="height-responsive font-responsive payment-btn" id="pay-later-btn"><i
@@ -970,7 +975,7 @@
                 </div>
             </div>
 
-            <div style="width: 100%" class="d-flex col-12 col-lg-2 flex-lg-column ">
+            <div style="width: 100%" class="d-flex col-lg-2 flex-lg-column p-0">
 
                 <div class="height-responsive mb-2" style="width: 100%">
                     <button data-method="draft"
@@ -979,7 +984,7 @@
                         data-target="#sale_note_modal"class="height-responsive"><i class="dripicons-flag"></i>
                         @lang('lang.draft')</button>
                 </div>
-                <div class="height-responsive mb-2" style="width: 100%">
+                <div class="height-responsive mb-2 ml-1 ml-lg-0" style="width: 100%">
                     <button data-method="draft"
                         style="background-color: #21912A;border: none;outline: none;box-shadow: 0 8px 6px -5px #bbb ;color: white; border-radius: 6px;width:100%;"
                         type="button" class="height-responsive font-responsive" id="view-draft-btn"
@@ -989,7 +994,7 @@
                 </div>
             </div>
 
-            <div style="width: 100%" class="d-flex col-12 col-lg-2 flex-lg-column ">
+            <div style="width: 100%" class="d-flex col-lg-2 flex-lg-column p-0">
 
                 <div class="height-responsive mb-2" style="width: 100%">
                     <button
@@ -998,7 +1003,7 @@
                             class="fa fa-close"></i>
                         @lang('lang.cancel')</button>
                 </div>
-                <div class="height-responsive mb-2" style="width: 100%">
+                <div class="height-responsive mb-2 ml-1 ml-lg-0" style="width: 100%">
                     <button data-method="cash"
                         style="background-color: #21912A;border: none;outline: none;box-shadow: 0 8px 6px -5px #bbb ;color: white; border-radius: 6px;width:100%;"
                         type="button" class="height-responsive font-responsive" id="quick-pay-btn"><i

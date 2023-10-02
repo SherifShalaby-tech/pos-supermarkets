@@ -2,7 +2,6 @@
     <tr class="product_row">
         @if (!empty($is_direct_sale))
             <td class="row_number"></td>
-            {{--  --}}
         @endif
         <td
             style="font-size: 12px; border:2px solid #dcdcdc;border-radius:5px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 19%; @else 20%; @endif height:40px">
@@ -26,7 +25,7 @@
                 
             @endphp
             @if ($product->variation_name != 'Default')
-                <b>{{ $product->variation_name }}</b> <b>SKU:</b>{{ $product->sub_sku }}
+                <b style="display: block">{{ $product->variation_name }}</b> <b>SKU:</b>{{ $product->sub_sku }}
             @else
                 <b>{{ $product->product_name }}</b>
 
@@ -51,8 +50,8 @@
             {{-- @endif --}}
             {{-- </small> --}}
 
-            <input type="hidden" name="transaction_sell_line[{{ $loop->index + $index }}][is_service]" class="is_service"
-                value="{{ $product->is_service }}">
+            <input type="hidden" name="transaction_sell_line[{{ $loop->index + $index }}][is_service]"
+                class="is_service" value="{{ $product->is_service }}">
             <input type="hidden" name="transaction_sell_line[{{ $loop->index + $index }}][have_weight]"
                 class="have_weight" value="{{ $product->have_weight }}">
             <input type="hidden" name="transaction_sell_line[{{ $loop->index + $index }}][product_id]"

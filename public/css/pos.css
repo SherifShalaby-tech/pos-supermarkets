@@ -12,7 +12,7 @@
         height: 44px;
         font-size: 16px;
     }
-/*  */
+
     .font-responsive {
         font-size: 13px;
     }
@@ -94,4 +94,35 @@
     .printer-responsive {
         padding: 48px 8px;
     }
+}
+
+.table-margin {
+    margin-top: 0px
+}
+
+@media (min-width:992px) {
+    .table-margin {
+        margin-top: -110px
+    }
+}
+
+/*
+.font-responsive {
+    font-size: 12px;
+}
+
+@media (min-width:992px) {
+    .font-responsive {
+        font-size: 16px;
+    }
+} */
+
+@media (min-width:992px) {
+    .promotion-padding {
+        padding: 10px;
+    }
+}
+
+.promotion-padding {
+    padding-top: 7px;
 }
