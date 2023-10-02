@@ -25,9 +25,10 @@
 .first-head .btn {
     border: none;
     border-radius: 16px;
-    color: #999;
+    color: #373737;
     font-weight: 200;
     font-size: 10px;
+
 }
 
 .tax .btn-group {
@@ -51,7 +52,8 @@
 .walk-in-customer .btn {
     padding-top: 1px;
     padding-bottom: 1px;
-    padding-left: 20px
+    padding-left: 20px;
+    color: #373737;
 }
 
 .terms .dropdown-menu {
@@ -70,7 +72,8 @@
     color: #999;
     font-weight: 200;
     font-size: 16px;
-    width: 100%
+    width: 100%;
+    color: #373737;
 }
 
 .terms .dropdown-menu {

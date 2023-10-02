@@ -27,8 +27,8 @@
 @endphp
 <li class="nav-item" id="notification-icon" style="list-style: none">
     <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-        class=" d-flex justify-content-center align-items-center dropdown-ite notification-list mr-1 mr-md-4"
-        style="color: black;background-color: white; font-size: 20px;width: 30px;height: 30px; border-radius: 4px;"><i
+        class=" d-flex justify-content-center align-items-center dropdown-ite notification-list mr-1 mr-md-2"
+        style="color: black;background-color: white; font-size: 15px;width: 24px;height: 24px; border-radius: 4px;"><i
             class="dripicons-bell"></i>
         @if ($new_count > 0)
             <span class="badge badge-danger notification-number">{{ $new_count }}</span>
