@@ -338,6 +338,9 @@ class ProductController extends Controller
                 })
                 ->addColumn('current_stock_value', function ($row) {
                     $price= AddStockLine::where('variation_id',$row->variation_id)
+                    ->whereHas('transaction', function ($query) {
+                        $query->where('type', '!=', 'supplier_service');
+                    })
                     ->latest()->first();
                     $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
                     return $this->productUtil->num_f($row->current_stock * $price);
