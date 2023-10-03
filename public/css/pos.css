@@ -13,6 +13,7 @@
         font-size: 16px;
     }
 
+    /*  */
     .font-responsive {
         font-size: 13px;
     }
@@ -125,4 +126,16 @@
 
 .promotion-padding {
     padding-top: 7px;
+}
+
+@media (min-width:992px) {
+    .image-responsive {
+        width: 37px;
+        height: 37px;
+    }
+}
+
+.image-responsive {
+    width: 25px;
+    height: 25px;
 }

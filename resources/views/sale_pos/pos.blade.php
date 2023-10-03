@@ -581,10 +581,10 @@
 
         <div class="col-lg-10 p-1 table-margin">
 
-            <div class="bg-white mb-1 py-2 d-flex flex-column flex-lg-row justify-content-between align-items-center"
-                style="border-radius: 8px;width: 100%">
+            <div class="bg-white mb-1 py-2 d-flex flex-column flex-lg-row justify-content-between align-items-start"
+                style="border-radius: 8px;width: 100%;min-height: 450px">
                 <div class="table-responsive transaction-list">
-                    <table id="product_table" style="width: 100%;"
+                    <table class="table table-borderless" id="product_table" style="width: 100%;"
                         class="table table-hover table-striped order-list table-fixed">
                         <thead>
                             <tr style="width: 100%">
@@ -618,7 +618,6 @@
                         </thead>
 
                         <tbody>
-
                         </tbody>
 
                     </table>
@@ -812,7 +811,7 @@
             </div>
         </div>
 
-        <div class="col-lg-2 p-1" style="max-height: 355px">
+        <div class="col-lg-2 p-1" style="max-height: 500px;overflow: scroll">
 
             <div class="col-lg-12 p-1" style="height: 100%">
                 <div class="card" style="height: 100%;margin-bottom:0 ">
@@ -902,9 +901,9 @@
 
         </div>
 
-
+        {{--  --}}
     </div>
-
+    {{--  --}}
     <div class="px-4 py-2 mx-3" style="background-color: white;border-radius: 6px;">
 
         <div class="mx-auto d-flex flex-lg-row flex-column justify-content-between align-items-center font-responsive"

@@ -5,7 +5,7 @@
         cursor: pointer;
     }
 
-
+    /*  */
     .read {
         opacity: 0.8 !important;
         cursor: pointer;
