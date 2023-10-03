@@ -589,30 +589,30 @@
                         <thead>
                             <tr style="width: 100%">
                                 <th class="text-center text-black"
-                                    style="width: @if (session('system_mode') != 'restaurant') 19% @else 20% @endif; font-size: 11px !important; font-weight: 700;">
+                                    style="width: @if (session('system_mode') != 'restaurant') 17% @else 20% @endif; font-size: 11px !important; font-weight: 700;">
                                     @lang('lang.product')</th>
                                 <th class="text-center text-black"
-                                    style="width: @if (session('system_mode') != 'restaurant') 14% @else 20% @endif; font-size: 11px !important; font-weight: 700;">
+                                    style="width: @if (session('system_mode') != 'restaurant') 12% @else 20% @endif; font-size: 11px !important; font-weight: 700;">
                                     @lang('lang.quantity')</th>
                                 <th class="text-center text-black"
-                                    style="width: @if (session('system_mode') != 'restaurant') 14% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
+                                    style="width: @if (session('system_mode') != 'restaurant') 12% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
                                     @lang('lang.price')</th>
                                 <th class="text-center text-black"
-                                    style="width: @if (session('system_mode') != 'restaurant') 13% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
-                                    @lang('lang.discount')</th>
-                                {{-- <th class="text-center text-black"
-                                    style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
-                                    @lang('lang.category_discount')</th> --}}
-                                <th class="text-center text-black"
                                     style="width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
+                                    @lang('lang.discount')</th>
+                                <th class="text-center text-black"
+                                    style="width: @if (session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
+                                    @lang('lang.category_discount')</th>
+                                <th class="text-center text-black"
+                                    style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
                                     @lang('lang.sub_total')</th>
                                 @if (session('system_mode') != 'restaurant')
                                     <th class="text-center text-black"
-                                        style="width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
+                                        style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
                                         @lang('lang.current_stock')</th>
                                 @endif
                                 <th class="text-center text-black"
-                                    style="width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
+                                    style="width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; font-size: 11px !important; font-weight: 700;">
                                     @lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -888,12 +888,15 @@
 
 
                             </div>
-                            <table id="filter-product-table" class="table no-shadow product-list"
-                                style="width: 100%; border: 0px">
-                                <tbody>
 
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table id="filter-product-table" class="table no-shadow product-list"
+                                    style="width: 100%; border: 0px;overflow: scroll">
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -4,9 +4,8 @@
             <td class="row_number"></td>
         @endif
         <td
-            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 19%; @else 20%; @endif height:40px">
+            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 17%; @else 20%; @endif height:40px">
             <div style=" border:2px solid #dcdcdc;border-radius:5px;width: 100%;height: 100%;">
-                {{--  --}}
                 @php
                     $Variation = \App\Models\Variation::where('id', $product->variation_id)->first();
                     if ($Variation) {
@@ -29,6 +28,7 @@
                 @if ($product->variation_name != 'Default')
                     <b style="display: block">{{ $product->variation_name }}</b> <b>SKU:</b>{{ $product->sub_sku }}
                 @else
+                    <b>{{ $product->product_name }}</b>
                     <p class="m-0">
                         @php
                             $ex = 'id' . $product->variation_id;
@@ -115,7 +115,7 @@
 
 
         <td
-            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 14%; @else 20%; @endif height:40px">
+            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 12%; @else 20%; @endif height:40px">
             <div
                 style=" border:2px solid #dcdcdc;border-radius:5px;width: 100%;height: 100%; padding-top: 4px;padding-bottom: 4px;">
                 <div class="input-group justify-content-between align-items-center flex-column flex-lg-row"
@@ -127,11 +127,15 @@
                     </span>
 
                     <input type="number" class="form-control quantity  qty numkey input-number" step="any"
-                        autocomplete="off" style="width: 50px;font-size: 13px"
+                        autocomplete="off" style="width: 50px;"
                         @isset($check_unit) @if ($check_unit->name == 'قطعه' || $check_unit->name == 'Piece') oninput="this.value = Math.round(this.value);" @endif @endisset
                         id="quantity" @if (!$product->is_service) max="{{ $product->qty_available }}" @endif
                         name="transaction_sell_line[{{ $loop->index + $index }}][quantity]" required
                         value="@if (!empty($edit_quantity)) {{ $edit_quantity }}@else @if (isset($product->quantity)){{ preg_match('/\.\d*[1-9]+/', (string) $product->quantity) ? $product->quantity : @num_format($product->quantity) }}@else{{ @num_format(1) }} @endif @endif">
+
+
+
+
                     <span class="input-group-btn">
                         <button type="button"
                             style="background-color:#21912A;color: white;font-weight: 700;font-size: 14px "
@@ -146,7 +150,7 @@
 
 
         <td
-            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 14%; @else 15%; @endif height:40px">
+            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 12%; @else 15%; @endif height:40px">
             <div style=" border:2px solid #dcdcdc;border-radius:5px;width: 100%;height: 100%;">
 
                 <input type="text" class="form-control sell_price text-center"
@@ -160,7 +164,7 @@
 
 
         <td
-            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 13%; @else 15%; @endif height:40px">
+            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 11%; @else 15%; @endif height:40px">
             <div style=" border:2px solid #dcdcdc;border-radius:5px;width: 100%;height: 100%;">
 
 
@@ -186,42 +190,47 @@
         </td>
 
 
-        {{-- <td style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; height:40px; "
-        >
-        <input type="hidden" value="{{ $product->product_id }}" class="p-id" />
-        @if (auth()->user()->can('sp_module.sales_promotion.view') ||
-    auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
-    auth()->user()->can('sp_module.sales_promotion.delete'))
-            <select class="custom-select custom-select-sm discount_category discount_category{{ $product->product_id }}"
-                style="height:30% !important">
-                <option selected>select</option>
-                @if (!empty($product_all_discounts_categories))
-                    @foreach ($product_all_discounts_categories as $discount)
-                        <option value="{{ $discount->id }}">{{ $discount->discount_category }}</option>
-                    @endforeach
+        <td
+            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; height:40px; ">
+            <div style=" border:2px solid #dcdcdc;border-radius:5px;width: 100%;height: 100%;">
+
+                <input type="hidden" value="{{ $product->product_id }}" class="p-id" />
+                @if (auth()->user()->can('sp_module.sales_promotion.view') ||
+                        auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
+                        auth()->user()->can('sp_module.sales_promotion.delete'))
+                    <select
+                        class="custom-select custom-select-sm discount_category discount_category{{ $product->product_id }}"
+                        style="height:30% !important">
+                        <option selected>select</option>
+                        @if (!empty($product_all_discounts_categories))
+                            @foreach ($product_all_discounts_categories as $discount)
+                                <option value="{{ $discount->id }}">{{ $discount->discount_category }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                @else
+                    <select
+                        class="custom-select custom-select-sm discount_category discount_category{{ $product->product_id }}"
+                        style="height:30% !important" disabled="disabled">
+                        <option selected>select</option>
+                        @if (!empty($product_all_discounts_categories))
+                            @foreach ($product_all_discounts_categories as $discount)
+                                <option value="{{ $discount->id }}">{{ $discount->discount_category }}</option>
+                            @endforeach
+                        @endif
+                    </select>
                 @endif
-            </select>
-        @else
-            <select class="custom-select custom-select-sm discount_category discount_category{{ $product->product_id }}"
-                style="height:30% !important" disabled="disabled">
-                <option selected>select</option>
-                @if (!empty($product_all_discounts_categories))
-                    @foreach ($product_all_discounts_categories as $discount)
-                        <option value="{{ $discount->id }}">{{ $discount->discount_category }}</option>
-                    @endforeach
-                @endif
-            </select>
-        @endif
-        <input type="hidden" name="transaction_sell_line[{{ $loop->index + $index }}][discount_category]"
-            class="discount_category_name{{ $product->product_id }}" />
-    </td> --}}
+                <input type="hidden" name="transaction_sell_line[{{ $loop->index + $index }}][discount_category]"
+                    class="discount_category_name{{ $product->product_id }}" />
+            </div>
+        </td>
 
 
 
 
 
         <td
-            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif; height:40px">
+            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif; height:40px">
             <div style=" border:2px solid #dcdcdc;border-radius:5px;width: 100%;height: 100%;">
 
 
@@ -235,7 +244,7 @@
 
         @if (session('system_mode') != 'restaurant')
             <td
-                style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 11% @else 15% @endif;height:40px">
+                style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 9% @else 15% @endif;height:40px">
                 <div style=" border:2px solid #dcdcdc;border-radius:5px;width: 100%;height: 100%;">
 
                     <div class="d-flex justify-content-center align-items-center" style="width: 100%;height: 100%;">
@@ -252,7 +261,7 @@
         @endif
 
         <td
-            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 11%; @else 15%; @endif padding: 0px;height:40px;border:none;">
+            style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 9%; @else 15%; @endif padding: 0px;height:40px;border:none;">
             @if (!empty($dining_table_id))
                 @if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1)
                     <button type="button" class="btn btn-danger btn-xs remove_row" style="margin-top: 15px;"><i
