@@ -125,15 +125,13 @@
                             <span class="dripicons-minus"></span>
                         </button>
                     </span>
-
+                    {{-- // qty --}}
                     <input type="number" class="form-control quantity  qty numkey input-number" step="any"
                         autocomplete="off" style="width: 50px;"
                         @isset($check_unit) @if ($check_unit->name == 'قطعه' || $check_unit->name == 'Piece') oninput="this.value = Math.round(this.value);" @endif @endisset
                         id="quantity" @if (!$product->is_service) max="{{ $product->qty_available }}" @endif
                         name="transaction_sell_line[{{ $loop->index + $index }}][quantity]" required
-                        value="@if (!empty($edit_quantity)) {{ $edit_quantity }}@else @if (isset($product->quantity)){{ preg_match('/\.\d*[1-9]+/', (string) $product->quantity) ? $product->quantity : @num_format($product->quantity) }}@else{{ @num_format(1) }} @endif @endif">
-
-
+                        value="@if (!empty($edit_quantity)) {{ $edit_quantity }}@else @if (isset($product->quantity)){{ preg_match('/\.\d*[1-9]+/', (string) $product->quantity) ? $product->quantity : @num_format($product->quantity) }}@else{{ 1 }} @endif @endif">
 
 
                     <span class="input-group-btn">
@@ -171,9 +169,11 @@
 
                 <div class="input-group" style="width: 100%;height: 100%;">
                     <input type="hidden" class="form-control product_discount_type  discount_type"
-                        name="transaction_sell_line[][product_discount_type]" {{-- value="@if (!empty($product_discount_details->discount_type)) {{ $product_discount_details->discount_type }}@else{{ 0 }} @endif"> --}}>
+                        name="transaction_sell_line[][product_discount_type]"
+                        value="@if (!empty($product_discount_details->discount_type)) {{ $product_discount_details->discount_type }}@else{{ 0 }} @endif">
                     <input type="hidden" class="form-control product_discount_value  discount_value"
-                        name="transaction_sell_line[][product_discount_value]" {{-- value="@if (!empty($product_discount_details->discount)) {{ @num_format($product_discount_details->discount) }}@else{{ 0 }} @endif"> --}}>
+                        name="transaction_sell_line[][product_discount_value]"
+                        value="@if (!empty($product_discount_details->discount)) {{ @num_format($product_discount_details->discount) }}@else{{ 0 }} @endif">
                     <div class="d-flex justify-content-center align-items-center">
 
                         <button type="button" style="border: none;outline: none" id="search_button"><span
@@ -200,7 +200,7 @@
                         auth()->user()->can('sp_module.sales_promotion.delete'))
                     <select
                         class="custom-select custom-select-sm discount_category discount_category{{ $product->product_id }}"
-                        style="height:30% !important">
+                        style="height:100%">
                         <option selected>select</option>
                         @if (!empty($product_all_discounts_categories))
                             @foreach ($product_all_discounts_categories as $discount)

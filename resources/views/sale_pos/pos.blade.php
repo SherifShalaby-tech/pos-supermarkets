@@ -327,9 +327,9 @@
                                 <path
                                     d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zM432 248a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
                             </svg>
-                            < </button>
-                                <input type="hidden" id="print_and_draft_hidden" name="print_and_draft_hidden"
-                                    value="">
+                        </button>
+                        <input type="hidden" id="print_and_draft_hidden" name="print_and_draft_hidden"
+                            value="">
                     </div>
                 </div>
 
@@ -699,11 +699,12 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="tac_description_div mt-2"><span></span></div>
                         </div>
 
-                        <div class="tac_description_div"><span></span></div>
 
-                        <div class="col-6 font-responsive" style="padding: 0;padding-left:2px">
+                        <div class="col-6 font-responsive mb-4" style="padding: 0;padding-left:2px">
                             {!! Form::label('commissioned_employees', __('lang.commissioned_employees'), ['class' => 'label mb-0']) !!}
                             <div class=""
                                 style="background-color: #dedede; border: none;
@@ -798,8 +799,7 @@
                                                 ">{{ __('lang.grand_total') }}
                         </span>
                         <span style="color: #000; padding-right: 30px;width: 45%"
-                            class="d-flex justify-content-start align-items-center  height-responsive"
-                            class="final_total_span">0.00</span>
+                            class="d-flex justify-content-start align-items-center  height-responsive final_total_span">0.00</span>
 
                     </div>
 
@@ -811,7 +811,7 @@
             </div>
         </div>
 
-        <div class="col-lg-2 p-1" style="max-height: 500px;overflow: scroll">
+        <div class="col-lg-2 p-1" style="max-height: 500px;">
 
             <div class="col-lg-12 p-1" style="height: 100%">
                 <div class="card" style="height: 100%;margin-bottom:0 ">
@@ -889,7 +889,7 @@
 
                             </div>
 
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="max-height: 470px">
                                 <table id="filter-product-table" class="table no-shadow product-list"
                                     style="width: 100%; border: 0px;overflow: scroll">
                                     <tbody>
