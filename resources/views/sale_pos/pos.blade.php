@@ -618,6 +618,7 @@
                         </thead>
 
                         <tbody>
+
                         </tbody>
 
                     </table>
@@ -917,7 +918,7 @@
                 <div class="mb-2 height-responsive" style="width: 100%">
                     <button data-method="cash"
                         style="background-color: #21912A;border: none;outline: none;box-shadow: 0 8px 6px -5px #bbb ;color: white; border-radius: 6px;width:100%;"
-                        type="button" class=" height-responsive font-responsive" data-toggle="modal"
+                        type="button" class=" height-responsive font-responsive payment-btn" data-toggle="modal"
                         data-target="#add-payment" data-backdrop="static" data-keyboard="false" id="cash-btn"><i
                             class="fa fa-money"></i>
                         @lang('lang.pay')</button>

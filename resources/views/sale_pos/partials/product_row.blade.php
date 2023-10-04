@@ -125,13 +125,32 @@
                             <span class="dripicons-minus"></span>
                         </button>
                     </span>
-                    {{-- // qty --}}
+
+                    @php
+                        
+                        $inputValue = !empty($edit_quantity) ? $edit_quantity : (isset($product->quantity) ? (preg_match('/\.\d*[1-9]+/', (string) $product->quantity) ? $product->quantity : number_format($product->quantity)) : 1);
+                        
+                        // Create a regular expression to match the whitespace between the `value` attribute and the value.
+                        $regex = '/\s+/';
+                        
+                        // Replace the whitespace with an empty string.
+                        $convertedInputValue = preg_replace($regex, '', $inputValue);
+                    @endphp
+
+
                     <input type="number" class="form-control quantity  qty numkey input-number" step="any"
                         autocomplete="off" style="width: 50px;"
                         @isset($check_unit) @if ($check_unit->name == 'قطعه' || $check_unit->name == 'Piece') oninput="this.value = Math.round(this.value);" @endif @endisset
                         id="quantity" @if (!$product->is_service) max="{{ $product->qty_available }}" @endif
                         name="transaction_sell_line[{{ $loop->index + $index }}][quantity]" required
-                        value="@if (!empty($edit_quantity)) {{ $edit_quantity }}@else @if (isset($product->quantity)){{ preg_match('/\.\d*[1-9]+/', (string) $product->quantity) ? $product->quantity : @num_format($product->quantity) }}@else{{ 1 }} @endif @endif">
+                        value="{{ $convertedInputValue }}">
+                    {{--
+                    <input type="number" class="form-control quantity  qty numkey input-number" step="any"
+                        autocomplete="off" style="width: 50px;"
+                        @isset($check_unit) @if ($check_unit->name == 'قطعه' || $check_unit->name == 'Piece') oninput="this.value = Math.round(this.value);" @endif @endisset
+                        id="quantity" @if (!$product->is_service) max="{{ $product->qty_available }}" @endif
+                        name="transaction_sell_line[{{ $loop->index + $index }}][quantity]" required
+                        value="@if (!empty($edit_quantity)) {{ $edit_quantity }}@else @if (isset($product->quantity)){{ preg_match('/\.\d*[1-9]+/', (string) $product->quantity) ? $product->quantity : @num_format($product->quantity) }}@else{{ 1 }} @endif @endif"> --}}
 
 
                     <span class="input-group-btn">
@@ -249,7 +268,8 @@
 
                     <div class="d-flex justify-content-center align-items-center" style="width: 100%;height: 100%;">
 
-                        @if ($product->is_service) {{ '-' }}
+                        @if ($product->is_service)
+                            {{ '-' }}
                         @else
                             @if (isset($product->qty_available))
                                 {{ preg_match('/\.\d*[1-9]+/', (string) $product->qty_available) ? $product->qty_available : @num_format($product->qty_available) }}@else{{ 0 }}
