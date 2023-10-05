@@ -132,6 +132,10 @@
                                             <label for="points" style="margin: 0px;">@lang('lang.points'):
                                                 <span class="points"><span
                                                         class="customer_points_span">{{ @num_format(0) }}</span></span></label>
+                                            {{-- <label for="staff_note"
+                                                style="margin-top: 30px; margin-bottom: 0px;">@lang('lang.note'): --}}
+                                                <br>
+                                                <span class="staff_note small"></span>
                                         </div>
                                             <div class="col-md-2">
                                                 <button type="button" class="btn btn-danger btn-xs pull-right"
