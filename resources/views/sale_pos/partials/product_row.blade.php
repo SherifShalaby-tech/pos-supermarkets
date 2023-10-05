@@ -204,7 +204,7 @@
                         name="transaction_sell_line[{{ $loop->index + $index }}][product_discount_type]"
                         value="{{ $convertedDiscountType }}">
 
-
+                    transaction_sell_line[{{ $loop->index + $index }}][product_discount_value]
                     <input type="hidden"
                         class="form-control product_discount_value  discount_value{{ $product->product_id }}"
                         name="transaction_sell_line[{{ $loop->index + $index }}][product_discount_value]"
