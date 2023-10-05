@@ -20,11 +20,27 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                 </strong></label>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="i-checks">
             <input id="active" name="active" type="checkbox" checked value="1" class="form-control-custom">
             <label for="active"><strong>
                     @lang('lang.active')
+                </strong></label>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="i-checks">
+            <input id="have_weight" name="have_weight" type="checkbox"  value="1"
+                   class="form-control-custom">
+            <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="i-checks">
+            <input id="weighing_scale_barcode" name="weighing_scale_barcode" type="checkbox"
+                   @if (!empty($product->weighing_scale_barcode)) checked @endif value="1" class="form-control-custom">
+            <label for="weighing_scale_barcode"><strong>
+                    @lang('lang.weighing_scale_barcode')
                 </strong></label>
         </div>
     </div>
@@ -40,13 +56,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             </label>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="i-checks">
-            <input id="have_weight" name="have_weight" type="checkbox"  value="1"
-                   class="form-control-custom">
-            <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
-        </div>
-    </div>
+
     @php
     $products_count=App\Models\Product::where('show_at_the_main_pos_page','yes')->count();
     @endphp
