@@ -249,7 +249,8 @@ $(document).ready(function () {
                             .data("ui-autocomplete")
                             ._trigger("select", "autocompleteselect", ui);
                         $(this).autocomplete("close");
-                    } else if (ui.content.length == 0) {
+                    }
+                    else if (ui.content.length == 0) {
                         get_label_product_row(
                             null,
                             null,
@@ -638,7 +639,7 @@ function calculate_sub_totals() {
         let price_hidden = __read_number($(tr).find(".price_hidden"));
         let sub_total = 0;
         if (sell_price > price_hidden) {
-            
+
             let price_discount = (sell_price - price_hidden);
 
             $(tr).find(".product_discount_type").val("surplus");

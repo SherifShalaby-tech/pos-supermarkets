@@ -2121,9 +2121,11 @@ class ProductUtil extends Util
             'variations.name as variation',
             'variations.default_sell_price',
             'variations.sub_sku',
+            'products.weighing_scale_barcode'
         );
 
         $query->groupBy('variations.id');
+//        dd($query->get());
         return $query
             ->get();
     }
