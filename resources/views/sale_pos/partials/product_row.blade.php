@@ -184,24 +184,41 @@
             style="font-size: 12px;padding:3px;margin:2px;width: @if (session('system_mode') != 'restaurant') 11%; @else 15%; @endif height:40px">
             <div style=" border:2px solid #dcdcdc;border-radius:5px;width: 100%;height: 100%;">
 
-
+                @php
+                    $discountType = !empty($product_discount_details->discount_type) ? $product_discount_details->discount_type : 0;
+                    
+                    $discountAmount = !empty($product_discount_details->discount) ? number_format($product_discount_details->discount) : 0;
+                    
+                    // Create a regular expression to match the whitespace between the `value` attribute and the value.
+                    $regex = '/\s+/';
+                    
+                    // Replace the whitespace with an empty string.
+                    $convertedDiscountType = preg_replace($regex, '', $discountType);
+                    
+                    $convertedDiscountAmount = preg_replace($regex, '', $discountAmount);
+                @endphp
 
                 <div class="input-group" style="width: 100%;height: 100%;">
-                    <input type="hidden" class="form-control product_discount_type  discount_type"
-                        name="transaction_sell_line[][product_discount_type]"
-                        value="@if (!empty($product_discount_details->discount_type)) {{ $product_discount_details->discount_type }}@else{{ 0 }} @endif">
-                    <input type="hidden" class="form-control product_discount_value  discount_value"
-                        name="transaction_sell_line[][product_discount_value]"
-                        value="@if (!empty($product_discount_details->discount)) {{ @num_format($product_discount_details->discount) }}@else{{ 0 }} @endif">
+                    <input type="hidden"
+                        class="form-control product_discount_type  discount_type{{ $product->product_id }}"
+                        name="transaction_sell_line[{{ $loop->index + $index }}][product_discount_type]"
+                        value="{{ $convertedDiscountType }}">
+
+
+                    <input type="hidden"
+                        class="form-control product_discount_value  discount_value{{ $product->product_id }}"
+                        name="transaction_sell_line[{{ $loop->index + $index }}][product_discount_value]"
+                        value="{{ $convertedDiscountAmount }}">
                     <div class="d-flex justify-content-center align-items-center">
 
                         <button type="button" style="border: none;outline: none" id="search_button"><span
                                 class="plus_sign_text">+</span></button>
+
                         <input type="text" style="outline: none;border: none;font-size: 13px;padding: 0!important;"
-                            class="form-control product_discount_amount  discount_amount"
+                            class="form-control product_discount_amount  discount_amount{{ $product->product_id }}"
                             name="transaction_sell_line[{{ $loop->index + $index }}][product_discount_amount]"
-                            readonly
-                            value="@if (!empty($product_discount_details->discount)) {{ @num_format($product_discount_details->discount) }}@else{{ 0 }} @endif">
+                            readonly value="{{ $convertedDiscountAmount }}">
+
                     </div>
                 </div>
             </div>
@@ -230,7 +247,7 @@
                 @else
                     <select
                         class="custom-select custom-select-sm discount_category discount_category{{ $product->product_id }}"
-                        style="height:30% !important" disabled="disabled">
+                        style="height:100% !important" disabled="disabled">
                         <option selected>select</option>
                         @if (!empty($product_all_discounts_categories))
                             @foreach ($product_all_discounts_categories as $discount)

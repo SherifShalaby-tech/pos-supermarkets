@@ -12,7 +12,7 @@
     $watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
 @endphp
 
-<section class="p-0">
+<section class="p-0 forms no-print">
     <audio id="mysoundclip1" preload="auto">
         <source src="{{ asset('audio/beep-timber.mp3') }}">
         </source>
@@ -203,7 +203,7 @@
                         ]) !!}
                     </div>
                 </div>
-                {{--  --}}
+
                 <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
                     <div class="form-group mb-2 mb-lg-0 height-responsive d-flex justify-content-center align-items-center"
                         style="background-color: #dedede; border: none;
@@ -222,6 +222,7 @@
                         ]) !!}
                     </div>
                 </div>
+
 
                 <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
                     <div class="form-group mb-2 mb-lg-0 height-responsive d-flex justify-content-center align-items-center"
@@ -243,6 +244,7 @@
                         ) !!}
                     </div>
                 </div>
+
 
                 <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
                     <div class="form-group mb-2 mb-lg-0 height-responsive d-flex justify-content-center align-items-center"
@@ -1048,151 +1050,151 @@
 
 
 
-                            {{-- <div class="col-lg-12 main_settings">
-                                    <div class="row">
+                            <div class="col-lg-12 main_settings">
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <div class="col-lg-1" style="padding: 0 !important;">
+
+                                        </div>
+
+
+
+
+                                        @if (session('system_mode') == 'restaurant')
+                                            <div class="col-lg-1">
+                                                <button type="button" style="padding: 0px !important;"
+                                                    data-href="{{ action('DiningRoomController@getDiningModal') }}"
+                                                    data-container="#dining_model"
+                                                    class="btn btn-modal pull-right mt-4"><img
+                                                        src="{{ asset('images/black-table.jpg') }}" alt="black-table"
+                                                        style="width: 40px; height: 33px; margin-top: 7px;"></button>
+                                            </div>
+                                        @endif
+
+
+
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 main_settings">
+
+                                    <div class="row table_room_show hide">
+                                        <div class="col-lg-4">
+                                            <div class=""
+                                                style="padding: 5px 5px; background:#0082ce; color: #fff; font-size: 20px; font-weight: bold; text-align: center; border-radius: 5px;">
+                                                <span class="room_name"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <label for=""
+                                                style="font-size: 20px !important; font-weight: bold; text-align: center; margin-top: 3px;">@lang('lang.table'):
+                                                <span class="table_name"></span></label>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="input-group my-group">
+                                                {!! Form::select('service_fee_id', $service_fees, null, [
+                                                    'class' => 'form-control',
+                                                    'placeholder' => __('lang.select_service'),
+                                                    'id' => 'service_fee_id',
+                                                ]) !!}
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden"
+                                            value="">
+                                        <input type="hidden" name="service_fee_rate" id="service_fee_rate"
+                                            value="0">
+                                        <input type="hidden" name="service_fee_value" id="service_fee_value"
+                                            value="0">
+                                    </div>
+
+
+
+
+
+
+                                    <div class="row" style="display: none;">
                                         <div class="col-lg-2">
-                                            <div class="col-lg-1" style="padding: 0 !important;">
-
+                                            <div class="form-group">
+                                                <input type="hidden" id="final_total" name="final_total" />
+                                                <input type="hidden" id="grand_total" name="grand_total" />
+                                                <input type="hidden" id="gift_card_id" name="gift_card_id" />
+                                                <input type="hidden" id="coupon_id" name="coupon_id">
+                                                <input type="hidden" id="total_tax" name="total_tax"
+                                                    value="0.00">
+                                                <input type="hidden" id="total_item_tax" name="total_item_tax"
+                                                    value="0.00">
+                                                <input type="hidden" id="status" name="status"
+                                                    value="final" />
+                                                <input type="hidden" id="total_sp_discount" name="total_sp_discount"
+                                                    value="0" />
+                                                <input type="hidden" id="total_pp_discount" name="total_pp_discount"
+                                                    value="0" />
+                                                <input type="hidden" name="dining_table_id" id="dining_table_id"
+                                                    value="">
+                                                <input type="hidden" name="dining_action_type"
+                                                    id="dining_action_type" value="">
                                             </div>
-
-
-
-
-                                            @if (session('system_mode') == 'restaurant')
-                                                <div class="col-lg-1">
-                                                    <button type="button" style="padding: 0px !important;"
-                                                        data-href="{{ action('DiningRoomController@getDiningModal') }}"
-                                                        data-container="#dining_model"
-                                                        class="btn btn-modal pull-right mt-4"><img
-                                                            src="{{ asset('images/black-table.jpg') }}" alt="black-table"
-                                                            style="width: 40px; height: 33px; margin-top: 7px;"></button>
-                                                </div>
-                                            @endif
-
-
-
-
                                         </div>
                                     </div>
-                                    <div class="col-lg-12 main_settings">
 
-                                        <div class="row table_room_show hide">
+
+
+
+                                    <div class="col-lg-12 table_room_show hide"
+                                        style="border-top: 2px solid #e4e6fc; margin-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-lg-8"></div>
                                             <div class="col-lg-4">
-                                                <div class=""
-                                                    style="padding: 5px 5px; background:#0082ce; color: #fff; font-size: 20px; font-weight: bold; text-align: center; border-radius: 5px;">
-                                                    <span class="room_name"></span>
+                                                <div class="row">
+                                                    <b>@lang('lang.total'): <span class="subtotal">0.00</span></b>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label for=""
-                                                    style="font-size: 20px !important; font-weight: bold; text-align: center; margin-top: 3px;">@lang('lang.table'):
-                                                    <span class="table_name"></span></label>
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <div class="input-group my-group">
-                                                    {!! Form::select('service_fee_id', $service_fees, null, [
-                                                        'class' => 'form-control',
-                                                        'placeholder' => __('lang.select_service'),
-                                                        'id' => 'service_fee_id',
-                                                    ]) !!}
+                                                <div class="row">
+                                                    <b>@lang('lang.discount'): <span class="discount_span">0.00</span></b>
                                                 </div>
-                                            </div>
-                                            <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden"
-                                                value="">
-                                            <input type="hidden" name="service_fee_rate" id="service_fee_rate"
-                                                value="0">
-                                            <input type="hidden" name="service_fee_value" id="service_fee_value"
-                                                value="0">
-                                        </div>
-
-
-
-
-
-
-                                        <div class="row" style="display: none;">
-                                            <div class="col-lg-2">
-                                                <div class="form-group">
-                                                    <input type="hidden" id="final_total" name="final_total" />
-                                                    <input type="hidden" id="grand_total" name="grand_total" />
-                                                    <input type="hidden" id="gift_card_id" name="gift_card_id" />
-                                                    <input type="hidden" id="coupon_id" name="coupon_id">
-                                                    <input type="hidden" id="total_tax" name="total_tax"
-                                                        value="0.00">
-                                                    <input type="hidden" id="total_item_tax" name="total_item_tax"
-                                                        value="0.00">
-                                                    <input type="hidden" id="status" name="status"
-                                                        value="final" />
-                                                    <input type="hidden" id="total_sp_discount" name="total_sp_discount"
-                                                        value="0" />
-                                                    <input type="hidden" id="total_pp_discount" name="total_pp_discount"
-                                                        value="0" />
-                                                    <input type="hidden" name="dining_table_id" id="dining_table_id"
-                                                        value="">
-                                                    <input type="hidden" name="dining_action_type"
-                                                        id="dining_action_type" value="">
+                                                <div class="row">
+                                                    <b>@lang('lang.service'): <span
+                                                            class="service_value_span">0.00</span></b>
+                                                </div>
+                                                <div class="row">
+                                                    <b>@lang('lang.grand_total'): <span
+                                                            class="final_total_span">0.00</span></b>
                                                 </div>
                                             </div>
                                         </div>
-
-
-
-
-                                        <div class="col-lg-12 table_room_show hide"
-                                            style="border-top: 2px solid #e4e6fc; margin-top: 10px;">
-                                            <div class="row">
-                                                <div class="col-lg-8"></div>
-                                                <div class="col-lg-4">
-                                                    <div class="row">
-                                                        <b>@lang('lang.total'): <span class="subtotal">0.00</span></b>
-                                                    </div>
-                                                    <div class="row">
-                                                        <b>@lang('lang.discount'): <span class="discount_span">0.00</span></b>
-                                                    </div>
-                                                    <div class="row">
-                                                        <b>@lang('lang.service'): <span
-                                                                class="service_value_span">0.00</span></b>
-                                                    </div>
-                                                    <div class="row">
-                                                        <b>@lang('lang.grand_total'): <span
-                                                                class="final_total_span">0.00</span></b>
-                                                    </div>
+                                        <div class="row pt-4">
+                                            <div class="col-lg-8">
+                                                <div class="row">
+                                                    <button type="button" name="action" value="print"
+                                                        id="dining_table_print" class="btn mr-2 text-white"
+                                                        style="background: orange;">@lang('lang.print')</button>
+                                                    <button type="button" name="action" value="save"
+                                                        id="dining_table_save"
+                                                        class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
+                                                    <button data-method="cash" style="background: #0082ce"
+                                                        type="button" class="btn mr-2 payment-btn text-white"
+                                                        data-toggle="modal" data-target="#add-payment"
+                                                        data-backdrop="static" data-keyboard="false"
+                                                        id="cash-btn">@lang('lang.pay_and_close')</button>
+                                                    @if (auth()->user()->can('sp_module.sales_promotion.view') ||
+                                                            auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
+                                                            auth()->user()->can('sp_module.sales_promotion.delete'))
+                                                        <button style="background-color: #d63031" type="button"
+                                                            class="btn mr-2 btn-md payment-btn text-white"
+                                                            data-toggle="modal"
+                                                            data-target="#discount_modal">@lang('lang.random_discount')</button>
+                                                    @endif
                                                 </div>
                                             </div>
-                                            <div class="row pt-4">
-                                                <div class="col-lg-8">
-                                                    <div class="row">
-                                                        <button type="button" name="action" value="print"
-                                                            id="dining_table_print" class="btn mr-2 text-white"
-                                                            style="background: orange;">@lang('lang.print')</button>
-                                                        <button type="button" name="action" value="save"
-                                                            id="dining_table_save"
-                                                            class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
-                                                        <button data-method="cash" style="background: #0082ce"
-                                                            type="button" class="btn mr-2 payment-btn text-white"
-                                                            data-toggle="modal" data-target="#add-payment"
-                                                            data-backdrop="static" data-keyboard="false"
-                                                            id="cash-btn">@lang('lang.pay_and_close')</button>
-                                                        @if (auth()->user()->can('sp_module.sales_promotion.view') ||
-    auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
-    auth()->user()->can('sp_module.sales_promotion.delete'))
-                                                            <button style="background-color: #d63031" type="button"
-                                                                class="btn mr-2 btn-md payment-btn text-white"
-                                                                data-toggle="modal"
-                                                                data-target="#discount_modal">@lang('lang.random_discount')</button>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-4">
-                                                    <button style="background-color: #ff00;" type="button"
-                                                        class="btn text-white" id="cancel-btn"
-                                                        onclick="return confirmCancel()">
-                                                        @lang('lang.cancel')</button>
-                                                </div>
+                                            <div class="col-lg-4">
+                                                <button style="background-color: #ff00;" type="button"
+                                                    class="btn text-white" id="cancel-btn"
+                                                    onclick="return confirmCancel()">
+                                                    @lang('lang.cancel')</button>
                                             </div>
                                         </div>
                                     </div>
-                                </div> --}}
+                                </div>
+                            </div>
 
 
 
@@ -1465,6 +1467,7 @@
 
 <!-- This will be printed -->
 <section class="invoice print_section print-only" id="receipt_section"> </section>
+
 @endsection
 @section('style')
 <style>
