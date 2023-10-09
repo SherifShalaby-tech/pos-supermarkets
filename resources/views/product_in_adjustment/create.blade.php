@@ -935,6 +935,7 @@
                 console.log(variation_id);
                 // Check if actualStock has a value
                 if (actualStock != '') {
+                    validActualStock = true;
                     // Add the required data to the selectedData array
                     var dataObj = {
                         id: id,
@@ -958,33 +959,55 @@
                     // Check if either the purchase price or sell price has changed
                     if (purchasePrice !== purchasePriceHidden || sellPrice !== sellPriceHidden) {
                         // Create an object with the updated values
-                        var updatedData = {
-                            id: id,
-                            variation_id : variation_id,
-                            default_purchase_price: purchasePrice,
-                            default_sell_price: sellPrice
-                        };
-                        // Add the updated data to the selectedData array
-                        selectedData.push(updatedData);
+                        if(purchasePrice !== 0 && sellPrice !== 0){
+                            var updatedData = {
+                                id: id,
+                                variation_id : variation_id,
+                                old_purchase_price: purchasePriceHidden,
+                                default_purchase_price: purchasePrice,
+                                old_sell_price: sellPriceHidden,
+                                default_sell_price: sellPrice
+                            };
+                            // Add the updated data to the selectedData array
+                            selectedData.push(updatedData);
+                        }else{
+                            swal(
+                                            'Success!',
+                                            "New stock quantity saved, Zero prices didn't save",
+                                            'success'
+                                        );
+                        }
+                        
                     }
 
             });
 
-            // Send the data to the server
-            $.ajax({
-                type: 'POST',
-                url: '/product-in-adjustment-store',
-                data: {selected_data: selectedData,
-                    total_shortage_value: total_shortage_value,
-                    expenses_total_shortage_value : expenses_total_shortage_value},
-                success: function(response) {
-                console.log('Data sent successfully');
-                location.reload();
-                },
-                error: function(xhr, status, error) {
-                console.log('Error sending data');
-                }
-            });
+            // // // Check if either purchase price or sell price is 0
+            // var invalidPrices = selectedData.some(function(data) {
+            //     return (data.default_purchase_price === 0 || data.default_sell_price === 0);
+            // });
+
+
+            // If invalid prices found, show the alert and do not send data
+       
+                //  Send the data to the server
+                $.ajax({
+                    type: 'POST',
+                    url: '/product-in-adjustment-store',
+                    data: {
+                        selected_data: selectedData,
+                        total_shortage_value: total_shortage_value,
+                        expenses_total_shortage_value: expenses_total_shortage_value
+                    },
+                    success: function(response) {
+                        console.log('Data sent successfully');
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error sending data');
+                    }
+                });
+            // }
 
         }
         

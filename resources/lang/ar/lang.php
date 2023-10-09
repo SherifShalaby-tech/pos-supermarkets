@@ -1431,5 +1431,7 @@ return [
     'total_before_discount'=>'المجموع قبل الخصم',
     'show'=>'اظهار',
     'added_balance' => 'الارصدة المضافة',
-
+    'old_purchase_price' => 'سعر الشراء القديم',
+    'old_sell_price' => 'سعر البيع القديم',
+    'new_sell_price' => 'سعر البيع الجديد',
 ];

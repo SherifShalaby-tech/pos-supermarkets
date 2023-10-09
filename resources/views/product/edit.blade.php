@@ -244,6 +244,15 @@
                                             </strong></label>
                                     </div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="i-checks">
+                                        <input id="weighing_scale_barcode" name="weighing_scale_barcode" type="checkbox"
+                                               @if (!empty($product->weighing_scale_barcode)) checked @endif value="1" class="form-control-custom">
+                                        <label for="weighing_scale_barcode"><strong>
+                                                @lang('lang.weighing_scale_barcode')
+                                            </strong></label>
+                                    </div>
+                                </div>
                                 @php
                                 $products_count=App\Models\Product::where('show_at_the_main_pos_page','yes')->count();
                                 @endphp
@@ -291,7 +300,7 @@
                                     </div>
                                     <div class="error-msg text-red"></div>
                                 </div>
-                               
+
                                 @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                                     <div class="col-md-4">
                                         {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
@@ -309,7 +318,7 @@
                                         </div>
                                         <div class="error-msg text-red"></div>
                                     </div>
-                                    
+
                                     <div class="col-md-4">
                                         {!! Form::label('sub_category_id', __('lang.sub_category') . ' *', []) !!}
                                         <div class="input-group my-group">
@@ -997,6 +1006,6 @@
                 return images
             }, 300);
         }
-  
+
     </script>
 @endsection

@@ -1447,4 +1447,7 @@ return [
     'total_before_discount'=>'Total Before discount',
     'show'=>'Show',
     'added_balance' => 'Added Balance',
+    'old_purchase_price' => 'Old purchase price',
+    'old_sell_price' => 'Old sell price',
+    'new_sell_price' => 'new sell price',
 ];

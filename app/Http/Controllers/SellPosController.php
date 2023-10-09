@@ -252,7 +252,7 @@ class SellPosController extends Controller
             'shared_commission' => !empty($request->shared_commission) ? 1 : 0,
             'created_by' => Auth::user()->id,
         ];
-        
+
         $transaction_data['dining_room_id'] = null;
         if (!empty($request->dining_table_id)) {
             $dining_table = DiningTable::find($request->dining_table_id);
@@ -269,8 +269,8 @@ class SellPosController extends Controller
             $transaction_data['validity_days'] = !empty($request->validity_days) ? $request->validity_days : 0;
         }
         $transaction = Transaction::create($transaction_data);
-        
-       
+
+
         $this->transactionUtil->createOrUpdateTransactionSellLine($transaction, $request->transaction_sell_line);
 
         foreach ($request->transaction_sell_line as $sell_line) {
@@ -500,7 +500,7 @@ class SellPosController extends Controller
 
         $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang,$last_due);
 
-        
+
         $output = [
             'success' => true,
             'html_content' => $html_content,
@@ -1032,7 +1032,7 @@ class SellPosController extends Controller
      */
     public function addProductRow(Request $request)
     {
-//        dd($request);
+//        dd($request->input('weighing_scale_barcode'));
         if ($request->ajax()) {
             $weighing_scale_barcode = $request->input('weighing_scale_barcode');
             $batch_number_id = $request->input('batch_number_id');
@@ -1285,8 +1285,9 @@ class SellPosController extends Controller
                 $qty = $price / $sell_price;
             }
 
+//            dd(empty($result->weighing_scale_barcode));
 
-            if (!empty($result)) {
+            if (!empty($result) && !empty($result->weighing_scale_barcode)) {
                 return [
                     'product_id' => $result->product_id,
                     'variation_id' => $result->variation_id,

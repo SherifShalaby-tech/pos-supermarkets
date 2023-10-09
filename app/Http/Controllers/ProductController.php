@@ -649,7 +649,7 @@ class ProductController extends Controller
                         'created_by' => 1,
                     ]);
                 }
-          
+
                 Transaction::create([
                     'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
                     'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
@@ -761,7 +761,7 @@ class ProductController extends Controller
                         'created_by' => 1,
                     ]);
                 }
-          
+
                 Transaction::create([
                     'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
                     'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
@@ -916,6 +916,7 @@ class ProductController extends Controller
                 'have_weight' => !empty($request->have_weight) ? 1 : 0,
                 'created_by' => Auth::user()->id,
                 'show_at_the_main_pos_page' => !empty($request->show_at_the_main_pos_page) ? 'yes' : 'no',
+                'weighing_scale_barcode' => !empty($request->weighing_scale_barcode) ? 1 : 0
             ];
 
 
@@ -1170,6 +1171,7 @@ class ProductController extends Controller
                 'have_weight' => !empty($request->have_weight) ? 1 : 0,
                 'edited_by' => Auth::user()->id,
                 'show_at_the_main_pos_page' => !empty($request->show_at_the_main_pos_page) ? 'yes' : 'no',
+                'weighing_scale_barcode' => !empty($request->weighing_scale_barcode) ? 1 : 0,
             ];
 
 
@@ -1264,7 +1266,7 @@ class ProductController extends Controller
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
                 // Clear the media collection only once, before the loop
                 $product->clearMediaCollection('product');
-                
+
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
                     $extention = explode(";", explode("/", $imageData)[1])[0];
                     $image = rand(1, 1500) . "_image." . $extention;
@@ -1327,7 +1329,7 @@ class ProductController extends Controller
                 $variation->deleted_by= request()->user()->id;
                 $variation->save();
                 $variation->delete();
-                
+
                 ProductStore::where('variation_id', $id)->delete();
                 $output = [
                     'success' => true,
