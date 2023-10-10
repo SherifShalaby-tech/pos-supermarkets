@@ -39,7 +39,7 @@
             style="background-color: #A0D8A1;padding-top: 5px;padding-bottom:5px">
 
             <div class="d-flex justify-content-center align-items-center">
-                <a id="toggle-btn" href="#" class="menu-btn">
+                <a id="toggle-btn-pos" href="#" class="menu-btn">
                     <div class=" rounded-lg px-1 d-flex justify-content-center align-items-center"
                         style="background-color: white;border-radius: 6px;width: 24px;height: 24px;">
                         <svg xmlns="http://www.w3.org/2000/svg" height="1.5em"
@@ -228,7 +228,7 @@
                             {!! Form::select('store_pos_id', $store_poses, $store_pos->id, [
                                 'class' => 'selectpicker first-head  walk-in-customer',
                                 'data-live-search' => 'true',
-                                'required',
+                                // 'required',
                                 'placeholder' => __('lang.pos'),
                             ]) !!}
                         </div>
@@ -342,7 +342,7 @@
                                 </svg>
                             </button>
                             <input type="hidden" id="print_and_draft_hidden" name="print_and_draft_hidden"
-                                value="">
+                                value="print_and_draft">
                         </div>
                     </div>
 
@@ -363,7 +363,7 @@
                                         flex-wrap: nowrap;
                                         padding-right:25px">
                                 {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, [
-                                    'class' => 'selectpicker first-head  walk-in-customer walk-in-customer',
+                                    'class' => 'selectpicker first-head  walk-in-customer',
                                     'data-live-search' => 'true',
                                     'style' => 'width: 80%',
                                     'id' => 'customer_id',
@@ -1495,6 +1495,18 @@
 <script src="{{ asset('js/onscan.min.js') }}"></script>
 <script src="{{ asset('js/pos.js') }}"></script>
 <script src="{{ asset('js/dining_table.js') }}"></script>
+<script>
+    $("#toggle-btn-pos").on("click", function(e) {
+        e.preventDefault();
+        if ($(window).outerWidth() > 1199) {
+            $("nav.side-navbar").toggleClass("shrink");
+            $(".page").toggleClass("active");
+        } else {
+            $("nav.side-navbar").toggleClass("shrink");
+            $(".page").toggleClass("active-sm");
+        }
+    });
+</script>
 <script>
     $(document).ready(function() {
         $('.online-order-badge').hide();

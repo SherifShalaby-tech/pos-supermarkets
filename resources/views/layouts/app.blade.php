@@ -37,6 +37,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
+
         .preview-brand-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -45,6 +46,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
+
         .preview-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -53,6 +55,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
+
         .preview-class-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -61,6 +64,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
+
         .preview-edit-product-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -275,12 +279,15 @@
             @endforeach
             <input type="hidden" id="__language" value="{{ session('language') }}">
             <input type="hidden" id="__decimal" value=".">
-            <input type="hidden" id="__currency_precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__currency_precision"
+                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
             <input type="hidden" id="__currency_symbol" value="$">
             <input type="hidden" id="__currency_thousand_separator" value=",">
             <input type="hidden" id="__currency_symbol_placement" value="before">
-            <input type="hidden" id="__precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
-            <input type="hidden" id="__quantity_precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__precision"
+                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__quantity_precision"
+                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
             <input type="hidden" id="system_mode" value="{{ env('SYSTEM_MODE') }}">
             @yield('content')
         </div>
@@ -357,7 +364,19 @@
     </script>
     @yield('javascript')
     @stack('javascripts')
-
+    <script type="text/javascript" src="{{ asset('js/front.js') }}"></script>
+    <script>
+        $("#toggle-btn").on("click", function(e) {
+            e.preventDefault();
+            if ($(window).outerWidth() > 1199) {
+                $("nav.side-navbar").toggleClass("shrink");
+                $(".page").toggleClass("active");
+            } else {
+                $("nav.side-navbar").toggleClass("shrink");
+                $(".page").toggleClass("active-sm");
+            }
+        });
+    </script>
     <script type="text/javascript">
         @if (session('status'))
             swal(
