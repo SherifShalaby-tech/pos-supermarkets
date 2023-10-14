@@ -2304,6 +2304,7 @@ function getCustomerBalance() {
             $(".customer_balance").text(
                 __currency_trans_from_en(result.balance, false)
             );
+            $(".staff_note").text(result.staff_note);
             $(".customer_balance").removeClass("text-red");
             if (result.balance < 0) {
                 $(".customer_balance").addClass("text-red");

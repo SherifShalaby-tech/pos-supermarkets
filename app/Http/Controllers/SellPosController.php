@@ -316,6 +316,7 @@ class SellPosController extends Controller
 
             //update customer deposit balance if any
             $customer = Customer::find($transaction->customer_id);
+            $customer->staff_note=isset($request->staff_note)?$request->staff_note:'';
             if ($request->used_deposit_balance > 0) {
                 $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
             }
@@ -1845,8 +1846,9 @@ class SellPosController extends Controller
     public function getCustomerBalance($customer_id)
     {
         $balance = $this->transactionUtil->getCustomerBalance($customer_id)['balance'];
+        $staff_note = $this->transactionUtil->getCustomerBalance($customer_id)['staff_note'];
 
-        return ['balance' => $balance];
+        return ['balance' => $balance,'staff_note'=>$staff_note];
     }
 
     /**

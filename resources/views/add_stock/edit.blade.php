@@ -129,7 +129,7 @@
                                                     {{!empty($product->product)?$product->product->units->pluck('name')[0]??'':''}}
                                                 </td>
                                                 <td>
-                                                     <input type="text" class="form-control purchase_price purchase_price_{{$loop->index}}"
+                                                     <input type="text" class="form-control purchase_price"
                                                             name="add_stock_lines[{{ $loop->index }}][purchase_price]"
                                                             required index_id="{{$loop->index}}"
                                                             value="@if (isset($product->purchase_price)) {{ @num_format($product->purchase_price) }}@else{{ 0 }} @endif">
