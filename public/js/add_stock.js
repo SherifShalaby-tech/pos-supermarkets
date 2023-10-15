@@ -529,24 +529,26 @@ $(document).on('click', '#submit-save', function(e) {
         } else if (data[1] != '' && data[2] == '') {
             title = LANG.purchase_price_equal_to_zero;
         }
-        swal({
-                title: title,
-                text: LANG.continue,
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-                showCancelButton: true,
-                confirmButtonText: 'Save',
-            })
-            .then((isConfirm) => {
-                if (isConfirm) {
-                    $('form#add_stock_form').valid();
-                    $('form#add_stock_form').submit();
-                } else {
+
+        // swal({
+        //         title: title,
+        //         text: LANG.continue,
+        //         icon: "warning",
+        //         buttons: true,
+        //         dangerMode: true,
+        //         showCancelButton: true,
+        //         confirmButtonText: 'Save',
+        //     })
+        //     .then((isConfirm) => {
+        //         if (isConfirm) {
+        //             $('form#add_stock_form').valid();
+        //             $('form#add_stock_form').submit();
+        //         } else {
                     $(this).find('.purchase_price_submit').val('0');
                     $(this).find('.selling_price_submit').val('0')
-                }
-            });
+        //         }
+        //     });
+        swal("warning", title, "warning");
     } else if(data[0]=="2") {
         $('form#add_stock_form').valid();
         $('form#add_stock_form').submit();

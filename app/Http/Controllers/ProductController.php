@@ -458,7 +458,7 @@ class ProductController extends Controller
 
                             $html .=
                                 '<li>
-                            <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+                            <a data-href="' . action('ProductController@destroy', $row->variation_id??0) . '"
                                 data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
                                 class="btn text-red delete_product"><i class="fa fa-trash"></i>
                                 ' . __('lang.delete') . '</a>
@@ -1559,7 +1559,7 @@ class ProductController extends Controller
     public function checkSku($sku)
     {
         $product_sku = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-            ->where('sub_sku', $sku)->first();
+            ->where('sub_sku', $sku)->whereNull('variations.deleted_at')->first();
 
         if (!empty($product_sku)) {
             $output = [
