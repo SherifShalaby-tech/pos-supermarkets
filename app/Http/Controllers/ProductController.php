@@ -1559,7 +1559,7 @@ class ProductController extends Controller
     public function checkSku($sku)
     {
         $product_sku = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-            ->where('sub_sku', $sku)->first();
+            ->where('sub_sku', $sku)->whereNull('variations.deleted_at')->first();
 
         if (!empty($product_sku)) {
             $output = [
