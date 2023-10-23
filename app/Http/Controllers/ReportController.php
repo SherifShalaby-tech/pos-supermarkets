@@ -1581,7 +1581,7 @@ class ReportController extends Controller
         if (!empty($store_id)) {
             $add_stock_query->where('transactions.store_id', $store_id);
         }
-        $add_stocks = $add_stock_query->where('product_id', $id)->select('add_stock_lines.*')->get();
+        $add_stocks = $add_stock_query->where('product_id', $id)->where('transactions.type', '!=', 'supplier_service')->select('add_stock_lines.*')->get();
 
         return view('reports.partials.view_product_details')->with(compact(
             'product',

@@ -73,21 +73,6 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             {!! Form::select('store_ids[]', $stores_select, array_keys($stores_select) , ['class' => ' selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple','id'=>'store_ids']) !!}
         </div>
     </div>
-    <div class="col-md-4 supplier_div">
-        <div class="form-group supplier_div">
-            {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
-            <div class="input-group my-group">
-                {!! Form::select('supplier_id', $suppliers, !empty($recent_product->supplier) ? $recent_product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                <span class="input-group-btn">
-                    @can('supplier_module.supplier.create_and_edit')
-                        <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
-                            data-href="{{ action('SupplierController@create') }}?quick_add=1"
-                            data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
-                    @endcan
-                </span>
-            </div>
-        </div>
-    </div>
     <div class="col-md-4">
         @if (session('system_mode') == 'restaurant')
             {!! Form::label('product_class_id', __('lang.category') . ' *', []) !!}
@@ -307,13 +292,6 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                 <input id="price_based_on_raw_material" name="price_based_on_raw_material" type="checkbox"
                     @if (!empty($recent_product) && $recent_product->price_based_on_raw_material == 1) checked @endif value="1" class="form-control-custom">
                 <label for="price_based_on_raw_material"><strong>@lang('lang.price_based_on_raw_material')</strong></label>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="i-checks">
-                <input id="buy_from_supplier" name="buy_from_supplier" type="checkbox" value="1"
-                    class="form-control-custom">
-                <label for="buy_from_supplier"><strong>@lang('lang.buy_from_supplier')</strong></label>
             </div>
         </div>
         <div class="col-md-12">
