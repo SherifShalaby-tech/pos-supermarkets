@@ -888,12 +888,12 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('SupplierController@index')}}">{{__('lang.view_all_supplier')}}</a>
                         </li>
                         @endcan
-                        {{-- @can('service_provider.supplier_service.create_and_edit') --}}
+                        @can('service_provider.supplier_service.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'supplier-service' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('SupplierServiceController@index')}}">{{__('lang.all_supplier_service')}}</a>
                         </li>
-                        {{-- @endcan --}}
+                        @endcan
                     </ul>
                 </li>
                 @endif
