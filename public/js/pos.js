@@ -2075,6 +2075,9 @@ $(document).ready(function () {
         }
     );
 });
+$(document).on('change', '.filter_transactions', function() {
+    get_recent_transactions();
+})
 function get_recent_transactions() {
     // recent_transaction_table.ajax.reload();
      $('#recent_transaction_table').DataTable().clear().destroy();
