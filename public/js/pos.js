@@ -1496,9 +1496,21 @@ $("button#submit-btn").click(function () {
         $("#submit-btn").attr("disabled", false);
     }, 2000);
 });
+var updateBtnClicked = false;
 $("button#update-btn").click(function () {
-    $("#is_edit").val("");
-    pos_form_obj.submit();
+        // Check if the button has not been clicked yet
+        if (!updateBtnClicked) {
+            // Perform the desired action
+            $("#is_edit").val("");
+            pos_form_obj.submit();
+    
+            // Set the flag to true to indicate the button has been clicked
+            updateBtnClicked = true;
+    
+            // Disable the button after it has been clicked
+            $(this).prop('disabled', true);
+        }
+    
 });
 
 $(document).ready(function () {
@@ -2063,6 +2075,9 @@ $(document).ready(function () {
         }
     );
 });
+$(document).on('change', '.filter_transactions', function() {
+    get_recent_transactions();
+})
 function get_recent_transactions() {
     // recent_transaction_table.ajax.reload();
      $('#recent_transaction_table').DataTable().clear().destroy();
