@@ -2416,26 +2416,7 @@ function getCustomerPointDetails() {
         },
     });
 }
-$(document).on("submit", "form#pay_customer_due_form", function (e) {
-    e.preventDefault();
-    let url = $(this).attr("action");
-    let data = $(this).serialize();
-    $.ajax({
-        method: "POST",
-        url: url,
-        data: data,
-        dataType: "json",
-        success: function (result) {
-            if (result.success) {
-                swal("Success!", result.msg, "success");
-                $(".view_modal").modal("hide");
-                $("#customer_id").change();
-            } else {
-                swal("Error!", result.msg, "error");
-            }
-        },
-    });
-});
+
 $(document).on("click", ".redeem_btn", function () {
     $("#is_redeem_points").val(1);
     $(this).attr("disabled", true);
@@ -2465,24 +2446,35 @@ $(document).on("change", "#deliveryman_id", function () {
 $(document).on("click", "#delivery_cost_btn", function () {
     $("#deliveryman_id_hidden").val($("#deliveryman_id").val());
 });
+var updateadd_payment_formClicked = false;
 $(document).on("submit", "form#add_payment_form", function (e) {
     e.preventDefault();
     let data = $(this).serialize();
+    let submitButton = $("#submit_form_button"); 
+    if (!updateadd_payment_formClicked) {
+       
+        console.log('ojj')
+        $.ajax({
+            method: "post",
+            url: $(this).attr("action"),
+            data: data,
+            success: function (result) {
+                if (result.success) {
+                    swal("Success", result.msg, "success");
+                } else {
+                    swal("Error", result.msg, "error");
+                }
+                $(".view_modal").modal("hide");
+                get_recent_transactions();
+            },
+        });
+    
+        // Set the flag to true to indicate the button has been clicked
+        updateadd_payment_formClicked = true;
 
-    $.ajax({
-        method: "post",
-        url: $(this).attr("action"),
-        data: data,
-        success: function (result) {
-            if (result.success) {
-                swal("Success", result.msg, "success");
-            } else {
-                swal("Error", result.msg, "error");
-            }
-            $(".view_modal").modal("hide");
-            get_recent_transactions();
-        },
-    });
+        // Disable the button after it has been clicked
+        submitButton.prop('disabled', true);
+    }
 });
 
 $(document).on("click", ".print-invoice", function () {
