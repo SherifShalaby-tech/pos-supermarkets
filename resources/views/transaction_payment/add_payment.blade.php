@@ -131,30 +131,38 @@
         });
 
         if(pageTitle!=="/pos/create"){
+        var updateadd_payment_formClicked = false;
         $('#add_payment_form').submit(function(e) {
             e.preventDefault();
 
             var formData = new FormData($(this)[0]);
+            let submitButton = $("#submit_form_button"); 
+            if (!updateadd_payment_formClicked) {
+                console.log('dae')
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        // Handle success response here
+                        console.log(response);
+                    
+                        $('#add_payment_form')[0].reset();
+                        $('#close_modal_button').click();
+                        $('#sales_table').DataTable().ajax.reload();
+                    },
+                    error: function(error) {
+                        // Handle error response here
+                        console.log(error);
+                    }
+                });
+                updateadd_payment_formClicked = true;
 
-            $.ajax({
-                url: $(this).attr('action'),
-                type: $(this).attr('method'),
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    // Handle success response here
-                    console.log(response);
-                  
-                    $('#add_payment_form')[0].reset();
-                    $('#close_modal_button').click();
-                    $('#sales_table').DataTable().ajax.reload();
-                },
-                error: function(error) {
-                    // Handle error response here
-                    console.log(error);
-                }
-            });
+                // Disable the button after it has been clicked
+                submitButton.prop('disabled', true);
+            }
         });
         }
     });

@@ -97,7 +97,7 @@
         </div>
 
         <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">@lang( 'lang.save' )</button>
+            <button type="submit" id="pay_due" class="btn btn-primary pay_due">@lang( 'lang.save' )</button>
             <button type="button" id="close_modal_button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
         </div>
 
@@ -107,6 +107,7 @@
 </div><!-- /.modal-dialog -->
 
 <script>
+
     $('.selectpicker').selectpicker('refresh');
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
@@ -159,3 +160,4 @@ $('#amount').on('change', function () {
         });
     });
 </script>
+<script src="{{ asset('js/due.js') }}"></script>
