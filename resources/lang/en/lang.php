@@ -1450,4 +1450,5 @@ return [
     'old_purchase_price' => 'Old purchase price',
     'old_sell_price' => 'Old sell price',
     'new_sell_price' => 'new sell price',
+    'check_purchase_price_please' => 'please make sure that purchase price is less than sell price',
 ];

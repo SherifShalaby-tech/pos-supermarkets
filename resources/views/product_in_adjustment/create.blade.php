@@ -250,6 +250,9 @@
             </div>
         </div>
     </div>
+    <div style="text-align: center;">
+        <p style="color: rgb(219, 76, 76)">@lang('lang.check_purchase_price_please')</p>
+    </div>
     <div class="table-responsive">
         <table id="product_table" class="table" style="width: auto">
             <thead>
@@ -350,33 +353,7 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
-            // $('.column-toggle').each(function(i, obj) {
-            //     if (i > 0) {
-            //         i = i + 2;
-            //     }
-            //     @if (session('system_mode') != 'restaurant')
-            //         @if (empty($page))
-            //             if (i > 15) {
-            //                 i = i + 1;
-            //             }
-            //         @else
-            //             if (i > 14) {
-            //                 i = i + 1;
-            //             }
-            //         @endif
-            //     @else
-            //         @if (empty($page))
-            //             if (i > 12) {
-            //                 i = i + 1;
-            //             }
-            //         @else
-            //             if (i > 11) {
-            //                 i = i + 1;
-            //             }
-            //         @endif
-            //     @endif
-            //     $(obj).val(i)
-            // });
+ 
             var actualStockColIndex = null;
             var currentStockColIndex = null;
             product_table = $('#product_table').DataTable({
@@ -897,12 +874,26 @@
 
             // // calculate the total initially
             // calculateTotal();
+            $('#product_table').on('change', '.default_purchase_price, .default_sell_price', function() {
+                var row = $(this).closest('tr');
+                var purchasePrice = parseFloat(row.find('.default_purchase_price').val()) || 0;
+                var sellPrice = parseFloat(row.find('.default_sell_price').val()) || 0;
 
+                // Check if default_purchase_price is greater than or equal to default_sell_price
+                if (purchasePrice >= sellPrice) {
+                    row.find('.default_purchase_price').css('border', '2px solid red');
+                    row.find('.default_sell_price').css('border', '2px solid red');
+                } else {
+                    row.find('.default_purchase_price').css('border', '');
+                    row.find('.default_sell_price').css('border', ''); // Reset border if condition is not met
+                }
+            });
             // add event listener to parent element (table)
             $("#product_table").on("input", ".actual_stock", function() {
                 var tr = $(this).closest('tr');
                 calculateTotal(tr);
             });
+        
 
             // add event listener to change event on actual_stock input field
             $("#product_table").on("input", ".actual_stock", function() {
@@ -958,6 +949,10 @@
                 console.log("sellPriceHidden :" + sellPriceHidden)
                     // Check if either the purchase price or sell price has changed
                     if (purchasePrice !== purchasePriceHidden || sellPrice !== sellPriceHidden) {
+                        if(purchasePrice > sellPrice){
+                            $(this).find('.default_purchase_price').css('border', '2px solid #6f42c1');
+                            $(this).find('.default_sell_price').css('border', '2px solid #6f42c1');
+                        }
                         // Create an object with the updated values
                         if(purchasePrice !== 0 && sellPrice !== 0){
                             var updatedData = {
