@@ -486,10 +486,11 @@ $(document).on("click", "#clear_all_input_form", function () {
         },
     });
 });
-function checkAddStock(){
+function    checkAddStock(){
     let willDelete = 2;
     let namePurchasePrice='';
     let nameSellingPrice='';
+    let checkPrice = '';
     let checkQty=0;
     $("#product_table tbody")
         .find(".product_row")
@@ -512,8 +513,17 @@ function checkAddStock(){
                     willDelete = 1;
                     nameSellingPrice = 'selling_price';
             }
+
+            if ($(this).find('.purchase_price').val() >= $(this).find('.selling_price').val()) {
+                console.log($(this).find('.purchase_price').val());
+                console.log($(this).find('.selling_price').val());
+                $(this).find('.selling_price').css('border', '2px solid #6f42c1');
+                $(this).find('.purchase_price').css('border', '2px solid #6f42c1');
+                willDelete = 1;
+                checkPrice = 'purchase_price>selling_price';
+            }
         });
-        return [willDelete,namePurchasePrice,nameSellingPrice,checkQty];
+        return [willDelete,namePurchasePrice,nameSellingPrice,checkQty,checkPrice];
 }
 $(document).on('click', '#submit-save', function(e) {
     e.preventDefault();
@@ -522,33 +532,90 @@ $(document).on('click', '#submit-save', function(e) {
     if (data[0]=="1" && data[3]!="3") {
         
         let title = '';
-        if (data[1] != '' && data[2] != '') {
-            title = LANG.purchase_price_and_sell_price_equal_to_zero;
-        } else if (data[1] == '' && data[2] != '') {
-            title = LANG.sell_price_equal_to_zero;
-        } else if (data[1] != '' && data[2] == '') {
-            title = LANG.purchase_price_equal_to_zero;
-        }
-
-        // swal({
-        //         title: title,
-        //         text: LANG.continue,
-        //         icon: "warning",
-        //         buttons: true,
-        //         dangerMode: true,
-        //         showCancelButton: true,
-        //         confirmButtonText: 'Save',
-        //     })
-        //     .then((isConfirm) => {
-        //         if (isConfirm) {
-        //             $('form#add_stock_form').valid();
-        //             $('form#add_stock_form').submit();
-        //         } else {
-                    $(this).find('.purchase_price_submit').val('0');
+        let check = '';
+        if(data[4] != ''){
+            title = LANG.purchase_price_more_than_sell_price;
+                   swal({
+                title: title,
+                text: LANG.continue,
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+            })
+            .then((isConfirm) => {
+                if (isConfirm) {
+                    if (data[1] != '' && data[2] != '') {
+                        title = LANG.purchase_price_and_sell_price_equal_to_zero;
+                        check = 'no'
+                    } else if (data[1] == '' && data[2] != '') {
+                        title = LANG.sell_price_equal_to_zero;
+                        check = 'no'
+                    } else if (data[1] != '' && data[2] == '') {
+                        title = LANG.purchase_price_equal_to_zero;
+                        check = 'no'
+                    }
+            
+                    // swal({
+                    //         title: title,
+                    //         text: LANG.continue,
+                    //         icon: "warning",
+                    //         buttons: true,
+                    //         dangerMode: true,
+                    //         showCancelButton: true,
+                    //         confirmButtonText: 'Save',
+                    //     })
+                    //     .then((isConfirm) => {
+                    //         if (isConfirm) {
+                    //             $('form#add_stock_form').valid();
+                    //             $('form#add_stock_form').submit();
+                    //         } else {
+                              
+                    //         }
+                    //     });
+                    if(check != ''){
+                        $(this).find('.purchase_price_submit').val('0');
+                        $(this).find('.selling_price_submit').val('0')
+                        swal("warning", title, "warning");
+                    }else{
+                        $('form#add_stock_form').valid();
+                        $('form#add_stock_form').submit();
+                    }
+                } else { $(this).find('.purchase_price_submit').val('0');
                     $(this).find('.selling_price_submit').val('0')
-        //         }
-        //     });
-        swal("warning", title, "warning");
+                }
+            });
+        }else{
+            if (data[1] != '' && data[2] != '') {
+                title = LANG.purchase_price_and_sell_price_equal_to_zero;
+            } else if (data[1] == '' && data[2] != '') {
+                title = LANG.sell_price_equal_to_zero;
+            } else if (data[1] != '' && data[2] == '') {
+                title = LANG.purchase_price_equal_to_zero;
+            }
+    
+            // swal({
+            //         title: title,
+            //         text: LANG.continue,
+            //         icon: "warning",
+            //         buttons: true,
+            //         dangerMode: true,
+            //         showCancelButton: true,
+            //         confirmButtonText: 'Save',
+            //     })
+            //     .then((isConfirm) => {
+            //         if (isConfirm) {
+            //             $('form#add_stock_form').valid();
+            //             $('form#add_stock_form').submit();
+            //         } else {
+                        $(this).find('.purchase_price_submit').val('0');
+                        $(this).find('.selling_price_submit').val('0')
+            //         }
+            //     });
+            swal("warning", title, "warning");
+        }
+   
     } else if(data[0]=="2") {
         $('form#add_stock_form').valid();
         $('form#add_stock_form').submit();
