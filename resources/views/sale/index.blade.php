@@ -9,6 +9,7 @@
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
                             <h3 class="print-title">@lang('lang.sales_list')</h3>
+                            <h3 class="print-title-hint" style="display:none;">sale_report</h3>
                         </div>
                         <div class="card-body">
                             <div class="row">

@@ -2065,7 +2065,6 @@ class ReportController extends Controller
             ->leftjoin('products as p', function ($join) {
                 $join->on('tsl.product_id', 'p.id');
             })
-           
             ->leftjoin('product_classes as pc', function ($join) {
                 $join->on('p.product_class_id', 'pc.id');
             })

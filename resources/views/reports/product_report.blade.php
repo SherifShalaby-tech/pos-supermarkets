@@ -6,6 +6,7 @@
         <div class="card">
             <div class="card-header d-flex align-items-center">
                 <h3 class="print-title">@lang('lang.product_report')</h3>
+                <h3 class="print-title-hint" style="display:none;">product_report</h3>
             </div>
             <form action="">
                 <div class="col-md-12">
