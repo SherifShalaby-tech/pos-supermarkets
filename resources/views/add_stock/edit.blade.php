@@ -406,7 +406,7 @@
                         </div>
 
                         <div class="col-sm-12">
-                            <button type="submit" name="submit" id="print" style="margin: 10px" value="save"
+                            <button type="submit" name="submit" id="submit-save" style="margin: 10px" value="save"
                                 class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.save' )</button>
 
                         </div>

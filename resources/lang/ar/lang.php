@@ -1434,4 +1434,5 @@ return [
     'old_purchase_price' => 'سعر الشراء القديم',
     'old_sell_price' => 'سعر البيع القديم',
     'new_sell_price' => 'سعر البيع الجديد',
+    'check_purchase_price_please' => 'برجاء التاكد من ان سعر الشراء اقل من سعر البيع',
 ];
