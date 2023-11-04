@@ -264,6 +264,17 @@ if($('.print-title').length){
     }
 var buttons = [
     {
+        extend: 'print',
+        text: '<i class="fas fa-print"></i>',
+        charset: 'UTF-8',
+        bom: true,
+        footer: true,
+        title: print_title,
+        exportOptions: {
+            columns: [0, 7, 8 , 9]
+        }
+    },
+    {
         extend: "print",
 
         charset: 'UTF-8',

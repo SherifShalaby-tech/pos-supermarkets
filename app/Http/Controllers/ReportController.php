@@ -2059,9 +2059,13 @@ class ReportController extends Controller
         $query = Transaction::leftjoin('transaction_sell_lines as tsl', function ($join) {
             $join->on('transactions.id', 'tsl.transaction_id');
         })
+            ->leftjoin('add_stock_lines as pl', function ($join) {
+                $join->on('transactions.id', 'pl.transaction_id');
+            })
             ->leftjoin('products as p', function ($join) {
                 $join->on('tsl.product_id', 'p.id');
             })
+           
             ->leftjoin('product_classes as pc', function ($join) {
                 $join->on('p.product_class_id', 'pc.id');
             })
@@ -2083,9 +2087,11 @@ class ReportController extends Controller
         }
 
         $transactions = $query->select(
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity * pl.purchase_price, 0)) as purchased_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
             DB::raw("SUM(IF(transactions.type='sell', final_total, 0)) as sold_amount"),
             'pc.name as product_class_name'
-
         )->groupBy('pc.id')->get();
 
         return view('reports.category_report',compact('transactions'));

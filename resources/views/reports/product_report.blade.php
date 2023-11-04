@@ -89,10 +89,6 @@
                             <a href="{{ action('ReportController@getProductReport') }}"
                                 class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
                         </div>
-                        <div class="col-md-1">
-                            <a href="{{ action('ReportController@printProductReportTable') }}"
-                                class="btn btn-warning mt-2 ml-2"><i class="fas fa-print"></i></a>
-                        </div>
                     </div>
                 </div>
             </form>
@@ -109,9 +105,9 @@
                                     <th class="sum">@lang('lang.purchased_qty')</th>
                                     <th class="sum">@lang('lang.sold_amount')</th>
                                     <th class="sum">@lang('lang.sold_qty')</th>
-                                    <th class="sum">@lang('lang.profit')</th>
                                     <th class="sum">@lang('lang.purchase_price')</th>
                                     <th class="sum">@lang('lang.sell_price')</th>
+                                    <th class="sum">@lang('lang.profit')</th>
                                     <th class="sum">@lang('lang.in_stock')</th>
                                     <th class="sum">@lang('lang.employee')</th>
                                     <th class="sum">@lang('lang.commission')</th>
@@ -127,11 +123,13 @@
                                         <td>{{ $transaction->sku }}</td>
                                         <td> {{ @num_format($transaction->purchased_amount) }}</td>
                                         <td> {{ @num_format($transaction->purchased_qty) }}</td>
-                                        <td> {{ @num_format($transaction->default_purchase_price) }}</td>
-                                        <td> {{ @num_format($transaction->default_sell_price) }}</td>
+                                      
                                         <td> {{ @num_format($transaction->sold_amount) }}</td>
                                         <td> {{ @num_format($transaction->sold_qty) }}</td>
-                                        <td> {{ @num_format($transaction->sold_amount - $transaction->purchase_cost) }}
+
+                                        <td> {{ @num_format($transaction->default_purchase_price) }}</td>
+                                        <td> {{ @num_format($transaction->default_sell_price) }}</td>
+                                        <td> {{ @num_format($transaction->sold_amount - $transaction->purchased_amount) }}
                                         </td>
                                         <td> {{ preg_match('/\.\d*[1-9]+/', (string) $transaction->in_stock) ? $transaction->in_stock : @num_format($transaction->in_stock) }}
                                         </td>
