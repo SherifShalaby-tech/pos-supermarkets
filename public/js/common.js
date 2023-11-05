@@ -421,7 +421,7 @@ if($('.print-title-hint').text()=="sale_report"){
             }
         ];
     buttons.push(button);
-    }
+}
 var datatable_params = {
     lengthChange: true,
     paging: true,
