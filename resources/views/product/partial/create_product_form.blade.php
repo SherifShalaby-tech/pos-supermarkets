@@ -158,7 +158,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('sku', __('lang.sku'), []) !!}
-            {!! Form::text('sku', null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.sku')]) !!}
+            {!! Form::text('sku', null, ['class' => 'clear_input_form form-control','id'=>'sku', 'placeholder' => __('lang.sku')]) !!}
         </div>
     </div>
     @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')

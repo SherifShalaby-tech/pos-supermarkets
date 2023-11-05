@@ -46,9 +46,11 @@ class Tax extends Model
             $arr = ['id' => $g_tax->id, 'name' => $g_tax->name, 'rate' => $g_tax->rate];
             if ($g_tax->status == 1) {
                 if (!empty($g_tax->store_ids)) {
-                    if (in_array($store_id, $g_tax->store_ids)) {
-                        $taxes[] = $arr;
-                    }
+                    if (is_array( $g_tax->store_ids)) {
+                        if (in_array($store_id, $g_tax->store_ids)) {
+                            $taxes[] = $arr;
+                        }
+                    }   
                 } else {
                     $taxes[] = $arr;
                 }

@@ -1370,29 +1370,33 @@ class TransactionUtil extends Util
         }
        $total_due= $this->getCustomerBalance($transaction->customer_id)['balance'];
 
-                $font='18px';
-                $line_height1='20px';
-                $line_height2='24px';
+       $font='15px';
+       $line_height1='20px';
+       $line_height2='24px';
+       $data_font='12px';
        $font_size_at_invoice=System::getProperty('font_size_at_invoice');
         if (!empty($font_size_at_invoice)){
             if($font_size_at_invoice == 'max'){
-                $font='18px';
+                $font='15px';
+                $data_font='12px';
                 $line_height1='20px';
                 $line_height2='24px';
             }else if($font_size_at_invoice == 'min'){
-                $font='11px';
+                $font='10px';
+                $data_font='7px';
                 $line_height1='10px';
                 $line_height2='17px';
             }else if($font_size_at_invoice == 'avg'){
-                $font='14px';
+                $font='13px';
+                $data_font='10px';
                 $line_height1='15px';
                 $line_height2='21px';
 
             }else{
-                $font='18px';
+                $font='15px';
+                $data_font='12px';
                 $line_height1='20px';
                 $line_height2='24';
-
             }
         }
         
@@ -1411,7 +1415,7 @@ class TransactionUtil extends Util
                 'invoice_lang',
                 'total_due',
                 'print_gift_invoice',
-                'font','line_height1','line_height2','last_due'
+                'font','line_height1','line_height2','data_font','last_due'
             ))->render();
         }
 
