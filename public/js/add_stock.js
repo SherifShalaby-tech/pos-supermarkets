@@ -297,31 +297,43 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
 }
 function calculate_sub_totals() {
     var total = 0;
-    $("#product_table > tbody  > .product_row").each((ele, tr) => {
+    $("#product_table > tbody > .product_row").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
-        let productId=$(".product_id").val();
+        let productId = $(tr).find(".product_id").val();
         let purchase_price = __read_number($(tr).find(".purchase_price"));
         let sub_total = purchase_price * quantity;
-        $("#product_table > tbody  > .row_batch_details").each((ele, td) => {
-            let batch_quantity =__read_number($(td).find(".batch_quantity"+productId));
-            let batch_purchase_price = __read_number($(td).find(".batch_purchase_price"+productId));
-            if(batch_quantity){
-                sub_total=(batch_quantity*batch_purchase_price)+sub_total;
+        let hasBatchQuantity = false;
+
+        $("#product_table > tbody > .row_batch_details").each((ele, td) => {
+            let batchProductId = $(td).find(".batch_product_id").val();
+            if (batchProductId === productId) {
+                let batch_quantity = __read_number($(td).find(".batch_quantity" + productId));
+                let batch_purchase_price = __read_number($(td).find(".batch_purchase_price" + productId));
+                if (batch_quantity) {
+                    sub_total += batch_quantity * batch_purchase_price;
+                    hasBatchQuantity = true;
+                }
             }
         });
+
+        if (!hasBatchQuantity) {
+            sub_total = purchase_price * quantity;
+        }
+
         __write_number($(tr).find(".sub_total"), sub_total);
-        $(tr)
-            .find(".sub_total_span")
-            .text(__currency_trans_from_en(sub_total, false));
+        $(tr).find(".sub_total_span").text(__currency_trans_from_en(sub_total, false));
         total += sub_total;
     });
-    __write_number($("#grand_total"), total);
 
+    // Calculate total with other expenses, discount, and other payments
     var other_expenses = __read_number($("#other_expenses"));
     var discount_amount = __read_number($("#discount_amount"));
     var other_payments = __read_number($("#other_payments"));
 
     total = total + other_expenses - discount_amount + other_payments;
+    
+    // Update grand total and final total
+    __write_number($("#grand_total"), total);
     __write_number($("#final_total"), total);
     __write_number($("#amount"), total);
     $(".final_total_span").text(__currency_trans_from_en(total, false));
