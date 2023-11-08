@@ -514,7 +514,7 @@ function    checkAddStock(){
                     nameSellingPrice = 'selling_price';
             }
 
-            if ($(this).find('.purchase_price').val() >= $(this).find('.selling_price').val()) {
+            if(parseFloat($(this).find('.purchase_price').val()) >= parseFloat($(this).find('.selling_price').val())) {
                 console.log($(this).find('.purchase_price').val());
                 console.log($(this).find('.selling_price').val());
                 $(this).find('.selling_price').css('border', '2px solid #6f42c1');
