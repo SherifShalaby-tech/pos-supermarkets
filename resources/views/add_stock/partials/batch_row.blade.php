@@ -18,7 +18,7 @@ $index=$batch_count;
         
     {{-- </td> --}}
     <td colspan="1">
-        <input type="hidden" name="batch_row[{{$index}}][product_id]" value="{{$product->product_id}}"/>
+        <input type="hidden"  class="batch_product_id" name="batch_row[{{$index}}][product_id]" value="{{$product->product_id}}"/>
         <input type="hidden" name="batch_row[{{$index}}][variation_id]" value="{{$product->variation_id}}"/>
         {!! Form::label('', __('lang.manufacturing_date'), []) !!}<br><br>
         {!! Form::text('batch_row['.$index.'][batch_manufacturing_date]', null, ['class' => 'form-control datepicker',

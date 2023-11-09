@@ -1932,11 +1932,11 @@ class SellPosController extends Controller
     public function changeSellingPrice($variation_id){
         try {
 
-            $stockLines=AddStockLine::where('sell_price','>',0)->where('variation_id',$variation_id)
+            $stockLines=AddStockLine::where('variation_id',$variation_id)
             ->get();
-            if(!empty($stockLines)){
+            if(count($stockLines) > 0){
                 $updateData = ['sell_price'=>request()->sell_price,'updated_by'=>Auth::user()->id];
-                AddStockLine::where('sell_price','>',0)->where('variation_id',$variation_id)->update($updateData);
+                AddStockLine::where('variation_id',$variation_id)->update($updateData);
             }else{
                 $variation=Variation::find($variation_id);
                 $variation->default_sell_price=request()->sell_price;
