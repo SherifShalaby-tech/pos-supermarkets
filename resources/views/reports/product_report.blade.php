@@ -82,13 +82,15 @@
                                 ]) !!}
                             </div>
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-3">
                             <br>
-                            <a href="{{ action('ReportController@getCategoryPurchases') }}"
-                                class="btn btn-primary mt-2 ml-2">@lang('lang.category_purchases')</a>
                             <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
                             <a href="{{ action('ReportController@getProductReport') }}"
                                 class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ action('ReportController@getCategoryPurchases') }}"
+                            class="btn btn-primary mt-2 ml-2">@lang('lang.category_purchases')</a>
                         </div>
                     </div>
                 </div>
