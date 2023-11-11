@@ -529,6 +529,7 @@
                                             dataType: 'json',
                                             data: data,
                                             success: function(result) {
+                                                console.log(6);
                                                 if (result.success ==
                                                     true) {
                                                     swal(
