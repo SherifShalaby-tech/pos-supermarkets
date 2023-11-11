@@ -937,7 +937,7 @@ class AddStockController extends Controller
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [
                 'success' => false,
-                'msg' => __('lang.something_went_wrong')
+                'msg' => $e
             ];
         }
         return redirect()->back()->with('status', $output);
