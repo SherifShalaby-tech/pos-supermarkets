@@ -1280,6 +1280,7 @@ class ProductController extends Controller
                 $product->clearMediaCollection('product');
             }
             //////////////////////////////////////
+            //////////////////////////////////////
             if (!empty($request->supplier_id)) {
                 SupplierProduct::updateOrCreate(
                     ['product_id' => $product->id],
