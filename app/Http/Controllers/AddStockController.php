@@ -308,6 +308,7 @@ class AddStockController extends Controller
     }
     public function store(Request $request)
     {
+        // return $request->batch_row;
         //  try {
         $data = $request->except('_token');
 
