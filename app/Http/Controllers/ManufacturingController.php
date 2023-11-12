@@ -491,14 +491,16 @@ class ManufacturingController extends Controller
         }
     }
 
-    public function destroy($id)
+      public function destroy($id)
     {
         try {
             $manufacturing = Manufacturing::find($id);
             if (isset($manufacturing->materials) && count($manufacturing->materials) > 0) {
                 foreach ($manufacturing->materials as $deleted_product) {
                        $product = Product::find($deleted_product->product_id);
+                       if(!empty($product)){
                        $product->product_stores->first()->increment("qty_available",$deleted_product->quantity);
+                       }
                        $deleted_product->delete();
                 }
             }
