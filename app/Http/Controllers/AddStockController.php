@@ -308,6 +308,7 @@ class AddStockController extends Controller
     }
     public function store(Request $request)
     {
+        // return $request->batch_row;
         //  try {
         $data = $request->except('_token');
 
@@ -936,7 +937,7 @@ class AddStockController extends Controller
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [
                 'success' => false,
-                'msg' => __('lang.something_went_wrong')
+                'msg' => $e
             ];
         }
         return redirect()->back()->with('status', $output);

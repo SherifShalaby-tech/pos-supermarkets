@@ -36,7 +36,8 @@ class AddStockLineImport implements ToModel, WithHeadingRow, WithValidation
     public function model(array $row)
     {
         $product = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-        ->where('sub_sku', $row['product_code'])
+        ->where('variations.sub_sku', $row['product_code'])
+        ->orWhere('products.sku', $row['product_code'])
         ->select(
             'products.id as product_id',
             'variations.id as variation_id',
@@ -68,7 +69,7 @@ class AddStockLineImport implements ToModel, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            'product_code' => 'exists:variations,sub_sku',
+            'product_code' => 'required',
             'quantity' => 'required',
             'purchase_price' => 'required',
             'sell_price' => 'required',
