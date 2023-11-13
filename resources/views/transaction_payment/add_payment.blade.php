@@ -19,7 +19,7 @@
                         {!! Form::label('amount', __('lang.amount') . ':*', []) !!} <br>
                         {{-- @if($balance >0 && $balance<$transaction->final_total - $transaction->transaction_payments->sum('amount'))
                         @if (isset($transaction->return_parent)) --}}
-                        {!! Form::text('amount', @num_format($amount), ['class' => 'form-control', 'placeholder' => __('lang.amount')]) !!}
+                        {!! Form::text('amount', @num_format($amount), ['id' => 'amount_pay','class' => 'form-control', 'placeholder' => __('lang.amount')]) !!}
                         {{-- @else 
                         {!! Form::text('amount', @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')-$balance), ['class' => 'form-control', 'placeholder' => __('lang.amount')]) !!}
                         @endif 
@@ -49,7 +49,7 @@
                 </div>
                 <div class="col-md-6 mt-1">
                     <label class="change_text">@lang('lang.change'): </label>
-                    <spand class="change" class="ml-2">0.00</spand>
+                    <span class="change" class="ml-2">0.00</span>
                     <div class="col-md-6">
                         <button type="button" 
                             class="ml-1 btn btn-danger add_to_customer_balance hide">@lang('lang.add_to_customer_balance')</button>
@@ -120,7 +120,6 @@
 
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
-
 <script>
     $(document).ready(function() {
         var pageTitle = window.location.pathname;
@@ -165,6 +164,47 @@
             }
         });
         }
+        var inputValue = $('#amount_pay').val();
+        console.log(inputValue);
+        if (inputValue !== undefined) {
+            var initialAmount = parseFloat(inputValue.replace(',', ''));
+            // Rest of your code using initialAmount
+        } else {
+            console.error("Error: The element with id 'amount_pay' does not exist or is undefined.");
+        }
+        // Store the initial amount value
+        // var initialAmount = parseFloat($('#amount_pay').val().replace(',', '')); // Assuming 'num_format' formats the number as a string with commas
+
+        $('#amount_pay').on('change', function () {
+            var newAmount = parseFloat($(this).val().replace(',', ''));
+
+            if (!isNaN(newAmount) && newAmount > initialAmount) {
+                var change = Math.abs(newAmount - initialAmount);
+                $(".add_to_customer_balance").removeClass("hide");
+                $('.change').text(change.toFixed(2));
+                $(document).on("click", ".add_to_customer_balance", function () {
+                    $('.change').text(change.toFixed(2)); // Update the change value
+                    
+                    // if ($('.payment_way').val() !== 'deposit') {
+                        $('#add_to_customer_balance').val(change.toFixed(2));
+                        console.log($('#add_to_customer_balance').val());
+                        // $('.change_amount').val(0);
+                        // $(this).attr('disabled', true);
+
+                        // Assuming you have a 'received_amount' variable
+                        var newReceivedAmount = newAmount - change;
+                        $('#amount_pay').val(newReceivedAmount.toFixed(2));
+                });
+                $(document).on("click", ".close , #close_modal_button", function () {
+                    $('.add_to_customer_balance').addClass('hide');
+                    $('#add_to_customer_balance').val(' ');
+                    console.log($('#add_to_customer_balance').val());
+                });
+                // } else {
+                //     $('.add_to_customer_balance').addClass('hide');
+                // }
+            }
+        });
     });
     $('#source_type').change(function() {
         if ($(this).val() !== '') {
@@ -202,37 +242,5 @@
         }
     })
 
-     // Store the initial amount value
-     var initialAmount = parseFloat($('#amount').val().replace(',', '')); // Assuming 'num_format' formats the number as a string with commas
-
-    $('#amount').on('change', function () {
-        var newAmount = parseFloat($(this).val().replace(',', ''));
-
-        if (!isNaN(newAmount) && newAmount > initialAmount) {
-            var change = Math.abs(newAmount - initialAmount);
-            $(".add_to_customer_balance").removeClass("hide");
-            $('.change').text(change.toFixed(2));
-            $(document).on("click", ".add_to_customer_balance", function () {
-                $('.change').text(change.toFixed(2)); // Update the change value
-                
-                // if ($('.payment_way').val() !== 'deposit') {
-                    $('#add_to_customer_balance').val(change.toFixed(2));
-                    console.log($('#add_to_customer_balance').val());
-                    // $('.change_amount').val(0);
-                    // $(this).attr('disabled', true);
-
-                    // Assuming you have a 'received_amount' variable
-                    var newReceivedAmount = newAmount - change;
-                    $('#amount').val(newReceivedAmount.toFixed(2));
-            });
-            $(document).on("click", ".close , #close_modal_button", function () {
-                $('.add_to_customer_balance').addClass('hide');
-                $('#add_to_customer_balance').val(' ');
-                console.log($('#add_to_customer_balance').val());
-            });
-            // } else {
-            //     $('.add_to_customer_balance').addClass('hide');
-            // }
-        }
-    });
+     
 </script>

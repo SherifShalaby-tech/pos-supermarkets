@@ -1471,8 +1471,21 @@ $(document).on("click", "#pay-later-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
-    $("#amount").val(0);
-    pos_form_obj.submit();
+    // Get the text content of the element with the class "customer_balance"
+    var balanceText = $(".customer_balance").text();
+
+    // Convert the text content to a number
+    var balance = parseFloat(balanceText);
+
+    if(balance > 0){
+        $("#pay_from_balance").val(1);
+        pos_form_obj.submit();
+    }else{
+        $("#amount").val(0);
+        pos_form_obj.submit();
+    }
+    
+    
 });
 $(document).on("click", "#quick-pay-btn", function (e) {
     //Check if product is present or not.
