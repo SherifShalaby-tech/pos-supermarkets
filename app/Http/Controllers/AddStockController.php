@@ -308,6 +308,7 @@ class AddStockController extends Controller
     }
     public function store(Request $request)
     {
+        // return $request->batch_row;
         //  try {
         $data = $request->except('_token');
 
@@ -539,9 +540,10 @@ class AddStockController extends Controller
             'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
             'notify_me' => !empty($data['notify_before_days']) ? 1 : 0,
             'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
-            'created_by' => Auth::user()->id,
+//            'created_by' => Auth::user()->id,
             'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
             'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
+            'updated_by' => Auth::user()->id,
         ];
 
         if (!empty($data['po_no'])) {
@@ -935,7 +937,7 @@ class AddStockController extends Controller
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [
                 'success' => false,
-                'msg' => __('lang.something_went_wrong')
+                'msg' => $e
             ];
         }
         return redirect()->back()->with('status', $output);

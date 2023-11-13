@@ -1370,29 +1370,33 @@ class TransactionUtil extends Util
         }
        $total_due= $this->getCustomerBalance($transaction->customer_id)['balance'];
 
-                $font='18px';
-                $line_height1='20px';
-                $line_height2='24px';
+       $font='15px';
+       $line_height1='20px';
+       $line_height2='24px';
+       $data_font='12px';
        $font_size_at_invoice=System::getProperty('font_size_at_invoice');
         if (!empty($font_size_at_invoice)){
             if($font_size_at_invoice == 'max'){
-                $font='18px';
+                $font='15px';
+                $data_font='12px';
                 $line_height1='20px';
                 $line_height2='24px';
             }else if($font_size_at_invoice == 'min'){
-                $font='11px';
+                $font='10px';
+                $data_font='7px';
                 $line_height1='10px';
                 $line_height2='17px';
             }else if($font_size_at_invoice == 'avg'){
-                $font='14px';
+                $font='13px';
+                $data_font='10px';
                 $line_height1='15px';
                 $line_height2='21px';
 
             }else{
-                $font='18px';
+                $font='15px';
+                $data_font='12px';
                 $line_height1='20px';
                 $line_height2='24';
-
             }
         }
         
@@ -1411,7 +1415,7 @@ class TransactionUtil extends Util
                 'invoice_lang',
                 'total_due',
                 'print_gift_invoice',
-                'font','line_height1','line_height2','last_due'
+                'font','line_height1','line_height2','data_font','last_due'
             ))->render();
         }
 
@@ -1566,6 +1570,7 @@ class TransactionUtil extends Util
             'customers.total_rp',
             'customers.deposit_balance',
             'customers.added_balance',
+            'customers.staff_note',
             DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', final_total, 0)) as total_return"),
             DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_return_paid"),
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
@@ -1576,7 +1581,7 @@ class TransactionUtil extends Util
 
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
         $balance = ($customer_details->total_paid - $customer_details->total_invoice  + $customer_details->total_return - $customer_details->total_return_paid)+ $customer_details->deposit_balance + $customer_details->added_balance + $balance_adjustment;        // print_r( $customer_details->total_return); die();
-        return ['balance' => $balance, 'points' => $customer_details->total_rp];
+        return ['balance' => $balance, 'points' => $customer_details->total_rp ,'staff_note'=>$customer_details->staff_note];
     }
     public function getCustomerBalanceExceptTransaction($customer_id,$transaction_id)
     {

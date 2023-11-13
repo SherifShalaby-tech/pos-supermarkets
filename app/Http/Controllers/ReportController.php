@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AddStockLine;
 use App\Models\CashRegister;
+use App\Models\Category;
 use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerType;
@@ -12,6 +13,7 @@ use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\ExchangeRate;
 use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -1500,6 +1502,12 @@ class ReportController extends Controller
                 $join->on('pl.product_id', 'p.id')
                     ->orOn('tsl.product_id', 'p.id');
             })
+            ->leftjoin('product_classes as pc', function ($join) {
+                $join->on('p.product_class_id','pc.id');
+            })
+            ->leftjoin('variations as v', function ($join) {
+                $join->on('p.id', 'v.product_id')->whereNull('v.deleted_at');
+            })
             ->whereIn('transactions.type', ['sell', 'add_stock'])
             ->whereIn('transactions.status', ['final', 'received']);
 
@@ -1521,6 +1529,9 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $query->where('customer_type_id', $request->customer_type_id);
         }
+        if (!empty($request->category_id)) {
+            $query->where('p.product_class_id', $request->category_id);
+        }
         $store_query = '';
 
         if (!empty($store_id)) {
@@ -1539,19 +1550,22 @@ class ReportController extends Controller
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
             DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
             'p.sku',
+            'pc.name as product_class_name',
             'p.name as product_name',
-            'p.id'
+            'p.id',
+            'v.default_purchase_price as default_purchase_price',
+            'v.default_sell_price as default_sell_price',
         )->groupBy('p.id')->get();
 
         $stores = Store::getDropdown();
         $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
-
+        $categories=ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         return view('reports.product_report')->with(compact(
             'transactions',
             'store_pos',
             'products',
-            'stores',
+            'stores','categories'
         ));
     }
 
@@ -1581,7 +1595,7 @@ class ReportController extends Controller
         if (!empty($store_id)) {
             $add_stock_query->where('transactions.store_id', $store_id);
         }
-        $add_stocks = $add_stock_query->where('product_id', $id)->select('add_stock_lines.*')->get();
+        $add_stocks = $add_stock_query->where('product_id', $id)->where('transactions.type', '!=', 'supplier_service')->select('add_stock_lines.*')->get();
 
         return view('reports.partials.view_product_details')->with(compact(
             'product',
@@ -2039,7 +2053,48 @@ class ReportController extends Controller
             'stores',
         ));
     }
+    public function getCategoryPurchases(Request $request){
+        // $product_classes=ProductClass::
+     
+        $query = Transaction::leftjoin('transaction_sell_lines as tsl', function ($join) {
+            $join->on('transactions.id', 'tsl.transaction_id');
+        })
+            ->leftjoin('add_stock_lines as pl', function ($join) {
+                $join->on('transactions.id', 'pl.transaction_id');
+            })
+            ->leftjoin('products as p', function ($join) {
+                $join->on('tsl.product_id', 'p.id');
+            })
+            ->leftjoin('product_classes as pc', function ($join) {
+                $join->on('p.product_class_id', 'pc.id');
+            })
+            ->whereIn('transactions.type', ['sell'])
+            ->where('transactions.payment_status', 'paid')
+            ->whereIn('transactions.status', ['final']);
 
+      
+        $store_query = '';
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id',  $store_id);
+            $store_query = 'AND store_id=' . $store_id;
+        }
+        if (!empty($pos_id)) {
+            $query->where('store_pos_id', $pos_id);
+        }
+        if (!empty($request->product_id)) {
+            $query->where('tsl.product_id', $request->product_id);
+        }
+
+        $transactions = $query->select(
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity * pl.purchase_price, 0)) as purchased_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
+            DB::raw("SUM(IF(transactions.type='sell', final_total, 0)) as sold_amount"),
+            'pc.name as product_class_name'
+        )->groupBy('pc.id')->get();
+
+        return view('reports.category_report',compact('transactions'));
+    }
     /**
      * show the payment report
      *

@@ -15,7 +15,11 @@ class ProductInAdjustmentDetails extends Model
         "old_stock",
         "new_stock",
         "shortage",
-        "shortage_value"
+        "shortage_value",
+       " old_purchase_price",
+       "new_purchase_price",
+       "old_sell_price",
+       "new_sell_price",
     ];
     public function product(){
         return $this->belongsTo(Product::class);

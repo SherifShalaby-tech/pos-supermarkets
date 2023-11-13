@@ -1447,4 +1447,10 @@ return [
     'total_before_discount'=>'Total Before discount',
     'show'=>'Show',
     'added_balance' => 'Added Balance',
+    'old_purchase_price' => 'Old purchase price',
+    'old_sell_price' => 'Old sell price',
+    'new_sell_price' => 'new sell price',
+    'check_purchase_price_please' => 'please make sure that purchase price is less than sell price',
+    'category_report'=>'Category Report',
+    'category_purchases'=>'Category Purchases',
 ];

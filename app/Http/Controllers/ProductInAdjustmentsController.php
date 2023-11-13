@@ -234,7 +234,7 @@ class ProductInAdjustmentsController extends Controller
                         $query->where('type', '!=', 'supplier_service');
                     })
                     ->latest()->first();
-                    $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
+                    $price= $price? ($price->purchase_price):$row->default_purchase_price;
 
                     return $this->productUtil->num_f($price);
                 })
@@ -476,21 +476,23 @@ class ProductInAdjustmentsController extends Controller
         ));
     }
     public function store(Request $request){
+        // return $request;
         // return Auth::user()->id;
         // return $request;
         // foreach ($request->selected_data as $data){
         //     return $data['id'];
         // }
-        $user_id =Auth::user()->id;
-        $store_pos = StorePos::where('user_id', $user_id)->first();
+        try {
+            $user_id =Auth::user()->id;
+            $store_pos = StorePos::where('user_id', $user_id)->first();
        
-        
+            $ProductInAdjustment = ProductInAdjustment::create([
+                'total_shortage_value'=>$request->total_shortage_value ?? null,
+                'created_by'=> $user_id,
+                'store_id'=> !empty($store_pos) ? $store_pos->store_id : null,
+            ]);
             if($request->total_shortage_value || $request->expenses_total_shortage_value){
-                $ProductInAdjustment = ProductInAdjustment::create([
-                    'total_shortage_value'=>$request->total_shortage_value,
-                    'created_by'=> $user_id,
-                    'store_id'=> !empty($store_pos) ? $store_pos->store_id : null,
-                ]);
+              
                 $expenses_category = ExpenseCategory::where('name','Adjustment')->orWhere('name','adjustment')->first();
                 if(!$expenses_category){
                     $expenses_category = ExpenseCategory::create([
@@ -531,35 +533,48 @@ class ProductInAdjustmentsController extends Controller
                             ->update([
                                 'qty_available' => $data['actual_stock'],
                             ]);
-                            ProductInAdjustmentDetails::create([
-                                'product_id'=>$data['id'],
-                                'variation_id'=>$data['variation_id'],
-                                'product_adjustments_id'=>$ProductInAdjustment->id,
-                                'old_stock'=>$data['current_stock'],
-                                'new_stock'=>$data['actual_stock'],
-                                'shortage'=>$data['shortage'],
-                                'shortage_value'=>$data['shortage_value'],
-                            ]);
                         }
                     }      
                     if(isset($data['default_purchase_price']) || isset($data['default_sell_price'])){
-                        $stocks = AddStockLine::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])->get();
-                         foreach($stocks as $stock){
-                             if(isset($data['default_purchase_price'])){
-                                 $stock->update([
-                                     'purchase_price' => $data['default_purchase_price'],
-                                 ]);
-                             }
-                             if(isset($data['default_sell_price'])){
-                                 $stock->update([
-                                     'sell_price' => $data['default_sell_price'],
-                                 ]);
-                             }     
+                        if($data['default_purchase_price'] != 0 && $data['default_sell_price'] != 0){
+                            $stocks = AddStockLine::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])->get();
+                            foreach($stocks as $stock){
+                                if(isset($data['default_purchase_price'])){
+                                    $stock->update([
+                                        'purchase_price' => $data['default_purchase_price'],
+                                    ]);
+                                }
+                                if(isset($data['default_sell_price'])){
+                                    $stock->update([
+                                        'sell_price' => $data['default_sell_price'],
+                                    ]);
+                                }     
+                           }
                         }
+                       
+                        
                     }
+                    ProductInAdjustmentDetails::create([
+                        'product_id'=>$data['id'],
+                        'variation_id'=>$data['variation_id'],
+                        'product_adjustments_id'=>$ProductInAdjustment->id,
+                        'old_stock'=>$data['current_stock'] ?? null,
+                        'new_stock'=>$data['actual_stock'] ?? null,
+                        'shortage'=>$data['shortage']??null,
+                        'shortage_value'=>$data['shortage_value']?? null,
+                        'old_purchase_price' =>$data['old_purchase_price']?? null,
+                        'new_purchase_price' =>$data['default_purchase_price']?? null,
+                        'old_sell_price' =>$data['old_sell_price']?? null,
+                        'new_sell_price' =>$data['default_sell_price']?? null,
+                    ]);
                 }
-
-            
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+           return $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
           
 
        

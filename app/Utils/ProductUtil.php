@@ -1264,6 +1264,7 @@ class ProductUtil extends Util
                 $add_stock->bounce_manufacturing_date = $line['bounce_manufacturing_date'];
                 $add_stock->bounce_batch_number = $line['bounce_batch_number'];
                 $add_stock->cost_ratio_per_one = $this->num_uf($all_cost_ratio / $line['quantity']) ?? 0;
+                $add_stock->updated_by = Auth::user()->id;
                 $add_stock->save();
                 $keep_lines_ids[] = $line['add_stock_line_id'];
                 $batch_numbers[]=$line['batch_number'];
@@ -1351,11 +1352,13 @@ class ProductUtil extends Util
                 $qty =  $number_vs_base_unit *$this->num_uf($line['quantity']);
                 $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $qty, 0);
             }
-            if(!empty($line['stock_pricechange'])){
+            if(!empty($line['stock_pricechange']) && $line['selling_price']>0){
                 AddStockLine::where('variation_id',$line['variation_id'])
                     ->whereColumn('quantity',">",'quantity_sold')->update([
                         'sell_price' => $line['selling_price'],
-                        'purchase_price'=>$line['bounce_qty'] > 0 ? $line['bounce_purchase_price']:$this->num_uf($line['purchase_price'])
+                        'updated_by'=>Auth::user()->id,
+
+                        // 'purchase_price'=>$line['bounce_qty'] > 0 ? $line['bounce_purchase_price']:$this->num_uf($line['purchase_price'])
                     ]);
             }
             }
@@ -1364,8 +1367,10 @@ class ProductUtil extends Util
         if (!empty($keep_lines_ids)) {
             $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)
             ->where(function ($query) use ($batch_numbers, $keep_lines_ids) {
-                $query->whereNotIn('batch_number', $batch_numbers)
-                    ->orWhereNotIn('id', $keep_lines_ids);
+                $query->whereNotIn('id', $keep_lines_ids);
+                if(!empty($batch_numbers)){
+                    $query->whereNotIn('batch_number', $batch_numbers);
+                }
             })
             ->get();
             foreach ($deleted_lines as $deleted_line) {
@@ -2120,9 +2125,11 @@ class ProductUtil extends Util
             'variations.name as variation',
             'variations.default_sell_price',
             'variations.sub_sku',
+            'products.weighing_scale_barcode'
         );
 
         $query->groupBy('variations.id');
+//        dd($query->get());
         return $query
             ->get();
     }

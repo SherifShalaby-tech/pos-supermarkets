@@ -129,7 +129,7 @@
                                                     {{!empty($product->product)?$product->product->units->pluck('name')[0]??'':''}}
                                                 </td>
                                                 <td>
-                                                     <input type="text" class="form-control purchase_price purchase_price_{{$loop->index}}"
+                                                     <input type="text" class="form-control purchase_price"
                                                             name="add_stock_lines[{{ $loop->index }}][purchase_price]"
                                                             required index_id="{{$loop->index}}"
                                                             value="@if (isset($product->purchase_price)) {{ @num_format($product->purchase_price) }}@else{{ 0 }} @endif">
@@ -406,7 +406,7 @@
                         </div>
 
                         <div class="col-sm-12">
-                            <button type="submit" name="submit" id="print" style="margin: 10px" value="save"
+                            <button type="submit" name="submit" id="submit-save" style="margin: 10px" value="save"
                                 class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.save' )</button>
 
                         </div>
