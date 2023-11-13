@@ -2055,7 +2055,7 @@ class ReportController extends Controller
     }
     public function getCategoryPurchases(Request $request){
         // $product_classes=ProductClass::
-     
+
         $query = Transaction::leftjoin('transaction_sell_lines as tsl', function ($join) {
             $join->on('transactions.id', 'tsl.transaction_id');
         })
@@ -2072,7 +2072,7 @@ class ReportController extends Controller
             ->where('transactions.payment_status', 'paid')
             ->whereIn('transactions.status', ['final']);
 
-      
+
         $store_query = '';
         if (!empty($store_id)) {
             $query->where('transactions.store_id',  $store_id);
@@ -2521,136 +2521,136 @@ class ReportController extends Controller
         ));
     }
     // getCustomerReport() : original method
-    public function getCustomerReportOriginal(Request $request)
-    {
-        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+    // public function getCustomerReportOriginal(Request $request)
+    // {
+    //     $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
 
-        $customer_id = $request->customer_id;
+    //     $customer_id = $request->customer_id;
 
-        $sale_query = Transaction::whereIn('transactions.type', ['sell'])
-            ->whereIn('transactions.status', ['final']);
+    //     $sale_query = Transaction::whereIn('transactions.type', ['sell'])
+    //         ->whereIn('transactions.status', ['final']);
 
-        if (!empty($request->start_date)) {
-            $sale_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $sale_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $sale_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $sale_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($customer_id)) {
-            $sale_query->where('transactions.customer_id', $customer_id);
-        }
-
-
-        $sales = $sale_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->get();
+    //     if (!empty($request->start_date)) {
+    //         $sale_query->whereDate('transaction_date', '>=', $request->start_date);
+    //     }
+    //     if (!empty($request->end_date)) {
+    //         $sale_query->whereDate('transaction_date', '<=', $request->end_date);
+    //     }
+    //     if (!empty(request()->start_time)) {
+    //         $sale_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+    //     }
+    //     if (!empty(request()->end_time)) {
+    //         $sale_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+    //     }
+    //     if (!empty($customer_id)) {
+    //         $sale_query->where('transactions.customer_id', $customer_id);
+    //     }
 
 
-        $payment_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('users', 'transactions.created_by', 'users.id')
-            ->whereIn('transactions.type', ['sell'])
-            ->where('transactions.payment_status', 'paid')
-            ->whereIn('transactions.status', ['final']);
-
-        if (!empty($request->start_date)) {
-            $payment_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $payment_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $payment_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $payment_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($request->customer_id)) {
-            $payment_query->where('customer_id',  $request->customer_id);
-        }
+    //     $sales = $sale_query->select(
+    //         'transactions.*'
+    //     )->groupBy('transactions.id')->get();
 
 
-        $payments = $payment_query->select(
-            'transactions.*',
-            'transaction_payments.method',
-            'transaction_payments.amount',
-            'transaction_payments.ref_number',
-            'transaction_payments.paid_on',
-            'users.name as created_by_name',
-        )->groupBy('transaction_payments.id')->get();
+    //     $payment_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+    //         ->leftjoin('users', 'transactions.created_by', 'users.id')
+    //         ->whereIn('transactions.type', ['sell'])
+    //         ->where('transactions.payment_status', 'paid')
+    //         ->whereIn('transactions.status', ['final']);
 
-        $quotation_query = Transaction::whereIn('transactions.type', ['sell'])
-            ->where('is_quotation', 1);
-
-        if (!empty($request->start_date)) {
-            $quotation_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $quotation_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $quotation_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $quotation_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $quotation_query->where('transactions.store_id', $store_id);
-        }
-        if (!empty($customer_id)) {
-            $quotation_query->where('transactions.customer_id', $customer_id);
-        }
+    //     if (!empty($request->start_date)) {
+    //         $payment_query->whereDate('transaction_date', '>=', $request->start_date);
+    //     }
+    //     if (!empty($request->end_date)) {
+    //         $payment_query->whereDate('transaction_date', '<=', $request->end_date);
+    //     }
+    //     if (!empty(request()->start_time)) {
+    //         $payment_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+    //     }
+    //     if (!empty(request()->end_time)) {
+    //         $payment_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+    //     }
+    //     if (!empty($request->customer_id)) {
+    //         $payment_query->where('customer_id',  $request->customer_id);
+    //     }
 
 
-        $quotations = $quotation_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->get();
+    //     $payments = $payment_query->select(
+    //         'transactions.*',
+    //         'transaction_payments.method',
+    //         'transaction_payments.amount',
+    //         'transaction_payments.ref_number',
+    //         'transaction_payments.paid_on',
+    //         'users.name as created_by_name',
+    //     )->groupBy('transaction_payments.id')->get();
+
+    //     $quotation_query = Transaction::whereIn('transactions.type', ['sell'])
+    //         ->where('is_quotation', 1);
+
+    //     if (!empty($request->start_date)) {
+    //         $quotation_query->whereDate('transaction_date', '>=', $request->start_date);
+    //     }
+    //     if (!empty($request->end_date)) {
+    //         $quotation_query->whereDate('transaction_date', '<=', $request->end_date);
+    //     }
+    //     if (!empty(request()->start_time)) {
+    //         $quotation_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+    //     }
+    //     if (!empty(request()->end_time)) {
+    //         $quotation_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+    //     }
+    //     if (!empty($store_id)) {
+    //         $quotation_query->where('transactions.store_id', $store_id);
+    //     }
+    //     if (!empty($customer_id)) {
+    //         $quotation_query->where('transactions.customer_id', $customer_id);
+    //     }
 
 
-        $return_query = Transaction::whereIn('transactions.type', ['sell_return'])->whereNotNull('return_parent_id')
-            ->whereIn('transactions.status', ['final']);
+    //     $quotations = $quotation_query->select(
+    //         'transactions.*'
+    //     )->groupBy('transactions.id')->get();
 
-        if (!empty($request->start_date)) {
-            $return_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $return_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $return_query->where('transactions.store_id', $store_id);
-        }
-        if (!empty($customer_id)) {
-            $return_query->where('transactions.customer_id', $customer_id);
-        }
 
-        $sell_returns = $return_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->get();
+    //     $return_query = Transaction::whereIn('transactions.type', ['sell_return'])->whereNotNull('return_parent_id')
+    //         ->whereIn('transactions.status', ['final']);
 
-        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
-        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+    //     if (!empty($request->start_date)) {
+    //         $return_query->whereDate('transaction_date', '>=', $request->start_date);
+    //     }
+    //     if (!empty($request->end_date)) {
+    //         $return_query->whereDate('transaction_date', '<=', $request->end_date);
+    //     }
+    //     if (!empty(request()->start_time)) {
+    //         $return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+    //     }
+    //     if (!empty(request()->end_time)) {
+    //         $return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+    //     }
+    //     if (!empty($store_id)) {
+    //         $return_query->where('transactions.store_id', $store_id);
+    //     }
+    //     if (!empty($customer_id)) {
+    //         $return_query->where('transactions.customer_id', $customer_id);
+    //     }
 
-        return view('reports.customer_report')->with(compact(
-            'sales',
-            'payments',
-            'quotations',
-            'sell_returns',
-            'payment_types',
-            'customers'
-        ));
-    }
-    // getCustomerReport() : new method
+    //     $sell_returns = $return_query->select(
+    //         'transactions.*'
+    //     )->groupBy('transactions.id')->get();
+
+    //     $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+    //     $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+    //     return view('reports.customer_report')->with(compact(
+    //         'sales',
+    //         'payments',
+    //         'quotations',
+    //         'sell_returns',
+    //         'payment_types',
+    //         'customers'
+    //     ));
+    // }
+    // +++++++++++++++++++++ getCustomerReport() : new method ++++++++++++++++++++++++++
     public function getCustomerReport(Request $request)
     {
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];

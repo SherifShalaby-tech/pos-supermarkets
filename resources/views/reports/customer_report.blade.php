@@ -161,6 +161,7 @@
                 },
                 ajax: {
                     url: "/report/get-customer-report",
+                    // method:"post",
                     data: function(d) {
                         d.customer_id = $("#customer_id").val();
                         d.customer_type_id = $("#customer_type_id").val();
