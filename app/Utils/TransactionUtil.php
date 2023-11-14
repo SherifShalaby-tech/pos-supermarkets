@@ -128,7 +128,7 @@ class TransactionUtil extends Util
         if($returned_transaction){
             $final_amount = $transaction->final_total - $transaction->used_deposit_balance -  $returned_transaction;
         }else{
-            $final_amount = $transaction->final_total - $transaction->used_deposit_balance;
+            $final_amount = $transaction->final_total ;
         }
         
         $payment_status = 'pending';
