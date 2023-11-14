@@ -21,7 +21,7 @@
                                 {!! Form::date('startdate', request()->start_date, ['class' => 'form-control','id'=>'startdate']) !!}
                             </div>
                         </div>
-                
+
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('end_date', __('lang.end_date'), []) !!}
@@ -32,7 +32,7 @@
                             <div class="form-group">
                                 {!! Form::label('customer_type_id', __('lang.customer_type') . ':', []) !!}
                                 {!! Form::select('customer_type_id', $customer_types, request()->customer_type_id, [
-                                        'class' => 'form-control 
+                                        'class' => 'form-control
                                                             selectpicker',
                                         'data-live-search' => 'true',
                                         'placeholder' => __('lang.all'),
@@ -44,8 +44,8 @@
                             <button type="button" class="btn btn-success mt-4 filter_product">@lang('lang.filter')</button>
 
                             <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
-                        
-                        </div> 
+
+                        </div>
                     </div>
                 </div>
         </div>
@@ -70,7 +70,7 @@
                 </tr>
             </thead>
             <tbody>
-        
+
             </tbody>
             <tfoot>
                 <tr>
@@ -350,7 +350,7 @@
                 }
             });
 
-            
+
         });
         $(document).on('click', '.filter_product', function() {
             store_table.ajax.reload();

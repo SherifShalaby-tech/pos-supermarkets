@@ -367,7 +367,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('report/get-user-report', 'ReportController@getUserReport');
     // +++++++++++ getCustomerReport +++++++++++
     Route::get('report/get-customer-report', 'ReportController@getCustomerReport');
-    Route::post('report/get-customer-report', 'ReportController@getCustomerReport');
+    // Route::post('report/get-customer-report', 'ReportController@getCustomerReport');
     Route::get('report/get-supplier-report', 'ReportController@getSupplierReport');
     Route::get('report/get-due-report', 'ReportController@getDueReport');
     Route::get('report/get-pos-details-by-store', 'ReportController@getPosDetailsByStores');

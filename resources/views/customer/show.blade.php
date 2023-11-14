@@ -38,6 +38,7 @@
                             <a class="nav-link @if (empty(request()->show)) active @endif" href="#info-sale" role="tab"
                                 data-toggle="tab">@lang('lang.info')</a>
                         </li>
+                        {{-- +++++++++++++++++++++++++++++ tab : المشتريات +++++++++++++++++++++++++++++ --}}
                         <li class="nav-item">
                             <a class="nav-link @if (request()->show == 'purchases') active @endif" href="#purchases" role="tab"
                                 data-toggle="tab">@lang('lang.purchases')</a>
@@ -74,6 +75,7 @@
                     </ul>
 
                     <div class="tab-content">
+                        {{-- +++++++++++++++++++++++++++++ tab : معلومات +++++++++++++++++++++++++++++ --}}
                         <div role="tabpanel" class="tab-pane fade @if (empty(request()->show)) show active @endif"
                             id="info-sale">
                             <br>
@@ -127,11 +129,11 @@
                                 </div>
                             </div>
                         </div>
-
+                        {{-- +++++++++++++++++++++++++++++ tab : المشتريات +++++++++++++++++++++++++++++ --}}
                         <div role="tabpanel" class="tab-pane fade @if (request()->show == 'purchases') show active @endif"
                             id="purchases">
                             <div class="table-responsive">
-                                <table class="table" id="sales_table">
+                                <table class="table datatable" id="sales_table">
                                     <thead>
                                         <tr>
                                             <th>@lang('lang.date')</th>
@@ -152,6 +154,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -169,7 +172,7 @@
                                 </table>
                             </div>
                         </div>
-
+                        {{-- +++++++++++++++++++++++++++++ tab : ارجاع عملية البيع +++++++++++++++++++++++++++++ --}}
                         <div role="tabpanel" class="tab-pane fade @if (request()->show == 'sell_return') show active @endif"
                             id="sell_return">
                             <div class="table-responsive">
@@ -291,7 +294,7 @@
                                 </table>
                             </div>
                         </div>
-
+                        {{-- +++++++++++++++++++++++++++++ tab : الخصومات +++++++++++++++++++++++++++++ --}}
                         <div role="tabpanel" class="tab-pane fade @if (request()->show == 'discounts') show active @endif"
                             id="store-discount">
                             <div class="table-responsive">
@@ -397,6 +400,7 @@
                                 </table>
                             </div>
                         </div>
+                        {{-- +++++++++++++++++++++++++++++ tab : عرض المدفوعات +++++++++++++++++++++++++++++ --}}
                         <div role="tabpanel" class="tab-pane fade @if (request()->show == 'view_payments') show active @endif"
                              id="view-payments">
                             <div class="table-responsive">
@@ -740,7 +744,7 @@
             __currency_convert_recursively($("#receipt_section"));
             __print_receipt("receipt_section");
         }
-
+        // +++++++++++++++++++++++++++++ tab : المشتريات +++++++++++++++++++++++++++++
         $(document).ready(function() {
             sales_table = $("#sales_table").DataTable({
                 lengthChange: true,
@@ -898,7 +902,7 @@
                 },
             });
         });
-
+        // +++++++++++++++++++++++++++++ tab : المكافات +++++++++++++++++++++++++++++
         $(document).ready(function() {
             rewards_table = $("#rewards_table").DataTable({
                 lengthChange: true,

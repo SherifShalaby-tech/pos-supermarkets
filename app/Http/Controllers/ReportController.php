@@ -2675,7 +2675,7 @@ class ReportController extends Controller
                 ->where('transactions.type', 'sell')->whereIn('status', ['final']
         );
 
-
+        // +++++++++++++ filters ++++++++++++++++++++
         if (!empty(request()->customer_id)) {
             $query->where('customer_id', request()->customer_id);
         }
@@ -2742,7 +2742,7 @@ class ReportController extends Controller
             'sell_variations',
             'sell_products'
         ])
-            ->groupBy('transactions.id');
+        ->groupBy('transactions.id');
 
         return DataTables::of($sales)
             // ->setTotalRecords()
@@ -2803,7 +2803,6 @@ class ReportController extends Controller
                 } else {
                     $final_total = number_format($row->final_total,2,'.',',');
                 }
-//                    $final_total = preg_match('/\.\d*[1-9]+/', (string)$final_total) ? $final_total : number_format($final_total,  2, '.', ',');
                 $received_currency_id = $row->received_currency_id ?? $default_currency_id;
                 return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
             })
