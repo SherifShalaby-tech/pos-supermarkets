@@ -1531,10 +1531,23 @@ $(document).ready(function () {
         submitHandler: function (form) {
             $("#pos-save").attr("disabled", "true");
             var data = $(form).serialize();
-            data =
+            var balanceText = $(".customer_balance").text();
+
+            // Convert the text content to a number
+            var balance = parseFloat(balanceText);
+        
+            if(balance > 0){
+                data =
+                data +"&pay_from_balance=1"+
+                "&terms_and_condition_id=" +
+                $("#terms_and_condition_id").val();
+            }else{
+                data =
                 data +
                 "&terms_and_condition_id=" +
                 $("#terms_and_condition_id").val();
+            }
+            
             var url = $(form).attr("action");
             $.ajax({
                 method: "POST",

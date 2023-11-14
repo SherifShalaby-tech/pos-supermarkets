@@ -318,7 +318,7 @@ class SellPosController extends Controller
             //update customer deposit balance if any
             $customer = Customer::find($transaction->customer_id);
             $customer->staff_note=isset($request->staff_note)?$request->staff_note:'';
-            if ($request->used_deposit_balance > 0) {
+            if ($request->used_deposit_balance > 0 && $customer->deposit_balance > 0) {
                 $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
             }
             if ($request->add_to_deposit > 0) {

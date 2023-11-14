@@ -53,7 +53,7 @@
                     <div class="col-md-6">
                         <button type="button" 
                             class="ml-1 btn btn-danger add_to_customer_balance hide">@lang('lang.add_to_customer_balance')</button>
-                        <input type="hidden" name="add_to_customer_balance" id="add_to_customer_balance" value="0">
+                        <input type="hidden" name="add_to_customer_balance" id="add_to_customer_balance" class="add_to_customer_balance_in">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -186,7 +186,7 @@
                     $('.change').text(change.toFixed(2)); // Update the change value
                     
                     // if ($('.payment_way').val() !== 'deposit') {
-                        $('#add_to_customer_balance').val(change.toFixed(2));
+                        $('.add_to_customer_balance_in').val(change.toFixed(2));
                         console.log($('#add_to_customer_balance').val());
                         // $('.change_amount').val(0);
                         // $(this).attr('disabled', true);
@@ -197,7 +197,7 @@
                 });
                 $(document).on("click", ".close , #close_modal_button", function () {
                     $('.add_to_customer_balance').addClass('hide');
-                    $('#add_to_customer_balance').val(' ');
+                    $('.add_to_customer_balance_in').val('0');
                     console.log($('#add_to_customer_balance').val());
                 });
                 // } else {
