@@ -25,6 +25,9 @@
         .mCSB_dragger_bar {
             width: 10px !important;
         }
+
+
+
     </style>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />

@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
-use App\Models\Currency;
 use App\Models\System;
+use App\Models\Currency;
 use App\Models\Transaction;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -98,5 +99,8 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('replace_space', function ($string) {
             return "str_replace(' ', '_', $string)";
         });
+
+        Paginator::useBootstrap();
+
     }
 }

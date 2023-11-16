@@ -34,6 +34,7 @@
             <div class="card-body">
                 <div class="col-md-12">
                     <ul class="nav nav-tabs ml-4 mt-3" role="tablist">
+                        {{-- +++++++++++++++++++++++++++++ tab : معلومات +++++++++++++++++++++++++++++ --}}
                         <li class="nav-item">
                             <a class="nav-link @if (empty(request()->show)) active @endif" href="#info-sale" role="tab"
                                 data-toggle="tab">@lang('lang.info')</a>
@@ -43,10 +44,12 @@
                             <a class="nav-link @if (request()->show == 'purchases') active @endif" href="#purchases" role="tab"
                                 data-toggle="tab">@lang('lang.purchases')</a>
                         </li>
+                        {{-- +++++++++++++++++++++++++++++ tab : إرجاع عملية البيع +++++++++++++++++++++++++++++ --}}
                         <li class="nav-item">
                             <a class="nav-link @if (request()->show == 'sell_return') active @endif" href="#sell_return"
                                 role="tab" data-toggle="tab">@lang('lang.sell_return')</a>
                         </li>
+                        {{-- +++++++++++++++++++++++++++++ tab : الخصومات +++++++++++++++++++++++++++++ --}}
                         <li class="nav-item">
                             <a class="nav-link @if (request()->show == 'discounts') active @endif" href="#store-discount"
                                 role="tab" data-toggle="tab">@lang('lang.discounts')</a>
@@ -173,8 +176,7 @@
                             </div>
                         </div>
                         {{-- +++++++++++++++++++++++++++++ tab : ارجاع عملية البيع +++++++++++++++++++++++++++++ --}}
-                        <div role="tabpanel" class="tab-pane fade @if (request()->show == 'sell_return') show active @endif"
-                            id="sell_return">
+                        <div role="tabpanel" class="tab-pane fade @if (request()->show == 'sell_return') show active @endif" id="sell_return">
                             <div class="table-responsive">
                                 <table class="table dataTable">
                                     <thead>
@@ -381,6 +383,7 @@
                                                             @endcan
                                                         </ul>
                                                     </div>
+                                                </td>
                                             </tr>
                                             @php
                                                 $total_discount_payments += $discount->transaction_payments->sum('amount');
@@ -398,6 +401,10 @@
                                         </tr>
                                     </tfoot>
                                 </table>
+                            </div>
+                            <!-- Pagination Links -->
+                            <div class="d-flex justify-content-center mt-3">
+                                {{ $discounts->links() }}
                             </div>
                         </div>
                         {{-- +++++++++++++++++++++++++++++ tab : عرض المدفوعات +++++++++++++++++++++++++++++ --}}
@@ -609,11 +616,7 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            {{-- <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th style="text-align: right">@lang('lang.total')</th>
-                                            <th></th> --}}
+
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -902,6 +905,7 @@
                 },
             });
         });
+
         // +++++++++++++++++++++++++++++ tab : المكافات +++++++++++++++++++++++++++++
         $(document).ready(function() {
             rewards_table = $("#rewards_table").DataTable({
@@ -990,6 +994,7 @@
             $(document).on('change', '.sale_filter', function() {
                 rewards_table.ajax.reload();
             });
-        })
+        });
+
     </script>
 @endsection

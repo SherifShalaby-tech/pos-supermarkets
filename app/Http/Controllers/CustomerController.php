@@ -386,7 +386,6 @@ class CustomerController extends Controller
     {
         $customer_id = $id;
         $customer = Customer::find($id);
-
         if (request()->ajax())
         {
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
@@ -441,7 +440,7 @@ class CustomerController extends Controller
                 'sell_variations'
             ])
             ->groupBy('transactions.id');
-
+            // dd($sales) ;
             return DataTables::of($sales)
                 ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
                 ->editColumn('invoice_no', function ($row) {
@@ -684,7 +683,7 @@ class CustomerController extends Controller
         }
         $sale_return_query = Transaction::whereIn('transactions.type', ['sell_return'])
             ->whereIn('transactions.status', ['final']);
-        // ->whereNull('parent_return_id');
+
 
         if (!empty(request()->start_date)) {
             $sale_return_query->where('transaction_date', '>=', request()->start_date);
@@ -708,7 +707,7 @@ class CustomerController extends Controller
                 $q->orWhere('total_coupon_discount', '>', 0);
             });
 
-        if (!empty(request()->start_date)) {
+            if (!empty(request()->start_date)) {
             $discount_query->where('transaction_date', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
@@ -719,7 +718,7 @@ class CustomerController extends Controller
         }
         $discounts = $discount_query->select(
             'transactions.*'
-        )->groupBy('transactions.id')->get();
+        )->groupBy('transactions.id')->paginate(10);
 
         $point_query = Transaction::whereIn('transactions.type', ['sell'])
             ->whereIn('transactions.status', ['final'])
