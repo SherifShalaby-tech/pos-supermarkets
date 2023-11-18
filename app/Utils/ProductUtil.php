@@ -1263,7 +1263,7 @@ class ProductUtil extends Util
                 $add_stock->bounce_expiry_date = $line['bounce_expiry_date'];
                 $add_stock->bounce_manufacturing_date = $line['bounce_manufacturing_date'];
                 $add_stock->bounce_batch_number = $line['bounce_batch_number'];
-                $add_stock->cost_ratio_per_one = $this->num_uf($all_cost_ratio / $line['quantity']) ?? 0;
+                $add_stock->cost_ratio_per_one = $this->num_uf($all_cost_ratio / $this->num_uf($line['quantity'])) ?? 0;
                 $add_stock->updated_by = Auth::user()->id;
                 $add_stock->save();
                 $keep_lines_ids[] = $line['add_stock_line_id'];
@@ -1314,8 +1314,8 @@ class ProductUtil extends Util
                                     'final_cost' => $this->num_uf($batch['batch_final_cost']),
                                     'sub_total' => $this->num_uf($line['sub_total']),
                                     'batch_number' => $batch['new_batch_number'],
-                                    'manufacturing_date' => !empty($batch['batch_manufacturing_date']) ? $this->uf_date($line['manufacturing_date']) : null,
-                                    'expiry_date' => !empty($batch['batch_expiry_date']) ? $this->uf_date($line['batch_expiry_date']) : null,
+                                    'manufacturing_date' => !empty($batch['batch_manufacturing_date']) ? $this->uf_date($batch['batch_manufacturing_date']) : null,
+                                    'expiry_date' => !empty($batch['batch_expiry_date']) ? $this->uf_date($batch['batch_expiry_date']) : null,
                                     'expiry_warning' => $batch['batch_expiry_warning'],
                                     'convert_status_expire' => $line['convert_status_expire'],
                                     'sell_price' => $batch['batch_selling_price'],
