@@ -602,6 +602,7 @@
                 $('.quantity').each(function() {
                     var inputValue = $(this).val();
                     var sanitizedValue = inputValue.replace(/,/g, '');
+                    sanitizedValue= number_format(floatval(sanitizedValue), 2, '.', '');
                     $(this).val(sanitizedValue);
                 });
             });
