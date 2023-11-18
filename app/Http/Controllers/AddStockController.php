@@ -560,7 +560,7 @@ class AddStockController extends Controller
             return $this->productUtil->sendQunatityMismacthResponse($mismtach['product_name'], $mismtach['quantity']);
         }
 
-        $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction);
+        $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction,$request->batch_row);
 
         if ($request->files) {
             foreach ($request->file('files', []) as $file) {
