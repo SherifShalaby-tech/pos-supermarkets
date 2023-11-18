@@ -46,7 +46,7 @@ if($stock){
     </td>
     <td>
         <input type="hidden" value="{{isset($number_vs_base_unit)&&$number_vs_base_unit!=0?$number_vs_base_unit:1}}" id="number_vs_base_unit"/>
-<input type="text" class="form-control quantity quantity_{{$i}}" data-val="0" name="add_stock_lines[{{$i}}][quantity]" required min="{{ in_array(strtolower($product->units->pluck('name')[0]), ['piece', 'قطعة', 'قطعه', ''], true) ? 1 : 0.00001 }}"
+<input type="text" class="form-control quantity quantity_{{$i}}" data-val="0" name="add_stock_lines[{{$i}}][quantity]" required min="{{ isset($product->units->pluck('name')[0]) && in_array(strtolower($product->units->pluck('name')[0]), ['piece', 'قطعة', 'قطعه', ''], true) ? 1 : 0.00001 }}"
             value="0"  index_id="{{$i}}">
     </td>
     <td>
