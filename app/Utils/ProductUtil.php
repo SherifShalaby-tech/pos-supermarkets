@@ -1263,7 +1263,7 @@ class ProductUtil extends Util
                 $add_stock->bounce_expiry_date = $line['bounce_expiry_date'];
                 $add_stock->bounce_manufacturing_date = $line['bounce_manufacturing_date'];
                 $add_stock->bounce_batch_number = $line['bounce_batch_number'];
-                $add_stock->cost_ratio_per_one = $this->num_uf($all_cost_ratio / $line['quantity']) ?? 0;
+                $add_stock->cost_ratio_per_one = $this->num_uf($all_cost_ratio / $this->num_uf($line['quantity'])) ?? 0;
                 $add_stock->updated_by = Auth::user()->id;
                 $add_stock->save();
                 $keep_lines_ids[] = $line['add_stock_line_id'];

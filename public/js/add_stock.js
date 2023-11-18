@@ -629,8 +629,13 @@ $(document).on('click', '#submit-save', function(e) {
         }
    
     } else if(data[0]=="2") {
-        $('form#add_stock_form').valid();
-        $('form#add_stock_form').submit();
+        if ($('form#add_stock_form').length) {
+            $('form#add_stock_form').valid();
+            $('form#add_stock_form').submit();
+        }else if ($('form#edit_stock_form').length) {
+            $('form#edit_stock_form').valid();
+            $('form#edit_stock_form').submit();
+        }
     }
 });
 $(document).on('change','.quantity,.purchase_price,.selling_price',function(){
