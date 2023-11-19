@@ -530,7 +530,7 @@ class AddStockController extends Controller
             'payment_status' =>isset($data['payment_status'])?$data['payment_status']:null,
             'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
             'grand_total' => isset($data['grand_total'])?$this->productUtil->num_uf($data['grand_total']):0,
-            'final_total' => isset($data['final_total'])?$this->productUtil->num_uf($data['final_total']):0,
+            'final_total' => $this->productUtil->num_uf($data['final_total']),
             'discount_amount' =>isset($data['discount_amount']) ? $this->productUtil->num_uf($data['discount_amount']):0,
             'other_payments' => isset($data['other_payments'])?$this->productUtil->num_uf($data['other_payments']):null,
             'other_expenses' => isset($data['other_expenses'])?$this->productUtil->num_uf($data['other_expenses']):null,
