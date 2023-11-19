@@ -110,7 +110,7 @@ $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     <input type="text" class="form-control product_discount_amount  discount_amount{{$product->product_id}}"
                         name="transaction_sell_line[{{$loop->index }}][product_discount_amount]" readonly
                         value="@if(!empty($product->product_discount_amount)){{@num_format($product->product_discount_amount)}}@else{{0}}@endif">
-                        </div>
+            </div>
         </div>
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 10% @endif padding:1.7rem !important;">

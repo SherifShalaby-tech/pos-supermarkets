@@ -643,30 +643,30 @@ function calculate_sub_totals() {
             let price_discount = (sell_price - price_hidden);
 
             $(tr).find(".product_discount_type").val("surplus");
-            __write_number(
-                $(tr).find(".product_discount_value"),
-                price_discount / exchange_rate
-            );
-            __write_number(
-                $(tr).find(".product_discount_amount"),
-                price_discount / exchange_rate
-            );
+            // __write_number(
+            //     $(tr).find(".product_discount_value"),
+            //     price_discount / exchange_rate
+            // );
+            // __write_number(
+            //     $(tr).find(".product_discount_amount"),
+            //     price_discount / exchange_rate
+            // );
             $(tr).find(".plus_sign_text").text("+");
             sub_total = sell_price * quantity;
         } else if (sell_price < price_hidden) {
             let price_discount = (price_hidden - sell_price);
 
             $(tr).find(".product_discount_type").val("fixed");
-            __write_number(
-                $(tr).find(".product_discount_value"),
-                price_discount / exchange_rate
-            );
-            __write_number(
-                $(tr).find(".product_discount_amount"),
-                price_discount / exchange_rate
-            );
+            // __write_number(
+            //     $(tr).find(".product_discount_value"),
+            //     price_discount / exchange_rate
+            // );
+            // __write_number(
+            //     $(tr).find(".product_discount_amount"),
+            //     price_discount / exchange_rate
+            // );
             $(tr).find(".plus_sign_text").text("-");
-            sub_total = price_hidden * quantity;
+            sub_total = sell_price * quantity;
         } else {
             sub_total = price_hidden * quantity;
             console.log("quantity "+ quantity)
