@@ -122,7 +122,7 @@
                                                     {{!empty($product->variation) ?$product->variation->sub_sku:''}}
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control quantity  quantity_{{$loop->index}}" min="{{isset($product->product->units->pluck('name')[0]) && $product->product->units->pluck('name')[0]==("piece"||"Piece"||"قطعة" || "قطعه" || "" )?1:0.00001}}" name="add_stock_lines[{{$loop->index}}][quantity]" required
+                                                    <input type="text" class="form-control quantity  quantity_{{$loop->index}}" min="{{!empty($product->product->units) && $product->product->units->pluck('name')[0]==("piece"||"Piece"||"قطعة" || "قطعه" || "" )?1:0.00001}}" name="add_stock_lines[{{$loop->index}}][quantity]" required
                                                         value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif" index_id="{{$loop->index}}">
                                                 </td>
                                                 <td>
