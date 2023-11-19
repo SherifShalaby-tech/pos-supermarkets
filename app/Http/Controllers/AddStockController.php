@@ -526,7 +526,7 @@ class AddStockController extends Controller
             'default_currency_id' => $data['default_currency_id'],
             'exchange_rate' => $this->commonUtil->num_uf($data['exchange_rate']),
             'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
-            'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']) . ' ' . date('H:i:s'),
+            'transaction_date' => isset($data['transaction_date'])? $this->commonUtil->uf_date($data['transaction_date']) . ' ' . date('H:i:s'):null,
             'payment_status' => $data['payment_status'],
             'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
             'grand_total' => $this->productUtil->num_uf($data['grand_total']),
