@@ -24,7 +24,6 @@
                 data-product_id="{{ $product->id }}" data-variation_id="{{ $product->variation_id }}"
                 title="{{ $product->name }}"
                 data-product="{{ $product->name . ' (' . $product->variation_name . ')' }}">
-                {{$stockLines}} 
                 <img src="@if (!empty($product->getFirstMediaUrl('product'))) {{ $product->getFirstMediaUrl('product') }}@else{{ asset('/uploads/' . session('logo')) }} @endif"
                      width="100%" />
                 <p><span

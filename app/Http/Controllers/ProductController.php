@@ -631,7 +631,7 @@ class ProductController extends Controller
                     "variation_id" =>$variation->id,
                     "quantity_of_expired_stock_removed" =>$data["quantity_to_be_removed"],
                     "date_of_purchase_of_expired_stock_removed" => Carbon::parse($data["date_of_purchase_of_expired_stock_removed"])->toDateTimeString(),
-                    // "value_of_removed_stocks" => $data["value_of_removed_stocks"],
+                    "value_of_removed_stocks" => $data["value_of_removed_stocks"],
                     "added_by" => auth()->id(),
                 ]);
                 $expenses_category = ExpenseCategory::where('name','Damage')->orWhere('name','damage')->first();
