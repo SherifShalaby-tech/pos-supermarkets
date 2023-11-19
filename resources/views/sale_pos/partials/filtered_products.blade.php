@@ -4,8 +4,16 @@
             @php
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
-                        $stockLines=\App\Models\AddStockLine::where('variation_id',$Variation->id)->first();
-                        $default_sell_price=$stockLines?$stockLines->sell_price : $Variation->default_sell_price;
+                        $stockLines = \App\Models\AddStockLine::where('variation_id', $Variation->id)
+                        // ->where('quantity_sold', '<', 'quantity')
+                        
+                        ->first();
+                        if($product->is_service==1){
+                            $default_sell_price=$Variation->default_sell_price;
+                        }else{
+                            $default_sell_price=$stockLines?$stockLines->sell_price : $Variation->default_sell_price;
+
+                        }
 
                     }
 
