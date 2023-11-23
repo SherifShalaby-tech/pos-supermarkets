@@ -69,7 +69,7 @@ class CashController extends Controller
             $query->where('cash_registers.created_at', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty(request()->store_id)) {
-            $query->where('store_id', request()->store_id);
+            $query->where('cash_registers.store_id', request()->store_id);
         }
         if (!empty(request()->store_pos_id)) {
             $query->where('cash_registers.store_pos_id', request()->store_pos_id);
