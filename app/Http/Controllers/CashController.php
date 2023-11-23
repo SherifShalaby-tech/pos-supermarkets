@@ -72,7 +72,7 @@ class CashController extends Controller
             $query->where('store_id', request()->store_id);
         }
         if (!empty(request()->store_pos_id)) {
-            $query->where('store_pos_id', request()->store_pos_id);
+            $query->where('cash_registers.store_pos_id', request()->store_pos_id);
         }
         if (!empty(request()->user_id)) {
             $query->where('cash_registers.user_id', request()->user_id);
