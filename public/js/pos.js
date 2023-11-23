@@ -1462,7 +1462,7 @@ $(document).on("click", "#draft-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
-
+    $("#pay_from_balance").val(3);
     pos_form_obj.submit();
 });
 $(document).on("click", "#pay-later-btn", function (e) {
@@ -1478,7 +1478,7 @@ $(document).on("click", "#pay-later-btn", function (e) {
     var balance = parseFloat(balanceText);
 
     if(balance > 0){
-        $("#pay_from_balance").val(1);
+        $("#pay_from_balance").val(2);
         pos_form_obj.submit();
     }else{
         $("#amount").val(0);
@@ -1493,6 +1493,7 @@ $(document).on("click", "#quick-pay-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
+    $("#pay_from_balance").val("1")
     pos_form_obj.submit();
 });
 $("button#submit-btn").click(function () {
@@ -1504,6 +1505,7 @@ $("button#submit-btn").click(function () {
 
     $(this).attr("disabled", true);
     $("#add-payment").modal("hide");
+    $("#pay_from_balance").val("1")
     pos_form_obj.submit();
     setTimeout(() => {
         $("#submit-btn").attr("disabled", false);
@@ -1538,7 +1540,7 @@ $(document).ready(function () {
         
             if(balance > 0){
                 data =
-                data +"&pay_from_balance=1"+
+                data +"&pay_from_balance="+$("#pay_from_balance").val()+
                 "&terms_and_condition_id=" +
                 $("#terms_and_condition_id").val();
             }else{
