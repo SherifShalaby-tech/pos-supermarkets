@@ -100,7 +100,7 @@
                                 @endif
                                 @if($total_tax_sell[$key] > 0)
                                 <strong>{{trans("lang.product_tax")}}</strong><br>
-                                <span>{{@num_format($total_tax[$key])}}</span><br><br>
+                                <span>{{isset($total_tax_sell)?@num_format($total_tax_sell[$key]):0}}</span><br><br>
                                 @endif
                                 @if($shipping_cost_sell[$key] > 0)
                                 <strong>{{trans("lang.delivery_cost")}}</strong><br>
