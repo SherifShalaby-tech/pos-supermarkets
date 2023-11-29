@@ -930,7 +930,7 @@ class SellPosController extends Controller
         );
 
         if (session('system_mode') != 'restaurant') {
-            $query->take(30);
+            $query->take(40);
         }
 
         $products = $query->groupBy('variations.id')->get();

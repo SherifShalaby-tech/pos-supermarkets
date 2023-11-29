@@ -1716,11 +1716,11 @@ class ReportController extends Controller
         while ($start <= $end) {
             $start_date = $year . '-' . date('m', $start) . '-' . '01';
             if(in_array(date('m', $start), [4, 6, 9, 11])){
-                $end_date = date("Y") . '-' . date('m', $start) . '-' . '30';
+                $end_date = $year . '-' . date('m', $start) . '-' . '30';
             } elseif (date('m', $start) == 2) {
-                $end_date = date("Y") . '-' . date('m', $start) . '-' . '29';
+                $end_date = $year . '-' . date('m', $start) . '-' . '29';
             } else {
-                $end_date = date("Y") . '-' . date('m', $start) . '-' . '31';
+                $end_date = $year . '-' . date('m', $start) . '-' . '31';
             }
 
             $total_sell_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
@@ -2803,7 +2803,7 @@ class ReportController extends Controller
                 } else {
                     $final_total = number_format($row->final_total,2,'.',',');
                 }
-//                    $final_total = preg_match('/\.\d*[1-9]+/', (string)$final_total) ? $final_total : number_format($final_total,  2, '.', ',');
+            //                    $final_total = preg_match('/\.\d*[1-9]+/', (string)$final_total) ? $final_total : number_format($final_total,  2, '.', ',');
                 $received_currency_id = $row->received_currency_id ?? $default_currency_id;
                 return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
             })

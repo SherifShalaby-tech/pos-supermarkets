@@ -209,6 +209,7 @@ $("#submit-btn").on("click", function (e) {
                     if (response.success) {
                         swal("Success", response.msg, "success");
                         $("#sku").val("").change();
+                        $("#show_at_the_main_pos_page").prop('checked', false);
                         $("#name").val("").change();
                         $(".translations").val("").change();
 
