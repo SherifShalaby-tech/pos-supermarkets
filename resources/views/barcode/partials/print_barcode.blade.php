@@ -89,7 +89,7 @@
                 class="sticker-border text-center">
                 <div style="display:inline-block;vertical-align:middle;line-height:14px !important; font-size: 14px;">
 
-                    <p class="text-center" style="padding: 0px !important; margin: 0px;">
+                    <p class="text-center" style="padding: 2px !important; margin: 0px;">
                         @if (!empty($print['name']))
                             @if (!empty($print['size']) && !empty($details['details']->size_name))
                                 {{ str_replace($details['details']->size_name, '', $details['details']->product_actual_name) }}
@@ -105,7 +105,7 @@
                     </p>
                     @if (!empty($print['size']) && !empty($details['details']->size_name))
                         <p style="margin-top: -12px; text-align: right; font-weight: bold; margin-bottom: 0px;">
-                            {{ $details['details']->size_name }}&nbsp;</p>
+                            {{ $details['details']->size_name }}&nbsp;&nbsp;</p>
                     @endif
 
                     {{-- Grade --}}
@@ -122,7 +122,11 @@
                         {{-- Price --}}
                         @if (!empty($print['price']))
                             @lang('lang.price'):
-                            {{ @num_format($details['details']->default_sell_price) }}
+                            @php
+                             $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$details['details']->variation_id)
+                                ->latest()->first();
+                            @endphp
+                             {{!empty($stockLines)?@num_format($stockLines->sell_price):@num_format($details['details']->default_sell_price) }}
                         @endif
                     </span>
 
@@ -137,7 +141,7 @@
 
                 </div>
                 <div class="row">
-                    <div class="col-md-4" style="font-size: 14px;">
+                    <div class="col-md-4" style="font-size: 14px; padding-left:6px">
                         @if (!empty($print['site_title']))
                             <p style="text-align: left; word-wrap: break-word;">
                                 {{ $print['site_title'] }}
@@ -155,7 +159,7 @@
                             ->first();
                     @endphp
                     <div class="col-md-4" style="font-size: 14px; margin-top: -30px;"></div>
-                    <div class="col-md-4" style="font-size: 14px; margin-top: -30px;">
+                    <div class="col-md-4" style="font-size: 14px; margin-top: -30px;padding-right:6px">
                         @if (!empty($print['size_variations']))
                             <p style="text-align: right; word-wrap: break-word;">
                                 {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}

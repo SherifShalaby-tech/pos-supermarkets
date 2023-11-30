@@ -63,7 +63,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
     <div class="col-md-2">
         <div class="i-checks">
             <input id="show_at_the_main_pos_page" name="show_at_the_main_pos_page" type="checkbox"
-                @if (isset($products_count)&& $products_count < 40) checked @else disabled @endif value="1" class="form-control-custom">
+                @if (isset($products_count)&& $products_count > 40) disabled @endif class="form-control-custom">
             <label for="show_at_the_main_pos_page"><strong>@lang('lang.show_at_the_main_pos_page')</strong></label>
         </div>
     </div>
