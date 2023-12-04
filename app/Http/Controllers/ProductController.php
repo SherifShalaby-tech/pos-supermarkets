@@ -273,7 +273,7 @@ class ProductController extends Controller
                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                     return $html;
                 })
-                ->editColumn('supplier_name', function ($row) {
+                ->addColumn('supplier_name', function ($row) {
                     return $row->supplier->name ?? '';
                 })
                 ->editColumn('batch_number', '{{$batch_number}}')
