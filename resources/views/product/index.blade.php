@@ -303,7 +303,8 @@
                         @endif
                     </th>
                     
-                    <th>@lang('lang.select_to_delete')</th>
+                    <th>@lang('lang.select_to_delete')<br>
+                        <input type="checkbox" name="product_delete_all" class="product_delete_all"  /></th>
                     @if (session('system_mode') != 'restaurant')
                         <th>@lang('lang.category')</th>
                         <th>@lang('lang.sub_category')</th>
@@ -574,6 +575,10 @@
 @endpush
 @section('javascript')
     <script>
+        $('#product_table').on('change', '.product_delete_all', function() {
+            var isChecked = $(this).prop('checked');
+            product_table.rows().nodes().to$().find('.product_selected_delete').prop('checked', isChecked);
+        });
         $(document).ready(function() {
             product_table = $('#product_table').DataTable({
                 lengthChange: true,
@@ -802,7 +807,7 @@
                         });
                 },
             });
-
+       
         });
 
 

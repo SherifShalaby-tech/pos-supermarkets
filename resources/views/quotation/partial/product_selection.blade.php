@@ -200,7 +200,9 @@
                     <table id="product_selection_table{{$index?? ''}}" class="table" style="width: auto">
                         <thead>
                             <tr>
-                                <th>@lang('lang.select')</th>
+                                <th>@lang('lang.select')<br>
+                                    <input type="checkbox" name="product_select_all" class="product_select_all"  /></th>
+                                
                                 <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.product_code')</th>

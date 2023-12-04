@@ -177,7 +177,11 @@
             product_selected = [];
             product_table.ajax.reload();
         });
-
+        $('#product_selection_table').on('change', '.product_select_all', function() {
+                var isChecked = $(this).prop('checked');
+                product_table.rows().nodes().to$().find('.product_selected').prop('checked', isChecked);
+                $('.product_selected').change();
+        });
         $(document).on('click', '.remove_row', function() {
             $(this).closest('tr').remove();
         });
