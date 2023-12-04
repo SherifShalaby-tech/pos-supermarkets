@@ -74,6 +74,7 @@
         margin-right: 0in;
 
     }
+
 </style>
 
 <title>{{ __('lang.print_labels') }}</title>
@@ -106,48 +107,36 @@
                         <p style="margin-top: -12px; text-align: right; font-weight: bold; margin-bottom: 0px;">
                             {{ $details['details']->size_name }}&nbsp;&nbsp;</p>
                     @endif
-                    {{-- Price --}}
-                    @if (!empty($print['price']))
-                        {{-- @lang('lang.price'): --}}
-                        @php
-                            $stockLines = \App\Models\AddStockLine::where('sell_price', '>', 0)
-                                ->where('variation_id', $details['details']->variation_id)
-                                ->latest()
-                                ->first();
-                        @endphp
-                        <p style="margin-top: -13px; text-align: left; font-weight: bold; margin-bottom: 0px;">
-                            &nbsp;&nbsp;
-                            {{ !empty($stockLines) ? @num_format($stockLines->sell_price) : @num_format($details['details']->default_sell_price) }}&nbsp;&nbsp;
-                        </p>
-                    @endif
 
                     {{-- Grade --}}
-                    <div style="" class="row d-flex justify-content-center">
+                    <span style="display: block !important">
                         @if (!empty($print['grade']) && !empty($details['details']->grade_name))
-                            {{-- @lang('lang.grade'): --}}
-                            <div style="text-align: left !important;" >&nbsp;&nbsp;
-                            {{ $details['details']->grade_name }}</div>
+                            @lang('lang.grade'):
+                            {{ $details['details']->grade_name }}
                         @endif
-                        {{--  --}}
-                        @if (!empty($print['free_text']))
-                            <div  style="text-align: center !important; margin-top:-14;">
-                                {{ $print['free_text'] }}
-                            </div>
-                        @endif
-                        {{--  --}}
                         {{-- Unit --}}
                         @if (!empty($print['unit']) && !empty($details['details']->unit_name))
-                            {{-- @lang('lang.unit'): --}}
-                            <div style="text-align: right !important;  margin-top:-14;">{{ $details['details']->unit_name }}&nbsp;&nbsp;</div>
+                            @lang('lang.unit'):
+                            {{ $details['details']->unit_name }}
                         @endif
+                        {{-- Price --}}
+                        @if (!empty($print['price']))
+                            @lang('lang.price'):
+                            @php
+                             $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$details['details']->variation_id)
+                                ->latest()->first();
+                            @endphp
+                             {{!empty($stockLines)?@num_format($stockLines->sell_price):@num_format($details['details']->default_sell_price) }}
+                        @endif
+                    </span>
 
-                    </div>
+                    @if (!empty($print['free_text']))
+                        <span style="display: block !important">
+                            {{ $print['free_text'] }}
+                        </span>
+                    @endif
 
-
-
-                    <img class="center-block"
-                    style="width:250px !important; height: 35px !important; margin: 0; padding: 0 10px;"
-                    src="data:image/png;base64,{{ DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3, 50, array(2, 1, 2), true) }}">
+                    {!! DNS1D::getBarcodeSVG($details['details']->sub_sku, "C128", 2, 40, '#2A3239') !!}
                 </div>
                 <div class="row">
                     <div class="col-md-4" style="font-size: 14px; padding-left:6px">
