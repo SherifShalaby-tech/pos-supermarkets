@@ -510,7 +510,9 @@ class CashController extends Controller
                 'msg' => __('lang.something_went_wrong')
             ];
         }
-
+        if ($request->ajax()) {
+            return $output;
+        }
         return redirect()->back()->with('status', $output);
     }
 

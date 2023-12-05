@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -198,6 +199,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('transfer/get-print/{id}', 'TransferController@print');
     Route::get('transfer/add-product-row', 'TransferController@addProductRow');
     Route::resource('transfer', TransferController::class);
+    Route::post('user/check-admin-password', [HomeController::class, 'checkAdminPassword'])->name('check_admin_password');
 
     Route::get('quotation/view-all-invoices', 'QuotationController@viewAllInvoices');
     Route::get('quotation/print/{id}', 'QuotationController@print');

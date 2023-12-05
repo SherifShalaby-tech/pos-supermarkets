@@ -74,7 +74,6 @@
         margin-right: 0in;
 
     }
-
 </style>
 
 <title>{{ __('lang.print_labels') }}</title>
@@ -87,7 +86,7 @@
         @while ($details['qty'] > 0)
             <div style="height:1.2in !important; line-height: {{ $page_height }}in;  display: inline-block;"
                 class="sticker-border text-center">
-                <div style="display:inline-block;vertical-align:middle;line-height:14px !important; font-size: 14px;">
+                <div style="display:inline-block;vertical-align:middle;line-height:13px !important; font-size: 14px;">
 
                     <p class="text-center" style="padding: 2px !important; margin: 0px;">
                         @if (!empty($print['name']))
@@ -107,36 +106,52 @@
                         <p style="margin-top: -12px; text-align: right; font-weight: bold; margin-bottom: 0px;">
                             {{ $details['details']->size_name }}&nbsp;&nbsp;</p>
                     @endif
-
-                    {{-- Grade --}}
-                    <span style="display: block !important">
-                        @if (!empty($print['grade']) && !empty($details['details']->grade_name))
-                            @lang('lang.grade'):
-                            {{ $details['details']->grade_name }}
-                        @endif
-                        {{-- Unit --}}
-                        @if (!empty($print['unit']) && !empty($details['details']->unit_name))
-                            @lang('lang.unit'):
-                            {{ $details['details']->unit_name }}
-                        @endif
-                        {{-- Price --}}
-                        @if (!empty($print['price']))
-                            @lang('lang.price'):
-                            @php
-                             $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$details['details']->variation_id)
-                                ->latest()->first();
-                            @endphp
-                             {{!empty($stockLines)?@num_format($stockLines->sell_price):@num_format($details['details']->default_sell_price) }}
-                        @endif
-                    </span>
-
-                    @if (!empty($print['free_text']))
-                        <span style="display: block !important">
-                            {{ $print['free_text'] }}
-                        </span>
+                    {{-- Price --}}
+                    @if (!empty($print['price']))
+                        {{-- @lang('lang.price'): --}}
+                        @php
+                            $stockLines = \App\Models\AddStockLine::where('sell_price', '>', 0)
+                                ->where('variation_id', $details['details']->variation_id)
+                                ->latest()
+                                ->first();
+                        @endphp
+                        <p style="margin-top: -13px; text-align: left; font-weight: bold; margin-bottom: 0px;">
+                            &nbsp;&nbsp;
+                            {{ !empty($stockLines) ? @num_format($stockLines->sell_price) : @num_format($details['details']->default_sell_price) }}&nbsp;&nbsp;
+                        </p>
                     @endif
 
-                    {!! DNS1D::getBarcodeSVG($details['details']->sub_sku, "C128", 2, 40, '#2A3239') !!}
+                    {{-- Grade --}}
+                    <div style="" class="row d-flex justify-content-center">
+                        @if (!empty($print['grade']) && !empty($details['details']->grade_name))
+                            {{-- @lang('lang.grade'): --}}
+                            <div style="text-align: left !important;" >&nbsp;&nbsp;
+                            {{ $details['details']->grade_name }}</div>
+                        @endif
+                        {{--  --}}
+                        @if (!empty($print['free_text']))
+                            <div  style="text-align: center !important;">
+                                {{ $print['free_text'] }}
+                            </div>
+                        @endif
+                        {{--  --}}
+                        {{-- Unit --}}
+                        @if (!empty($print['unit']) && !empty($details['details']->unit_name))
+                            {{-- @lang('lang.unit'): --}}
+                            <div style="text-align: right !important; margin-top:-12px;">{{ $details['details']->unit_name }}&nbsp;&nbsp;</div>
+                        @endif
+
+                    </div>
+
+
+
+                    {{-- <img class="center-block"
+                        style="width:250px !important; height: 37px !important; margin: 0; padding: 0 10px;"
+                        src="data:image/png;base64,{{ DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3, 30, [39, 48, 54], true) }}"> --}}
+                      <div class="center-block"
+                        style="width:250px !important; height: 35px !important; margin: 0; padding: 0px 10px; 3px 2px">
+                        {!! DNS1D::getBarcodeSVG($details['details']->sub_sku, "C128", 3, 40, '#2A3239') !!}
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4" style="font-size: 14px; padding-left:6px">
