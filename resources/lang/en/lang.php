@@ -1453,4 +1453,9 @@ return [
     'check_purchase_price_please' => 'please make sure that purchase price is less than sell price',
     'category_report'=>'Category Report',
     'category_purchases'=>'Category Purchases',
+    'are_you_sure'=>'Are You Sure',
+    'are_you_sure_you_wanna_update_it'=>'Are You Sure You Wanna Update It?',
+    'please_enter_your_password'=>'Please Enter Your Password',
+    'type_your_password'=>'Type Your Password',
+    'correct_password'=>'Correct Password',
 ];

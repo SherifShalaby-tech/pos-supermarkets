@@ -285,6 +285,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
         Route::get('send-login-details/{employee_id}', 'EmployeeController@sendLoginDetails');
         Route::get('toggle-active/{employee_id}', 'EmployeeController@toggleActive');
         Route::get('employee/get-dropdown', 'EmployeeController@getDropdown');
+        Route::get('print/employee-barcode/{id}','EmployeeController@printEmployeeBarcode')->name('print_employee_barcode');
         Route::resource('employee', EmployeeController::class);
         Route::resource('leave-type', LeaveTypeController::class);
 
