@@ -117,7 +117,7 @@
                         @endphp
                         <p style="margin-top: -13px; text-align: left; font-weight: bold; margin-bottom: 0px;">
                             &nbsp;&nbsp;
-                            {{ !empty($stockLines) ? @num_format($stockLines->sell_price) : @num_format($details['details']->default_sell_price) }}&nbsp;&nbsp;
+                            {{ !empty($stockLines) ? @num_format($stockLines->sell_price) : @num_format($details['details']->default_sell_price) }}{{ $currency->symbol??''}}
                         </p>
                     @endif
 

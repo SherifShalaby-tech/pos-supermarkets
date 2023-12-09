@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
+use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Grade;
@@ -207,9 +208,9 @@ class BarcodeController extends Controller
         $print['store'] = !empty($store) ? implode(',', $store) : null;
         $print['free_text'] = !empty($request->free_text) ? $request->free_text : null;
 
-
+        $currency=Currency::find(System::getProperty('currency'));
         $output = view('barcode.partials.print_barcode')
-            ->with(compact('print', 'product_details',  'page_height'))->render();
+            ->with(compact('print', 'product_details',  'page_height','currency'))->render();
         // } catch (\Exception $e) {
         //     Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
 
