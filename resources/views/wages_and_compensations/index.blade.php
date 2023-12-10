@@ -120,7 +120,7 @@
                                                 </td>
                                                 <td>
                                                     @if ($wages_and_compensation->payment_type == 'salary')
-                                                        {{ \Carbon\Carbon::parse($wages_and_compensation->account_period)->format('F') }}
+                                                        {{ $wages_and_compensation->account_period }}
                                                     @else
                                                         @if (!empty($wages_and_compensation->acount_period_start_date))
                                                             {{ @format_date($wages_and_compensation->acount_period_start_date) }}

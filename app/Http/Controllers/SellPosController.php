@@ -246,7 +246,7 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->status;
+        // return $request->payments;
         // try {
         $last_due = ($this->transactionUtil->getCustomerBalance($request->customer_id)['balance']);
         $transaction_data = [
@@ -433,48 +433,47 @@ class SellPosController extends Controller
                     }
                 }
 
-                if ($request->pay_from_balance != "1" || $transaction->payment_status != "paid") {
-                    // return 33;
-                    $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer->id)->sum('add_new_balance');
-                    $customer_added_balance = $customer->added_balance;
-                    if ($customer_added_balance >= $amount) {
-                        $customer->added_balance = $customer->added_balance - $amount;
-                        $customer->save();
-                    } elseif ($customer_added_balance < $amount && $balance_adjustment >= $amount) {
-                        $data['current_balance'] = $this->commonUtil->num_uf($balance_adjustment);
-                        $data['add_new_balance'] = (-$amount);
-                        $data['new_balance'] = $this->commonUtil->num_uf($balance_adjustment - $amount);
-                        $data['date_and_time'] = Carbon::now();
-                        $data['customer_id'] = $customer->id;
-                        $data['created_by'] = $request->user_id;
-                        $data['note'] = 'pay_from_balance';
-                        CustomerBalanceAdjustment::create($data);
-                    } else if ($customer_added_balance <  $amount && $balance_adjustment < $amount && ($balance_adjustment + $customer_added_balance) >= $amount) {
-                        $customer->added_balance = 0;
-                        $customer->save();
-                        $data['current_balance'] = $this->commonUtil->num_uf($balance_adjustment);
-                        $balance_adjustment -= ($amount - $customer_added_balance);
-                        $data['add_new_balance'] = - ($amount - $customer_added_balance);
-                        $data['new_balance'] = $balance_adjustment;
-                        $data['date_and_time'] = Carbon::now();
-                        $data['customer_id'] = $customer->id;
-                        $data['created_by'] = $request->user_id;
-                        $data['note'] = 'pay_from_balance';
-                        CustomerBalanceAdjustment::create($data);
-                    } else if ($customer_added_balance <  $amount && $balance_adjustment < $amount && ($balance_adjustment + $customer_added_balance) < $amount) {
-                        // $amount = ( $balance_adjustment+$customer_added_balance);
-                        $customer->added_balance = 0;
-                        $customer->save();
-                        $data['current_balance'] = $this->commonUtil->num_uf($balance_adjustment);
-                        $data['add_new_balance'] = - ($balance_adjustment);
-                        $data['new_balance'] = 0;
-                        $data['date_and_time'] = Carbon::now();
-                        $data['customer_id'] = $customer->id;
-                        $data['created_by'] = $request->user_id;
-                        $data['note'] = 'pay_from_balance';
-                        CustomerBalanceAdjustment::create($data);
-                    }
-                }
+                // if ($request->pay_from_balance != "1" || $transaction->payment_status != "paid") {
+                //     $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer->id)->sum('add_new_balance');
+                //     $customer_added_balance = $customer->added_balance;
+                //     if ($customer_added_balance >= $amount) {
+                //         $customer->added_balance = $customer->added_balance - $amount;
+                //         $customer->save();
+                //     } elseif ($customer_added_balance < $amount && $balance_adjustment >= $amount) {
+                //         $data['current_balance'] = $this->commonUtil->num_uf($balance_adjustment);
+                //         $data['add_new_balance'] = (-$amount);
+                //         $data['new_balance'] = $this->commonUtil->num_uf($balance_adjustment - $amount);
+                //         $data['date_and_time'] = Carbon::now();
+                //         $data['customer_id'] = $customer->id;
+                //         $data['created_by'] = $request->user_id;
+                //         $data['note'] = 'pay_from_balance';
+                //         CustomerBalanceAdjustment::create($data);
+                //     } else if ($customer_added_balance <  $amount && $balance_adjustment < $amount && ($balance_adjustment + $customer_added_balance) >= $amount) {
+                //         $customer->added_balance = 0;
+                //         $customer->save();
+                //         $data['current_balance'] = $this->commonUtil->num_uf($balance_adjustment);
+                //         $balance_adjustment -= ($amount - $customer_added_balance);
+                //         $data['add_new_balance'] = - ($amount - $customer_added_balance);
+                //         $data['new_balance'] = $balance_adjustment;
+                //         $data['date_and_time'] = Carbon::now();
+                //         $data['customer_id'] = $customer->id;
+                //         $data['created_by'] = $request->user_id;
+                //         $data['note'] = 'pay_from_balance';
+                //         CustomerBalanceAdjustment::create($data);
+                //     } else if ($customer_added_balance <  $amount && $balance_adjustment < $amount && ($balance_adjustment + $customer_added_balance) < $amount) {
+                //         // $amount = ( $balance_adjustment+$customer_added_balance);
+                //         $customer->added_balance = 0;
+                //         $customer->save();
+                //         $data['current_balance'] = $this->commonUtil->num_uf($balance_adjustment);
+                //         $data['add_new_balance'] = - ($balance_adjustment);
+                //         $data['new_balance'] = 0;
+                //         $data['date_and_time'] = Carbon::now();
+                //         $data['customer_id'] = $customer->id;
+                //         $data['created_by'] = $request->user_id;
+                //         $data['note'] = 'pay_from_balance';
+                //         CustomerBalanceAdjustment::create($data);
+                //     }
+                // }
             }
 
 

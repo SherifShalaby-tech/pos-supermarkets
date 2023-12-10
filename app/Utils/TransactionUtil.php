@@ -130,7 +130,7 @@ class TransactionUtil extends Util
         }else{
             $final_amount = $transaction->final_total - $transaction->used_deposit_balance;
         }
-        
+        // return $total_paid;
         $payment_status = 'pending';
         if ($final_amount <= $total_paid) {
             $payment_status = 'paid';
