@@ -246,7 +246,7 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->status;
+        // return $request->payments;
         // try {
         $last_due = ($this->transactionUtil->getCustomerBalance($request->customer_id)['balance']);
         $transaction_data = [
@@ -434,7 +434,6 @@ class SellPosController extends Controller
                 }
 
                 if ($request->pay_from_balance != "1" || $transaction->payment_status != "paid") {
-                    // return 33;
                     $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer->id)->sum('add_new_balance');
                     $customer_added_balance = $customer->added_balance;
                     if ($customer_added_balance >= $amount) {

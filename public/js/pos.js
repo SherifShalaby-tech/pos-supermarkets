@@ -1477,13 +1477,13 @@ $(document).on("click", "#pay-later-btn", function (e) {
     // Convert the text content to a number
     var balance = parseFloat(balanceText);
 
-    if(balance > 0){
-        $("#pay_from_balance").val(2);
-        pos_form_obj.submit();
-    }else{
+    // if(balance > 0){
+    //     $("#pay_from_balance").val(2);
+    //     pos_form_obj.submit();
+    // }else{
         $("#amount").val(0);
         pos_form_obj.submit();
-    }
+    // }
     
     
 });
