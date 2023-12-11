@@ -210,6 +210,8 @@ class SellPosController extends Controller
                 if ($balance >= $due_for_transaction) {
                     $paid_amount = $due_for_transaction;
                     $balance -= $due_for_transaction;
+                    $transaction->payment_status="paid";
+                    $transaction->save();
                 } else if ($balance < $due_for_transaction) {
                     $paid_amount = $balance;
                     $balance = 0;
@@ -246,7 +248,7 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->payments;
+        // return $request->payments[0]['method'];
         // try {
         $last_due = ($this->transactionUtil->getCustomerBalance($request->customer_id)['balance']);
         $transaction_data = [
@@ -388,7 +390,10 @@ class SellPosController extends Controller
         if ($transaction->status != 'draft') {
             foreach ($request->payments as $payment) {
                 $amount = $this->commonUtil->num_uf($payment['amount']) - $this->commonUtil->num_uf($payment['change_amount']);
-
+                if($request->payments[0]['method']=='deposit'){
+                $customer->added_balance = $customer->added_balance - $amount;
+                $customer->save();
+                }
                 if ($amount > 0) {
                     $payment_data = [
                         'transaction_id' => $transaction->id,
@@ -547,8 +552,9 @@ class SellPosController extends Controller
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
 
         // return $transaction->customer_id;
-        $this->payCustomerDue($transaction->customer_id);
-
+        if($request->payments[0]['method']=='cash'){
+            $this->payCustomerDue($transaction->customer_id);
+        }
         if ($transaction->is_direct_sale) {
             $output = [
                 'success' => true,

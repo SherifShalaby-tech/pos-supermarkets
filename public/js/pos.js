@@ -2320,6 +2320,7 @@ $(document).on("click", ".use_it_deposit_balance", function () {
 
     let used_deposit_balance = __read_number($("#used_deposit_balance"));
     __write_number($("#amount"), used_deposit_balance);
+    $(".received_amount").change();
 });
 
 $(document).on("click", ".add_to_deposit", function () {
