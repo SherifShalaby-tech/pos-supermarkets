@@ -203,6 +203,7 @@ class SellPosController extends Controller
         $transactions = Transaction::where('customer_id', $customer_id)->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])->orderBy('transaction_date', 'asc')->get();
 
         $remaining_due_amount = 0;
+        $new_balance =0;
         foreach ($transactions as $transaction) {
             $due_for_transaction = $this->getDueForTransaction($transaction->id);
             $paid_amount = 0;
@@ -216,9 +217,11 @@ class SellPosController extends Controller
                     $paid_amount = $balance;
                     $balance = 0;
                 }
+                
                 $remaining_due_amount += $paid_amount;
                 $customer->added_balance = $customer->added_balance - $paid_amount;
                 $customer->save();
+                $new_balance +=$paid_amount;
                 $payment_data = [
                     'transaction_payment_id' => null,
                     'transaction_id' =>  $transaction->id,
@@ -238,7 +241,7 @@ class SellPosController extends Controller
 
             }
         }
-        // return $remaining_due_amount;
+        return $new_balance;
     }
     /**
      * Store a newly created resource in storage.
@@ -380,17 +383,13 @@ class SellPosController extends Controller
                 $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
             }
             $customer->added_balance = $customer->added_balance + $request->add_to_customer_balance;
-            if ($request->add_to_customer_balance > 0) {
-                $register = CashRegister::where('store_id', $request->store_id)->where('store_pos_id', $request->store_pos_id)->where('user_id', Auth::user()->id)->where('closed_at', null)->where('status', 'open')->first();
-                $this->cashRegisterUtil->createCashRegisterTransaction($register, $request->add_to_customer_balance, 'cash_in', 'debit', $request->customer_id, $request->notes, null, 'customer_balance');
-            }
             $customer->save();
         }
 
         if ($transaction->status != 'draft') {
             foreach ($request->payments as $payment) {
                 $amount = $this->commonUtil->num_uf($payment['amount']) - $this->commonUtil->num_uf($payment['change_amount']);
-                if($request->payments[0]['method']=='deposit'){
+                if($payment['method']=='deposit'){
                 $customer->added_balance = $customer->added_balance - $amount;
                 $customer->save();
                 }
@@ -553,7 +552,20 @@ class SellPosController extends Controller
 
         // return $transaction->customer_id;
         if($request->payments[0]['method']=='cash'){
-            $this->payCustomerDue($transaction->customer_id);
+            $new_balance=$this->payCustomerDue($transaction->customer_id);
+            if ($new_balance < $request->add_to_customer_balance) {
+                // return [$this->commonUtil->num_uf($request->add_to_customer_balance),$new_balance];
+                $register = CashRegister::where('store_id', $request->store_id)->where('store_pos_id', $request->store_pos_id)->where('user_id', Auth::user()->id)->where('closed_at', null)->where('status', 'open')->first();
+                $this->cashRegisterUtil->createCashRegisterTransaction($register,$this->commonUtil->num_uf($request->add_to_customer_balance)-$new_balance, 'cash_in', 'debit', $request->customer_id, $request->notes, null, 'customer_balance');
+            }
+
+        }else{
+            if ($request->add_to_customer_balance > 0) {
+                return 1;
+                $register = CashRegister::where('store_id', $request->store_id)->where('store_pos_id', $request->store_pos_id)->where('user_id', Auth::user()->id)->where('closed_at', null)->where('status', 'open')->first();
+                $this->cashRegisterUtil->createCashRegisterTransaction($register, $request->add_to_customer_balance, 'cash_in', 'debit', $request->customer_id, $request->notes, null, 'customer_balance');
+            }
+            return 3;
         }
         if ($transaction->is_direct_sale) {
             $output = [
