@@ -561,11 +561,9 @@ class SellPosController extends Controller
 
         }else{
             if ($request->add_to_customer_balance > 0) {
-                return 1;
                 $register = CashRegister::where('store_id', $request->store_id)->where('store_pos_id', $request->store_pos_id)->where('user_id', Auth::user()->id)->where('closed_at', null)->where('status', 'open')->first();
                 $this->cashRegisterUtil->createCashRegisterTransaction($register, $request->add_to_customer_balance, 'cash_in', 'debit', $request->customer_id, $request->notes, null, 'customer_balance');
             }
-            return 3;
         }
         if ($transaction->is_direct_sale) {
             $output = [
