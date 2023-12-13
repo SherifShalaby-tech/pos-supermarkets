@@ -22,7 +22,7 @@
                     <table class="table">
                         <tr>
                             <td><b>@lang('lang.date_and_time')</b></td>
-                            <td>{{ @format_datetime($cash_register->created_at) }}</td>
+                            <td>{{ $cash_register->created_at ? \Carbon\Carbon::parse($cash_register->created_at)->format('Y-m-d H:i:s') : now()->format('Y-m-d H:i:s') }}</td>
                         </tr>
                         <tr>
                             <td><b>@lang('lang.cash_in')</b></td>

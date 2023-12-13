@@ -119,6 +119,10 @@
                                         <input type="hidden" name="remaining_deposit_balance"
                                             id="remaining_deposit_balance" value="0">
                                     </div>
+                                    <div class="col-md-12 mb-2 ">
+                                        <button type="button" id="add_payment_row" class="btn btn-primary btn-block">
+                                            @lang('lang.add_payment_row')</button>
+                                    </div>
                                     {{-- <div class="col-md-6">
                                         <button type="button"
                                             class="ml-1 btn btn-danger add_to_deposit">@lang('lang.add_to_deposit')</button>
