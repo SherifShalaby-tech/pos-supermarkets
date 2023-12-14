@@ -81,7 +81,7 @@
 <div id="preview_body">
     @foreach ($product_details as $details)
         @while ($details['qty'] > 0)
-            <div style="height:{{$height}}in !important; width:{{$width}}in !important; line-height: 10px;  display: inline-block;"
+            <div style="height:1.2in !important; line-height: {{ $page_height }}in; display: inline-block;"
                 class="sticker-border text-center">
                 <div style="display:inline-block;vertical-align:middle;line-height:13px !important; font-size: 14px;">
 

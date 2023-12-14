@@ -185,22 +185,9 @@ class BarcodeController extends Controller
             $total_qty += $this->commonUtil->num_uf($value['quantity']);
         }
 
-        $page_height = null;
-        $width=4;
-        $height=3;
-        $font1=18;
-        $font2=16;
-        $font3=12;
-        $font4=9;
         // $rows = ceil($total_qty / 3) + 0.4;
         $page_height = $request->paper_size;
-        if($page_height==1){
-            $width=4;
-            $height=3;
-        }else if($page_height==2){
-            $width=4;
-            $height=3;
-        }
+
 
         $print['name'] = !empty($request->product_name) ? 1 : 0;
         $print['price'] = !empty($request->price) ? 1 : 0;
@@ -223,8 +210,7 @@ class BarcodeController extends Controller
 
         $currency=Currency::find(System::getProperty('currency'));
         $output = view('barcode.partials.print_barcode')
-            ->with(compact('print', 'product_details',  'page_height','currency','height','width',
-            'font1','font2','font3','font4'))->render();
+            ->with(compact('print', 'product_details',  'page_height','currency'))->render();
         // } catch (\Exception $e) {
         //     Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
 
