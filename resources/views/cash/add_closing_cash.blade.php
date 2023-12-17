@@ -103,6 +103,12 @@
                             @endforeach
                         </tr>
                         <tr>
+                            <td><b>@lang('lang.total_latest_payments')</b></td>
+                            <td>{{ $data['currency']['symbol'] }}
+                                {{ @num_format($total_latest_payments) }}
+                            </td>
+                        </tr>
+                        <tr>
                             <td><b>@lang('lang.return_sales')</b></td>
                             @foreach ($cr_data as $data)
                                 <td>{{ $data['currency']['symbol'] }}

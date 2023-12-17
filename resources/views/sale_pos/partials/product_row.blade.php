@@ -5,15 +5,27 @@
         @endif
         <td style="width: @if(session('system_mode')  != 'restaurant') 17%; @else 20%; @endif font-size: 13px;">
             @php
+            if($product->is_service!=1){
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
                         $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
                         ->latest()->first();
-                        $default_sell_price=$stockLines?$stockLines->sell_price : $Variation->default_sell_price;
-                        $default_purchase_price=$stockLines?$stockLines->purchase_price : $Variation->default_purchase_price;
+                        $default_sell_price=$stockLines?$stockLines->sell_price : 0;
+                        $default_purchase_price=$stockLines?$stockLines->purchase_price : 0;
                         $cost_ratio_per_one = $stockLines ? $stockLines->cost_ratio_per_one : 0;
 
                     }
+            }else{
+                $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
+                    if($Variation){
+                        $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
+                        ->latest()->first();
+                        $default_sell_price= $Variation->default_sell_price??0;
+                        $default_purchase_price= $Variation->default_purchase_price??0;
+                        $cost_ratio_per_one = $stockLines ? $stockLines->cost_ratio_per_one : 0;
+
+                    }
+            }
                 $product_unit = \App\Models\Product::where('id',$product->product_id)->first();
                 if($product_unit && isset($product_unit->multiple_units) ){
                     foreach ($product_unit->multiple_units as $unit) {
@@ -21,7 +33,7 @@
                         $check_unit = \App\Models\Unit::where('id',$unit)->first();
                     }
                 }
-                
+            
             @endphp
             @if($product->variation_name != "Default")
 

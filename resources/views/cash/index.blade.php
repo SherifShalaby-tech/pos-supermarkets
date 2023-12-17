@@ -79,6 +79,7 @@
                             <th>@lang('lang.notes')</th>
                             <th>@lang('lang.status')</th>
                             <th class="sum">@lang('lang.cash_sales')</th>
+                            <th>@lang('lang.total_latest_payments')</th>
                             @if(session('system_mode') == 'restaurant')
                             <th class="sum">@lang('lang.dining_in')</th>
                             @endif
@@ -103,6 +104,21 @@
                             <td>{{ucfirst($cash_register->notes)}}</td>
                             <td>{{ucfirst($cash_register->status)}}</td>
                             <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash - $cash_register->total_sell_return)}}
+                            </td>
+                            <td>
+                                {{-- @php
+                                use Illuminate\Support\Facades\DB;
+                                @endphp --}}
+                                {{DB::table('cash_register_transactions')
+                                ->where('cash_register_id', $cash_register->id)
+                                ->where('transaction_type', "sell")
+                                ->whereIn('transaction_id', function ($query) use ($cash_register) {
+                                    $query->select('id')
+                                        ->from('transactions')
+                                        ->whereRaw('DATE(created_at) != DATE(updated_at)')
+                                        ->whereRaw('updated_at > (created_at + INTERVAL 12 HOUR)');
+                                })
+                                ->sum('amount');}}
                             </td>
                             @if(session('system_mode') == 'restaurant')
                             <td>{{@num_format($cash_register->total_dining_in)}}</td>
