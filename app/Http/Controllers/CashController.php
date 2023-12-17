@@ -107,8 +107,18 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_sell_return"),
             DB::raw("SUM(IF(transaction_type = 'wages_and_compensation' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_wages_and_compensation")
         )
+        
             ->groupBy('cash_registers.id')->orderBy('cash_registers.created_at', 'desc')->get();
-
+        //  SELECT SUM(amount)
+        // FROM cash_register_transactions
+        // WHERE cash_register_id = 1509
+        //   AND transaction_id IN (
+        //     SELECT cr.id
+        //     FROM transactions cr
+        //     WHERE cr.created_at <> cr.updated_at
+        //       AND cr.updated_at > (cr.created_at + INTERVAL 2 MINUTE)
+        //       AND created_by !=5
+        //   );
 
         $stores = Store::getDropdown();
         $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
@@ -418,10 +428,41 @@ class CashController extends Controller
                     $cash_register->total_purchases - $cash_register->total_expenses - $cash_register->total_wages_and_compensation - $cash_register->total_sell_return;
             }
         }
+        
+        //  SELECT SUM(amount)
+        // FROM cash_register_transactions
+        // WHERE cash_register_id = 1509
+        //   AND transaction_id IN (
+        //     SELECT cr.id
+        //     FROM transactions cr
+        //     WHERE cr.created_at <> cr.updated_at
+        //       AND cr.updated_at > (cr.created_at + INTERVAL 2 MINUTE)
+        //       AND created_by !=5
+        //   );
 
 
+        $total_latest_payments= DB::table('cash_register_transactions')
+        ->where('cash_register_id', $cash_register_id)
+        ->where('transaction_type', "sell")
+        ->whereIn('transaction_id', function ($query) use($cash_register) {
+            $query->select('id')
+            ->from('transactions')
+            ->whereRaw('created_at <> updated_at')
+            // ->where(function ($dateQuery) {
+            //     $dateQuery->whereRaw('DATE(created_at) <> DATE(updated_at)')
+            //                ->orWhere(function ($subQuery) {
+            //                    $subQuery->whereRaw('DATE(created_at) = DATE(updated_at)')
+            //                              ->where('created_by', '!=', 5);
+            //                });
+            // })
+            ->whereRaw('updated_at > (created_at + INTERVAL 12 HOUR)')
+   
+                ->where('created_by', '!=', $cash_register->cashier->id);
+        })
+        ->sum('amount');
         $users = User::Notview()->orderBy('name', 'asc')->pluck('name', 'id');
         return view('cash.add_closing_cash')->with(compact(
+            'total_latest_payments',
             'cash_register',
             'cr_data',
             'cash_register_id',
