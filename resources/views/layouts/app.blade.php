@@ -288,7 +288,7 @@
         @include('layouts.partials.footer')
 
 
-        <div class="modal view_modal no-print" role="dialog" aria-hidden="true"></div>
+        <div class="modal view_modal no-print" role="dialog" aria-hidden="true" ></div>
         <div class="modal" id="cropper_modal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -328,7 +328,7 @@
         <input type="hidden" name="cash_register_id" id="cash_register_id"
             value="@if (!empty($cash_register)) {{ $cash_register->id }} @endif">
         <div id="closing_cash_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-            class="modal text-left">
+            class="modal">
         </div>
 
         <!-- This will be printed -->
@@ -457,6 +457,13 @@
                 url: $(this).data('href'),
                 dataType: 'html',
                 success: function(result) {
+                    if(result){
+                        if($('.add_closing_cash').length>0){
+                            $('.add_closing_cash').hide();
+                            $('.close').click();
+                            $('#overlay').hide();
+                        }
+                    }
                     $(container).html(result).modal('show');
                 },
             });

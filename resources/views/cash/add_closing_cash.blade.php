@@ -83,7 +83,7 @@
                             <td><b>@lang('lang.other_cash_sales')</b></td>
                             @foreach ($cr_data as $data)
                                 <td>{{ $data['currency']['symbol'] }}
-                                    {{ @num_format($data['cash_register']->total_cash_sales - $data['cash_register']->total_dining_in_cash) }}
+                                    {{ @num_format($data['cash_register']->total_cash_sales - $data['cash_register']->total_dining_in_cash-$total_latest_payments) }}
                                 </td>
                             @endforeach
                         </tr>
@@ -91,25 +91,32 @@
                             <td><b>@lang('lang.total_cash_sale')</b></td>
                             @foreach ($cr_data as $data)
                                 <td>{{ $data['currency']['symbol'] }}
-                                    {{ @num_format($data['cash_register']->total_cash_sales) }}</td>
+                                    {{ @num_format($data['cash_register']->total_cash_sales-$total_latest_payments) }}</td>
                             @endforeach
                         </tr>
                         <tr>
                             <td><b>@lang('lang.total_sales')</b></td>
                             @foreach ($cr_data as $data)
                                 <td>{{ $data['currency']['symbol'] }}
-                                    {{ @num_format($data['cash_register']->total_sale - $data['cash_register']->total_refund) }}
+                                    {{ @num_format($data['cash_register']->total_sale - $data['cash_register']->total_refund-$total_latest_payments) }}
                                 </td>
                             @endforeach
                         </tr>
                         <tr>
                             <td><b>@lang('lang.total_latest_payments')</b></td>
-                            <td>{{ $data['currency']['symbol'] }}
+                            <td>
+                                @php  
+                                foreach ($cr_data as $data){
+                                    $currency=$data['currency']['symbol'];
+                                    break;
+                                }
+                                @endphp
+                                {{$currency}}
                                 {{ @num_format($total_latest_payments) }}
                             </td>
                             @if(!empty($total_latest_payments) && $total_latest_payments>0)
                             <td><a data-href="{{action('CashController@showLatestPaymentDetails', $cash_register_id)}}"
-                                data-container=".view_modal" class="btn btn-modal btn-danger text-white"><i
+                                data-container=".view_modal" class="btn btn-modal btn-danger text-white close_cash"><i
                                     class="fa fa-eye"></i> @lang('lang.view')</a></td>
                             @endif
                         </tr>

@@ -24,11 +24,11 @@
                     </tr>
                     <tr>
                         <td><b>@lang('lang.total_sales')</b></td>
-                        <td>{{ @num_format($cash_register->total_sale - $cash_register->total_refund) }}</td>
+                        <td>{{ @num_format($cash_register->total_sale - $cash_register->total_refund -$total_latest_payments) }}</td>
                     </tr>
                     <tr>
                         <td><b>@lang('lang.total_cash_sale')</b></td>
-                        <td>{{ @num_format($cash_register->total_cash_sales) }}
+                        <td>{{ @num_format($cash_register->total_cash_sales- $total_latest_payments) }}
                         </td>
                     </tr>
                     <tr>

@@ -1,8 +1,8 @@
-<div class="modal-dialog" role="document">
+<div class="modal-dialog" role="document" >
     <div class="modal-content">
         <div class="modal-header">
 
-            <h4 class="modal-title">@lang( 'lang.total_latest_payments' )</h4>
+            <h4 class="modal-title">@lang('lang.total_latest_payments')</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
         </div>
@@ -11,7 +11,7 @@
             <div class="item">
                 <div class="col-md-12">
                     <div class="table-responsive no-print">
-                        <table id="sales_table" class="table" style="min-height: 300px;">
+                        <table id="cashes_table" class="table" style="min-height: 300px;">
                             <thead>
                                 <tr>
                                     <th>@lang('lang.date_and_time')</th>
@@ -31,48 +31,50 @@
                             </thead>
                             <tbody>
                                 @foreach ($transactions as $item)
-                                    <td>{{@format_date($item->created_at)}}</td>
-                                    <td>{{$item->invoice_no??''}}</td>
-                                    <td>{{!empty($item->store)?$item->store->name??'':''}}</td>
-                                    <td>{{!empty($item->customer)?$item->customer->name??'':''}}</td>
-                                    <td>{{$item->payment_status}}</td>
-                                    <td>{{$item->status}}</td>
-                                    <td>{{@number_format($item->final_total)}}</td>
+                                <tr>
+                                    <td>{{ @format_date($item->created_at) }}</td>
+                                    <td>{{ $item->invoice_no ?? '' }}</td>
+                                    <td>{{ !empty($item->store) ? $item->store->name ?? '' : '' }}</td>
+                                    <td>{{ !empty($item->customer) ? $item->customer->name ?? '' : '' }}</td>
+                                    <td>{{ $item->payment_status }}</td>
+                                    <td>{{ $item->status }}</td>
+                                    <td>{{ @number_format($item->final_total) }}</td>
                                     <td>
                                         @php
-                                        $amount_paid = 0;
-                                        if (!empty($item->transaction_payments)){
-                                            $payments = $item->transaction_payments;
-                                        }
-                                        foreach ($payments as $payment) {
-                                            $amount_paid += $payment->amount;
-                                        }    
+                                            $amount_paid = 0;
+                                            if (!empty($item->transaction_payments)) {
+                                                $payments = $item->transaction_payments;
+                                            }
+                                            foreach ($payments as $payment) {
+                                                $amount_paid += $payment->amount;
+                                            }
                                         @endphp
-                                        {{@number_format($amount_paid)}}
+                                        {{ @number_format($amount_paid) }}
                                     </td>
                                     <td>@php
-                                        $recieved_amount=\App\Models\CashRegisterTransaction::where('cash_register_id',$id)->
-                                        where('transaction_id',$item->id)->first()->amount;
+                                        $recieved_amount = \App\Models\CashRegisterTransaction::where('cash_register_id', $id)
+                                            ->where('transaction_id', $item->id)
+                                            ->first()->amount;
                                     @endphp
-                                    {{@number_format($recieved_amount)}}    
-                                </td>
-                                <td>
-                                    @php
-                                    $paid = $item->transaction_payments->sum('amount');
-                                    @endphp
-                                    {{ $item->final_total - $paid}}
-                                </td>
-                                    <td>{{@format_date($item->transaction_date)}}</td>
-                                    <td>
-                                        {{!empty($item->created_by_user)?$item->created_by_user->name??'':''}}
+                                        {{ @number_format($recieved_amount) }}
                                     </td>
                                     <td>
-                                        <a data-href="{{action('SellController@show', $item->id)}}" data-container=".view_modal"
-                                            class="btn btn-modal"><i class="fa fa-eye"></i> {{__('lang.view')}}</a>
+                                        @php
+                                            $paid = $item->transaction_payments->sum('amount');
+                                        @endphp
+                                        {{ $item->final_total - $paid }}
                                     </td>
-                                    
+                                    <td>{{ @format_date($item->transaction_date) }}</td>
+                                    <td>
+                                        {{ !empty($item->created_by_user) ? $item->created_by_user->name ?? '' : '' }}
+                                    </td>
+                                    <td>
+                                        <a data-href="{{ action('SellController@show', $item->id) }}"
+                                            data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                                            {{ __('lang.view') }}</a>
+                                    </td>
+                                </tr>
                                 @endforeach
-                                {{-- {{$total_latest_payments}} --}}
                             </tbody>
                         </table>
                     </div>
@@ -81,15 +83,13 @@
         </div>
 
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.close')</button>
         </div>
 
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 <script>
     $(document).ready(function () {
-        $('.add_closing_cash').hide();
-        $('#overlay').hide();    
+        $('#cashes_table').dataTable({});    
     });
 </script>
-
