@@ -108,7 +108,7 @@
                                 {{ @num_format($total_latest_payments) }}
                             </td>
                             @if(!empty($total_latest_payments) && $total_latest_payments>0)
-                            <td><a data-href="{{action('CashController@showLatestPaymentDetails', $cash_register->id)}}"
+                            <td><a data-href="{{action('CashController@showLatestPaymentDetails', $cash_register_id)}}"
                                 data-container=".view_modal" class="btn btn-modal btn-danger text-white"><i
                                     class="fa fa-eye"></i> @lang('lang.view')</a></td>
                             @endif
