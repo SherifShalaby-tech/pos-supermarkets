@@ -15,5 +15,7 @@ LANG = {
     qty_msg:'الكمية يجب ان تكون اكبر من الصفر',
     sorry_you_should_select_products_to_continue_delete:'يجب اختيار منتجات لحذفها',
     all_transactions_related_to_this_products_will_be_deleted:'سيتم حذف جميع المعاملات المتعلقة بهذا المنتج ؛ الأسهم والمبيعات والمشتريات وما إلى ذلك.',
-
+    change_price_permenatly:'هل تريد تغيير السعر بصورة دائمة؟',
+    price_changed_only_for_this_transaction:'تم تغيير سعر البيع لهذه العملية فقط',
+    purchase_price_more_than_sell_price:'سعر البيع اقل من سعر الشراء او يساويه ',
 };

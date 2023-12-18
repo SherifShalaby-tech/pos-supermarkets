@@ -20,6 +20,10 @@
                                 <th>@lang('lang.new_stock')</th>
                                 <th>@lang('lang.shortage')</th>
                                 <th>@lang('lang.value_of_shortage')</th>
+                                <th>@lang('lang.old_purchase_price')</th>
+                                <th>@lang('lang.new_purchase_price')</th>
+                                <th>@lang('lang.old_sell_price')</th>
+                                <th>@lang('lang.new_sell_price')</th>
                             </tr>
                         </thead>
                     <tbody>
@@ -27,10 +31,14 @@
                         <tr>
                             <td>{{($adjustment->product->name)}}</td>
                             <td>{{$adjustment->product->sku}}</td>
-                            <td>{{$adjustment->old_stock}}</td>
-                            <td>{{$adjustment->new_stock}}</td>
-                            <td>{{$adjustment->shortage}}</td>
-                            <td>{{@num_format($adjustment->shortage_value)}}</td>
+                            <td>{{$adjustment->old_stock ?? '-'}}</td>
+                            <td>{{$adjustment->new_stock ?? '-'}}</td>
+                            <td>{{$adjustment->shortage ?? '-'}}</td>
+                            <td>{{@num_format($adjustment->shortage_value )?? '-'}}</td>
+                            <td>{{$adjustment->old_purchase_price ?? '-'}}</td>
+                            <td>{{$adjustment->new_purchase_price ?? '-'}}</td>
+                            <td>{{$adjustment->old_sell_price ?? '-'}}</td>
+                            <td>{{$adjustment->new_sell_price ?? '-'}}</td>
                         </tr>
 
                         @endforeach

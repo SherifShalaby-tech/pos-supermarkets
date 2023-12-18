@@ -43,6 +43,7 @@ use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -141,18 +142,18 @@ class SellController extends Controller
             }
             if (!empty($store_id)) {
                 $query->where('transactions.store_id', $store_id);
-            }elseif (!session('user.is_superadmin')) {
+            } elseif (!session('user.is_superadmin')) {
                 $employee = Employee::where('user_id', auth()->user()->id)->first();
                 $query->wherein('transactions.store_id', (array) $employee->store_id);
             }
             if (!empty(request()->deliveryman_id)) {
-                if(request()->deliveryman_id == 'all_delivery'){
-                    $query->where('deliveryman_id','!=', null);
-                }else{
+                if (request()->deliveryman_id == 'all_delivery') {
+                    $query->where('deliveryman_id', '!=', null);
+                } else {
                     $query->where('deliveryman_id', request()->deliveryman_id);
                 }
-                
             }
+            // return request()->all();
             if (!empty(request()->payment_status)) {
                 $query->where('payment_status', request()->payment_status);
             }
@@ -163,16 +164,19 @@ class SellController extends Controller
                 $query->where('transaction_payments.method', request()->method);
             }
             if (!empty(request()->start_date)) {
-                $query->whereDate('transaction_date', '>=', request()->start_date);
+                $query->whereDate('transactions.created_at', '>=', request()->start_date);
             }
             if (!empty(request()->end_date)) {
-                $query->whereDate('transaction_date', '<=', request()->end_date);
+                $query->whereDate('transactions.created_at', '<=', request()->end_date);
             }
             if (!empty(request()->start_time)) {
-                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+                $startTime = Carbon::parse(request()->start_date . ' ' . request()->start_time)->format('Y-m-d H:i:s');
+                $query->where('transactions.created_at', '>=', $startTime);
             }
+            
             if (!empty(request()->end_time)) {
-                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+                $endTime = Carbon::parse(request()->end_date . ' ' . request()->end_time)->format('Y-m-d H:i:s');
+                $query->where('transactions.created_at', '<=', $endTime);
             }
             if (!empty(request()->payment_start_date)) {
                 $query->whereDate('paid_on', '>=', request()->payment_start_date);
@@ -195,7 +199,9 @@ class SellController extends Controller
                 'transactions.payment_status',
                 'transactions.status',
                 'transactions.id',
+                'transactions.sale_note',
                 'transactions.transaction_date',
+                'transactions.created_at as created_at',
                 'transactions.service_fee_value',
                 'transactions.invoice_no',
                 'transactions.deliveryman_id',
@@ -219,7 +225,7 @@ class SellController extends Controller
 
             return DataTables::of($sales)
                 // ->setTotalRecords(100)
-                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->editColumn('transaction_date', '{{@format_date($created_at)}}')
                 ->editColumn('invoice_no', function ($row) {
                     $string = $row->invoice_no . ' ';
                     if (!empty($row->return_parent)) {
@@ -237,13 +243,16 @@ class SellController extends Controller
                 })
                 ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     if (!empty($row->return_parent)) {
-                        $final_total = number_format($row->final_total - $row->return_parent->final_total,2);
+                        $final_total = number_format($row->final_total - $row->return_parent->final_total, 2);
                     } else {
-                        $final_total = number_format($row->final_total,2);
+                        $final_total = number_format($row->final_total, 2);
                     }
 
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
                     return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+                })
+                ->editColumn('sale_note', function ($row) {
+                    return $row->sale_note;
                 })
                 ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
                     $amount_paid = 0;
@@ -257,14 +266,14 @@ class SellController extends Controller
                     }
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($amount_paid,2) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($amount_paid, 2) . '</span>';
                 })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $paid = $row->transaction_payments->sum('amount');
                     $due = $row->final_total - $paid;
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($due,2) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . number_format($due, 2) . '</span>';
                 })
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
@@ -279,7 +288,7 @@ class SellController extends Controller
                     foreach ($commissions as $commission) {
                         $total +=  $commission->final_total;
                     }
-                    return number_format($total,2);
+                    return number_format($total, 2);
                 })
                 ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);
@@ -428,22 +437,22 @@ class SellController extends Controller
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('return.sell_return.create_and_edit')) {
-//                            if (empty($row->return_parent)) {
-                                $html .=
-                                    '<li>
+                            //                            if (empty($row->return_parent)) {
+                            $html .=
+                                '<li>
                                     <a href="' . action('SellReturnController@add', $row->id) . '" class="btn"><i
                                         class="fa fa-undo"></i> ' . __('lang.sale_return') . '</a>
                                     </li>';
-//                            }
+                            //                            }
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('sale.pay.create_and_edit')) {
                             if ($row->status != 'draft' && $row->payment_status != 'paid' && $row->status != 'canceled') {
-                                $final_total=$row->final_total;
+                                $final_total = $row->final_total;
                                 if (!empty($row->return_parent)) {
                                     $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
                                 }
-                                if($final_total > 0) {
+                                if ($final_total > 0) {
                                     $html .=
                                         ' <li>
                                         <a data-href="' . action('TransactionPaymentController@addPayment', $row->id) . '"
@@ -630,6 +639,82 @@ class SellController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // public function edit($id)
+    // {
+
+    //     // Get the current date
+    //     $currentDate = Carbon::today();
+    //     // Retrieve the last execution date from the cache or database
+    //     $lastExecutionDate = Cache::get('last_execution_date');
+    //     // Check if the last execution date is not today
+    //     if (!$lastExecutionDate || $lastExecutionDate < $currentDate) {
+    //         // Call the function or perform the desired task
+    //         $this->notificationUtil->checkExpiary();
+    //         $this->notificationUtil->quantityAlert();
+    //         // Store the current date as the last execution date
+    //         Cache::put('last_execution_date', $currentDate, 1440); // 1440 minutes = 1 day
+    //     }
+
+    //     //Check if there is a open register, if no then redirect to Create Register screen.
+    //     if ($this->cashRegisterUtil->countOpenedRegister() == 0) {
+    //         return redirect()->to('/cash-register/create?is_pos=1');
+    //     }
+
+    //     $categories = Category::whereNull('parent_id')->groupBy('categories.id')->get();
+    //     $sub_categories = Category::whereNotNull('parent_id')->groupBy('categories.id')->get();
+    //     $brands = Brand::all();
+    //     $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
+    //     $customers = Customer::getCustomerArrayWithMobile();
+    //     $taxes = Tax::getDropdown();
+    //     $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+    //     $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
+    //     $deliverymen = Employee::getDropdownByJobType('Deliveryman');
+    //     $tac = TermsAndCondition::getDropdownInvoice();
+    //     $walk_in_customer = Customer::where('is_default', 1)->first();
+    //     $product_classes = ProductClass::orderBy('sort', 'asc')->select('name', 'id')->get();
+    //     $stores = Store::getDropdown();
+    //     $store_poses = [];
+    //     $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
+    //     $languages = System::getLanguageDropdown();
+    //     $service_fees = ServiceFee::pluck('name', 'id');
+    //     $delivery_zones = DeliveryZone::pluck('name', 'id');
+    //     $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
+    //     $employees = Employee::getCommissionEmployeeDropdown();
+    //     $delivery_men = Employee::getDropdownByJobType('Deliveryman');
+
+    //     if (empty($store_pos)) {
+    //         $output = [
+    //             'success' => false,
+    //             'msg' => __('lang.kindly_assign_pos_for_that_user_to_able_to_use_it')
+    //         ];
+
+    //         return redirect()->to('/home')->with('status', $output);
+    //     }
+
+    //     return view('sale_pos.edit_pos')->with(compact(
+    //         'categories',
+    //         'walk_in_customer',
+    //         'deliverymen',
+    //         'sub_categories',
+    //         'tac',
+    //         'brands',
+    //         'store_pos',
+    //         'customers',
+    //         'stores',
+    //         'store_poses',
+    //         'cashiers',
+    //         'taxes',
+    //         'product_classes',
+    //         'payment_types',
+    //         'weighing_scale_setting',
+    //         'languages',
+    //         'service_fees',
+    //         'delivery_zones',
+    //         'employees',
+    //         'delivery_men',
+    //         'exchange_rate_currencies',
+    //     ));
+    // }
     public function edit($id)
     {
         $sale = Transaction::findOrFail($id);
@@ -707,33 +792,31 @@ class SellController extends Controller
 
             $transaction_sell_lines = TransactionSellLine::where('transaction_id', $id)->get();
             $transaction_sell_payments = TransactionPayment::where('transaction_id', $id)->get();
-            foreach($transaction_sell_payments as $transaction_sell_payment) {
-                if($transaction_sell_payment->method == 'gift_card') {
-                  $GiftCard= GiftCard::where('card_number', $transaction_sell_payment->gift_card_number)->update([
-                       'balance' => DB::raw('balance + '.$transaction_sell_payment->amount),
-                   ]);
-//                    dd($GiftCard);
+            foreach ($transaction_sell_payments as $transaction_sell_payment) {
+                if ($transaction_sell_payment->method == 'gift_card') {
+                    $GiftCard = GiftCard::where('card_number', $transaction_sell_payment->gift_card_number)->update([
+                        'balance' => DB::raw('balance + ' . $transaction_sell_payment->amount),
+                    ]);
+                    //                    dd($GiftCard);
                 }
             }
             foreach ($transaction_sell_lines as $transaction_sell_line) {
-                    if ($transaction->status == 'final') {
-                        $product = Product::find($transaction_sell_line->product_id);
-                        if (!$product->is_service) {
-                            $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
-                            if(isset($transaction_sell_line->stock_line_id)){
-                                $stock = AddStockLine::where('id',$transaction_sell_line->stock_line_id)->first();
-                                $stock->update([
-                                    'quantity' =>  $stock->quantity + $transaction_sell_line->quantity,
-                                    'quantity_sold' =>  $stock->quantity - $transaction_sell_line->quantity
-                                ]);
-                            }
-
+                if ($transaction->status == 'final') {
+                    $product = Product::find($transaction_sell_line->product_id);
+                    if (!$product->is_service) {
+                        $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
+                        if (isset($transaction_sell_line->stock_line_id)) {
+                            $stock = AddStockLine::where('id', $transaction_sell_line->stock_line_id)->first();
+                            $stock->update([
+                                'quantity_sold' =>  $stock->quantity - $transaction_sell_line->quantity
+                            ]);
                         }
                     }
-                    $transaction_sell_line->delete();
                 }
+                $transaction_sell_line->delete();
+            }
 
-            $return_ids =Transaction::where('return_parent_id', $id)->pluck('id');
+            $return_ids = Transaction::where('return_parent_id', $id)->pluck('id');
 
 
 
@@ -1029,9 +1112,9 @@ class SellController extends Controller
                 $query->where('store_id', $store_id);
             }
             if (!empty(request()->deliveryman_id)) {
-                if(request()->deliveryman_id == 'all_delivery'){
-                    $query->where('deliveryman_id','!=', null);
-                }else{
+                if (request()->deliveryman_id == 'all_delivery') {
+                    $query->where('deliveryman_id', '!=', null);
+                } else {
                     $query->where('deliveryman_id', request()->deliveryman_id);
                 }
             }

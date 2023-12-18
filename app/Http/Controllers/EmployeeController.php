@@ -841,4 +841,24 @@ class EmployeeController extends Controller
 
         return $employees_dp;
     }
+    public  function printEmployeeBarcode($id,Request $request){
+        $employee = Employee::find($id);
+        $password=request()->value['value'];
+        if (Hash::check(request()->value['value'], $employee->user->password)) {
+            $invoice_lang = System::getProperty('invoice_lang');
+            $site_title = System::getProperty('site_title');
+            if (empty($invoice_lang)) {
+                $invoice_lang = request()->session()->get('language');
+            }
+            $html_content=view('sale_pos.partials.employee_barcode')
+            ->with(compact( 'employee','site_title','password',
+            'invoice_lang'))->render();
+            
+    
+            return $html_content;
+            // return ['success' => true];
+        }
+        return ['success' => false];
+       
+    }
 }

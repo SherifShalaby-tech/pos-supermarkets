@@ -85,7 +85,6 @@ class CashRegisterUtil extends Util
             'referenced_id' => $referenced_id,
             'notes' => $notes,
         ]);
-
         return $cash_register_transaction;
     }
 

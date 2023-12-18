@@ -1,7 +1,13 @@
-<div class="modal-dialog" role="document">
+<div class="modal-dialog add_closing_cash" role="document" >
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('CashController@saveAddClosingCash'), 'method' => 'post', 'id' => 'add_closing_cash_form', 'files' => true]) !!}
+        {!! Form::open([
+            'url' => action('CashController@saveAddClosingCash'),
+            'method' => 'post',
+            'id' => 'add_closing_cash_form',
+            'files' => true,
+            'class' => 'add_closing_cash_form_class',
+        ]) !!}
 
         <div class="modal-header">
 
@@ -16,7 +22,7 @@
                     <table class="table">
                         <tr>
                             <td><b>@lang('lang.date_and_time')</b></td>
-                            <td>{{ @format_datetime($cash_register->created_at) }}</td>
+                            <td>{{ $cash_register->created_at ? \Carbon\Carbon::parse($cash_register->created_at)->format('Y-m-d H:i:s') : now()->format('Y-m-d H:i:s') }}</td>
                         </tr>
                         <tr>
                             <td><b>@lang('lang.cash_in')</b></td>
@@ -97,6 +103,17 @@
                             @endforeach
                         </tr>
                         <tr>
+                            <td><b>@lang('lang.total_latest_payments')</b></td>
+                            <td>{{ $data['currency']['symbol'] }}
+                                {{ @num_format($total_latest_payments) }}
+                            </td>
+                            @if(!empty($total_latest_payments) && $total_latest_payments>0)
+                            <td><a data-href="{{action('CashController@showLatestPaymentDetails', $cash_register->id)}}"
+                                data-container=".view_modal" class="btn btn-modal btn-danger text-white"><i
+                                    class="fa fa-eye"></i> @lang('lang.view')</a></td>
+                            @endif
+                        </tr>
+                        <tr>
                             <td><b>@lang('lang.return_sales')</b></td>
                             @foreach ($cr_data as $data)
                                 <td>{{ $data['currency']['symbol'] }}
@@ -159,31 +176,56 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('current_cash', __('lang.current_cash') . ':*') !!}
-                            {!! Form::text('current_cash', @num_format($total_cash), ['class' => 'form-control', 'placeholder' => __('lang.current_cash'), 'readonly', 'id' => 'closing_current_cash']) !!}
+                            {!! Form::text('current_cash', @num_format($total_cash), [
+                                'class' => 'form-control',
+                                'placeholder' => __('lang.current_cash'),
+                                'readonly',
+                                'id' => 'closing_current_cash',
+                            ]) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('amount', __('lang.amount') . ':*') !!}
-                            {!! Form::text('amount', null, ['class' => 'form-control', 'placeholder' => __('lang.amount'), 'required', 'id' => 'closing_amount']) !!}
+                            {!! Form::text('amount', null, [
+                                'class' => 'form-control',
+                                'placeholder' => __('lang.amount'),
+                                'required',
+                                'id' => 'closing_amount',
+                            ]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
-                            {!! Form::select('source_type', ['user' => __('lang.user'), 'safe' => __('lang.safe')], 'user', ['class' => 'selectpicker form-control', 'required', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                            {!! Form::label('source_type', __('lang.given_to', ['value' => __('lang.user')]), ['id' => 'source_type_label']) !!} <br>
+                            {!! Form::select('source_type', ['user' => __('lang.user'), 'safe' => __('lang.safe')], 'user', [
+                                'class' => 'selectpicker form-control',
+                                'required',
+                                'data-live-search' => 'true',
+                                'style' => 'width: 80%',
+                                'placeholder' => __('lang.please_select'),
+                            ]) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('cash_given_to', __('lang.cash_given_to') . ':*') !!}
-                            {!! Form::select('cash_given_to', $users, false, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required','placeholder' => __('lang.please_select')]) !!}
+                            {!! Form::select('cash_given_to', $users, false, [
+                                'class' => 'form-control selectpicker',
+                                'data-live-search' => 'true',
+                                'required',
+                                'placeholder' => __('lang.please_select'),
+                            ]) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('discrepancy', __('lang.discrepancy') . ':*') !!}
-                            {!! Form::text('discrepancy', 0, ['class' => 'form-control', 'placeholder' => __('lang.discrepancy'), 'required']) !!}
+                            {!! Form::text('discrepancy', 0, [
+                                'class' => 'form-control',
+                                'placeholder' => __('lang.discrepancy'),
+                                'required',
+                            ]) !!}
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -230,6 +272,17 @@
     });
     $('#source_type').change();
     $(document).on('change', '#source_type', function() {
+        var selectedValue = $('#source_type').find(":selected").val();
+        if (selectedValue == "safe") {
+            var langKey = "@lang('lang.given_to') (@lang('lang.safe'))";
+        } else if (selectedValue == "user") {
+            var langKey = "@lang('lang.given_to') (@lang('lang.user'))";
+
+        } else {
+            var langKey = "@lang('lang.given_to')";
+        }
+        $('#source_type_label').html(langKey);
+
         if ($(this).val() !== '') {
             $.ajax({
                 method: 'get',
@@ -241,5 +294,91 @@
                 },
             });
         }
+    });
+    $(document).on('click', '#adjust-btn', function(e) {
+        e.preventDefault();
+        var title = "{!! __('lang.are_you_sure') !!}";
+        Swal.fire({
+            title: title,
+            text: "{!! __('lang.are_you_sure_you_wanna_update_it') !!}",
+            icon: 'warning',
+        }).then(willDelete => {
+            if (willDelete) {
+                // var check_password = $(this).data('check_password');
+                var href = $(this).data('href');
+                var data = $(this).serialize();
+
+                Swal.fire({
+                    title: "{!! __('lang.please_enter_your_password') !!}",
+                    input: 'password',
+                    inputAttributes: {
+                        placeholder: "{!! __('lang.type_your_password') !!}",
+                        autocomplete: 'off',
+                        autofocus: true,
+                    },
+                }).then((result) => {
+                    if (result) {
+                        $.ajax({
+                            url: '{{ route('check_admin_password') }}',
+                            method: 'POST',
+                            data: {
+                                value: result,
+                            },
+                            dataType: 'json',
+                            success: (data) => {
+
+                                if (data.success == true) {
+                                    $('#add_closing_cash_form').submit();
+
+                                    Swal.fire(
+                                        'success',
+                                        "{!! __('lang.correct_password') !!}",
+                                        'success'
+                                    );
+
+
+                                } else {
+                                    Swal.fire(
+                                        'Failed!',
+                                        'Wrong Password!',
+                                        'error'
+                                    )
+
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+    $(document).ready(function() {
+        $('#add_closing_cash_form').submit(function(e) {
+            e.preventDefault(); 
+            $(this).validate();
+            $.ajax({
+                type: 'POST', // or 'GET' depending on your form's method
+                url: "{{ url('cash/save-add-closing-cash') }}",
+                data: $('#add_closing_cash_form').serialize(), // Serialize the form data
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire(
+                            'success',
+                            response.msg,
+                            'success'
+                        );
+                        location.reload();
+                    } else {
+                        Swal.fire(
+                            'Failed!',
+                            response.msg,
+                            'error'
+                        )
+                        // location.reload();
+                    }
+
+                }
+            });
+        });
     });
 </script>

@@ -273,7 +273,7 @@ class ProductController extends Controller
                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                     return $html;
                 })
-                ->editColumn('supplier_name', function ($row) {
+                ->addColumn('supplier_name', function ($row) {
                     return $row->supplier->name ?? '';
                 })
                 ->editColumn('batch_number', '{{$batch_number}}')
@@ -338,6 +338,9 @@ class ProductController extends Controller
                 })
                 ->addColumn('current_stock_value', function ($row) {
                     $price= AddStockLine::where('variation_id',$row->variation_id)
+                    ->whereHas('transaction', function ($query) {
+                        $query->where('type', '!=', 'supplier_service');
+                    })
                     ->latest()->first();
                     $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
                     return $this->productUtil->num_f($row->current_stock * $price);
@@ -455,7 +458,7 @@ class ProductController extends Controller
 
                             $html .=
                                 '<li>
-                            <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+                            <a data-href="' . action('ProductController@destroy', $row->variation_id??0) . '"
                                 data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
                                 class="btn text-red delete_product"><i class="fa fa-trash"></i>
                                 ' . __('lang.delete') . '</a>
@@ -646,7 +649,7 @@ class ProductController extends Controller
                         'created_by' => 1,
                     ]);
                 }
-          
+
                 Transaction::create([
                     'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
                     'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
@@ -758,7 +761,7 @@ class ProductController extends Controller
                         'created_by' => 1,
                     ]);
                 }
-          
+
                 Transaction::create([
                     'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
                     'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
@@ -907,12 +910,13 @@ class ProductController extends Controller
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
                 'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
                 'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
-                'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
+                'buy_from_supplier' =>  0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'have_weight' => !empty($request->have_weight) ? 1 : 0,
                 'created_by' => Auth::user()->id,
                 'show_at_the_main_pos_page' => !empty($request->show_at_the_main_pos_page) ? 'yes' : 'no',
+                'weighing_scale_barcode' => !empty($request->weighing_scale_barcode) ? 1 : 0
             ];
 
 
@@ -1161,12 +1165,13 @@ class ProductController extends Controller
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
                 'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
                 'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
-                'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
+                'buy_from_supplier' =>  0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'have_weight' => !empty($request->have_weight) ? 1 : 0,
                 'edited_by' => Auth::user()->id,
                 'show_at_the_main_pos_page' => !empty($request->show_at_the_main_pos_page) ? 'yes' : 'no',
+                'weighing_scale_barcode' => !empty($request->weighing_scale_barcode) ? 1 : 0,
             ];
 
 
@@ -1257,37 +1262,25 @@ class ProductController extends Controller
             }
 
 
-//            if ($request->images) {
-//                $product->clearMediaCollection('product');
-//                foreach ($request->images as $image) {
-//                    $product->addMedia($image)->toMediaCollection('product');
-//                }
-//            }
-            // return $request->cropImages;
-            // if ($request->has("cropImages") && count($request->cropImages) > 0) {
-            //     foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-            //         $product->clearMediaCollection('product');
-            //         $extention = explode(";",explode("/",$imageData)[1])[0];
-            //         $image = rand(1,1500)."_image.".$extention;
-            //         $filePath = public_path('uploads/' . $image);
-            //         $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-            //         $product->addMedia($filePath)->toMediaCollection('product');
-            //     }
-            // }
-
-
+            //////////////////////////
             if ($request->has("cropImages") && count($request->cropImages) > 0) {
+                // Clear the media collection only once, before the loop
+                $product->clearMediaCollection('product');
+
                 foreach ($this->getCroppedImages($request->cropImages) as $imageData) {
-                    if (strlen($imageData) > 300){
-                        $product->clearMediaCollection('product');
-                        $extention = explode(";",explode("/",$imageData)[1])[0];
-                        $image = rand(1,1500)."_image.".$extention;
-                        $filePath = public_path('uploads/' . $image);
-                        $fp = file_put_contents($filePath,base64_decode(explode(",",$imageData)[1]));
-                        $product->addMedia($filePath)->toMediaCollection('product');
-                    }
+                    $extention = explode(";", explode("/", $imageData)[1])[0];
+                    $image = rand(1, 1500) . "_image." . $extention;
+                    $filePath = public_path('uploads/' . $image);
+                    $fp = file_put_contents($filePath, base64_decode(explode(",", $imageData)[1]));
+                    $product->addMedia($filePath)->toMediaCollection('product');
                 }
             }
+
+            if (!isset($request->cropImages) || count($request->cropImages) == 0) {
+                $product->clearMediaCollection('product');
+            }
+            //////////////////////////////////////
+            //////////////////////////////////////
             if (!empty($request->supplier_id)) {
                 SupplierProduct::updateOrCreate(
                     ['product_id' => $product->id],
@@ -1337,7 +1330,7 @@ class ProductController extends Controller
                 $variation->deleted_by= request()->user()->id;
                 $variation->save();
                 $variation->delete();
-                
+
                 ProductStore::where('variation_id', $id)->delete();
                 $output = [
                     'success' => true,
@@ -1567,7 +1560,7 @@ class ProductController extends Controller
     public function checkSku($sku)
     {
         $product_sku = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-            ->where('sub_sku', $sku)->first();
+            ->where('sub_sku', $sku)->whereNull('variations.deleted_at')->first();
 
         if (!empty($product_sku)) {
             $output = [

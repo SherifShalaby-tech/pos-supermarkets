@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AddStockLine;
 use App\Models\CashRegister;
+use App\Models\Category;
 use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerType;
@@ -12,6 +13,7 @@ use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\ExchangeRate;
 use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -1092,7 +1094,7 @@ class ReportController extends Controller
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
         $add_stock_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+            // ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
             ->where('transactions.type', 'add_stock')
@@ -1131,11 +1133,11 @@ class ReportController extends Controller
         )->first();
 
         $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+            // ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell')
-            ->where('transactions.payment_status', 'paid')
+            // ->where('transactions.payment_status', 'paid')
             ->where('transactions.status', 'final');
 
         if (!empty($request->start_date)) {
@@ -1174,11 +1176,11 @@ class ReportController extends Controller
         )->first();
 
         $sale_return_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+            // ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell_return')
-            ->where('transactions.payment_status', 'paid')
+            // ->where('transactions.payment_status', 'paid')
             ->where('transactions.status', 'final');
 
         if (!empty($request->start_date)) {
@@ -1217,11 +1219,11 @@ class ReportController extends Controller
         )->first();
 
         $purchase_return_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+            // ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'purchase_return')
-            ->where('transactions.payment_status', 'paid')
+            // ->where('transactions.payment_status', 'paid')
             ->where('transactions.status', 'final');
 
         if (!empty($request->start_date)) {
@@ -1500,6 +1502,12 @@ class ReportController extends Controller
                 $join->on('pl.product_id', 'p.id')
                     ->orOn('tsl.product_id', 'p.id');
             })
+            ->leftjoin('product_classes as pc', function ($join) {
+                $join->on('p.product_class_id','pc.id');
+            })
+            ->leftjoin('variations as v', function ($join) {
+                $join->on('p.id', 'v.product_id')->whereNull('v.deleted_at');
+            })
             ->whereIn('transactions.type', ['sell', 'add_stock'])
             ->whereIn('transactions.status', ['final', 'received']);
 
@@ -1521,6 +1529,9 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $query->where('customer_type_id', $request->customer_type_id);
         }
+        if (!empty($request->category_id)) {
+            $query->where('p.product_class_id', $request->category_id);
+        }
         $store_query = '';
 
         if (!empty($store_id)) {
@@ -1532,25 +1543,29 @@ class ReportController extends Controller
             $query->where('p.id', $request->product_id);
         }
         $transactions = $query->select(
-            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * p.sell_price, 0)) as sold_amount"),
-            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * p.purchase_price, 0)) as purchased_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * tsl.sell_price, 0)) as sold_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * tsl.purchase_price, 0)) as purchase_cost"),
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity * pl.purchase_price, 0)) as purchased_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
             DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
             'p.sku',
+            'pc.name as product_class_name',
             'p.name as product_name',
-            'p.id'
+            'p.id',
+            'v.default_purchase_price as default_purchase_price',
+            'v.default_sell_price as default_sell_price',
         )->groupBy('p.id')->get();
 
         $stores = Store::getDropdown();
         $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
-
+        $categories=ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         return view('reports.product_report')->with(compact(
             'transactions',
             'store_pos',
             'products',
-            'stores',
+            'stores','categories'
         ));
     }
 
@@ -1580,7 +1595,7 @@ class ReportController extends Controller
         if (!empty($store_id)) {
             $add_stock_query->where('transactions.store_id', $store_id);
         }
-        $add_stocks = $add_stock_query->where('product_id', $id)->select('add_stock_lines.*')->get();
+        $add_stocks = $add_stock_query->where('product_id', $id)->where('transactions.type', '!=', 'supplier_service')->select('add_stock_lines.*')->get();
 
         return view('reports.partials.view_product_details')->with(compact(
             'product',
@@ -1700,43 +1715,76 @@ class ReportController extends Controller
 
         while ($start <= $end) {
             $start_date = $year . '-' . date('m', $start) . '-' . '01';
-            $end_date = $year . '-' . date('m', $start) . '-' . '31';
-
-            $total_discount_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
-            if (!empty($store_id)) {
-                $total_discount_query->where('store_id', $store_id);
+            if(in_array(date('m', $start), [4, 6, 9, 11])){
+                $end_date = $year . '-' . date('m', $start) . '-' . '30';
+            } elseif (date('m', $start) == 2) {
+                $end_date = $year . '-' . date('m', $start) . '-' . '29';
+            } else {
+                $end_date = $year . '-' . date('m', $start) . '-' . '31';
             }
-            $total_discount[] = $total_discount_query->sum('discount_amount');
 
-            $total_tax_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
+            $total_sell_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
             if (!empty($store_id)) {
-                $total_tax_query->where('store_id', $store_id);
+                $total_sell_query->where('store_id', $store_id);
             }
-            $total_tax[] = $total_tax_query->sum('total_tax');
+            $total_discount_sell[] = $total_sell_query->sum('discount_amount');
+            //
+            $total_addstock_query = Transaction::where('type', 'add_stock')->where('status', 'received')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date)
+            ->with('add_stock_lines');
 
-            $shipping_cost_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
             if (!empty($store_id)) {
-                $shipping_cost_query->where('store_id', $store_id);
+                $total_addstock_query->where('store_id', $store_id);
             }
-            $shipping_cost[] = $shipping_cost_query->sum('delivery_cost');
+            $total_discount_addstock[] = $total_addstock_query->sum('discount_amount');
+            // $current_stock[] = $total_addstock_query->get()
+            // ->sum(function ($transaction) {
+            //     return $transaction->add_stock_lines->sum('quantity');
+            // });
+            ///
+            $total_tax_sell[] = $total_sell_query->sum('total_tax');
+            ///
 
-            $total_query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', '>=', $start_date)->whereDate('transaction_date', '<=', $end_date);
-            if (!empty($store_id)) {
-                $total_query->where('store_id', $store_id);
-            }
-            $total[] = $total_query->sum('final_total');
+            $total_tax_addstock[] = $total_addstock_query->sum('total_tax');
+            //
+            $shipping_cost_sell[] = $total_sell_query->sum('delivery_cost');
+            //
+            $shipping_cost_addstock[] = $total_addstock_query->sum('delivery_cost');
+            ///
 
+            $total_sell[] = $total_sell_query->sum('grand_total');
+
+            //
+            $total_addstock[] = $total_addstock_query->sum('final_total');
+            $term=$total_sell_query->with('transaction_sell_lines');
+                $total_net_profit[] = $term->get()
+                ->sum(function ($transaction) {
+                    return $transaction->transaction_sell_lines->sum(function ($line) {
+                        return $line->sell_price * ($line->quantity - $line->quantity_returned);
+                    });
+                })-$term->get()
+                ->sum(function ($transaction) {
+                    return $transaction->transaction_sell_lines->sum(function ($line) {
+                        return $line->purchase_price * ($line->quantity - $line->quantity_returned);
+                    });
+                });
             $start = strtotime("+1 month", $start);
         }
         $stores = Store::getDropdown();
+        ///////
 
         return view('reports.monthly_sale_report', compact(
             'year',
-            'total_discount',
-            'total_tax',
-            'shipping_cost',
-            'total',
-            'stores'
+            'total_discount_sell',
+            'total_tax_sell',
+            'shipping_cost_sell',
+            'total_sell',
+            'stores',
+            'total_discount_addstock',
+            'total_tax_addstock',
+            'shipping_cost_addstock',
+            'total_addstock',
+            'total_net_profit',
+            // 'total_p'
         ));
     }
     /**
@@ -1922,10 +1970,12 @@ class ReportController extends Controller
         }
 
         $transactions = $query->select(
+            'sale_note',
             DB::raw("SUM(IF(transactions.type='sell', final_total, 0)) as sold_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
             'p.name as product_name'
+
         )->groupBy('p.id')->get();
 
         $stores = Store::getDropdown();
@@ -2003,7 +2053,48 @@ class ReportController extends Controller
             'stores',
         ));
     }
+    public function getCategoryPurchases(Request $request){
+        // $product_classes=ProductClass::
 
+        $query = Transaction::leftjoin('transaction_sell_lines as tsl', function ($join) {
+            $join->on('transactions.id', 'tsl.transaction_id');
+        })
+            ->leftjoin('add_stock_lines as pl', function ($join) {
+                $join->on('transactions.id', 'pl.transaction_id');
+            })
+            ->leftjoin('products as p', function ($join) {
+                $join->on('tsl.product_id', 'p.id');
+            })
+            ->leftjoin('product_classes as pc', function ($join) {
+                $join->on('p.product_class_id', 'pc.id');
+            })
+            ->whereIn('transactions.type', ['sell'])
+            ->where('transactions.payment_status', 'paid')
+            ->whereIn('transactions.status', ['final']);
+
+
+        $store_query = '';
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id',  $store_id);
+            $store_query = 'AND store_id=' . $store_id;
+        }
+        if (!empty($pos_id)) {
+            $query->where('store_pos_id', $pos_id);
+        }
+        if (!empty($request->product_id)) {
+            $query->where('tsl.product_id', $request->product_id);
+        }
+
+        $transactions = $query->select(
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity * pl.purchase_price, 0)) as purchased_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
+            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
+            DB::raw("SUM(IF(transactions.type='sell', final_total, 0)) as sold_amount"),
+            'pc.name as product_class_name'
+        )->groupBy('pc.id')->get();
+
+        return view('reports.category_report',compact('transactions'));
+    }
     /**
      * show the payment report
      *
@@ -2429,136 +2520,503 @@ class ReportController extends Controller
             'users'
         ));
     }
+    // getCustomerReport() : original method
+    // public function getCustomerReportOriginal(Request $request)
+    // {
+    //     $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
 
+    //     $customer_id = $request->customer_id;
+
+    //     $sale_query = Transaction::whereIn('transactions.type', ['sell'])
+    //         ->whereIn('transactions.status', ['final']);
+
+    //     if (!empty($request->start_date)) {
+    //         $sale_query->whereDate('transaction_date', '>=', $request->start_date);
+    //     }
+    //     if (!empty($request->end_date)) {
+    //         $sale_query->whereDate('transaction_date', '<=', $request->end_date);
+    //     }
+    //     if (!empty(request()->start_time)) {
+    //         $sale_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+    //     }
+    //     if (!empty(request()->end_time)) {
+    //         $sale_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+    //     }
+    //     if (!empty($customer_id)) {
+    //         $sale_query->where('transactions.customer_id', $customer_id);
+    //     }
+
+
+    //     $sales = $sale_query->select(
+    //         'transactions.*'
+    //     )->groupBy('transactions.id')->get();
+
+
+    //     $payment_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+    //         ->leftjoin('users', 'transactions.created_by', 'users.id')
+    //         ->whereIn('transactions.type', ['sell'])
+    //         ->where('transactions.payment_status', 'paid')
+    //         ->whereIn('transactions.status', ['final']);
+
+    //     if (!empty($request->start_date)) {
+    //         $payment_query->whereDate('transaction_date', '>=', $request->start_date);
+    //     }
+    //     if (!empty($request->end_date)) {
+    //         $payment_query->whereDate('transaction_date', '<=', $request->end_date);
+    //     }
+    //     if (!empty(request()->start_time)) {
+    //         $payment_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+    //     }
+    //     if (!empty(request()->end_time)) {
+    //         $payment_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+    //     }
+    //     if (!empty($request->customer_id)) {
+    //         $payment_query->where('customer_id',  $request->customer_id);
+    //     }
+
+
+    //     $payments = $payment_query->select(
+    //         'transactions.*',
+    //         'transaction_payments.method',
+    //         'transaction_payments.amount',
+    //         'transaction_payments.ref_number',
+    //         'transaction_payments.paid_on',
+    //         'users.name as created_by_name',
+    //     )->groupBy('transaction_payments.id')->get();
+
+    //     $quotation_query = Transaction::whereIn('transactions.type', ['sell'])
+    //         ->where('is_quotation', 1);
+
+    //     if (!empty($request->start_date)) {
+    //         $quotation_query->whereDate('transaction_date', '>=', $request->start_date);
+    //     }
+    //     if (!empty($request->end_date)) {
+    //         $quotation_query->whereDate('transaction_date', '<=', $request->end_date);
+    //     }
+    //     if (!empty(request()->start_time)) {
+    //         $quotation_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+    //     }
+    //     if (!empty(request()->end_time)) {
+    //         $quotation_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+    //     }
+    //     if (!empty($store_id)) {
+    //         $quotation_query->where('transactions.store_id', $store_id);
+    //     }
+    //     if (!empty($customer_id)) {
+    //         $quotation_query->where('transactions.customer_id', $customer_id);
+    //     }
+
+
+    //     $quotations = $quotation_query->select(
+    //         'transactions.*'
+    //     )->groupBy('transactions.id')->get();
+
+
+    //     $return_query = Transaction::whereIn('transactions.type', ['sell_return'])->whereNotNull('return_parent_id')
+    //         ->whereIn('transactions.status', ['final']);
+
+    //     if (!empty($request->start_date)) {
+    //         $return_query->whereDate('transaction_date', '>=', $request->start_date);
+    //     }
+    //     if (!empty($request->end_date)) {
+    //         $return_query->whereDate('transaction_date', '<=', $request->end_date);
+    //     }
+    //     if (!empty(request()->start_time)) {
+    //         $return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+    //     }
+    //     if (!empty(request()->end_time)) {
+    //         $return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+    //     }
+    //     if (!empty($store_id)) {
+    //         $return_query->where('transactions.store_id', $store_id);
+    //     }
+    //     if (!empty($customer_id)) {
+    //         $return_query->where('transactions.customer_id', $customer_id);
+    //     }
+
+    //     $sell_returns = $return_query->select(
+    //         'transactions.*'
+    //     )->groupBy('transactions.id')->get();
+
+    //     $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+    //     $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+    //     return view('reports.customer_report')->with(compact(
+    //         'sales',
+    //         'payments',
+    //         'quotations',
+    //         'sell_returns',
+    //         'payment_types',
+    //         'customers'
+    //     ));
+    // }
+    // +++++++++++++++++++++ getCustomerReport() : new method ++++++++++++++++++++++++++
     public function getCustomerReport(Request $request)
     {
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
-        $customer_id = $request->customer_id;
+        if (request()->ajax())
+        {
+            $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+            $default_currency_id = System::getProperty('currency');
+            $store_id = request()->store_id;
+            $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
-        $sale_query = Transaction::whereIn('transactions.type', ['sell'])
-            ->whereIn('transactions.status', ['final']);
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('stores', 'transactions.store_id', 'stores.id')
+                ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+                ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
+                ->leftjoin('users', 'transactions.created_by', 'users.id')
+                ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
+                ->where('transactions.payment_status', 'paid')
+                ->where('transactions.type', 'sell')->whereIn('status', ['final']
+        );
 
-        if (!empty($request->start_date)) {
-            $sale_query->whereDate('transaction_date', '>=', $request->start_date);
+
+        if (!empty(request()->customer_id)) {
+            $query->where('customer_id', request()->customer_id);
         }
-        if (!empty($request->end_date)) {
-            $sale_query->whereDate('transaction_date', '<=', $request->end_date);
+        if (!empty(request()->customer_type_id)) {
+            if (request()->customer_type_id == 'dining_in') {
+                $query->whereNotNull('dining_table_id');
+            } else {
+                $query->where('customer_type_id', request()->customer_type_id);
+            }
+        }
+
+        if (!empty(request()->status)) {
+            $query->where('status', request()->status);
+        }
+        if (!empty($store_id)) {
+            $query->where('store_id', $store_id);
+        }
+        if (!empty(request()->pos_id)) {
+            $query->where('store_pos_id', request()->pos_id);
+        }
+        if (!empty(request()->payment_status)) {
+            $query->where('payment_status', request()->payment_status);
+        }
+        if (!empty(request()->created_by)) {
+            $query->where('transactions.created_by', request()->created_by);
+        }
+
+        if (!empty(request()->start_date)) {
+            $query->whereDate('transaction_date', '>=', request()->start_date);
+        }
+        if (!empty(request()->end_date)) {
+            $query->whereDate('transaction_date', '<=', request()->end_date);
         }
         if (!empty(request()->start_time)) {
-            $sale_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
         }
         if (!empty(request()->end_time)) {
-            $sale_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($customer_id)) {
-            $sale_query->where('transactions.customer_id', $customer_id);
+            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
 
-
-        $sales = $sale_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->get();
-
-
-        $payment_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('users', 'transactions.created_by', 'users.id')
-            ->whereIn('transactions.type', ['sell'])
-            ->where('transactions.payment_status', 'paid')
-            ->whereIn('transactions.status', ['final']);
-
-        if (!empty($request->start_date)) {
-            $payment_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $payment_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $payment_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $payment_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($request->customer_id)) {
-            $payment_query->where('customer_id',  $request->customer_id);
-        }
-
-
-        $payments = $payment_query->select(
-            'transactions.*',
-            'transaction_payments.method',
-            'transaction_payments.amount',
-            'transaction_payments.ref_number',
+        $sales = $query->select(
+            'transactions.final_total',
+            'transactions.payment_status',
+            'transactions.status',
+            'transactions.id',
+            'transactions.transaction_date',
+            'transactions.service_fee_value',
+            'transactions.invoice_no',
             'transaction_payments.paid_on',
+            'stores.name as store_name',
             'users.name as created_by_name',
-        )->groupBy('transaction_payments.id')->get();
+            'customers.name as customer_name',
+            'customers.mobile_number',
+            'received_currency.symbol as received_currency_symbol',
+            'received_currency_id'
+        )->with([
+            'return_parent',
+            'customer',
+            'transaction_payments',
+            'deliveryman',
+            'canceled_by_user',
+            'transaction_sell_lines',
+            'sell_products',
+            'sell_variations',
+            'sell_products'
+        ])
+            ->groupBy('transactions.id');
 
-        $quotation_query = Transaction::whereIn('transactions.type', ['sell'])
-            ->where('is_quotation', 1);
+        return DataTables::of($sales)
+            // ->setTotalRecords()
+            // transaction_date
+            ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+            // invoice_no
+            ->editColumn('invoice_no', function ($row) {
+                $string = $row->invoice_no . ' ';
+                if (!empty($row->return_parent)) {
+                    $string .= '<a
+                    data-href="' . action('SellReturnController@show', $row->id) . '" data-container=".view_modal"
+                    class="btn btn-modal" style="color: #007bff;">R</a>';
+                }
+                if ($row->payment_status == 'pending') {
+                    $string .= '<a
+                        data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                        class="btn btn-modal" style="color: #007bff;">P</a>';
+                }
 
-        if (!empty($request->start_date)) {
-            $quotation_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $quotation_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $quotation_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $quotation_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $quotation_query->where('transactions.store_id', $store_id);
-        }
-        if (!empty($customer_id)) {
-            $quotation_query->where('transactions.customer_id', $customer_id);
-        }
+                return $string;
+            })
+            // products
+            ->addColumn('products', function ($row) {
+                $string = '';
+                foreach ($row->sell_variations as $sell_variation) {
+                    if (!empty($sell_variation)) {
+                        if ($sell_variation->name != 'Default') {
+                            $string .= $sell_variation->name . ' ' . $sell_variation->sub_sku . '<br>';
+                        } else {
+                            $string .= $sell_variation->product->name . '-' . $sell_variation->product->sku . '<br>';
+                        }
+                    }
+                }
+
+                return $string;
+            })
+            // customer_type
+            ->addColumn('customer_type', function ($row) {
+                if (!empty($row->customer->customer_type)) {
+                    return $row->customer->customer_type->name;
+                } else {
+                    return '';
+                }
+            })
+            // status
+            ->editColumn('status', function ($row) {
+                if ($row->status == 'canceled') {
+                    return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
+                } elseif ($row->status == 'final' && $row->payment_status == 'pending') {
+                    return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
+                } else {
+                    return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
+                }
+            })
+            ->editColumn('final_total', function ($row) use ($default_currency_id) {
+                if (!empty($row->return_parent)) {
+                    $final_total = number_format($row->final_total - $row->return_parent->final_total,2,'.',',');
+                } else {
+                    $final_total = number_format($row->final_total,2,'.',',');
+                }
+            //                    $final_total = preg_match('/\.\d*[1-9]+/', (string)$final_total) ? $final_total : number_format($final_total,  2, '.', ',');
+                $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+                return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+            })
+            ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
+                $amount_paid = 0;
+                if (!empty($request->method)) {
+                    $payments = $row->transaction_payments->where('method', $request->method);
+                } else {
+                    $payments = $row->transaction_payments;
+                }
+                foreach ($payments as $payment) {
+                    $amount_paid += $payment->amount;
+                }
+                $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+
+                return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+            })
+            ->addColumn('due', function ($row) use ($default_currency_id) {
+                $paid = $row->transaction_payments->sum('amount');
+                $due = $row->final_total - $paid;
+                $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+
+                return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+            })
+
+            ->addColumn('product', function ($row) {
+                $productInfo = '';
+                foreach ($row->transaction_sell_lines as $line) {
+                    $productInfo .= '(' . $line->quantity . ')';
+                    if (!empty($line->product)) {
+                        $productInfo .= $line->product->name;
+                    }
+                    $productInfo .= `<br/>`;
+                }
+                return $productInfo;
+            })
+            ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
+                $default_currency = Currency::find($default_currency_id);
+                return $row->received_currency_symbol ?? $default_currency->symbol;
+            })
+            ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
+            ->addColumn('method', function ($row) use ($payment_types, $request) {
+                $methods = '';
+                if (!empty($request->method)) {
+                    $payments = $row->transaction_payments->where('method', $request->method);
+                } else {
+                    $payments = $row->transaction_payments;
+                }
+                foreach ($payments as $payment) {
+                    if (!empty($payment->method)) {
+                        $methods .= $payment_types[$payment->method] . '<br>';
+                    }
+                }
+                return $methods;
+            })
+            ->addColumn('deliveryman', function ($row) {
+                if (!empty($row->deliveryman)) {
+                    return $row->deliveryman->employee_name;
+                } else {
+                    return '';
+                }
+            })
+            ->addColumn('store_name', '{{$store_name}}')
+            ->addColumn('ref_number', function ($row) use ($request) {
+                $ref_numbers = '';
+                if (!empty($request->method)) {
+                    $payments = $row->transaction_payments->where('method', $request->method);
+                } else {
+                    $payments = $row->transaction_payments;
+                }
+                foreach ($payments as $payment) {
+                    if (!empty($payment->ref_number)) {
+                        $ref_numbers .= $payment->ref_number . '<br>';
+                    }
+                }
+                return $ref_numbers;
+            })
+            ->editColumn('payment_status', function ($row) {
+                if ($row->payment_status == 'pending') {
+                    return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                } else {
+                    return '<span class="label label-danger">' . ucfirst($row->payment_status) . '</span>';
+                }
+            })
 
 
-        $quotations = $quotation_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->get();
+            ->editColumn('service_fee_value', '{{@num_format($service_fee_value)}}')
+            ->editColumn('created_by', '{{$created_by_name}}')
+            ->editColumn('canceled_by', function ($row) {
+                return !empty($row->canceled_by_user) ? $row->canceled_by_user->name : '';
+            })
+            ->addColumn(
+                'action',
+                function ($row) {
+                    $html = '<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">' . __('lang.action') . '
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
 
-
-        $return_query = Transaction::whereIn('transactions.type', ['sell_return'])->whereNotNull('return_parent_id')
-            ->whereIn('transactions.status', ['final']);
-
-        if (!empty($request->start_date)) {
-            $return_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $return_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $return_query->where('transactions.store_id', $store_id);
-        }
-        if (!empty($customer_id)) {
-            $return_query->where('transactions.customer_id', $customer_id);
-        }
-
-        $sell_returns = $return_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->get();
-
-        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
-        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-
-        return view('reports.customer_report')->with(compact(
-            'sales',
-            'payments',
-            'quotations',
-            'sell_returns',
-            'payment_types',
-            'customers'
-        ));
+                    if (auth()->user()->can('sale.pos.create_and_edit')) {
+                        $html .=
+                            '<li>
+                            <a data-href="' . action('SellController@print', $row->id) . '"
+                                class="btn print-invoice"><i class="dripicons-print"></i>
+                                ' . __('lang.generate_invoice') . '</a>
+                        </li>';
+                    }
+                    if (auth()->user()->can('sale.pos.create_and_edit')) {
+                        $html .=
+                            '<li>
+                            <a data-href="' . action('SellController@print', $row->id) . '?print_gift_invoice=true"
+                                class="btn print-invoice"><i class="fa fa-gift"></i>
+                                ' . __('lang.print_gift_invoice') . '</a>
+                        </li>';
+                    }
+                    $html .= '<li class="divider"></li>';
+                    if (auth()->user()->can('sale.pos.view')) {
+                        $html .=
+                            '<li>
+                            <a data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                                class="btn btn-modal"><i class="fa fa-eye"></i> ' . __('lang.view') . '</a>
+                        </li>';
+                    }
+                    $html .= '<li class="divider"></li>';
+                    if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1) {
+                        $html .=
+                            '<li>
+                            <a href="' . action('SellController@edit', $row->id) . '" class="btn"><i
+                                    class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a>
+                        </li>';
+                    }
+                    $html .= '<li class="divider"></li>';
+                    if (auth()->user()->can('return.sell_return.create_and_edit')) {
+                        if (empty($row->return_parent)) {
+                            $html .=
+                                '<li>
+                                <a href="' . action('SellReturnController@add', $row->id) . '" class="btn"><i
+                                    class="fa fa-undo"></i> ' . __('lang.sale_return') . '</a>
+                                </li>';
+                        }
+                    }
+                    $html .= '<li class="divider"></li>';
+                    if (auth()->user()->can('sale.pay.create_and_edit')) {
+                        if ($row->status != 'draft' && $row->payment_status != 'paid' && $row->status != 'canceled') {
+                            $html .=
+                                ' <li>
+                                <a data-href="' . action('TransactionPaymentController@addPayment', $row->id) . '"
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
+                                    ' . __('lang.add_payment') . '</a>
+                                </li>';
+                        }
+                    }
+                    $html .= '<li class="divider"></li>';
+                    if (auth()->user()->can('sale.pay.view')) {
+                        $html .=
+                            '<li>
+                            <a data-href="' . action('TransactionPaymentController@show', $row->id) . '"
+                                data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
+                                ' . __('lang.view_payments') . '</a>
+                            </li>';
+                    }
+                    $html .= '<li class="divider"></li>';
+                    if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1) {
+                        $html .=
+                            '<li>
+                            <a data-href="' . action('SellController@destroy', $row->id) . '"
+                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                ' . __('lang.delete') . '</a>
+                            </li>';
+                    }
+                    $html .= '</div>';
+                    return $html;
+                }
+            )
+            ->rawColumns([
+                'action',
+                'method',
+                'invoice_no',
+                'ref_number',
+                'payment_status',
+                'transaction_date',
+                'final_total',
+                'paid',
+                'due',
+                'status',
+                'store_name',
+                'products',
+                'created_by',
+            ])
+            ->make(true);
     }
+
+
+    $stores = Store::getDropdown();
+    $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+    $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
+    $customer_types = CustomerType::getDropdown();
+    $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+    $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+
+    return view('reports.customer_report')->with(compact(
+        'store_pos',
+        'products',
+        'customers',
+        'stores',
+        'customer_types',
+        'payment_status_array',
+    ));
+
+}
 
     /**
      * show the supplier report

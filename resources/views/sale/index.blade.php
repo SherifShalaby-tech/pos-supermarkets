@@ -9,6 +9,7 @@
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
                             <h3 class="print-title">@lang('lang.sales_list')</h3>
+                            <h3 class="print-title-hint" style="display:none;">sale_report</h3>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -193,10 +194,11 @@
                                     <th>@lang('lang.service')</th>
                                     <th>@lang('lang.canceled_by')</th>
                                 @endif
-                                <th>@lang('lang.commissions')</th>
+                                <th>@lang('lang.commission')</th>
                                 <th>@lang('lang.products')</th>
                                 <th>@lang('lang.sku')</th>
                                 <th>@lang('lang.sub_sku')</th>
+                                <th>@lang('lang.sale_note')</th>
                                 <th>@lang('lang.files')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
@@ -405,6 +407,10 @@
                         visible: false
                     },
                     {
+                        data: "sale_note",
+                        name: "sale_note",
+                    },
+                    {
                         data: "files",
                         name: "files",
                         orderable: false,
@@ -473,6 +479,20 @@
                 sales_table.ajax.reload();
                 get_total_details();
             });
+            $('#sales_table').on('column-visibility.dt', function (e, settings, column, state) {
+                // Here, you can use cookies or local storage to save the column visibility state
+                // Example using local storage:
+                var savedColumnPreferences = JSON.parse(localStorage.getItem('columnPreferences')) || {};
+                savedColumnPreferences[column] = state;
+                localStorage.setItem('columnPreferences', JSON.stringify(savedColumnPreferences));
+            });
+
+            // Restore column visibility preferences on page load
+            var savedColumnPreferences = JSON.parse(localStorage.getItem('columnPreferences')) || {};
+            for (var column in savedColumnPreferences) {
+                var columnIdx = dataTable.column(column).index();
+                dataTable.column(columnIdx).visible(savedColumnPreferences[column]);
+            }
         })
         $('.time_picker').focusout(function(event) {
             sales_table.ajax.reload();

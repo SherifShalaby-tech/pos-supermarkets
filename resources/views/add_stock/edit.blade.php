@@ -41,7 +41,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('status', __('lang.status') . ':*', []) !!}
-                                        {!! Form::select('status', ['received' => __('lang.received'), 'partially_received' => __('lang.partially_received'),], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('status', ['received' =>  __('lang.received'), 'partially_received' => __('lang.partially_received')], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -78,35 +78,35 @@
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-10 offset-md-1">
                                     <table class="table table-bordered table-striped table-condensed" id="product_table">
                                         <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
-                                            <th style="width: 10%" class="col-sm-8">@lang( 'lang.products' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.sku' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.quantity' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.unit' )</th>
-                                            <th style="width: 30%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
-                                            <th style="width: 30%" class="col-sm-4">@lang( 'lang.selling_price' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.change_current_stock' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
-                                        </tr>
+                                           <tr>
+                                                <th>#</th>
+                                                <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
+                                                <th style="width: 10%" class="col-sm-8">@lang( 'lang.products' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.sku' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.quantity' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.unit' )</th>
+                                                <th style="width: 30%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
+                                                <th style="width: 30%" class="col-sm-4">@lang( 'lang.selling_price' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.change_current_stock' )</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($add_stock->add_stock_lines as $product)
                                             <tr class="product_row">
                                                 <td class="row_number"></td>
-                                                <td><img src="@if(!empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                                <td><img src="@if(!empty($product->product) && !empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                                                     alt="photo" width="50" height="50"></td>
                                                 <td>
-                                                    @if($product->variation->name != "Default")
+                                                    @if(!empty($product->variation) && $product->variation->name != "Default")
                                                     <b>{{$product->variation->name}} {{$product->sub_sku}}</b>
                                                     @else
-                                                    {{$product->product->name}}
+                                                    {{!empty($product->product) ?$product->product->name:__('lang.deleted')}}
                                                     @endif
                                                      <input type="hidden"
                                                             name="add_stock_lines[{{ $loop->index }}][add_stock_line_id]"
@@ -119,14 +119,14 @@
                                                             value="{{ $product->variation_id }}">
                                                 </td>
                                                 <td>
-                                                    {{$product->variation->sub_sku}}
+                                                    {{!empty($product->variation) ?$product->variation->sub_sku:''}}
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control quantity  quantity_{{$loop->index}}" min=1 name="add_stock_lines[{{$loop->index}}][quantity]" required
+                                                    <input type="text" class="form-control quantity  quantity_{{$loop->index}}" min="{{!empty($product->product->units) && $product->product->units->pluck('name')[0]==("piece"||"Piece"||"قطعة" || "قطعه" || "" )?1:0.00001}}" name="add_stock_lines[{{$loop->index}}][quantity]" required
                                                         value="@if(isset($product->quantity)){{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{1}}@endif" index_id="{{$loop->index}}">
                                                 </td>
                                                 <td>
-                                                    {{$product->product->units->pluck('name')[0]??''}}
+                                                    {{!empty($product->product)?$product->product->units->pluck('name')[0]??'':''}}
                                                 </td>
                                                 <td>
                                                      <input type="text" class="form-control purchase_price purchase_price_{{$loop->index}}"
@@ -146,34 +146,29 @@
 
                                                 </td>
                                                 <td>
-                                                    <span
-{{--                                                        class="sub_total_span">{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}--}}
-                                                        class="sub_total_span">{{ number_format($product->sub_total,2) }}
-                                                    </span>
-                                                    <input type="hidden" class="form-control sub_total"
-                                                        name="add_stock_lines[{{ $loop->index }}][sub_total]"
-{{--                                                            value="{{preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}">--}}
-                                                        value="{{ number_format($product->sub_total,2) }}">
+                                                    <span class="sub_total_span">{{ number_format($product->sub_total,2) }}</span>
+                                                        <input type="hidden" class="form-control sub_total"
+                                                            name="add_stock_lines[{{ $loop->index }}][sub_total]"
+                                                            value="{{ number_format($product->sub_total,2) }}">
 
                                                 </td>
                                                  @php
-
-                                                           $current_stock = App\Models\ProductStore::where('product_id', $product->product_id)
-                                                               ->where('store_id', $add_stock->store_id)
-                                                               ->sum('qty_available');
-                                                @endphp
-                                                <td>
-                                                    <input type="hidden" name="current_stock" class="current_stock"
-                                                        value="@if (isset($current_stock)) {{ number_format($current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }}@else{{ 0 }} @endif">
-                                                    <span class="current_stock_text">
-                                                        @if (isset($current_stock))
-                                                            {{ number_format($current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }}@else{{ 0 }}
-                                                        @endif
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <div class="i-checks"><input name="add_stock_lines[{{$loop->index}}][stock_pricechange]" id="active" type="checkbox" class="" checked value="1"></div>
-                                                </td>
+                                                        $current_stock = App\Models\ProductStore::where('product_id', $product->product_id)
+                                                            ->where('store_id', $add_stock->store_id)
+                                                            ->sum('qty_available');
+                                                    @endphp
+                                                    <td>
+                                                        <input type="hidden" name="current_stock" class="current_stock"
+                                                            value="@if (isset($current_stock)) {{ number_format($current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }} @else{{ 0 }} @endif">
+                                                        <span class="current_stock_text">
+                                                            @if (isset($current_stock))
+                                                                {{ number_format($current_stock,App\Models\System::getProperty('numbers_length_after_dot')) }}@else{{ 0 }}
+                                                            @endif
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="i-checks"><input name="stock_pricechange" id="active" type="checkbox" class=""  value="1"></div>
+                                                    </td>
                                                 <td rowspan="2">
                                                     <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$loop->index}}"><i
                                                             class="fa fa-times"></i></button>
@@ -302,9 +297,6 @@
                                             @else
                                                 <option value="{{ $key }}">{{ $val }}</option>
                                             @endif
-                                                {{-- <option value="{{ $key }}" @selected(old('user') == $key)>
-                                                    {{ $val }}
-                                                </option> --}}
                                             @endforeach
                                         </select>
                                         {{-- {!! Form::select('source_id', $users, $add_stock->source_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!} --}}
@@ -406,7 +398,7 @@
                         </div>
 
                         <div class="col-sm-12">
-                            <button type="submit" name="submit" id="print" style="margin: 10px" value="save"
+                            <button type="btn" name="submit" id="submit-edit-save" style="margin: 10px" value="save"
                                 class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.save' )</button>
 
                         </div>
@@ -535,7 +527,6 @@
                 $('#method').attr('required', true);
                 $('#paid_on').attr('required', true);
                 $('.payment_fields').removeClass('hide');
-
             } else {
                 $('.payment_fields').addClass('hide');
             }
@@ -569,7 +560,7 @@
         });
 
         $(document).ready(function() {
-                $.ajax({
+            $.ajax({
                     method: 'get',
                     url: '/add-stock/get-source-by-type-dropdown/{{$add_stock->source_type}}' ,
                     data: {},
@@ -583,6 +574,7 @@
                         $("#source_id").selectpicker("refresh");
                     },
                 });
+            // $('#payment_status').change();
             // $('#source_type').change();
         })
         $('#source_type').change(function() {
@@ -605,5 +597,15 @@
                 tr.find('.days_before_the_expiry_date').val(15);
             }
         })
+        $(document).ready(function() {
+            $('form#edit_stock_form').submit(function() {
+                $('.quantity').each(function() {
+                    var inputValue = $(this).val();
+                    var sanitizedValue = inputValue.replace(/,/g, '');
+                    sanitizedValue= number_format(floatval(sanitizedValue), 2, '.', '');
+                    $(this).val(sanitizedValue);
+                });
+            });
+        });
     </script>
 @endsection

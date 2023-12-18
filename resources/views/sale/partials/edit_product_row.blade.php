@@ -72,8 +72,9 @@ $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
             <!-- after calculation actual discounted amount for row product row -->
         </td>
         <td style="width: 15%">
-            <div class="input-group"><span class="input-group-btn">
-                    <button type="button" class="btn btn-danger minus">
+            <div class="input-group">
+                <span class="input-group-btn">
+                   <button type="button" class="btn btn-danger minus">
                         <span class="dripicons-minus"></span>
                     </button>
                 </span>
@@ -109,7 +110,7 @@ $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     <input type="text" class="form-control product_discount_amount  discount_amount{{$product->product_id}}"
                         name="transaction_sell_line[{{$loop->index }}][product_discount_amount]" readonly
                         value="@if(!empty($product->product_discount_amount)){{@num_format($product->product_discount_amount)}}@else{{0}}@endif">
-                        </div>
+            </div>
         </div>
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 10% @endif padding:1.7rem !important;">
@@ -121,7 +122,7 @@ $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                         <option selected>select</option>
                         @if(!empty($product_all_discounts_categories))
                             @foreach($product_all_discounts_categories as $discount)
-                                    <option value="{{$discount->id}}">{{$discount->discount_category}}</option>
+                                    <option value="{{$discount->id}}"  {{(isset($product->discount_category) && $product->discount_category==$discount->discount_category)?'selected':''}}>{{$discount->discount_category}}</option>
                             @endforeach
                         @endif
                     </select>

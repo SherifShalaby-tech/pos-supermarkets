@@ -8,8 +8,11 @@ $current_stock = \App\Models\ProductStore::where('product_id', $product->id)->wh
 $stock = \App\Models\AddStockLine::where('product_id', $product->id)->where('variation_id', $product->variation_id)->latest()->first();
 $number_vs_base_unit=\App\Models\Variation::find($product->variation_id)->number_vs_base_unit;
 if($stock){
-    $purchase_price = number_format($stock->purchase_price,2);
-    $sell_price = number_format($stock->sell_price,2);
+    $purchase_price = str_replace(',', '', $stock->purchase_price);
+    $sell_price = str_replace(',', '', $stock->sell_price);
+
+    // $purchase_price = number_format($stock->purchase_price,2);
+    // $sell_price = number_format($stock->sell_price,2);
 }
 @endphp
 <tr class="product_row">
@@ -43,7 +46,7 @@ if($stock){
     </td>
     <td>
         <input type="hidden" value="{{isset($number_vs_base_unit)&&$number_vs_base_unit!=0?$number_vs_base_unit:1}}" id="number_vs_base_unit"/>
-<input type="text" class="form-control quantity quantity_{{$i}}" data-val="0" name="add_stock_lines[{{$i}}][quantity]" required
+<input type="text" class="form-control quantity quantity_{{$i}}" data-val="0" name="add_stock_lines[{{$i}}][quantity]" required min="{{ isset($product->units->pluck('name')[0]) && in_array(strtolower($product->units->pluck('name')[0]), ['piece', 'قطعة', 'قطعه', ''], true) ? 1 : 0.00001 }}"
             value="0"  index_id="{{$i}}">
     </td>
     <td>

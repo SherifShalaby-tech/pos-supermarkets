@@ -209,6 +209,7 @@ $("#submit-btn").on("click", function (e) {
                     if (response.success) {
                         swal("Success", response.msg, "success");
                         $("#sku").val("").change();
+                        $("#show_at_the_main_pos_page").prop('checked', false);
                         $("#name").val("").change();
                         $(".translations").val("").change();
 
@@ -381,12 +382,14 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
                 $.ajax({
                     method: "get",
                     url:
-                        "/category/get-dropdown?product_class_id=" +
+                        "/category/get-dropdown?type=category&product_class_id=" +
                         $("#product_class_id").val(),
                     data: {},
                     contactType: "html",
                     success: function (data_html) {
+                        console.log(data_html);
                         if (category_id) {
+                            console.log(category_id);
                             $("#category_id").empty().append(data_html);
                             $("#category_id").selectpicker("refresh");
                             $("#category_id").val(category_id);

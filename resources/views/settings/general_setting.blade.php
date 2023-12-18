@@ -274,6 +274,10 @@
                         {!! Form::text('watsapp_numbers', !empty($settings['watsapp_numbers']) ? $settings['watsapp_numbers'] : null, ['class' => 'form-control',Auth::user()->is_superadmin == 1?'':'disabled']) !!}
                     </div>
                     <div class="col-md-3">
+                        {!! Form::label('font_size_at_invoice', __('lang.font_size_at_invoice'), []) !!}
+                        {!! Form::select('font_size_at_invoice', $fonts, !empty($settings['font_size_at_invoice']) ? $settings['font_size_at_invoice'] : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
+                    </div>
+                    <div class="col-md-3">
                         <div class="i-checks">
                             <input id="show_the_window_printing_prompt" name="show_the_window_printing_prompt"
                                 type="checkbox" @if (!empty($settings['show_the_window_printing_prompt']) && $settings['show_the_window_printing_prompt'] == '1') checked @endif value="1"

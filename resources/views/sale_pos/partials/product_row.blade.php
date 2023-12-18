@@ -5,15 +5,33 @@
         @endif
         <td style="width: @if(session('system_mode')  != 'restaurant') 17%; @else 20%; @endif font-size: 13px;">
             @php
+            if($product->is_service!=1){
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
                         $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
+                        ->whereHas('transaction', function ($query) {
+                        $query->where('type', '!=', 'supplier_service');
+                        })
                         ->latest()->first();
-                        $default_sell_price=$stockLines?$stockLines->sell_price : $Variation->default_sell_price;
-                        $default_purchase_price=$stockLines?$stockLines->purchase_price : $Variation->default_purchase_price;
+                        $default_sell_price=$stockLines?$stockLines->sell_price : 0;
+                        $default_purchase_price=$stockLines?$stockLines->purchase_price : 0;
                         $cost_ratio_per_one = $stockLines ? $stockLines->cost_ratio_per_one : 0;
 
                     }
+            }else{
+                $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
+                    if($Variation){
+                        $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
+                        ->whereHas('transaction', function ($query) {
+                            $query->where('type', '!=', 'supplier_service');
+                        })
+                        ->latest()->first();
+                        $default_sell_price= $Variation->default_sell_price??0;
+                        $default_purchase_price= $Variation->default_purchase_price??0;
+                        $cost_ratio_per_one = $stockLines ? $stockLines->cost_ratio_per_one : 0;
+
+                    }
+            }
                 $product_unit = \App\Models\Product::where('id',$product->product_id)->first();
                 if($product_unit && isset($product_unit->multiple_units) ){
                     foreach ($product_unit->multiple_units as $unit) {
@@ -21,7 +39,7 @@
                         $check_unit = \App\Models\Unit::where('id',$unit)->first();
                     }
                 }
-                
+            
             @endphp
             @if($product->variation_name != "Default")
 
@@ -98,8 +116,6 @@
                     <span class="dripicons-minus"></span>
                 </button>
             </span>
-
-                // qty
                 <input type="number" class="form-control quantity  qty numkey input-number" step="any"
                        autocomplete="off" style="width: 50px;" @isset($check_unit) @if($check_unit->name == "قطعه" || $check_unit->name == "Piece") oninput="this.value = Math.round(this.value);" @endif @endisset id="quantity" 
                        @if(!$product->is_service)max="{{$product->qty_available}}"@endif
@@ -115,7 +131,7 @@
 
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 14% @else 15% @endif">
-            <input type="text" class="form-control sell_price"
+            <input type="text" class="form-control sell_price" data-variation_id="{{$product->variation_id}}"
                    name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
                    @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @elseif(env('IS_SUB_BRANCH',false)) readonly @endif
                    value="@if(isset($default_sell_price)){{@num_format(($default_sell_price) / $exchange_rate)}}@else{{0}}@endif ">

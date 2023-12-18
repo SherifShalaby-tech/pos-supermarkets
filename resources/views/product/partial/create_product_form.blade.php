@@ -20,11 +20,27 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                 </strong></label>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="i-checks">
             <input id="active" name="active" type="checkbox" checked value="1" class="form-control-custom">
             <label for="active"><strong>
                     @lang('lang.active')
+                </strong></label>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="i-checks">
+            <input id="have_weight" name="have_weight" type="checkbox"  value="1"
+                   class="form-control-custom">
+            <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="i-checks">
+            <input id="weighing_scale_barcode" name="weighing_scale_barcode" type="checkbox"
+                   @if (!empty($product->weighing_scale_barcode)) checked @endif value="1" class="form-control-custom">
+            <label for="weighing_scale_barcode"><strong>
+                    @lang('lang.weighing_scale_barcode')
                 </strong></label>
         </div>
     </div>
@@ -40,20 +56,14 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
             </label>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="i-checks">
-            <input id="have_weight" name="have_weight" type="checkbox"  value="1"
-                   class="form-control-custom">
-            <label for="have_weight"><strong>@lang('lang.have_weight')</strong></label>
-        </div>
-    </div>
+
     @php
     $products_count=App\Models\Product::where('show_at_the_main_pos_page','yes')->count();
     @endphp
     <div class="col-md-2">
         <div class="i-checks">
             <input id="show_at_the_main_pos_page" name="show_at_the_main_pos_page" type="checkbox"
-                @if (isset($products_count)&& $products_count < 40) checked @else disabled @endif value="1" class="form-control-custom">
+                @if (isset($products_count)&& $products_count > 40) disabled @endif class="form-control-custom">
             <label for="show_at_the_main_pos_page"><strong>@lang('lang.show_at_the_main_pos_page')</strong></label>
         </div>
     </div>
@@ -61,21 +71,6 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
         <div class="form-group">
             {!! Form::label('store_ids', __('lang.store'), []) !!}
             {!! Form::select('store_ids[]', $stores_select, array_keys($stores_select) , ['class' => ' selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple','id'=>'store_ids']) !!}
-        </div>
-    </div>
-    <div class="col-md-4 supplier_div">
-        <div class="form-group supplier_div">
-            {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
-            <div class="input-group my-group">
-                {!! Form::select('supplier_id', $suppliers, !empty($recent_product->supplier) ? $recent_product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                <span class="input-group-btn">
-                    @can('supplier_module.supplier.create_and_edit')
-                        <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
-                            data-href="{{ action('SupplierController@create') }}?quick_add=1"
-                            data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
-                    @endcan
-                </span>
-            </div>
         </div>
     </div>
     <div class="col-md-4">
@@ -163,7 +158,7 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('sku', __('lang.sku'), []) !!}
-            {!! Form::text('sku', null, ['class' => 'clear_input_form form-control', 'placeholder' => __('lang.sku')]) !!}
+            {!! Form::text('sku', null, ['class' => 'clear_input_form form-control','id'=>'sku', 'placeholder' => __('lang.sku')]) !!}
         </div>
     </div>
     @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
@@ -297,13 +292,6 @@ $clear_all_input_form = App\Models\System::getProperty('clear_all_input_form');
                 <input id="price_based_on_raw_material" name="price_based_on_raw_material" type="checkbox"
                     @if (!empty($recent_product) && $recent_product->price_based_on_raw_material == 1) checked @endif value="1" class="form-control-custom">
                 <label for="price_based_on_raw_material"><strong>@lang('lang.price_based_on_raw_material')</strong></label>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="i-checks">
-                <input id="buy_from_supplier" name="buy_from_supplier" type="checkbox" value="1"
-                    class="form-control-custom">
-                <label for="buy_from_supplier"><strong>@lang('lang.buy_from_supplier')</strong></label>
             </div>
         </div>
         <div class="col-md-12">

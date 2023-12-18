@@ -73,6 +73,7 @@ class LoginController extends Controller
         if (!$lastExecutionDate || $lastExecutionDate < $currentDate) {
             // Call the function or perform the desired task
             $this->notificationUtil->checkExpiary();
+            $this->notificationUtil->quantityAlert();
             // Store the current date as the last execution date
             Cache::put('last_execution_date', $currentDate, 1440); // 1440 minutes = 1 day
         }

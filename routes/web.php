@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\ProductInAdjustmentsController;
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Request;
+use App\Http\Controllers\ProductInAdjustmentsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,12 +65,13 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('product/convolutions/storeStockDamaged', 'ProductController@storeStockDamaged')->name("storeStockDamaged");
     Route::post('product/convolutions/deleteExpiryRow', 'ProductController@deleteExpiryRow')->name("deleteExpiryRow");
    Route::get('product/toggle-appearance-pos/{id}', 'ProductController@toggleAppearancePos');
-   Route::post('/update-column-visibility', 'ProductController@updateColumnVisibility');
+
 //    Route::post('product/remove_expiry/{id}', 'ProductController@send_remove_damage');
     Route::resource('product', ProductController::class);
     Route::post('product/multiDeleteRow', 'ProductController@multiDeleteRow');
     Route::post('/update-column-visibility', 'ProductController@updateColumnVisibility');
     Route::get('raw-material/add-stock/create', 'AddStockController@create');
+    Route::post('/update-stock-column-visibility', 'AddStockController@updateStockColumnVisibility');
     Route::get('raw-material/add-stock', 'AddStockController@index');
     Route::get('raw-material/add-product-row', 'RawMaterialController@addProductRow');
     Route::resource('raw-material', RawMaterialController::class);
@@ -134,9 +137,9 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('supplier/pay-supplier-due/{supplier_id}', 'SupplierController@postPayContactDue');
     Route::get('supplier/pay-supplier-due/{supplier_id}', 'SupplierController@getPayContactDue');
     Route::resource('supplier', SupplierController::class);
-    Route::get('supplier-service/update-status/{id}', 'SupplierServiceController@getUpdateStatus');
-    Route::post('supplier-service/update-status/{id}', 'SupplierServiceController@postUpdateStatus');
-    Route::resource('supplier-service', SupplierServiceController::class);
+    // Route::get('supplier-service/update-status/{id}', 'SupplierServiceController@getUpdateStatus');
+    // Route::post('supplier-service/update-status/{id}', 'SupplierServiceController@postUpdateStatus');
+    // Route::resource('supplier-service', SupplierServiceController::class);
     Route::get('supplier-category/get-dropdown', 'SupplierCategoryController@getDropdown');
     Route::resource('supplier-category', SupplierCategoryController::class);
     Route::resource('product-classification-tree', ProductClassificationTreeController::class);
@@ -196,6 +199,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('transfer/get-print/{id}', 'TransferController@print');
     Route::get('transfer/add-product-row', 'TransferController@addProductRow');
     Route::resource('transfer', TransferController::class);
+    Route::post('user/check-admin-password', [HomeController::class, 'checkAdminPassword'])->name('check_admin_password');
 
     Route::get('quotation/view-all-invoices', 'QuotationController@viewAllInvoices');
     Route::get('quotation/print/{id}', 'QuotationController@print');
@@ -227,6 +231,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('pos/get-sale-promotion-details-if-valid', 'SellPosController@getSalePromotionDetailsIfValid');
     Route::get('pos/get-transaction-details/{transaction_id}', 'SellPosController@getTransactionDetails');
     Route::post('pos/update-transaction-status-cancel/{transaction_id}', 'SellPosController@updateTransactionStatusCancel');
+    Route::post('pos/change-selling-price/{variation_id}', 'SellPosController@changeSellingPrice');
 
     Route::resource('pos', SellPosController::class);
     Route::get('dining-room/get-dining-rooms', 'DiningRoomController@getDiningRooms');
@@ -243,7 +248,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('dining-table/get-dropdown-by-dining-room/{id}', 'DiningTableController@getDropdownByDiningRoom');
     Route::resource('dining-table', DiningTableController::class);
 
-    
+
     Route::post('sale/save-import', 'SellController@saveImport');
     Route::get('sale/get-import', 'SellController@getImport');
     Route::get('sale/get-delivery-list', 'SellController@getDeliveryList');
@@ -280,6 +285,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
         Route::get('send-login-details/{employee_id}', 'EmployeeController@sendLoginDetails');
         Route::get('toggle-active/{employee_id}', 'EmployeeController@toggleActive');
         Route::get('employee/get-dropdown', 'EmployeeController@getDropdown');
+        Route::get('print/employee-barcode/{id}','EmployeeController@printEmployeeBarcode')->name('print_employee_barcode');
         Route::resource('employee', EmployeeController::class);
         Route::resource('leave-type', LeaveTypeController::class);
 
@@ -319,6 +325,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('cash/save-add-cash-out', 'CashController@saveAddCashOut');
     Route::get('cash/add-cash-in/{cash_register_id}', 'CashController@addCashIn');
     Route::post('cash/save-add-cash-in', 'CashController@saveAddCashIn');
+    Route::get('cash/show-latest-payment-details/{id}', 'CashController@showLatestPaymentDetails');
+    
     Route::resource('cash', CashController::class);
     Route::resource('cash-out', CashOutController::class);
     Route::resource('cash-in', CashInController::class);
@@ -346,8 +354,11 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('report/get-expected-payable-report', 'ReportController@getExpectedPayableReport');
     Route::get('report/get-summary-report', 'ReportController@getSummaryReport');
     Route::get('report/get-best-seller-report', 'ReportController@getBestSellerReport');
+    Route::get('report/print-product-report-table', 'ReportController@printProductReportTable');
+
     Route::get('report/view-product-details/{id}', 'ReportController@viewProductDetails');
     Route::get('report/get-product-report', 'ReportController@getProductReport');
+    Route::get('report/get-category-purchases', 'ReportController@getCategoryPurchases');
     Route::get('report/get-daily-sale-report', 'ReportController@getDailySaleReport');
     Route::get('report/get-monthly-sale-report', 'ReportController@getMonthlySaleReport');
     Route::get('report/get-daily-purchase-report', 'ReportController@getDailyPurchaseReport');
@@ -359,7 +370,9 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('report/get-store-stock-chart', 'ReportController@getStoreStockChart');
     Route::get('report/get-product-quantity-alert-report', 'ReportController@getProductQuantityAlertReport');
     Route::get('report/get-user-report', 'ReportController@getUserReport');
+    // +++++++++++ getCustomerReport +++++++++++
     Route::get('report/get-customer-report', 'ReportController@getCustomerReport');
+    Route::post('report/get-customer-report', 'ReportController@getCustomerReport');
     Route::get('report/get-supplier-report', 'ReportController@getSupplierReport');
     Route::get('report/get-due-report', 'ReportController@getDueReport');
     Route::get('report/get-pos-details-by-store', 'ReportController@getPosDetailsByStores');
@@ -392,6 +405,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::post('terms-and-conditions/update-invoice-tac-setting', 'TermsAndConditionsController@updateInvoiceTacSetting');
     Route::get('terms-and-conditions/get-details/{id}', 'TermsAndConditionsController@getDetails');
+    Route::get('make-default/{id}', 'TermsAndConditionsController@makeDefault');
     Route::resource('terms-and-conditions', TermsAndConditionsController::class);
 
     Route::get('notification/mark-as-read/{id}', 'NotificationController@markAsRead');

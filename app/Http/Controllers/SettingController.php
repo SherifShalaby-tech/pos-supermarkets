@@ -122,13 +122,13 @@ class SettingController extends Controller
 
         $timezone_list = $this->commonUtil->allTimeZones();
         $terms_and_conditions = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
-
+        $fonts=System::getFonts();
         return view('settings.general_setting')->with(compact(
             'settings',
             'currencies',
             'timezone_list',
             'terms_and_conditions',
-            'languages'
+            'languages','fonts'
         ));
     }
     public function updateGeneralSetting(Request $request)
@@ -173,6 +173,10 @@ class SettingController extends Controller
             System::updateOrCreate(
                 ['key' => 'currency'],
                 ['value' => $request->currency, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
+            System::updateOrCreate(
+                ['key' => 'font_size_at_invoice'],
+                ['value' => $request->font_size_at_invoice, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
             if (!empty($request->currency)) {
                 $currency = Currency::find($request->currency);
@@ -409,6 +413,7 @@ class SettingController extends Controller
     public function postWeighingScaleSetting(Request $request)
     {
         try {
+//            dd($request->weighing_scale_setting);
             System::updateOrCreate(
                 ['key' => 'weighing_scale_setting'],
                 ['value' => json_encode($request->weighing_scale_setting), 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]

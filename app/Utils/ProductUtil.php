@@ -580,7 +580,7 @@ class ProductUtil extends Util
             // $product = $product->addSelect();
             $products[]=$product;
         }
-        
+
 
         return $products;
     }
@@ -634,7 +634,7 @@ class ProductUtil extends Util
      * @return Obj
      */
     public function getDetailsFromProductByStore($product_id, $variation_id = null, $store_id = null,$batch_number_id=null)
-    {  
+    {
         $product = Product::
         leftjoin('variations as v', 'products.id', '=', 'v.product_id')
         ->leftjoin('taxes', 'products.tax_id', '=', 'taxes.id')
@@ -1153,7 +1153,7 @@ class ProductUtil extends Util
                     'bounce_manufacturing_date' => $line['bounce_manufacturing_date'],
                     'bounce_batch_number' => $line['bounce_batch_number'],
                 ];
-              
+
                 $add_stock = AddStockLine::create($add_stock_data);
                 $qty =  $this->num_uf($line['quantity']);
                 if($add_stock){
@@ -1222,7 +1222,7 @@ class ProductUtil extends Util
     } --*/
     public function createOrUpdateAddStockLines($add_stocks, $transaction,$batch_row=null)
     {
-        
+
         $keep_lines_ids = [];
         $batch_numbers=[];
         $qty=0;
@@ -1232,7 +1232,7 @@ class ProductUtil extends Util
         foreach ($add_stocks as $line) {
             if( $transaction->discount_amount || $transaction->other_payments || $transaction->other_expenses){
                 $all_cost_percentage = ((($line['quantity'] * $line['purchase_price'])*100) / $transaction->grand_total); //percentage
-                
+
                 $discount_amount_per_line =  !empty($transaction->discount_amount) ? ($transaction->discount_amount * $all_cost_percentage /100 ): 0;
                 $other_payments_per_line = !empty($transaction->other_payments) ? ($transaction->other_payments * $all_cost_percentage /100) : 0;
                 $other_expenses_per_line = !empty($transaction->other_expenses) ? ($transaction->other_expenses * $all_cost_percentage /100) : 0;
@@ -1263,7 +1263,8 @@ class ProductUtil extends Util
                 $add_stock->bounce_expiry_date = $line['bounce_expiry_date'];
                 $add_stock->bounce_manufacturing_date = $line['bounce_manufacturing_date'];
                 $add_stock->bounce_batch_number = $line['bounce_batch_number'];
-                $add_stock->cost_ratio_per_one = $this->num_uf($all_cost_ratio / $line['quantity']) ?? 0;
+                $add_stock->cost_ratio_per_one = $this->num_uf($all_cost_ratio / $this->num_uf($line['quantity'])) ?? 0;
+                $add_stock->updated_by = Auth::user()->id;
                 $add_stock->save();
                 $keep_lines_ids[] = $line['add_stock_line_id'];
                 $batch_numbers[]=$line['batch_number'];
@@ -1276,25 +1277,25 @@ class ProductUtil extends Util
                     'variation_id' => $line['variation_id'],
                     'quantity' => $line['bounce_qty'] > 0 ? $number_vs_base_unit *($this->num_uf($line['quantity'])+$line['bounce_qty']): $this->num_uf($line['quantity']),
                     'purchase_price' => $line['bounce_qty'] > 0 ? $line['bounce_purchase_price'] : $this->num_uf($line['purchase_price']),
-                    'final_cost' => $this->num_uf($line['final_cost']),
-                    'sub_total' => $this->num_uf($line['sub_total']),
-                    'batch_number' => $line['batch_number'],
+                    'final_cost' => isset($line['final_cost'])?$this->num_uf($line['final_cost']):0,
+                    'sub_total' => isset($line['sub_total'])?$this->num_uf($line['sub_total']):0,
+                    'batch_number' => isset($line['batch_number'])?$line['batch_number']:null,
                     'manufacturing_date' => !empty($line['manufacturing_date']) ? $this->uf_date($line['manufacturing_date']) : null,
                     'expiry_date' => !empty($line['expiry_date']) ? $this->uf_date($line['expiry_date']) : null,
-                    'expiry_warning' => $line['expiry_warning'],
-                    'convert_status_expire' => $line['convert_status_expire'],
-                    'sell_price' => $line['selling_price'],
-                    'bounce_qty' => $line['bounce_qty'],
-                    'profit_bounce' => $line['bounce_profit'],
-                    'bounce_purchase_price' => $line['bounce_purchase_price'],
-                    'bounce_convert_status_expire' => $line['bounce_convert_status_expire'],
-                    'bounce_expiry_warning' => $line['bounce_expiry_warning'],
-                    'bounce_expiry_date' => $line['bounce_expiry_date'],
-                    'bounce_manufacturing_date' => $line['bounce_manufacturing_date'],
-                    'bounce_batch_number' => $line['bounce_batch_number'],
+                    'expiry_warning' => isset($line['expiry_warning'])?$line['expiry_warning']:null,
+                    'convert_status_expire' => isset($line['convert_status_expire'])?$line['convert_status_expire']:null,
+                    'sell_price' => isset($line['selling_price'])?$line['selling_price']:null,
+                    'bounce_qty' => isset($line['bounce_qty'])?$line['bounce_qty']:null,
+                    'profit_bounce' => isset($line['bounce_profit'])?$line['bounce_profit']:null,
+                    'bounce_purchase_price' => isset($line['bounce_purchase_price'])?$line['bounce_purchase_price']:null,
+                    'bounce_convert_status_expire' =>isset($line['bounce_convert_status_expire'])? $line['bounce_convert_status_expire']:null,
+                    'bounce_expiry_warning' =>isset($line['bounce_expiry_warning'])? $line['bounce_expiry_warning']:null,
+                    'bounce_expiry_date' => isset($line['bounce_expiry_date'])?$line['bounce_expiry_date']:null,
+                    'bounce_manufacturing_date' => isset($line['bounce_manufacturing_date'])?$line['bounce_manufacturing_date']:null,
+                    'bounce_batch_number' => isset($line['bounce_batch_number'])?$line['bounce_batch_number']:null,
                     'cost_ratio_per_one' => $this->num_uf($all_cost_ratio / $line['quantity']) ?? 0,
                 ];
-              
+
                 $add_stock = AddStockLine::create($add_stock_data);
                 // $qty =  $this->num_uf($line['quantity']);
                 $batch_qty=0;
@@ -1313,8 +1314,8 @@ class ProductUtil extends Util
                                     'final_cost' => $this->num_uf($batch['batch_final_cost']),
                                     'sub_total' => $this->num_uf($line['sub_total']),
                                     'batch_number' => $batch['new_batch_number'],
-                                    'manufacturing_date' => !empty($batch['batch_manufacturing_date']) ? $this->uf_date($line['manufacturing_date']) : null,
-                                    'expiry_date' => !empty($batch['batch_expiry_date']) ? $this->uf_date($line['batch_expiry_date']) : null,
+                                    'manufacturing_date' => !empty($batch['batch_manufacturing_date']) ? $this->uf_date($batch['batch_manufacturing_date']) : null,
+                                    'expiry_date' => !empty($batch['batch_expiry_date']) ? $this->uf_date($batch['batch_expiry_date']) : null,
                                     'expiry_warning' => $batch['batch_expiry_warning'],
                                     'convert_status_expire' => $line['convert_status_expire'],
                                     'sell_price' => $batch['batch_selling_price'],
@@ -1332,12 +1333,12 @@ class ProductUtil extends Util
                                 $add_stock_batch = AddStockLine::create($add_stock_batch_data);
                                 $batch_numbers[]=$add_stock_batch->batch_number;
                                 $batch_qty+= $number_vs_base_unit * $this->num_uf($batch['batch_quantity']);
-                                
+
                                 // return $add_stock_batch;
                         }
 
                         }
-                        
+
                     }
                     $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $batch_qty, 0);
                     $batch_qty=0;
@@ -1351,18 +1352,28 @@ class ProductUtil extends Util
                 $qty =  $number_vs_base_unit *$this->num_uf($line['quantity']);
                 $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $qty, 0);
             }
-            if(!empty($line['stock_pricechange'])){
+            if(!empty($line['stock_pricechange']) && $line['selling_price']>0){
                 AddStockLine::where('variation_id',$line['variation_id'])
                     ->whereColumn('quantity',">",'quantity_sold')->update([
                         'sell_price' => $line['selling_price'],
-                        'purchase_price'=>$line['bounce_qty'] > 0 ? $line['bounce_purchase_price']:$this->num_uf($line['purchase_price'])
+                        'updated_by'=>Auth::user()->id,
+
+                        // 'purchase_price'=>$line['bounce_qty'] > 0 ? $line['bounce_purchase_price']:$this->num_uf($line['purchase_price'])
                     ]);
             }
             }
         }
         // return $keep_lines_ids;
         if (!empty($keep_lines_ids)) {
-            $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)->whereNotIn('batch_number',$batch_numbers)->whereNotIn('id', $keep_lines_ids)->get();
+            $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)
+            ->where(function ($query) use ($batch_numbers, $keep_lines_ids) {
+                $query->whereNotIn('id', $keep_lines_ids)
+                ->orWhereNotIn('batch_number', $batch_numbers);
+                // if(!empty($batch_numbers)){
+                //     $query->whereNotIn('batch_number', $batch_numbers);
+                // }
+            })
+            ->get();
             foreach ($deleted_lines as $deleted_line) {
                 if ($deleted_line->quantity_sold != 0) {
                     $product_name = Product::find($deleted_line->product_id)->name ?? '';
@@ -1802,46 +1813,62 @@ class ProductUtil extends Util
      * @param int $store_id
      * @return void
      */
+    // public function getCurrentStockValueByStore($store_id = null)
+    // {
+    //     if(!$store_id){
+    //         $stores = Store::get();
+    //         $current_stock_value = 0;
+    //         foreach($stores as $store){
+    //             $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+    //             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+    //             ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+
+    //             ->where('is_service', 0)
+    //             ->where('product_stores.store_id', $store->id)
+    //             ->where('add_stock_lines.purchase_price','>',0)
+    //             ;
+    //             $query->groupBy('variations.id')->select(
+    //                 DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+    //             );
+
+    //             $current_stock_value += $query->get()->sum('current_stock_value');
+    //         }
+    //         return $current_stock_value;
+    //     }
+
+    //     $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+    //         ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+    //         ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
+    //         ->where('product_stores.store_id', $store_id)
+    //         ->where('is_service', 0)
+    //         ->where('add_stock_lines.purchase_price','>',0)
+    //         ;
+
+    //     $query->groupBy('variations.id')->select(
+    //         DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+    //     );
+
+    //     $current_stock_value = $query->get()->sum('current_stock_value');
+    //     // dd($current_stock_value);
+    //     return $current_stock_value ;
+    // }
     public function getCurrentStockValueByStore($store_id = null)
     {
-        if(!$store_id){
-            $stores = Store::get();
-            $current_stock_value = 0;
-            foreach($stores as $store){
-                $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-                ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
-                ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
-                
-                ->where('is_service', 0)
-                ->where('product_stores.store_id', $store->id)
-                ->where('add_stock_lines.purchase_price','>',0)
-                ;
-                $query->groupBy('variations.id')->select(
-                    DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
-                );
-
-                $current_stock_value += $query->get()->sum('current_stock_value');
-            }
-            return $current_stock_value;
-        }
-        
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
             ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
-            ->where('product_stores.store_id', $store_id)
-            ->where('is_service', 0)
-            ->where('add_stock_lines.purchase_price','>',0)
-            ;
-        
-        $query->groupBy('variations.id')->select(
-            DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+            ->where('is_service', 0);
+        if (!empty($store_id)) {
+            $query->where('product_stores.store_id', $store_id);
+        }
+        $query->select(
+            DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value'),
         );
 
-        $current_stock_value = $query->get()->sum('current_stock_value');
-        // dd($current_stock_value);
-        return $current_stock_value ;
-    }
+        $current_stock_value = $query->first();
 
+        return $current_stock_value ? $current_stock_value->current_stock_value : 0;
+    }
     public function getCurrentStockValueProductByStore($store_id = null)
     {
         if(!$store_id){
@@ -1851,21 +1878,21 @@ class ProductUtil extends Util
                 $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
                 ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
                 ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
-                
+
                 ->where('is_service', 0)
                 ->where('is_raw_material',0)
                 ->where('product_stores.store_id', $store->id)
                 ->where('add_stock_lines.purchase_price','>',0)
                 ;
                 $query->groupBy('variations.id')->select(
-                    DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+                    DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value'),
                 );
 
                 $current_stock_value_product += $query->get()->sum('current_stock_value');
             }
             return $current_stock_value_product;
         }
-        
+
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
             ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
@@ -1874,9 +1901,9 @@ class ProductUtil extends Util
             ->where('is_raw_material',0)
             ->where('add_stock_lines.purchase_price','>',0)
             ;
-        
+
         $query->groupBy('variations.id')->select(
-            DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+            DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value'),
         );
 
         $current_stock_value_product = $query->get()->sum('current_stock_value');
@@ -1892,21 +1919,21 @@ class ProductUtil extends Util
                 $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
                 ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
                 ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
-                
+
                 ->where('is_service', 0)
                 ->where('is_raw_material',1)
                 ->where('product_stores.store_id', $store->id)
                 ->where('add_stock_lines.purchase_price','>',0)
                 ;
                 $query->groupBy('variations.id')->select(
-                    DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+                    DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value'),
                 );
 
                 $current_stock_value_material += $query->get()->sum('current_stock_value');
             }
             return $current_stock_value_material;
         }
-        
+
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
             ->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id')
@@ -1915,9 +1942,9 @@ class ProductUtil extends Util
             ->where('is_raw_material',0)
             ->where('add_stock_lines.purchase_price','>',0)
             ;
-        
+
         $query->groupBy('variations.id')->select(
-            DB::raw('(product_stores.qty_available ) * add_stock_lines.purchase_price as current_stock_value'),
+            DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.purchase_price) as current_stock_value'),
         );
 
         $current_stock_value_material = $query->get()->sum('current_stock_value');
@@ -2099,9 +2126,11 @@ class ProductUtil extends Util
             'variations.name as variation',
             'variations.default_sell_price',
             'variations.sub_sku',
+            'products.weighing_scale_barcode'
         );
 
         $query->groupBy('variations.id');
+//        dd($query->get());
         return $query
             ->get();
     }

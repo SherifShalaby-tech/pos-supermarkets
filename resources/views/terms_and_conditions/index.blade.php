@@ -51,6 +51,7 @@
                         <tr>
                             <th>@lang('lang.name')</th>
                             <th>@lang('lang.description')</th>
+                            <th>@lang('lang.show')</th>
                             <th>@lang('lang.name_of_creator')</th>
                             <th class="notexport">@lang('lang.action')</th>
                         </tr>
@@ -64,6 +65,11 @@
                             </td>
                             <td>
                                 {!! $terms_and_condition->description !!}
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input make-default" type="checkbox" data-id="{{$terms_and_condition->id}}" value="{{$terms_and_condition->default}}" {{($terms_and_condition->default =="1"?'checked':'')}}>
+                                </div>
                             </td>
                             <td>
                                 {{$terms_and_condition->created_by}}
@@ -105,5 +111,17 @@
     $('.view_modal').on('hidden.bs.modal', function () {
         tinymce.remove();
     });
+    $(document).on('change','.make-default',function(){
+        var isChecked = $(this).prop('checked');
+        console.log(isChecked);
+        $.ajax({
+            type: "get",
+            url: "/make-default/"+$(this).data('id'),
+            data:{isChecked:isChecked},
+            success: function (response) {
+                // swal('Success', response.msg, 'success')
+            }
+        });
+    })
 </script>
 @endsection

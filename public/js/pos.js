@@ -83,6 +83,9 @@ function getFilterCheckboxValue(class_name) {
     });
     return val;
 }
+function roundToNearestQuarter(number) {
+    return Math.round(number * 4) / 4;
+}
 $(document).on("click", ".filter-by", function () {
     let type = $(this).data("type");
     let id = $(this).data("id");
@@ -246,7 +249,16 @@ $(document).ready(function () {
                             .data("ui-autocomplete")
                             ._trigger("select", "autocompleteselect", ui);
                         $(this).autocomplete("close");
-                    } else if (ui.content.length == 0) {
+                    }
+                    else if (ui.content.length == 0) {
+                        get_label_product_row(
+                            null,
+                            null,
+                            null,
+                            1,
+                            0,
+                            $("#search_product").val()
+                        );
                         // swal("Product not found");
                     }
                 },
@@ -415,7 +427,7 @@ function get_label_product_row(
                 customer_id: customer_id,
                 currency_id: currency_id,
                 edit_quantity: edit_quantity,
-                weighing_scale_barcode: weighing_scale_barcode,
+                weighing_scale_barcode: $("#search_product").val(),
                 dining_table_id: $("#dining_table_id").val(),
                 is_direct_sale: $("#is_direct_sale").val(),
                 batch_number_id:add_stock_lines_id
@@ -618,6 +630,7 @@ function calculate_sub_totals() {
     var total_coupon_discount = 0;
     var sales_promotion_cost = __read_number($("#sales_promotion-cost"));
     let item_quantity=0;
+    let total_before_discount=0;
     var exchange_rate = __read_number($("#exchange_rate"));
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
@@ -626,6 +639,7 @@ function calculate_sub_totals() {
         let price_hidden = __read_number($(tr).find(".price_hidden"));
         let sub_total = 0;
         if (sell_price > price_hidden) {
+
             let price_discount = (sell_price - price_hidden);
 
             $(tr).find(".product_discount_type").val("surplus");
@@ -664,6 +678,8 @@ function calculate_sub_totals() {
         __write_number($(tr).find(".sub_total"), sub_total);
         let product_discount = calculate_product_discount(tr);
         product_discount_total += product_discount;
+
+        total_before_discount+=sub_total;
         sub_total -= product_discount;
         grand_total += sub_total;
         $(".grand_total_span").text(
@@ -682,8 +698,8 @@ function calculate_sub_totals() {
         $(tr)
             .find(".sub_total_span")
             .text(__currency_trans_from_en(sub_total, false));
-        total += sub_total;
-
+        total +=  roundToNearestQuarter(sub_total);
+        console.log(total)
         item_count++;
 
         calculate_promotion_discount(tr);
@@ -709,6 +725,7 @@ function calculate_sub_totals() {
     });
     // $("#subtotal").text(total);
     // $(".subtotal").text(total);
+    $('#total_before_discount').text(__currency_trans_from_en(total_before_discount, false));
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $(".subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
@@ -837,7 +854,7 @@ function calculate_product_discount(tr) {
         discount = quantity * value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     if(exchange_rate==0){
         exchange_rate=1;
@@ -859,7 +876,7 @@ function calculate_promotion_discount(tr) {
         discount = value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     discount = discount / exchange_rate;
     $(tr).find(".promotion_discount_amount").val(discount);
@@ -906,7 +923,7 @@ function calculate_coupon_discount(tr) {
         discount = value;
     }
     if (type == "percentage") {
-        discount = __get_percent_value(sub_total, value);
+        discount = __get_percent_value(roundToNearestQuarter(sub_total), value);
     }
     discount = discount / exchange_rate;
     $(tr).find(".coupon_discount_amount").val(discount);
@@ -991,6 +1008,31 @@ $(document).on("change", ".sell_price", function () {
     if (sell_price < purchase_price) {
         swal(LANG.warning, LANG.sell_price_less_than_purchase_price, "warning");
         return;
+    }else{
+        //change price
+        swal({
+            title: "",
+            text: LANG.change_price_permenatly,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+        })
+        .then((isConfirm) => {
+            if (isConfirm) {
+            $.ajax({
+                type: "post",
+                url: "/pos/change-selling-price/"+$(this).data('variation_id'),
+                data: {sell_price:sell_price},
+                success: function (response) {
+                    swal("Success", response.msg, "success");
+                }
+            });
+            } else {
+                swal("Success", LANG.price_changed_only_for_this_transaction, "success");
+            }
+        });
     }
 });
 $(document).on("change", ".quantity, .sell_price", function () {
@@ -1420,7 +1462,7 @@ $(document).on("click", "#draft-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
-
+    $("#pay_from_balance").val(3);
     pos_form_obj.submit();
 });
 $(document).on("click", "#pay-later-btn", function (e) {
@@ -1429,8 +1471,21 @@ $(document).on("click", "#pay-later-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
-    $("#amount").val(0);
-    pos_form_obj.submit();
+    // Get the text content of the element with the class "customer_balance"
+    var balanceText = $(".customer_balance").text();
+
+    // Convert the text content to a number
+    var balance = parseFloat(balanceText);
+
+    // if(balance > 0){
+    //     $("#pay_from_balance").val(2);
+    //     pos_form_obj.submit();
+    // }else{
+        $("#amount").val(0);
+        pos_form_obj.submit();
+    // }
+    
+    
 });
 $(document).on("click", "#quick-pay-btn", function (e) {
     //Check if product is present or not.
@@ -1438,6 +1493,7 @@ $(document).on("click", "#quick-pay-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
+    $("#pay_from_balance").val("1")
     pos_form_obj.submit();
 });
 $("button#submit-btn").click(function () {
@@ -1449,14 +1505,27 @@ $("button#submit-btn").click(function () {
 
     $(this).attr("disabled", true);
     $("#add-payment").modal("hide");
+    $("#pay_from_balance").val("1")
     pos_form_obj.submit();
     setTimeout(() => {
         $("#submit-btn").attr("disabled", false);
     }, 2000);
 });
+var updateBtnClicked = false;
 $("button#update-btn").click(function () {
-    $("#is_edit").val("");
-    pos_form_obj.submit();
+        // Check if the button has not been clicked yet
+        if (!updateBtnClicked) {
+            // Perform the desired action
+            $("#is_edit").val("");
+            pos_form_obj.submit();
+    
+            // Set the flag to true to indicate the button has been clicked
+            updateBtnClicked = true;
+    
+            // Disable the button after it has been clicked
+            $(this).prop('disabled', true);
+        }
+    
 });
 
 $(document).ready(function () {
@@ -1464,10 +1533,23 @@ $(document).ready(function () {
         submitHandler: function (form) {
             $("#pos-save").attr("disabled", "true");
             var data = $(form).serialize();
-            data =
+            var balanceText = $(".customer_balance").text();
+
+            // Convert the text content to a number
+            var balance = parseFloat(balanceText);
+        
+            if(balance > 0){
+                data =
+                data +"&pay_from_balance="+$("#pay_from_balance").val()+
+                "&terms_and_condition_id=" +
+                $("#terms_and_condition_id").val();
+            }else{
+                data =
                 data +
                 "&terms_and_condition_id=" +
                 $("#terms_and_condition_id").val();
+            }
+            
             var url = $(form).attr("action");
             $.ajax({
                 method: "POST",
@@ -1538,7 +1620,7 @@ $(document).ready(function () {
 
                         reset_pos_form();
                         getFilterProductRightSide();
-                        get_recent_transactions();
+                        // get_recent_transactions();
                     } else {
                         toastr.error(result.msg);
                     }
@@ -1805,136 +1887,7 @@ $(document).ready(function () {
                 });
         },
     });
-    recent_transaction_table = $("#recent_transaction_table").DataTable({
-        lengthChange: true,
-        paging: true,
-        info: false,
-        bAutoWidth: false,
-        language: {
-            url: dt_lang_url,
-        },
-        lengthMenu: [
-            [10, 25, 50, 75, 100, 200, 500, -1],
-            [10, 25, 50, 75, 100, 200, 500, "All"],
-        ],
-        dom: "lBfrtip",
-        stateSave: true,
-        buttons: buttons,
-        processing: true,
-        serverSide: true,
-        aaSorting: [[0, "desc"]],
-        initComplete: function () {
-            $(this.api().table().container())
-                .find("input")
-                .parent()
-                .wrap("<form>")
-                .parent()
-                .attr("autocomplete", "off");
-        },
-        ajax: {
-            url: "/pos/get-recent-transactions",
-            data: function (d) {
-                d.start_date = $("#rt_start_date").val();
-                d.end_date = $("#rt_end_date").val();
-                d.method = $("#rt_method").val();
-                d.created_by = $("#rt_created_by").val();
-                d.customer_id = $("#rt_customer_id").val();
-                d.deliveryman_id = $("#rt_deliveryman_id").val();
-            },
-        },
-        columnDefs: [
-            {
-                targets: [13],
-                orderable: false,
-                searchable: false,
-            },
-        ],
-        columns: [
-            { data: "transaction_date", name: "transaction_date" },
-            { data: "invoice_no", name: "invoice_no" },
-            {
-                data: "received_currency_symbol",
-                name: "received_currency_symbol",
-                searchable: false,
-            },
-            { data: "final_total", name: "final_total" },
-            { data: "customer_type_name", name: "customer_types.name" },
-            { data: "customer_name", name: "customers.name" },
-            { data: "mobile_number", name: "customers.mobile_number" },
-            { data: "method", name: "transaction_payments.method" },
-            { data: "ref_number", name: "transaction_payments.ref_number" },
-            { data: "status", name: "transactions.status" },
-            { data: "payment_status", name: "transactions.payment_status" },
-            { data: "deliveryman_name", name: "deliveryman.employee_name" },
-            { data: "created_by", name: "users.name" },
-            { data: "canceled_by", name: "canceled_by" },
-            { data: "action", name: "action" },
-        ],
-        createdRow: function (row, data, dataIndex) {},
-        footerCallback: function (row, data, start, end, display) {
-            var intVal = function (i) {
-                return typeof i === "string"
-                    ? i.replace(/[\$,]/g, "") * 1
-                    : typeof i === "number"
-                    ? i
-                    : 0;
-            };
 
-            this.api()
-                .columns(".currencies", {
-                    page: "current",
-                })
-                .every(function () {
-                    var column = this;
-                    let currencies_html = "";
-                    $.each(currency_obj, function (key, value) {
-                        currencies_html += `<h6 class="footer_currency" data-is_default="${value.is_default}"  data-currency_id="${value.currency_id}">${value.symbol}</h6>`;
-                        $(column.footer()).html(currencies_html);
-                    });
-                });
-
-            this.api()
-                .columns(".sum", { page: "current" })
-                .every(function () {
-                    var column = this;
-                    var currency_total = [];
-                    $.each(currency_obj, function (key, value) {
-                        currency_total[value.currency_id] = 0;
-                    });
-                    column.data().each(function (group, i) {
-                        b = $(group).text();
-                        currency_id = $(group).data("currency_id");
-
-                        $.each(currency_obj, function (key, value) {
-                            if (currency_id == value.currency_id) {
-                                currency_total[value.currency_id] += intVal(b);
-                            }
-                        });
-                    });
-                    var footer_html = "";
-                    $.each(currency_obj, function (key, value) {
-                        footer_html += `<h6 class="currency_total currency_total_${
-                            value.currency_id
-                        }" data-currency_id="${
-                            value.currency_id
-                        }" data-is_default="${
-                            value.is_default
-                        }" data-conversion_rate="${
-                            value.conversion_rate
-                        }" data-base_conversion="${
-                            currency_total[value.currency_id] *
-                            value.conversion_rate
-                        }" data-orig_value="${
-                            currency_total[value.currency_id]
-                        }">${__currency_trans_from_en(
-                            currency_total[value.currency_id],
-                            false
-                        )}</h6>`;
-                    });
-                    $(column.footer()).html(footer_html);
-                });
-        },
-    });
     draft_table = $("#draft_table").DataTable({
         lengthChange: true,
         paging: true,
@@ -2114,7 +2067,8 @@ $(document).on("shown.bs.modal", "#contact_details_modal", function () {
     getCustomerPointDetails();
 });
 $(document).on("shown.bs.modal", "#recentTransaction", function () {
-    recent_transaction_table.ajax.reload();
+    // recent_transaction_table.ajax.reload();
+    get_recent_transactions();
 });
 $(document).on("click", "#view-draft-btn", function () {
     $("#draftTransaction").modal("show");
@@ -2145,12 +2099,146 @@ $(document).ready(function () {
         "change",
         "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by, #rt_method, #rt_deliveryman_id",
         function () {
-            get_recent_transactions();
+            // get_recent_transactions();
         }
     );
 });
+$(document).on('change', '.filter_transactions', function() {
+    get_recent_transactions();
+})
 function get_recent_transactions() {
-    recent_transaction_table.ajax.reload();
+    // recent_transaction_table.ajax.reload();
+     $('#recent_transaction_table').DataTable().clear().destroy();
+    recent_transaction_table = $("#recent_transaction_table").DataTable({
+        lengthChange: true,
+        paging: true,
+        info: false,
+        bAutoWidth: false,
+        language: {
+            url: dt_lang_url,
+        },
+        lengthMenu: [
+            [10, 25, 50, 75, 100, 200, 500, -1],
+            [10, 25, 50, 75, 100, 200, 500, "All"],
+        ],
+        dom: "lBfrtip",
+        stateSave: true,
+        buttons: buttons,
+        processing: true,
+        serverSide: true,
+        aaSorting: [[0, "desc"]],
+        initComplete: function () {
+            $(this.api().table().container())
+                .find("input")
+                .parent()
+                .wrap("<form>")
+                .parent()
+                .attr("autocomplete", "off");
+        },
+        ajax: {
+            url: "/pos/get-recent-transactions",
+            data: function (d) {
+                d.start_date = $("#rt_start_date").val();
+                d.end_date = $("#rt_end_date").val();
+                d.method = $("#rt_method").val();
+                d.created_by = $("#rt_created_by").val();
+                d.customer_id = $("#rt_customer_id").val();
+                d.deliveryman_id = $("#rt_deliveryman_id").val();
+            },
+        },
+        columnDefs: [
+            {
+                targets: [13],
+                orderable: false,
+                searchable: false,
+            },
+        ],
+        columns: [
+            { data: "transaction_date", name: "transaction_date" },
+            { data: "invoice_no", name: "invoice_no" },
+            {
+                data: "received_currency_symbol",
+                name: "received_currency_symbol",
+                searchable: false,
+            },
+            { data: "final_total", name: "final_total" },
+            { data: "customer_type_name", name: "customer_types.name" },
+            { data: "customer_name", name: "customers.name" },
+            { data: "mobile_number", name: "customers.mobile_number" },
+            { data: "method", name: "transaction_payments.method" },
+            { data: "ref_number", name: "transaction_payments.ref_number" },
+            { data: "status", name: "transactions.status" },
+            { data: "payment_status", name: "transactions.payment_status" },
+            { data: "deliveryman_name", name: "deliveryman.employee_name" },
+            { data: "created_by", name: "users.name" },
+            { data: "canceled_by", name: "canceled_by" },
+            { data: "action", name: "action" },
+        ],
+        createdRow: function (row, data, dataIndex) {},
+        footerCallback: function (row, data, start, end, display) {
+            var intVal = function (i) {
+                return typeof i === "string"
+                    ? i.replace(/[\$,]/g, "") * 1
+                    : typeof i === "number"
+                    ? i
+                    : 0;
+            };
+
+            this.api()
+                .columns(".currencies", {
+                    page: "current",
+                })
+                .every(function () {
+                    var column = this;
+                    let currencies_html = "";
+                    $.each(currency_obj, function (key, value) {
+                        currencies_html += `<h6 class="footer_currency" data-is_default="${value.is_default}"  data-currency_id="${value.currency_id}">${value.symbol}</h6>`;
+                        $(column.footer()).html(currencies_html);
+                    });
+                });
+
+            this.api()
+                .columns(".sum", { page: "current" })
+                .every(function () {
+                    var column = this;
+                    var currency_total = [];
+                    $.each(currency_obj, function (key, value) {
+                        currency_total[value.currency_id] = 0;
+                    });
+                    column.data().each(function (group, i) {
+                        b = $(group).text();
+                        currency_id = $(group).data("currency_id");
+
+                        $.each(currency_obj, function (key, value) {
+                            if (currency_id == value.currency_id) {
+                                currency_total[value.currency_id] += intVal(b);
+                            }
+                        });
+                    });
+                    var footer_html = "";
+                    $.each(currency_obj, function (key, value) {
+                        footer_html += `<h6 class="currency_total currency_total_${
+                            value.currency_id
+                        }" data-currency_id="${
+                            value.currency_id
+                        }" data-is_default="${
+                            value.is_default
+                        }" data-conversion_rate="${
+                            value.conversion_rate
+                        }" data-base_conversion="${
+                            currency_total[value.currency_id] *
+                            value.conversion_rate
+                        }" data-orig_value="${
+                            currency_total[value.currency_id]
+                        }">${__currency_trans_from_en(
+                            currency_total[value.currency_id],
+                            false
+                        )}</h6>`;
+                    });
+                    $(column.footer()).html(footer_html);
+                });
+        },
+    });
 }
 
 $(document).on("change", "#customer_id", function () {
@@ -2232,6 +2320,7 @@ $(document).on("click", ".use_it_deposit_balance", function () {
 
     let used_deposit_balance = __read_number($("#used_deposit_balance"));
     __write_number($("#amount"), used_deposit_balance);
+    $(".received_amount").change();
 });
 
 $(document).on("click", ".add_to_deposit", function () {
@@ -2259,6 +2348,7 @@ function getCustomerBalance() {
             $(".customer_balance").text(
                 __currency_trans_from_en(result.balance, false)
             );
+            $(".staff_note").text(result.staff_note);
             $(".customer_balance").removeClass("text-red");
             if (result.balance < 0) {
                 $(".customer_balance").addClass("text-red");
@@ -2355,26 +2445,7 @@ function getCustomerPointDetails() {
         },
     });
 }
-$(document).on("submit", "form#pay_customer_due_form", function (e) {
-    e.preventDefault();
-    let url = $(this).attr("action");
-    let data = $(this).serialize();
-    $.ajax({
-        method: "POST",
-        url: url,
-        data: data,
-        dataType: "json",
-        success: function (result) {
-            if (result.success) {
-                swal("Success!", result.msg, "success");
-                $(".view_modal").modal("hide");
-                $("#customer_id").change();
-            } else {
-                swal("Error!", result.msg, "error");
-            }
-        },
-    });
-});
+
 $(document).on("click", ".redeem_btn", function () {
     $("#is_redeem_points").val(1);
     $(this).attr("disabled", true);
@@ -2404,24 +2475,35 @@ $(document).on("change", "#deliveryman_id", function () {
 $(document).on("click", "#delivery_cost_btn", function () {
     $("#deliveryman_id_hidden").val($("#deliveryman_id").val());
 });
+var updateadd_payment_formClicked = false;
 $(document).on("submit", "form#add_payment_form", function (e) {
     e.preventDefault();
     let data = $(this).serialize();
+    let submitButton = $("#submit_form_button"); 
+    if (!updateadd_payment_formClicked) {
+       
+        console.log('ojj')
+        $.ajax({
+            method: "post",
+            url: $(this).attr("action"),
+            data: data,
+            success: function (result) {
+                if (result.success) {
+                    swal("Success", result.msg, "success");
+                } else {
+                    swal("Error", result.msg, "error");
+                }
+                $(".view_modal").modal("hide");
+                get_recent_transactions();
+            },
+        });
+    
+        // Set the flag to true to indicate the button has been clicked
+        updateadd_payment_formClicked = true;
 
-    $.ajax({
-        method: "post",
-        url: $(this).attr("action"),
-        data: data,
-        success: function (result) {
-            if (result.success) {
-                swal("Success", result.msg, "success");
-            } else {
-                swal("Error", result.msg, "error");
-            }
-            $(".view_modal").modal("hide");
-            get_recent_transactions();
-        },
-    });
+        // Disable the button after it has been clicked
+        submitButton.prop('disabled', true);
+    }
 });
 
 $(document).on("click", ".print-invoice", function () {
@@ -3074,7 +3156,6 @@ $(document).on("change", ".discount_category", function (e) {
 
             }
             else{
-                alert("333")
                 $(".discount_type"+product_id).val('');
                 __write_number($(".discount_value"+product_id), 0);
                 __write_number($(".discount_amount"+product_id), 0);

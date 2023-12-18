@@ -53,7 +53,16 @@
                             'placeholder' => __('lang.payment_date')]) !!}
                         </div>
                     </div>
-
+                    
+                    <div class="col-md-6 mt-1">
+                        <label class="change_text">@lang('lang.change'): </label>
+                        <spand class="change" class="ml-2">0.00</spand>
+                        <div class="col-md-6">
+                            <button type="button" 
+                                class="ml-1 btn btn-danger add_to_customer_balance hide">@lang('lang.add_to_customer_balance')</button>
+                            <input type="hidden" name="add_to_customer_balance" id="add_to_customer_balance" value="0">
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             {!! Form::label('upload_documents', __('lang.upload_documents'). ':', []) !!} <br>
@@ -88,8 +97,8 @@
         </div>
 
         <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">@lang( 'lang.save' )</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
+            <button type="submit" id="pay_due" class="btn btn-primary pay_due">@lang( 'lang.save' )</button>
+            <button type="button" id="close_modal_button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
         </div>
 
         {!! Form::close() !!}
@@ -98,6 +107,7 @@
 </div><!-- /.modal-dialog -->
 
 <script>
+
     $('.selectpicker').selectpicker('refresh');
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
@@ -114,4 +124,40 @@
             $('.not_cash').attr('required', true);
         }
     })
+    $(document).ready(function() {
+        // Store the initial amount value
+     var initialAmount = parseFloat($('#amount').val().replace(',', '')); // Assuming 'num_format' formats the number as a string with commas
+
+$('#amount').on('change', function () {
+        var newAmount = parseFloat($(this).val().replace(',', ''));
+
+        if (!isNaN(newAmount) && newAmount > initialAmount) {
+                var change = Math.abs(newAmount - initialAmount);
+                $(".add_to_customer_balance").removeClass("hide");
+                $('.change').text(change.toFixed(2));
+                $(document).on("click", ".add_to_customer_balance", function () {
+                    $('.change').text(change.toFixed(2)); // Update the change value
+                    
+                    // if ($('.payment_way').val() !== 'deposit') {
+                        $('#add_to_customer_balance').val(change.toFixed(2));
+                        console.log($('#add_to_customer_balance').val());
+                        // $('.change_amount').val(0);
+                        // $(this).attr('disabled', true);
+
+                        // Assuming you have a 'received_amount' variable
+                        var newReceivedAmount = newAmount - change;
+                        $('#amount').val(newReceivedAmount.toFixed(2));
+                });
+                $(document).on("click", ".close , #close_modal_button", function () {
+                    $('.add_to_customer_balance').addClass('hide');
+                    $('#add_to_customer_balance').val(' ');
+                    console.log($('#add_to_customer_balance').val());
+                });
+                // } else {
+                //     $('.add_to_customer_balance').addClass('hide');
+                // }
+            }
+        });
+    });
 </script>
+<script src="{{ asset('js/due.js') }}"></script>

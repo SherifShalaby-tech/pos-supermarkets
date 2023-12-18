@@ -363,6 +363,7 @@
                 dataType: "html",
                 success: function (response) {
                     $('.edit_product_row').append(response);
+                    calculate_sub_totals();
                 }
             });
         })

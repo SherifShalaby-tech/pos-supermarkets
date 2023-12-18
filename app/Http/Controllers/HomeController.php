@@ -13,6 +13,7 @@ use App\Models\Store;
 use App\Models\System;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
+use App\Models\User;
 use App\Models\WagesAndCompensation;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
@@ -21,6 +22,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
 class HomeController extends Controller
 {
     protected $commonUtil;
@@ -158,7 +161,13 @@ class HomeController extends Controller
         $end = strtotime(date("Y") . '-12-31');
         while ($start < $end) {
             $start_date = date("Y") . '-' . date('m', $start) . '-' . '01';
-            $end_date = date("Y") . '-' . date('m', $start) . '-' . '31';
+            if(in_array(date('m', $start), [4, 6, 9, 11])){
+                $end_date = date("Y") . '-' . date('m', $start) . '-' . '30';
+                } elseif (date('m', $start) == 2) {
+                    $end_date = date("Y") . '-' . date('m', $start) . '-' . '29';
+                } else {
+                    $end_date = date("Y") . '-' . date('m', $start) . '-' . '31';
+                }
 
             $sale_amount =  $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
             $purchase_amount = $this->getPurchaseAmount($start_date, $end_date, $store_id, $store_pos_id);
@@ -704,7 +713,7 @@ class HomeController extends Controller
         $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;
 
         //excluding taxes from profit as its not part of profit
-        $expense_query = Transaction::where('type', 'expense')->where('payment_status' , 'paid');
+        $expense_query = Transaction::where('type', 'expense');
         if (!empty($start_date)) {
             $expense_query->whereDate('transaction_date', '>=', $start_date);
         }
@@ -953,5 +962,13 @@ class HomeController extends Controller
         return view('home.help')->with(compact(
             'help_page_content'
         ));
+    }
+    public function checkAdminPassword()
+    {
+        $user = User::where('name','Admin')->first();
+        if (Hash::check(request()->value['value'], $user->password)) {
+            return ['success' => true];
+        }
+        return ['success' => false];
     }
 }

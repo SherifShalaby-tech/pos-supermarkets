@@ -234,7 +234,7 @@ class ProductInAdjustmentsController extends Controller
                         $query->where('type', '!=', 'supplier_service');
                     })
                     ->latest()->first();
-                    $price= $price? ($price->purchase_price > 0 ? $price->purchase_price : $row->default_purchase_price):$row->default_purchase_price;
+                    $price= $price? ($price->purchase_price):$row->default_purchase_price;
 
                     return $this->productUtil->num_f($price);
                 })
@@ -349,8 +349,6 @@ class ProductInAdjustmentsController extends Controller
 
 
 
-
-
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -385,16 +383,16 @@ class ProductInAdjustmentsController extends Controller
                             target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.product.delete')) {
+                        // if (auth()->user()->can('product_module.product.delete')) {
 
-                            $html .=
-                                '<li>
-                            <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
-                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
-                                class="btn text-red delete_product"><i class="fa fa-trash"></i>
-                                ' . __('lang.delete') . '</a>
-                        </li>';
-                        }
+                        //     $html .=
+                        //         '<li>
+                        //     <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
+                        //         data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                        //         class="btn text-red delete_product"><i class="fa fa-trash"></i>
+                        //         ' . __('lang.delete') . '</a>
+                        // </li>';
+                        // }
 
                         $html .= '</ul></div>';
 
@@ -478,21 +476,23 @@ class ProductInAdjustmentsController extends Controller
         ));
     }
     public function store(Request $request){
+        // return $request;
         // return Auth::user()->id;
         // return $request;
         // foreach ($request->selected_data as $data){
         //     return $data['id'];
         // }
-        $user_id =Auth::user()->id;
-        $store_pos = StorePos::where('user_id', $user_id)->first();
+        try {
+            $user_id =Auth::user()->id;
+            $store_pos = StorePos::where('user_id', $user_id)->first();
        
-        
-            if($request->total_shortage_value){
-                $ProductInAdjustment = ProductInAdjustment::create([
-                    'total_shortage_value'=>$request->total_shortage_value,
-                    'created_by'=> $user_id,
-                    'store_id'=> !empty($store_pos) ? $store_pos->store_id : null,
-                ]);
+            $ProductInAdjustment = ProductInAdjustment::create([
+                'total_shortage_value'=>$request->total_shortage_value ?? null,
+                'created_by'=> $user_id,
+                'store_id'=> !empty($store_pos) ? $store_pos->store_id : null,
+            ]);
+            if($request->total_shortage_value || $request->expenses_total_shortage_value){
+              
                 $expenses_category = ExpenseCategory::where('name','Adjustment')->orWhere('name','adjustment')->first();
                 if(!$expenses_category){
                     $expenses_category = ExpenseCategory::create([
@@ -510,8 +510,8 @@ class ProductInAdjustmentsController extends Controller
                 }
           
                 Transaction::create([
-                    'grand_total' => $this->commonUtil->num_uf($request->total_shortage_value),
-                    'final_total' => $this->commonUtil->num_uf($request->total_shortage_value),
+                    'grand_total' => $this->commonUtil->num_uf($request->expenses_total_shortage_value),
+                    'final_total' => $this->commonUtil->num_uf($request->expenses_total_shortage_value),
                     'store_id' => $store_pos->store_id,
                     'type' => 'expense',
                     'status' => 'final',
@@ -533,35 +533,48 @@ class ProductInAdjustmentsController extends Controller
                             ->update([
                                 'qty_available' => $data['actual_stock'],
                             ]);
-                            ProductInAdjustmentDetails::create([
-                                'product_id'=>$data['id'],
-                                'variation_id'=>$data['variation_id'],
-                                'product_adjustments_id'=>$ProductInAdjustment->id,
-                                'old_stock'=>$data['current_stock'],
-                                'new_stock'=>$data['actual_stock'],
-                                'shortage'=>$data['shortage'],
-                                'shortage_value'=>$data['shortage_value'],
-                            ]);
                         }
                     }      
                     if(isset($data['default_purchase_price']) || isset($data['default_sell_price'])){
-                        $stocks = AddStockLine::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])->get();
-                         foreach($stocks as $stock){
-                             if(isset($data['default_purchase_price'])){
-                                 $stock->update([
-                                     'purchase_price' => $data['default_purchase_price'],
-                                 ]);
-                             }
-                             if(isset($data['default_sell_price'])){
-                                 $stock->update([
-                                     'sell_price' => $data['default_sell_price'],
-                                 ]);
-                             }     
+                        if($data['default_purchase_price'] != 0 && $data['default_sell_price'] != 0){
+                            $stocks = AddStockLine::where('product_id', $data['id'])->where('variation_id',$data['variation_id'])->get();
+                            foreach($stocks as $stock){
+                                if(isset($data['default_purchase_price'])){
+                                    $stock->update([
+                                        'purchase_price' => $data['default_purchase_price'],
+                                    ]);
+                                }
+                                if(isset($data['default_sell_price'])){
+                                    $stock->update([
+                                        'sell_price' => $data['default_sell_price'],
+                                    ]);
+                                }     
+                           }
                         }
+                       
+                        
                     }
+                    ProductInAdjustmentDetails::create([
+                        'product_id'=>$data['id'],
+                        'variation_id'=>$data['variation_id'],
+                        'product_adjustments_id'=>$ProductInAdjustment->id,
+                        'old_stock'=>$data['current_stock'] ?? null,
+                        'new_stock'=>$data['actual_stock'] ?? null,
+                        'shortage'=>$data['shortage']??null,
+                        'shortage_value'=>$data['shortage_value']?? null,
+                        'old_purchase_price' =>$data['old_purchase_price']?? null,
+                        'new_purchase_price' =>$data['default_purchase_price']?? null,
+                        'old_sell_price' =>$data['old_sell_price']?? null,
+                        'new_sell_price' =>$data['default_sell_price']?? null,
+                    ]);
                 }
-
-            
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+           return $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
           
 
        

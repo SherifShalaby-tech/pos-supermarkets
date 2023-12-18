@@ -74,7 +74,6 @@
         margin-right: 0in;
 
     }
-
 </style>
 
 <title>{{ __('lang.print_labels') }}</title>
@@ -89,7 +88,7 @@
                 class="sticker-border text-center">
                 <div style="display:inline-block;vertical-align:middle;line-height:14px !important; font-size: 14px;">
 
-                    <p class="text-center" style="padding: 0px !important; margin: 0px;">
+                    <p class="text-center" style="padding: 2px !important; margin: 0px;">
                         @if (!empty($print['name']))
                             @if (!empty($print['size']) && !empty($details['details']->size_name))
                                 {{ str_replace($details['details']->size_name, '', $details['details']->product_actual_name) }}
@@ -105,7 +104,7 @@
                     </p>
                     @if (!empty($print['size']) && !empty($details['details']->size_name))
                         <p style="margin-top: -12px; text-align: right; font-weight: bold; margin-bottom: 0px;">
-                            {{ $details['details']->size_name }}</p>
+                            {{ $details['details']->size_name }}&nbsp;&nbsp;</p>
                     @endif
 
                     {{-- Grade --}}
@@ -122,7 +121,13 @@
                         {{-- Price --}}
                         @if (!empty($print['price']))
                             @lang('lang.price'):
-                            {{ @num_format($details['details']->default_sell_price) }}
+                            @php
+                                $stockLines = \App\Models\AddStockLine::where('sell_price', '>', 0)
+                                    ->where('variation_id', $details['details']->variation_id)
+                                    ->latest()
+                                    ->first();
+                            @endphp
+                            {{ !empty($stockLines) ? @num_format($stockLines->sell_price) : @num_format($details['details']->default_sell_price) }}{{ $currency->symbol??''}}
                         @endif
                     </span>
 
@@ -132,12 +137,14 @@
                         </span>
                     @endif
 
-                    <img class="center-block" style="width:250px !important; height: 70px; margin: 0; padding: 0 10px;"
-                        src="data:image/png;base64,{{ DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3, 30, [39, 48, 54], true) }}">
-
+                    <div class="center-block" style="max-width: 95%; overflow: hidden; padding-left: 6px; vertical-align: top;">
+                        @if($page_height == 3) 
+                        {!! DNS1D::getBarcodeSVG($details['details']->sub_sku, "C128", 1,25, '#2A3239') !!}
+                        @else {!! DNS1D::getBarcodeSVG($details['details']->sub_sku, "C128", 1,20, '#2A3239') !!} @endif
+                    </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-4" style="font-size: 14px; margin-top: -30px;">
+                    <div class="col-md-4" style="font-size: 14px; margin-top: 0px;padding-left:6px">
                         @if (!empty($print['site_title']))
                             <p style="text-align: left; word-wrap: break-word;">
                                 {{ $print['site_title'] }}
@@ -155,7 +162,7 @@
                             ->first();
                     @endphp
                     <div class="col-md-4" style="font-size: 14px; margin-top: -30px;"></div>
-                    <div class="col-md-4" style="font-size: 14px; margin-top: -30px;">
+                    <div class="col-md-4" style="font-size: 14px; margin-top: -30px;padding-right:6px">
                         @if (!empty($print['size_variations']))
                             <p style="text-align: right; word-wrap: break-word;">
                                 {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}

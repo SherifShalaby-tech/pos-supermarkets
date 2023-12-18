@@ -150,46 +150,46 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" value="0"
+                            <button type="button" value="1"
                                 class="badge badge-pill badge-primary column-toggle">@lang('lang.image')</button>
-                            <button type="button" value="3"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.class')</button>
-                            <button type="button" value="4"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
                             <button type="button" value="5"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.sub_category')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.class')</button>
                             <button type="button" value="6"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
                             <button type="button" value="7"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.sub_category')</button>
                             <button type="button" value="8"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
                             <button type="button" value="9"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
                             <button type="button" value="10"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
                             <button type="button" value="11"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
                             <button type="button" value="12"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
                             <button type="button" value="13"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
                             <button type="button" value="14"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
+                            <button type="button" value="15"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
+                            <button type="button" value="16"
                                 class="badge badge-pill badge-primary column-toggle">@lang('lang.grade')</button>
                             @if(empty($page))
-                            <button type="button" value="15"
+                            <button type="button" value="17"
                                 class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
                             @endif
-                            <button type="button" value="16"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
-                            <button type="button" value="17"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
                             <button type="button" value="18"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
                             <button type="button" value="19"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
+                            <button type="button" value="20"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+                            <button type="button" value="21"
                                 class="badge badge-pill badge-primary column-toggle">@lang('lang.discount')</button>
                             @can('product_module.purchase_price.view')
-                            <button type="button" value="20"
+                            <button type="button" value="22"
                                 class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
                             @endcan
                         </div>
@@ -200,7 +200,9 @@
                     <table id="product_selection_table{{$index?? ''}}" class="table" style="width: auto">
                         <thead>
                             <tr>
-                                <th>@lang('lang.select')</th>
+                                <th>@lang('lang.select')<br>
+                                    <input type="checkbox" name="product_select_all" class="product_select_all"  /></th>
+                                
                                 <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.product_code')</th>

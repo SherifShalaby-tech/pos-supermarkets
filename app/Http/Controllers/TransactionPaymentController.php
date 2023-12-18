@@ -55,15 +55,34 @@ class TransactionPaymentController extends Controller
      */
     public function addPayment($transaction_id)
     {
+
+        
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $transaction = Transaction::find($transaction_id);
         $users = User::Notview()->pluck('name', 'id');
-
+        $balance = $this->transactionUtil->getCustomerBalanceExceptTransaction($transaction->customer_id,$transaction_id)['balance'];
+        $finalTotal = $transaction->final_total;
+        $transactionPaymentsSum = $transaction->transaction_payments->sum('amount');
+        if ($balance > 0 && $balance < $finalTotal - $transactionPaymentsSum) {
+            if (isset($transaction->return_parent)) {
+                $amount = $finalTotal - $transactionPaymentsSum - $transaction->return_parent->final_total - $balance;
+            } else {
+                $amount = $finalTotal - $transactionPaymentsSum - $balance;
+            }
+        } else {
+            if (isset($transaction->return_parent)) {
+                $amount = $finalTotal - $transactionPaymentsSum - $transaction->return_parent->final_total;
+            } else {
+                $amount = $finalTotal - $transactionPaymentsSum;
+            }
+        }
         return view('transaction_payment.add_payment')->with(compact(
             'payment_type_array',
             'transaction_id',
             'transaction',
-            'users'
+            'users',
+            'balance',
+            'amount'
         ));
     }
     /**
@@ -125,6 +144,12 @@ class TransactionPaymentController extends Controller
                 'created_by' => auth()->id(),
             ];
             $debt_payment=  DebtPayment::create($debt_data);
+            $customer = Customer::find($transaction->customer_id);
+            if($request->add_to_customer_balance > 0){
+                $customer->added_balance = $customer->added_balance + $request->add_to_customer_balance;
+                $customer->save();
+            }
+           
             if ($request->upload_documents) {
                 foreach ($request->file('upload_documents', []) as $key => $doc) {
                     $debt_payment->addMedia($doc)->toMediaCollection('debt_payment');
@@ -392,6 +417,10 @@ class TransactionPaymentController extends Controller
         try {
             $amount = $this->commonUtil->num_uf($request->amount);
             $customer = Customer::find($customer_id);
+            if($request->add_to_customer_balance > 0){
+                $customer->added_balance = $customer->added_balance + $request->add_to_customer_balance;
+                $customer->save();
+            }
             if($this->commonUtil->num_uf($request->balance)<$amount && $request->extract_due == 'true'){
                 DB::commit();
                 $output = [

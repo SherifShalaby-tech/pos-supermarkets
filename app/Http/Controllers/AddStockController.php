@@ -37,6 +37,7 @@ use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -307,6 +308,7 @@ class AddStockController extends Controller
     }
     public function store(Request $request)
     {
+        // return $request->batch_row;
         //  try {
         $data = $request->except('_token');
 
@@ -524,23 +526,24 @@ class AddStockController extends Controller
             'default_currency_id' => $data['default_currency_id'],
             'exchange_rate' => $this->commonUtil->num_uf($data['exchange_rate']),
             'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
-            'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']) . ' ' . date('H:i:s'),
-            'payment_status' => $data['payment_status'],
+            'transaction_date' => isset($data['transaction_date'])? $this->commonUtil->uf_date($data['transaction_date']) . ' ' . date('H:i:s'):null,
+            'payment_status' =>isset($data['payment_status'])?$data['payment_status']:null,
             'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
-            'grand_total' => $this->productUtil->num_uf($data['grand_total']),
+            'grand_total' => isset($data['grand_total'])?$this->productUtil->num_uf($data['grand_total']):0,
             'final_total' => $this->productUtil->num_uf($data['final_total']),
-            'discount_amount' => $this->productUtil->num_uf($data['discount_amount']),
-            'other_payments' => $this->productUtil->num_uf($data['other_payments']),
-            'other_expenses' => $this->productUtil->num_uf($data['other_expenses']),
+            'discount_amount' =>isset($data['discount_amount']) ? $this->productUtil->num_uf($data['discount_amount']):0,
+            'other_payments' => isset($data['other_payments'])?$this->productUtil->num_uf($data['other_payments']):null,
+            'other_expenses' => isset($data['other_expenses'])?$this->productUtil->num_uf($data['other_expenses']):null,
             'notes' => !empty($data['notes']) ? $data['notes'] : null,
             'details' => !empty($data['details']) ? $data['details'] : null,
             'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
             'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
             'notify_me' => !empty($data['notify_before_days']) ? 1 : 0,
             'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
-            'created_by' => Auth::user()->id,
+//            'created_by' => Auth::user()->id,
             'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
             'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
+            'updated_by' => Auth::user()->id,
         ];
 
         if (!empty($data['po_no'])) {
@@ -557,7 +560,7 @@ class AddStockController extends Controller
             return $this->productUtil->sendQunatityMismacthResponse($mismtach['product_name'], $mismtach['quantity']);
         }
 
-        $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction);
+        $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction,$request->batch_row);
 
         if ($request->files) {
             foreach ($request->file('files', []) as $file) {
@@ -649,7 +652,7 @@ class AddStockController extends Controller
         }
         DB::commit();
 
-        if ($data['submit'] == 'print') {
+        if (isset($data['submit']) && $data['submit'] == 'print') {
             $print = 'print';
             $url = action('AddStockController@show', $transaction->id) . '?print=' . $print;
 
@@ -934,7 +937,7 @@ class AddStockController extends Controller
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [
                 'success' => false,
-                'msg' => __('lang.something_went_wrong')
+                'msg' => $e
             ];
         }
         return redirect()->back()->with('status', $output);
@@ -956,5 +959,13 @@ class AddStockController extends Controller
         }
 
         return $this->commonUtil->createDropdownHtml($array, __('lang.please_select'));
+    }
+
+
+    public function updateStockColumnVisibility(Request $request)
+    {
+        $stockColumnVisibility = $request->input('stockColumnVisibility');
+        Cache::forever('key_' . auth()->id(), $stockColumnVisibility);
+        return response()->json(['success' => true]);
     }
 }

@@ -21,6 +21,7 @@
                                         <label>@lang('lang.received_amount'): *</label>
                                         <input type="text" name="payments[0][amount]"
                                             class="form-control numkey received_amount" required id="amount" step="any">
+                                            <input type="hidden" name="pay_from_balance" id="pay_from_balance" value="">
                                     </div>
                                     <div class="col-md-6 mt-1">
                                         <label>@lang('lang.paying_amount'): *</label>
@@ -118,11 +119,15 @@
                                         <input type="hidden" name="remaining_deposit_balance"
                                             id="remaining_deposit_balance" value="0">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12 mb-2 ">
+                                        <button type="button" id="add_payment_row" class="btn btn-primary btn-block">
+                                            @lang('lang.add_payment_row')</button>
+                                    </div>
+                                    {{-- <div class="col-md-6">
                                         <button type="button"
                                             class="ml-1 btn btn-danger add_to_deposit">@lang('lang.add_to_deposit')</button>
                                         <input type="hidden" name="add_to_deposit" id="add_to_deposit" value="0">
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             @php
