@@ -130,14 +130,14 @@
                                             ->where(function ($query) use ($cash_register) {
                                                 $query->whereRaw('created_at <> updated_at');
                                                 $query->WhereRaw('updated_at >= (created_at + INTERVAL 1 MINUTE)');
-                                                $query->where('created_at', '<=', $cash_register->created_at);
+                                                $query->where('created_at', '<=',\Carbon\Carbon::parse($cash_register->created_at));
                                             })->
                                             OrWhere(function ($query) use ($cash_register) {
                                                 $query->whereRaw('created_at <> updated_at');
                                                 $query->WhereRaw('updated_at >= (created_at + INTERVAL 1 MINUTE)');
                                                 $query->where('created_by', '!=', $cash_register->user_id)
                                                     ->where('created_at', '<=', \Carbon\Carbon::parse($cash_register->closed_at))
-                                                    ->where('created_at', '>=', $cash_register->created_at);
+                                                    ->where('created_at', '>=', \Carbon\Carbon::parse($cash_register->created_at));
                                             });
                                     })
                                     ->sum('amount');
