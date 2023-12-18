@@ -9,6 +9,9 @@
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
                         $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
+                        ->whereHas('transaction', function ($query) {
+                        $query->where('type', '!=', 'supplier_service');
+                        })
                         ->latest()->first();
                         $default_sell_price=$stockLines?$stockLines->sell_price : 0;
                         $default_purchase_price=$stockLines?$stockLines->purchase_price : 0;
@@ -19,6 +22,9 @@
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     if($Variation){
                         $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
+                        ->whereHas('transaction', function ($query) {
+                            $query->where('type', '!=', 'supplier_service');
+                        })
                         ->latest()->first();
                         $default_sell_price= $Variation->default_sell_price??0;
                         $default_purchase_price= $Variation->default_purchase_price??0;
