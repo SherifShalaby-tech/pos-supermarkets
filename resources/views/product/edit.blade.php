@@ -519,12 +519,12 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="i-checks">
+                                        {{-- <div class="i-checks">
                                             <input id="buy_from_supplier" name="buy_from_supplier" type="checkbox"
                                                 @if ($product->buy_from_supplier == 1) checked @endif value="1"
                                                 class="form-control-custom">
                                             <label for="buy_from_supplier"><strong>@lang('lang.buy_from_supplier')</strong></label>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="col-md-12">
                                         <table class="table table-bordered" id="consumption_table">
