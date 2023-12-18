@@ -64,7 +64,7 @@
                                 </td>
                                     <td>{{@format_date($item->transaction_date)}}</td>
                                     <td>
-                                        {{!empty($item->cashier)?$item->cashier->name??'':''}}
+                                        {{!empty($item->created_by_user)?$item->created_by_user->name??'':''}}
                                     </td>
                                     <td>
                                         <a data-href="{{action('SellController@show', $item->id)}}" data-container=".view_modal"
