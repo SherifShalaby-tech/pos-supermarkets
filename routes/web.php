@@ -137,9 +137,9 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('supplier/pay-supplier-due/{supplier_id}', 'SupplierController@postPayContactDue');
     Route::get('supplier/pay-supplier-due/{supplier_id}', 'SupplierController@getPayContactDue');
     Route::resource('supplier', SupplierController::class);
-    Route::get('supplier-service/update-status/{id}', 'SupplierServiceController@getUpdateStatus');
-    Route::post('supplier-service/update-status/{id}', 'SupplierServiceController@postUpdateStatus');
-    Route::resource('supplier-service', SupplierServiceController::class);
+    // Route::get('supplier-service/update-status/{id}', 'SupplierServiceController@getUpdateStatus');
+    // Route::post('supplier-service/update-status/{id}', 'SupplierServiceController@postUpdateStatus');
+    // Route::resource('supplier-service', SupplierServiceController::class);
     Route::get('supplier-category/get-dropdown', 'SupplierCategoryController@getDropdown');
     Route::resource('supplier-category', SupplierCategoryController::class);
     Route::resource('product-classification-tree', ProductClassificationTreeController::class);
@@ -325,6 +325,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('cash/save-add-cash-out', 'CashController@saveAddCashOut');
     Route::get('cash/add-cash-in/{cash_register_id}', 'CashController@addCashIn');
     Route::post('cash/save-add-cash-in', 'CashController@saveAddCashIn');
+    Route::get('cash/show-latest-payment-details/{id}', 'CashController@showLatestPaymentDetails');
+    
     Route::resource('cash', CashController::class);
     Route::resource('cash-out', CashOutController::class);
     Route::resource('cash-in', CashInController::class);

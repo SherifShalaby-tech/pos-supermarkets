@@ -31,6 +31,17 @@
                         <td>{{ @num_format($cash_register->total_cash_sales) }}
                         </td>
                     </tr>
+                    <tr>
+                        <td><b>@lang('lang.total_latest_payments')</b></td>
+                        <td>
+                            {{ @num_format($total_latest_payments) }}
+                        </td>
+                        @if(!empty($total_latest_payments) && $total_latest_payments>0)
+                        <td><a data-href="{{action('CashController@showLatestPaymentDetails', $cash_register->id)}}"
+                            data-container=".view_modal" class="btn btn-modal btn-danger text-white"><i
+                                class="fa fa-eye"></i> @lang('lang.view')</a></td>
+                                @endif
+                    </tr>
                     @if(session('system_mode') == 'restaurant')
                     <tr>
                         <td><b>@lang('lang.dining_in')</b></td>

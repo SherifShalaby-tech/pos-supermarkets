@@ -1443,4 +1443,5 @@ return [
     'type_your_password'=>'اكتب كلمة السر',
     'correct_password'=>'كلمة السر صحيحة',
     'total_latest_payments'=>'اجمالى المدفوعات المتأخرة',
+    'recieved_amount'=>'المبلغ المستلم',
 ];

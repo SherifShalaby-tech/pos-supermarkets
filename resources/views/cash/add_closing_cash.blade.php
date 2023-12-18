@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+<div class="modal-dialog add_closing_cash" role="document" >
     <div class="modal-content">
 
         {!! Form::open([
@@ -107,6 +107,11 @@
                             <td>{{ $data['currency']['symbol'] }}
                                 {{ @num_format($total_latest_payments) }}
                             </td>
+                            @if(!empty($total_latest_payments) && $total_latest_payments>0)
+                            <td><a data-href="{{action('CashController@showLatestPaymentDetails', $cash_register->id)}}"
+                                data-container=".view_modal" class="btn btn-modal btn-danger text-white"><i
+                                    class="fa fa-eye"></i> @lang('lang.view')</a></td>
+                            @endif
                         </tr>
                         <tr>
                             <td><b>@lang('lang.return_sales')</b></td>

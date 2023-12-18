@@ -153,6 +153,7 @@ class SellController extends Controller
                     $query->where('deliveryman_id', request()->deliveryman_id);
                 }
             }
+            // return request()->all();
             if (!empty(request()->payment_status)) {
                 $query->where('payment_status', request()->payment_status);
             }
@@ -163,16 +164,19 @@ class SellController extends Controller
                 $query->where('transaction_payments.method', request()->method);
             }
             if (!empty(request()->start_date)) {
-                $query->whereDate('transaction_date', '>=', request()->start_date);
+                $query->whereDate('transactions.created_at', '>=', request()->start_date);
             }
             if (!empty(request()->end_date)) {
-                $query->whereDate('transaction_date', '<=', request()->end_date);
+                $query->whereDate('transactions.created_at', '<=', request()->end_date);
             }
             if (!empty(request()->start_time)) {
-                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+                $startTime = Carbon::parse(request()->start_date . ' ' . request()->start_time)->format('Y-m-d H:i:s');
+                $query->where('transactions.created_at', '>=', $startTime);
             }
+            
             if (!empty(request()->end_time)) {
-                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+                $endTime = Carbon::parse(request()->end_date . ' ' . request()->end_time)->format('Y-m-d H:i:s');
+                $query->where('transactions.created_at', '<=', $endTime);
             }
             if (!empty(request()->payment_start_date)) {
                 $query->whereDate('paid_on', '>=', request()->payment_start_date);
@@ -197,6 +201,7 @@ class SellController extends Controller
                 'transactions.id',
                 'transactions.sale_note',
                 'transactions.transaction_date',
+                'transactions.created_at as created_at',
                 'transactions.service_fee_value',
                 'transactions.invoice_no',
                 'transactions.deliveryman_id',
@@ -220,7 +225,7 @@ class SellController extends Controller
 
             return DataTables::of($sales)
                 // ->setTotalRecords(100)
-                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->editColumn('transaction_date', '{{@format_date($created_at)}}')
                 ->editColumn('invoice_no', function ($row) {
                     $string = $row->invoice_no . ' ';
                     if (!empty($row->return_parent)) {

@@ -1459,4 +1459,5 @@ return [
     'type_your_password'=>'Type Your Password',
     'correct_password'=>'Correct Password',
     'total_latest_payments'=>'Total Latest Payments',
+    'recieved_amount'=>'recieved_amount',
 ];
