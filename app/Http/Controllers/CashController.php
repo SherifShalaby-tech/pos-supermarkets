@@ -491,7 +491,7 @@ class CashController extends Controller
 
 
         $total_latest_payments= DB::table('cash_register_transactions')
-        ->where('cash_register_id', $cash_register->id)
+        ->where('cash_register_id', $cash_register_id)
         ->where('transaction_type', 'sell')
         ->whereIn('transaction_id', function ($query) use ($cash_register) {
             $query->select('id')
