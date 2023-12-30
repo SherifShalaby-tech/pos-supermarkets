@@ -27,7 +27,7 @@
     @php
         $this_raw_material = App\Models\Product::find($consumption_product->raw_material_id);
     @endphp
-    <input type="hidden" name="raw_material_price" class="raw_material_price" value="{{$this_raw_material->purchase_price}}">
+    <input type="hidden" name="raw_material_price" class="raw_material_price" value="{{$this_raw_material->purchase_price??0}}">
     @else
     <input type="hidden" name="raw_material_price" class="raw_material_price" value="0">
     @endif
