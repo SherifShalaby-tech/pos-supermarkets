@@ -20,17 +20,17 @@
                     }
             }else{
                 $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
-                    if($Variation){
-                        $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
-                        ->whereHas('transaction', function ($query) {
-                            $query->where('type', '!=', 'supplier_service');
-                        })
-                        ->latest()->first();
-                        $default_sell_price= $Variation->default_sell_price??0;
-                        $default_purchase_price= $Variation->default_purchase_price??0;
-                        $cost_ratio_per_one = $stockLines ? $stockLines->cost_ratio_per_one : 0;
+                if($Variation){
+                    $stockLines=\App\Models\AddStockLine::where('sell_price','>',0)->where('variation_id',$Variation->id)
+                    ->whereHas('transaction', function ($query) {
+                        $query->where('type', '!=', 'supplier_service');
+                    })
+                    ->latest()->first();
+                    $default_sell_price= $Variation->default_sell_price??0;
+                    $default_purchase_price= $Variation->default_purchase_price??0;
+                    $cost_ratio_per_one = $stockLines ? $stockLines->cost_ratio_per_one : 0;
 
-                    }
+                }
             }
                 $product_unit = \App\Models\Product::where('id',$product->product_id)->first();
                 if($product_unit && isset($product_unit->multiple_units) ){

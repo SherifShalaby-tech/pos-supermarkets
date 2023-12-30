@@ -106,19 +106,6 @@
                             <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash - $cash_register->total_sell_return)}}
                             </td>
                             <td>
-                                {{-- @php
-                                use Illuminate\Support\Facades\DB;
-                                @endphp --}}
-                                {{-- {{DB::table('cash_register_transactions')
-                                ->where('cash_register_id', $cash_register->id)
-                                ->where('transaction_type', "sell")
-                                ->whereIn('transaction_id', function ($query) use ($cash_register) {
-                                    $query->select('id')
-                                        ->from('transactions')
-                                        ->whereRaw('DATE(created_at) != DATE(updated_at)')
-                                        ->whereRaw('updated_at > (created_at + INTERVAL 12 HOUR)');
-                                })
-                                ->sum('amount');}} --}}
 
                                 {{
                                     DB::table('cash_register_transactions')

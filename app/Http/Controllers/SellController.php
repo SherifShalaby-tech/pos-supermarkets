@@ -790,8 +790,8 @@ class SellController extends Controller
 
             DB::beginTransaction();
 
-            $transaction_sell_lines = TransactionSellLine::where('transaction_id', $id)->get();
-            $transaction_sell_payments = TransactionPayment::where('transaction_id', $id)->get();
+            $transaction_sell_lines = TransactionSellLine::where('transaction_id', $transaction->return_parent_id)->get();
+            $transaction_sell_payments = TransactionPayment::where('transaction_id', $transaction->return_parent_id)->get();
             foreach ($transaction_sell_payments as $transaction_sell_payment) {
                 if ($transaction_sell_payment->method == 'gift_card') {
                     $GiftCard = GiftCard::where('card_number', $transaction_sell_payment->gift_card_number)->update([
@@ -804,7 +804,8 @@ class SellController extends Controller
                 if ($transaction->status == 'final') {
                     $product = Product::find($transaction_sell_line->product_id);
                     if (!$product->is_service) {
-                        $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
+                        // return $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned;
+                        $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, -$transaction_sell_line->quantity_returned);
                         if (isset($transaction_sell_line->stock_line_id)) {
                             $stock = AddStockLine::where('id', $transaction_sell_line->stock_line_id)->first();
                             $stock->update([

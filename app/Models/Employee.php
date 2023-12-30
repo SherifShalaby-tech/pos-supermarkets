@@ -210,8 +210,10 @@ class Employee extends Model implements HasMedia
     {
         if($job_type == 'Deliveryman'){
             $query = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
-                ->leftjoin('users', 'employees.user_id', 'users.id')
-                ->where('job_types.job_title', $job_type);
+                ->leftjoin('users', 'employees.user_id', 'users.id');
+            if($job_type=='Deliveryman'){
+                $query->where('job_types.job_title', $job_type);
+            }
             if ($include_superadmin) {
                 $query->orWhere('is_superadmin', 1);
             }
@@ -226,7 +228,7 @@ class Employee extends Model implements HasMedia
             $query = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
                 ->leftjoin('users', 'employees.user_id', 'users.id')
                 ->leftjoin('store_pos', 'users.id', 'store_pos.user_id')
-//            ->where('job_types.job_title', $job_type)
+        //            ->where('job_types.job_title', $job_type)
                 ->whereNotNull('store_pos.user_id');
             if ($include_superadmin) {
                 $query->orWhere('is_superadmin', 1);
