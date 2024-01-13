@@ -6,7 +6,9 @@
     <link rel="stylesheet" href="{{ url('css/pos.css') }}">
 @endsection
 
-
+{{--  --}}
+{{--  --}}
+{{--  --}}
 
 @php
     $watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
