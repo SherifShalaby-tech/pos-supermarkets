@@ -37,7 +37,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
-
         .preview-brand-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -46,7 +45,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
-
         .preview-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -55,7 +53,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
-
         .preview-class-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -64,7 +61,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
-
         .preview-edit-product-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -279,15 +275,12 @@
             @endforeach
             <input type="hidden" id="__language" value="{{ session('language') }}">
             <input type="hidden" id="__decimal" value=".">
-            <input type="hidden" id="__currency_precision"
-                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__currency_precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
             <input type="hidden" id="__currency_symbol" value="$">
             <input type="hidden" id="__currency_thousand_separator" value=",">
             <input type="hidden" id="__currency_symbol_placement" value="before">
-            <input type="hidden" id="__precision"
-                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
-            <input type="hidden" id="__quantity_precision"
-                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__quantity_precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
             <input type="hidden" id="system_mode" value="{{ env('SYSTEM_MODE') }}">
             @yield('content')
         </div>
@@ -295,7 +288,7 @@
         @include('layouts.partials.footer')
 
 
-        <div class="modal view_modal no-print" role="dialog" aria-hidden="true"></div>
+        <div class="modal view_modal no-print" role="dialog" aria-hidden="true" ></div>
         <div class="modal" id="cropper_modal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -335,7 +328,7 @@
         <input type="hidden" name="cash_register_id" id="cash_register_id"
             value="@if (!empty($cash_register)) {{ $cash_register->id }} @endif">
         <div id="closing_cash_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-            class="modal text-left">
+            class="modal">
         </div>
 
         <!-- This will be printed -->
@@ -364,19 +357,7 @@
     </script>
     @yield('javascript')
     @stack('javascripts')
-    <script type="text/javascript" src="{{ asset('js/front.js') }}"></script>
-    <script>
-        $("#toggle-btn").on("click", function(e) {
-            e.preventDefault();
-            if ($(window).outerWidth() > 1199) {
-                $("nav.side-navbar").toggleClass("shrink");
-                $(".page").toggleClass("active");
-            } else {
-                $("nav.side-navbar").toggleClass("shrink");
-                $(".page").toggleClass("active-sm");
-            }
-        });
-    </script>
+
     <script type="text/javascript">
         @if (session('status'))
             swal(
@@ -476,6 +457,13 @@
                 url: $(this).data('href'),
                 dataType: 'html',
                 success: function(result) {
+                    if(result){
+                        if($('.add_closing_cash').length>0){
+                            $('.add_closing_cash').hide();
+                            $('.close').click();
+                            $('#overlay').hide();
+                        }
+                    }
                     $(container).html(result).modal('show');
                 },
             });
@@ -548,6 +536,7 @@
                                             dataType: 'json',
                                             data: data,
                                             success: function(result) {
+                                                console.log(6);
                                                 if (result.success ==
                                                     true) {
                                                     swal(

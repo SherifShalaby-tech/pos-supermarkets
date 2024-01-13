@@ -4,11 +4,8 @@
 
 @section('style')
     <link rel="stylesheet" href="{{ url('css/pos.css') }}">
+    <link rel="stylesheet" href="{{ url('css/pos-modals.css') }}">
 @endsection
-
-{{--  --}}
-{{--  --}}
-{{--  --}}
 
 @php
     $watsapp_numbers = App\Models\System::getProperty('watsapp_numbers');
@@ -23,7 +20,7 @@
     ]) !!}
 
     <section class="p-0 forms pos-section no-print">
-        <audio id="mysoundclip1" preload="auto">
+        {{-- <audio id="mysoundclip1" preload="auto">
             <source src="{{ asset('audio/beep-timber.mp3') }}">
             </source>
         </audio>
@@ -34,7 +31,7 @@
         <audio id="mysoundclip3" preload="auto">
             <source src="{{ asset('audio/beep-long.mp3') }}">
             </source>
-        </audio>
+        </audio> --}}
 
         {{-- Navbar --}}
         <div class=" d-flex flex-column flex-lg-row justify-content-between align-items-center px-4"
@@ -523,10 +520,6 @@
                             </div>
                         </div>
                     </div>
-
-
-
-
 
                 </div>
 
@@ -1033,6 +1026,7 @@
                 </div>
 
             </div>
+        </div>
 
     </section>
 

@@ -1431,5 +1431,17 @@ return [
     'total_before_discount'=>'المجموع قبل الخصم',
     'show'=>'اظهار',
     'added_balance' => 'الارصدة المضافة',
-
+    'old_purchase_price' => 'سعر الشراء القديم',
+    'old_sell_price' => 'سعر البيع القديم',
+    'new_sell_price' => 'سعر البيع الجديد',
+    'check_purchase_price_please' => 'برجاء التاكد من ان سعر الشراء اقل من سعر البيع',
+    'category_report'=>'تقرير المنتج',
+    'category_purchases'=>'مبيعات المنتج',
+    'are_you_sure'=>'هل انت متاكد ؟',
+    'are_you_sure_you_wanna_update_it'=>'هل متاك من التعديل',
+    'please_enter_your_password'=>'ادخل كلمة السر الصحيح',
+    'type_your_password'=>'اكتب كلمة السر',
+    'correct_password'=>'كلمة السر صحيحة',
+    'total_latest_payments'=>'اجمالى المدفوعات المتأخرة',
+    'recieved_amount'=>'المبلغ المستلم',
 ];

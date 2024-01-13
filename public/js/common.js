@@ -390,6 +390,38 @@ var buttons = [
         columns: ":gt(0)",
     },
 ];
+if($('.print-title-hint').text()=="product_report"){
+var button= [
+        {
+            extend: 'print',
+            text: '<i class="fas fa-print"></i>',
+            charset: 'UTF-8',
+            bom: true,
+            footer: true,
+            title: print_title,
+            exportOptions: {
+                columns: [0, 7, 8 , 9]
+            }
+        }
+    ];
+buttons.push(button);
+}
+if($('.print-title-hint').text()=="sale_report"){
+    var button= [
+            {
+                extend: 'print',
+                text: '<i class="fas fa-print"></i>',
+                charset: 'UTF-8',
+                bom: true,
+                footer: true,
+                title: print_title,
+                exportOptions: {
+                    columns: [0, 1, 3 , 10,12]
+                }
+            }
+        ];
+    buttons.push(button);
+}
 var datatable_params = {
     lengthChange: true,
     paging: true,

@@ -250,6 +250,9 @@
             </div>
         </div>
     </div>
+    <div style="text-align: center;">
+        <p style="color: rgb(219, 76, 76)">@lang('lang.check_purchase_price_please')</p>
+    </div>
     <div class="table-responsive">
         <table id="product_table" class="table" style="width: auto">
             <thead>
@@ -350,33 +353,7 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
-            // $('.column-toggle').each(function(i, obj) {
-            //     if (i > 0) {
-            //         i = i + 2;
-            //     }
-            //     @if (session('system_mode') != 'restaurant')
-            //         @if (empty($page))
-            //             if (i > 15) {
-            //                 i = i + 1;
-            //             }
-            //         @else
-            //             if (i > 14) {
-            //                 i = i + 1;
-            //             }
-            //         @endif
-            //     @else
-            //         @if (empty($page))
-            //             if (i > 12) {
-            //                 i = i + 1;
-            //             }
-            //         @else
-            //             if (i > 11) {
-            //                 i = i + 1;
-            //             }
-            //         @endif
-            //     @endif
-            //     $(obj).val(i)
-            // });
+ 
             var actualStockColIndex = null;
             var currentStockColIndex = null;
             product_table = $('#product_table').DataTable({
@@ -897,12 +874,26 @@
 
             // // calculate the total initially
             // calculateTotal();
+            $('#product_table').on('change', '.default_purchase_price, .default_sell_price', function() {
+                var row = $(this).closest('tr');
+                var purchasePrice = parseFloat(row.find('.default_purchase_price').val()) || 0;
+                var sellPrice = parseFloat(row.find('.default_sell_price').val()) || 0;
 
+                // Check if default_purchase_price is greater than or equal to default_sell_price
+                if (purchasePrice >= sellPrice) {
+                    row.find('.default_purchase_price').css('border', '2px solid red');
+                    row.find('.default_sell_price').css('border', '2px solid red');
+                } else {
+                    row.find('.default_purchase_price').css('border', '');
+                    row.find('.default_sell_price').css('border', ''); // Reset border if condition is not met
+                }
+            });
             // add event listener to parent element (table)
             $("#product_table").on("input", ".actual_stock", function() {
                 var tr = $(this).closest('tr');
                 calculateTotal(tr);
             });
+        
 
             // add event listener to change event on actual_stock input field
             $("#product_table").on("input", ".actual_stock", function() {
@@ -935,6 +926,7 @@
                 console.log(variation_id);
                 // Check if actualStock has a value
                 if (actualStock != '') {
+                    validActualStock = true;
                     // Add the required data to the selectedData array
                     var dataObj = {
                         id: id,
@@ -957,34 +949,60 @@
                 console.log("sellPriceHidden :" + sellPriceHidden)
                     // Check if either the purchase price or sell price has changed
                     if (purchasePrice !== purchasePriceHidden || sellPrice !== sellPriceHidden) {
+                        if(purchasePrice > sellPrice){
+                            $(this).find('.default_purchase_price').css('border', '2px solid #6f42c1');
+                            $(this).find('.default_sell_price').css('border', '2px solid #6f42c1');
+                        }
                         // Create an object with the updated values
-                        var updatedData = {
-                            id: id,
-                            variation_id : variation_id,
-                            default_purchase_price: purchasePrice,
-                            default_sell_price: sellPrice
-                        };
-                        // Add the updated data to the selectedData array
-                        selectedData.push(updatedData);
+                        if(purchasePrice !== 0 && sellPrice !== 0){
+                            var updatedData = {
+                                id: id,
+                                variation_id : variation_id,
+                                old_purchase_price: purchasePriceHidden,
+                                default_purchase_price: purchasePrice,
+                                old_sell_price: sellPriceHidden,
+                                default_sell_price: sellPrice
+                            };
+                            // Add the updated data to the selectedData array
+                            selectedData.push(updatedData);
+                        }else{
+                            swal(
+                                            'Success!',
+                                            "New stock quantity saved, Zero prices didn't save",
+                                            'success'
+                                        );
+                        }
+                        
                     }
 
             });
 
-            // Send the data to the server
-            $.ajax({
-                type: 'POST',
-                url: '/product-in-adjustment-store',
-                data: {selected_data: selectedData,
-                    total_shortage_value: total_shortage_value,
-                    expenses_total_shortage_value : expenses_total_shortage_value},
-                success: function(response) {
-                console.log('Data sent successfully');
-                location.reload();
-                },
-                error: function(xhr, status, error) {
-                console.log('Error sending data');
-                }
-            });
+            // // // Check if either purchase price or sell price is 0
+            // var invalidPrices = selectedData.some(function(data) {
+            //     return (data.default_purchase_price === 0 || data.default_sell_price === 0);
+            // });
+
+
+            // If invalid prices found, show the alert and do not send data
+       
+                //  Send the data to the server
+                $.ajax({
+                    type: 'POST',
+                    url: '/product-in-adjustment-store',
+                    data: {
+                        selected_data: selectedData,
+                        total_shortage_value: total_shortage_value,
+                        expenses_total_shortage_value: expenses_total_shortage_value
+                    },
+                    success: function(response) {
+                        console.log('Data sent successfully');
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error sending data');
+                    }
+                });
+            // }
 
         }
         

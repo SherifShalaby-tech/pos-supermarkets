@@ -79,6 +79,7 @@
                             <th>@lang('lang.notes')</th>
                             <th>@lang('lang.status')</th>
                             <th class="sum">@lang('lang.cash_sales')</th>
+                            <th>@lang('lang.total_latest_payments')</th>
                             @if(session('system_mode') == 'restaurant')
                             <th class="sum">@lang('lang.dining_in')</th>
                             @endif
@@ -103,6 +104,31 @@
                             <td>{{ucfirst($cash_register->notes)}}</td>
                             <td>{{ucfirst($cash_register->status)}}</td>
                             <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash - $cash_register->total_sell_return)}}
+                            </td>
+                            <td>
+
+                                {{
+                                    DB::table('cash_register_transactions')
+                                    ->where('cash_register_id', $cash_register->id)
+                                    ->where('transaction_type', 'sell')
+                                    ->whereIn('transaction_id', function ($query) use ($cash_register) {
+                                        $query->select('id')
+                                            ->from('transactions')
+                                            ->where(function ($query) use ($cash_register) {
+                                                $query->whereRaw('created_at <> updated_at');
+                                                $query->WhereRaw('updated_at >= (created_at + INTERVAL 1 MINUTE)');
+                                                $query->where('created_at', '<=',\Carbon\Carbon::parse($cash_register->created_at));
+                                            })->
+                                            OrWhere(function ($query) use ($cash_register) {
+                                                $query->whereRaw('created_at <> updated_at');
+                                                $query->WhereRaw('updated_at >= (created_at + INTERVAL 1 MINUTE)');
+                                                $query->where('created_by', '!=', $cash_register->user_id)
+                                                    ->where('created_at', '<=', \Carbon\Carbon::parse($cash_register->closed_at))
+                                                    ->where('created_at', '>=', \Carbon\Carbon::parse($cash_register->created_at));
+                                            });
+                                    })
+                                    ->sum('amount');
+                                }}
                             </td>
                             @if(session('system_mode') == 'restaurant')
                             <td>{{@num_format($cash_register->total_dining_in)}}</td>

@@ -11,6 +11,7 @@
         cursor: pointer;
     }
 </style>
+{{--  --}}
 @php
     $new_notifications = App\Models\Notification::where('user_id', Auth::user()->id)
         ->whereDate('created_at', date('Y-m-d'))

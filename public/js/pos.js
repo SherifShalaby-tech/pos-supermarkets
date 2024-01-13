@@ -249,7 +249,8 @@ $(document).ready(function () {
                             .data("ui-autocomplete")
                             ._trigger("select", "autocompleteselect", ui);
                         $(this).autocomplete("close");
-                    } else if (ui.content.length == 0) {
+                    }
+                    else if (ui.content.length == 0) {
                         get_label_product_row(
                             null,
                             null,
@@ -638,7 +639,7 @@ function calculate_sub_totals() {
         let price_hidden = __read_number($(tr).find(".price_hidden"));
         let sub_total = 0;
         if (sell_price > price_hidden) {
-            
+
             let price_discount = (sell_price - price_hidden);
 
             $(tr).find(".product_discount_type").val("surplus");
@@ -1461,7 +1462,7 @@ $(document).on("click", "#draft-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
-
+    $("#pay_from_balance").val(3);
     pos_form_obj.submit();
 });
 $(document).on("click", "#pay-later-btn", function (e) {
@@ -1470,8 +1471,21 @@ $(document).on("click", "#pay-later-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
-    $("#amount").val(0);
-    pos_form_obj.submit();
+    // Get the text content of the element with the class "customer_balance"
+    var balanceText = $(".customer_balance").text();
+
+    // Convert the text content to a number
+    var balance = parseFloat(balanceText);
+
+    // if(balance > 0){
+    //     $("#pay_from_balance").val(2);
+    //     pos_form_obj.submit();
+    // }else{
+        $("#amount").val(0);
+        pos_form_obj.submit();
+    // }
+    
+    
 });
 $(document).on("click", "#quick-pay-btn", function (e) {
     //Check if product is present or not.
@@ -1479,6 +1493,7 @@ $(document).on("click", "#quick-pay-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
+    $("#pay_from_balance").val("1")
     pos_form_obj.submit();
 });
 $("button#submit-btn").click(function () {
@@ -1490,14 +1505,27 @@ $("button#submit-btn").click(function () {
 
     $(this).attr("disabled", true);
     $("#add-payment").modal("hide");
+    $("#pay_from_balance").val("1")
     pos_form_obj.submit();
     setTimeout(() => {
         $("#submit-btn").attr("disabled", false);
     }, 2000);
 });
+var updateBtnClicked = false;
 $("button#update-btn").click(function () {
-    $("#is_edit").val("");
-    pos_form_obj.submit();
+        // Check if the button has not been clicked yet
+        if (!updateBtnClicked) {
+            // Perform the desired action
+            $("#is_edit").val("");
+            pos_form_obj.submit();
+    
+            // Set the flag to true to indicate the button has been clicked
+            updateBtnClicked = true;
+    
+            // Disable the button after it has been clicked
+            $(this).prop('disabled', true);
+        }
+    
 });
 
 $(document).ready(function () {
@@ -1505,10 +1533,23 @@ $(document).ready(function () {
         submitHandler: function (form) {
             $("#pos-save").attr("disabled", "true");
             var data = $(form).serialize();
-            data =
+            var balanceText = $(".customer_balance").text();
+
+            // Convert the text content to a number
+            var balance = parseFloat(balanceText);
+        
+            if(balance > 0){
+                data =
+                data +"&pay_from_balance="+$("#pay_from_balance").val()+
+                "&terms_and_condition_id=" +
+                $("#terms_and_condition_id").val();
+            }else{
+                data =
                 data +
                 "&terms_and_condition_id=" +
                 $("#terms_and_condition_id").val();
+            }
+            
             var url = $(form).attr("action");
             $.ajax({
                 method: "POST",
@@ -2062,6 +2103,9 @@ $(document).ready(function () {
         }
     );
 });
+$(document).on('change', '.filter_transactions', function() {
+    get_recent_transactions();
+})
 function get_recent_transactions() {
     // recent_transaction_table.ajax.reload();
      $('#recent_transaction_table').DataTable().clear().destroy();
@@ -2276,6 +2320,7 @@ $(document).on("click", ".use_it_deposit_balance", function () {
 
     let used_deposit_balance = __read_number($("#used_deposit_balance"));
     __write_number($("#amount"), used_deposit_balance);
+    $(".received_amount").change();
 });
 
 $(document).on("click", ".add_to_deposit", function () {
@@ -2303,6 +2348,7 @@ function getCustomerBalance() {
             $(".customer_balance").text(
                 __currency_trans_from_en(result.balance, false)
             );
+            $(".staff_note").text(result.staff_note);
             $(".customer_balance").removeClass("text-red");
             if (result.balance < 0) {
                 $(".customer_balance").addClass("text-red");
@@ -2399,26 +2445,7 @@ function getCustomerPointDetails() {
         },
     });
 }
-$(document).on("submit", "form#pay_customer_due_form", function (e) {
-    e.preventDefault();
-    let url = $(this).attr("action");
-    let data = $(this).serialize();
-    $.ajax({
-        method: "POST",
-        url: url,
-        data: data,
-        dataType: "json",
-        success: function (result) {
-            if (result.success) {
-                swal("Success!", result.msg, "success");
-                $(".view_modal").modal("hide");
-                $("#customer_id").change();
-            } else {
-                swal("Error!", result.msg, "error");
-            }
-        },
-    });
-});
+
 $(document).on("click", ".redeem_btn", function () {
     $("#is_redeem_points").val(1);
     $(this).attr("disabled", true);
@@ -2448,24 +2475,35 @@ $(document).on("change", "#deliveryman_id", function () {
 $(document).on("click", "#delivery_cost_btn", function () {
     $("#deliveryman_id_hidden").val($("#deliveryman_id").val());
 });
+var updateadd_payment_formClicked = false;
 $(document).on("submit", "form#add_payment_form", function (e) {
     e.preventDefault();
     let data = $(this).serialize();
+    let submitButton = $("#submit_form_button"); 
+    if (!updateadd_payment_formClicked) {
+       
+        console.log('ojj')
+        $.ajax({
+            method: "post",
+            url: $(this).attr("action"),
+            data: data,
+            success: function (result) {
+                if (result.success) {
+                    swal("Success", result.msg, "success");
+                } else {
+                    swal("Error", result.msg, "error");
+                }
+                $(".view_modal").modal("hide");
+                get_recent_transactions();
+            },
+        });
+    
+        // Set the flag to true to indicate the button has been clicked
+        updateadd_payment_formClicked = true;
 
-    $.ajax({
-        method: "post",
-        url: $(this).attr("action"),
-        data: data,
-        success: function (result) {
-            if (result.success) {
-                swal("Success", result.msg, "success");
-            } else {
-                swal("Error", result.msg, "error");
-            }
-            $(".view_modal").modal("hide");
-            get_recent_transactions();
-        },
-    });
+        // Disable the button after it has been clicked
+        submitButton.prop('disabled', true);
+    }
 });
 
 $(document).on("click", ".print-invoice", function () {

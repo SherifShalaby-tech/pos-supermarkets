@@ -208,18 +208,38 @@ class Employee extends Model implements HasMedia
 
     public static function getDropdownByJobType($job_type, $include_superadmin = false, $return_user_id = false)
     {
-        $query = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
-            ->leftjoin('users', 'employees.user_id', 'users.id')
-            ->where('job_types.job_title', $job_type);
-        if ($include_superadmin) {
-            $query->orWhere('is_superadmin', 1);
+        if($job_type == 'Deliveryman'){
+            $query = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
+                ->leftjoin('users', 'employees.user_id', 'users.id');
+            if($job_type=='Deliveryman'){
+                $query->where('job_types.job_title', $job_type);
+            }
+            if ($include_superadmin) {
+                $query->orWhere('is_superadmin', 1);
+            }
+            if ($return_user_id) {
+                $employees = $query->pluck('users.name', 'users.id');
+            } else {
+                $employees = $query->pluck('users.name', 'employees.id');
+            }
+            return $employees->toArray();
         }
-        if ($return_user_id) {
-            $employees = $query->pluck('users.name', 'users.id');
-        } else {
-            $employees = $query->pluck('users.name', 'employees.id');
+        else{
+            $query = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
+                ->leftjoin('users', 'employees.user_id', 'users.id')
+                ->leftjoin('store_pos', 'users.id', 'store_pos.user_id')
+        //            ->where('job_types.job_title', $job_type)
+                ->whereNotNull('store_pos.user_id');
+            if ($include_superadmin) {
+                $query->orWhere('is_superadmin', 1);
+            }
+            if ($return_user_id) {
+                $employees = $query->pluck('users.name', 'users.id');
+            } else {
+                $employees = $query->pluck('users.name', 'employees.id');
+            }
+            return $employees->toArray();
         }
-        return $employees->toArray();
     }
     public static function getCommissionEmployeeDropdown($include_superadmin = false, $return_user_id = false)
     {

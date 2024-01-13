@@ -153,8 +153,8 @@
                 "ajax": {
                     "url": "/expense",
                     "data": function(d) {
-                        d.startdate = $('#start_date').val();
-                        d.enddate = $('#end_date').val();
+                        d.start_date = $('#start_date').val();
+                        d.end_date = $('#end_date').val();
                         d.expense_category_id = $('#expense_category_id').val()
                         d.expense_beneficiary_id = $('#expense_beneficiary_id').val()
                         d.store_id = $('#store_id').val()

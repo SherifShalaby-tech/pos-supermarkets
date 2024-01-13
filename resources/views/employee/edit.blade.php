@@ -11,18 +11,30 @@
                         <h4>@lang('lang.edit_employee')</h4>
                     </div>
                     <div class="card-body">
-                        {!! Form::open(['url' => action('EmployeeController@update', $employee->id), 'method' => 'put', 'id' => 'edit_employee_form', 'enctype' => 'multipart/form-data']) !!}
+                        {!! Form::open([
+                            'url' => action('EmployeeController@update', $employee->id),
+                            'method' => 'put',
+                            'id' => 'edit_employee_form',
+                            'enctype' => 'multipart/form-data',
+                        ]) !!}
 
                         <div class="row">
 
                             <div class="col-sm-6">
                                 <label for="fname">@lang('lang.name'):*</label>
-                                <input type="text" class="form-control" name="name" value="{{ $employee->name }}" @if($employee->name == 'Admin') readonly @endif
-                                    id="name" required placeholder="Name">
+                                <input type="text" class="form-control" name="name" value="{{ $employee->name }}"
+                                    @if ($employee->name == 'Admin') readonly @endif id="name" required
+                                    placeholder="Name">
                             </div>
                             <div class="col-sm-6">
                                 <label for="store_id">@lang('lang.store')</label>
-                                {!! Form::select('store_id[]', $stores, !empty($employee->store_id) ? $employee->store_id : [], ['class' => 'form-control selectpicker', 'multiple', 'placeholder' => __('lang.please_select'), 'data-live-search' => 'true', 'id' => 'store_id']) !!}
+                                {!! Form::select('store_id[]', $stores, !empty($employee->store_id) ? $employee->store_id : [], [
+                                    'class' => 'form-control selectpicker',
+                                    'multiple',
+                                    'placeholder' => __('lang.please_select'),
+                                    'data-live-search' => 'true',
+                                    'id' => 'store_id',
+                                ]) !!}
                             </div>
                             <div class="col-sm-6">
                                 <label for="email">@lang('lang.email'):*<small>(@lang('lang.it_will_be_used_for_login'))</small></label>
@@ -39,12 +51,18 @@
                                 <input type="password" class="form-control" name="password" id="password"
                                     placeholder="Create New Password">
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-5">
                                 <label for="pass">@lang('lang.confirm_password')</label>
                                 <input type="password" class="form-control" id="password_confirmation"
                                     name="password_confirmation" placeholder="Conform Password">
+                                {{-- <input type="password" value="{{$employee->user->password}}"> --}}
+                                {{-- {{decrypt($employee->user->password)}} --}}
                             </div>
-
+                            <div class="col-sm-1 pt-4">
+                                <a class="btn-primary btn print-employee-barcode text-white"
+                                    data-href="{{ route('print_employee_barcode', $employee->id) }}"><i
+                                        class="fas fa-print"></i></a>
+                            </div>
                         </div>
                         <div class="row mt-4">
 
@@ -66,7 +84,10 @@
 
                             <div class="col-sm-6">
                                 <label for="job_type">@lang('lang.job_type')</label>
-                                {!! Form::select('job_type_id', $jobs, $employee->job_type_id, ['class' => 'form-control', 'placeholder' => __('lang.select_job_type')]) !!}
+                                {!! Form::select('job_type_id', $jobs, $employee->job_type_id, [
+                                    'class' => 'form-control',
+                                    'placeholder' => __('lang.select_job_type'),
+                                ]) !!}
                             </div>
                             <div class="col-sm-6">
                                 <label for="mobile">@lang('lang.mobile'):*</label>
@@ -136,20 +157,27 @@
                                                             <input id="working_day_per_week{{ $key }}"
                                                                 @if (!empty($employee->working_day_per_week[$key])) checked @endif
                                                                 name="working_day_per_week[{{ $key }}]"
-                                                                type="checkbox" value="1" class="form-control-custom">
+                                                                type="checkbox" value="1"
+                                                                class="form-control-custom">
                                                             <label
                                                                 for="working_day_per_week{{ $key }}"><strong>{{ $week_day }}</strong></label>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    {!! Form::text('check_in[' . $key . ']', !empty($employee->check_in[$key]) ? $employee->check_in[$key] : null, ['class' => 'form-control input-md check_in time_picker ']) !!}
+                                                    {!! Form::text('check_in[' . $key . ']', !empty($employee->check_in[$key]) ? $employee->check_in[$key] : null, [
+                                                        'class' => 'form-control input-md check_in time_picker ',
+                                                    ]) !!}
                                                 </td>
                                                 <td>
-                                                    {!! Form::text('check_out[' . $key . ']', !empty($employee->check_out[$key]) ? $employee->check_out[$key] : null, [
-    'class' => 'form-control input-md check_out
-                                            time_picker',
-]) !!}
+                                                    {!! Form::text(
+                                                        'check_out[' . $key . ']',
+                                                        !empty($employee->check_out[$key]) ? $employee->check_out[$key] : null,
+                                                        [
+                                                            'class' => 'form-control input-md check_out
+                                                                                                                                                                                                        time_picker',
+                                                        ],
+                                                    ) !!}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -174,7 +202,8 @@
                         <div class="row mt-4">
 
                             <div class="col-sm-12">
-                                <button type="submit" class="btn btn-primary" id="submit-btn">@lang('lang.update_employee')</button>
+                                <button type="submit" class="btn btn-primary"
+                                    id="submit-btn">@lang('lang.update_employee')</button>
                             </div>
 
                         </div>
@@ -313,6 +342,46 @@
             $('.salary_select').selectpicker('refresh');
             $('.salary_checkbox').prop('checked', false);
 
-        })
+        });
+        $(document).on('click', '.print-employee-barcode', function(e) {
+            e.preventDefault();
+            var url = $(this).data('href');
+
+            Swal.fire({
+                title: "{!! __('lang.please_enter_your_password') !!}",
+                input: 'password',
+                inputAttributes: {
+                    placeholder: "{!! __('lang.type_your_password') !!}",
+                    autocomplete: 'off',
+                    autofocus: true,
+                },
+            }).then((result) => {
+                if (result) {
+                    $.ajax({
+                        type: "get",
+                        url: url,
+                        data: {
+                            value: result,
+                        },
+                        success: function(response) {
+                            var newWindow = window.open();
+                            newWindow.document.write(response);
+                            Swal.fire(
+                                'success',
+                                "{!! __('lang.correct_password') !!}",
+                                'success'
+                            );
+                        }
+                    });
+                } else {
+                    Swal.fire(
+                        'Failed!',
+                        'Wrong Password!',
+                        'error'
+                    )
+
+                }
+            });
+        });
     </script>
 @endsection

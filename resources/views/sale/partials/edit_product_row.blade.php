@@ -73,11 +73,11 @@ $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
         </td>
         <td style="width: 15%">
             <div class="input-group">
-                {{-- <span class="input-group-btn">
+                <span class="input-group-btn">
                    <button type="button" class="btn btn-danger minus">
                         <span class="dripicons-minus"></span>
                     </button>
-                </span> --}}
+                </span>
                 <input type="text" class="form-control quantity  qty numkey input-number" step="any"
                     name="transaction_sell_line[{{ $loop->index }}][quantity]" required
                     value="@if (isset($product->quantity)) {{preg_match('/\.\d*[1-9]+/', (string)$product->quantity) ? $product->quantity : @num_format($product->quantity)}}@else{{ 1 }} @endif">
@@ -110,7 +110,7 @@ $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                     <input type="text" class="form-control product_discount_amount  discount_amount{{$product->product_id}}"
                         name="transaction_sell_line[{{$loop->index }}][product_discount_amount]" readonly
                         value="@if(!empty($product->product_discount_amount)){{@num_format($product->product_discount_amount)}}@else{{0}}@endif">
-                        </div>
+            </div>
         </div>
         </td>
         <td style="width: @if(session('system_mode')  != 'restaurant') 11% @else 10% @endif padding:1.7rem !important;">
@@ -145,9 +145,9 @@ $Variation=\App\Models\Variation::where('id',$product->variation_id)->first();
                 name="transaction_sell_line[{{ $loop->index }}][sub_total]"
                 value="{{ preg_match('/\.\d*[1-9]+/', (string)$product->sub_total) ? $product->sub_total : @num_format($product->sub_total) }}">
         </td>
-        {{-- <td style="width: 15%">
+        <td style="width: 15%">
             <button type="button" class="btn btn-danger btn-sx remove_row"><i class="fa fa-times"></i></button>
-        </td> --}}
+        </td>
     </tr>
 @empty
 @endforelse

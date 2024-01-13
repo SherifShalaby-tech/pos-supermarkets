@@ -297,31 +297,43 @@ function get_label_product_row(product_id, variation_id,is_batch=false) {
 }
 function calculate_sub_totals() {
     var total = 0;
-    $("#product_table > tbody  > .product_row").each((ele, tr) => {
+    $("#product_table > tbody > .product_row").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
-        let productId=$(".product_id").val();
+        let productId = $(tr).find(".product_id").val();
         let purchase_price = __read_number($(tr).find(".purchase_price"));
         let sub_total = purchase_price * quantity;
-        $("#product_table > tbody  > .row_batch_details").each((ele, td) => {
-            let batch_quantity =__read_number($(td).find(".batch_quantity"+productId));
-            let batch_purchase_price = __read_number($(td).find(".batch_purchase_price"+productId));
-            if(batch_quantity){
-                sub_total=(batch_quantity*batch_purchase_price)+sub_total;
+        let hasBatchQuantity = false;
+
+        $("#product_table > tbody > .row_batch_details").each((ele, td) => {
+            let batchProductId = $(td).find(".batch_product_id").val();
+            if (batchProductId === productId) {
+                let batch_quantity = __read_number($(td).find(".batch_quantity" + productId));
+                let batch_purchase_price = __read_number($(td).find(".batch_purchase_price" + productId));
+                if (batch_quantity) {
+                    sub_total += batch_quantity * batch_purchase_price;
+                    hasBatchQuantity = true;
+                }
             }
         });
+
+        if (!hasBatchQuantity) {
+            sub_total = purchase_price * quantity;
+        }
+
         __write_number($(tr).find(".sub_total"), sub_total);
-        $(tr)
-            .find(".sub_total_span")
-            .text(__currency_trans_from_en(sub_total, false));
+        $(tr).find(".sub_total_span").text(__currency_trans_from_en(sub_total, false));
         total += sub_total;
     });
-    __write_number($("#grand_total"), total);
 
+    // Calculate total with other expenses, discount, and other payments
     var other_expenses = __read_number($("#other_expenses"));
     var discount_amount = __read_number($("#discount_amount"));
     var other_payments = __read_number($("#other_payments"));
 
     total = total + other_expenses - discount_amount + other_payments;
+    
+    // Update grand total and final total
+    __write_number($("#grand_total"), total);
     __write_number($("#final_total"), total);
     __write_number($("#amount"), total);
     $(".final_total_span").text(__currency_trans_from_en(total, false));
@@ -486,10 +498,11 @@ $(document).on("click", "#clear_all_input_form", function () {
         },
     });
 });
-function checkAddStock(){
+function    checkAddStock(){
     let willDelete = 2;
     let namePurchasePrice='';
     let nameSellingPrice='';
+    let checkPrice = '';
     let checkQty=0;
     $("#product_table tbody")
         .find(".product_row")
@@ -512,24 +525,29 @@ function checkAddStock(){
                     willDelete = 1;
                     nameSellingPrice = 'selling_price';
             }
+
+            if(parseFloat($(this).find('.purchase_price').val()) >= parseFloat($(this).find('.selling_price').val())) {
+                console.log($(this).find('.purchase_price').val());
+                console.log($(this).find('.selling_price').val());
+                $(this).find('.selling_price').css('border', '2px solid #6f42c1');
+                $(this).find('.purchase_price').css('border', '2px solid #6f42c1');
+                willDelete = 1;
+                checkPrice = 'purchase_price>selling_price';
+            }
         });
-        return [willDelete,namePurchasePrice,nameSellingPrice,checkQty];
+        return [willDelete,namePurchasePrice,nameSellingPrice,checkQty,checkPrice];
 }
-$(document).on('click', '#submit-save', function(e) {
-    e.preventDefault();
+$(document).on('click', '#submit-edit-save', function(e) {
+    // e.preventDefault();
     let data=checkAddStock();
     console.log(data)
     if (data[0]=="1" && data[3]!="3") {
         
         let title = '';
-        if (data[1] != '' && data[2] != '') {
-            title = LANG.purchase_price_and_sell_price_equal_to_zero;
-        } else if (data[1] == '' && data[2] != '') {
-            title = LANG.sell_price_equal_to_zero;
-        } else if (data[1] != '' && data[2] == '') {
-            title = LANG.purchase_price_equal_to_zero;
-        }
-        swal({
+        let check = '';
+        if(data[4] != ''){
+            title = LANG.purchase_price_more_than_sell_price;
+                   swal({
                 title: title,
                 text: LANG.continue,
                 icon: "warning",
@@ -540,18 +558,166 @@ $(document).on('click', '#submit-save', function(e) {
             })
             .then((isConfirm) => {
                 if (isConfirm) {
-                    $('form#add_stock_form').valid();
-                    $('form#add_stock_form').submit();
-                } else {
-                    $(this).find('.purchase_price_submit').val('0');
+                    if (data[1] != '' && data[2] != '') {
+                        title = LANG.purchase_price_and_sell_price_equal_to_zero;
+                        check = 'no'
+                    } else if (data[1] == '' && data[2] != '') {
+                        title = LANG.sell_price_equal_to_zero;
+                        check = 'no'
+                    } else if (data[1] != '' && data[2] == '') {
+                        title = LANG.purchase_price_equal_to_zero;
+                        check = 'no'
+                    }
+                    if(check != ''){
+                        $(this).find('.purchase_price_submit').val('0');
+                        $(this).find('.selling_price_submit').val('0')
+                        swal("warning", title, "warning");
+                    }else{
+                        $('form#edit_stock_form').valid();
+                        $('form#edit_stock_form').submit();
+                    }
+                } else { $(this).find('.purchase_price_submit').val('0');
                     $(this).find('.selling_price_submit').val('0')
                 }
             });
+        }else{
+            if (data[1] != '' && data[2] != '') {
+                title = LANG.purchase_price_and_sell_price_equal_to_zero;
+            } else if (data[1] == '' && data[2] != '') {
+                title = LANG.sell_price_equal_to_zero;
+            } else if (data[1] != '' && data[2] == '') {
+                title = LANG.purchase_price_equal_to_zero;
+            }
+    
+            // swal({
+            //         title: title,
+            //         text: LANG.continue,
+            //         icon: "warning",
+            //         buttons: true,
+            //         dangerMode: true,
+            //         showCancelButton: true,
+            //         confirmButtonText: 'Save',
+            //     })
+            //     .then((isConfirm) => {
+            //         if (isConfirm) {
+            //             $('form#add_stock_form').valid();
+            //             $('form#add_stock_form').submit();
+            //         } else {
+                        $(this).find('.purchase_price_submit').val('0');
+                        $(this).find('.selling_price_submit').val('0')
+            //         }
+            //     });
+            swal("warning", title, "warning");
+        }
+   
     } else if(data[0]=="2") {
-        $('form#add_stock_form').valid();
-        $('form#add_stock_form').submit();
+        console.log('test');
+        $('form#edit_stock_form').valid();
+        $('form#edit_stock_form').submit();
     }
 });
+$(document).on('click', '#submit-save', function(e) {
+    e.preventDefault();
+    let data=checkAddStock();
+    console.log(data)
+    if (data[0]=="1" && data[3]!="3") {
+        
+        let title = '';
+        let check = '';
+        if(data[4] != ''){
+            title = LANG.purchase_price_more_than_sell_price;
+                   swal({
+                title: title,
+                text: LANG.continue,
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+            })
+            .then((isConfirm) => {
+                if (isConfirm) {
+                    if (data[1] != '' && data[2] != '') {
+                        title = LANG.purchase_price_and_sell_price_equal_to_zero;
+                        check = 'no'
+                    } else if (data[1] == '' && data[2] != '') {
+                        title = LANG.sell_price_equal_to_zero;
+                        check = 'no'
+                    } else if (data[1] != '' && data[2] == '') {
+                        title = LANG.purchase_price_equal_to_zero;
+                        check = 'no'
+                    }
+            
+                    // swal({
+                    //         title: title,
+                    //         text: LANG.continue,
+                    //         icon: "warning",
+                    //         buttons: true,
+                    //         dangerMode: true,
+                    //         showCancelButton: true,
+                    //         confirmButtonText: 'Save',
+                    //     })
+                    //     .then((isConfirm) => {
+                    //         if (isConfirm) {
+                    //             $('form#add_stock_form').valid();
+                    //             $('form#add_stock_form').submit();
+                    //         } else {
+                              
+                    //         }
+                    //     });
+                    if(check != ''){
+                        $(this).find('.purchase_price_submit').val('0');
+                        $(this).find('.selling_price_submit').val('0')
+                        swal("warning", title, "warning");
+                    }else{
+                        $('form#add_stock_form').valid();
+                        $('form#add_stock_form').submit();
+                    }
+                } else { $(this).find('.purchase_price_submit').val('0');
+                    $(this).find('.selling_price_submit').val('0')
+                }
+            });
+        }else{
+            if (data[1] != '' && data[2] != '') {
+                title = LANG.purchase_price_and_sell_price_equal_to_zero;
+            } else if (data[1] == '' && data[2] != '') {
+                title = LANG.sell_price_equal_to_zero;
+            } else if (data[1] != '' && data[2] == '') {
+                title = LANG.purchase_price_equal_to_zero;
+            }
+    
+            // swal({
+            //         title: title,
+            //         text: LANG.continue,
+            //         icon: "warning",
+            //         buttons: true,
+            //         dangerMode: true,
+            //         showCancelButton: true,
+            //         confirmButtonText: 'Save',
+            //     })
+            //     .then((isConfirm) => {
+            //         if (isConfirm) {
+            //             $('form#add_stock_form').valid();
+            //             $('form#add_stock_form').submit();
+            //         } else {
+                        $(this).find('.purchase_price_submit').val('0');
+                        $(this).find('.selling_price_submit').val('0')
+            //         }
+            //     });
+            swal("warning", title, "warning");
+        }
+   
+    } else if(data[0]=="2") {
+        if ($('form#add_stock_form').length) {
+            $('form#add_stock_form').valid();
+            $('form#add_stock_form').submit();
+        }else if ($('form#edit_stock_form').length) {
+            $('form#edit_stock_form').valid();
+            $('form#edit_stock_form').submit();
+        }
+    }
+});
+
 $(document).on('change','.quantity,.purchase_price,.selling_price',function(){
     $(this).css('border','1px solid grey');
 });
