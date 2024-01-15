@@ -531,7 +531,6 @@ class CashController extends Controller
     public function saveAddClosingCash(Request $request)
     {
         try {
-
             DB::beginTransaction();
             $data = $request->except('_token');
 
