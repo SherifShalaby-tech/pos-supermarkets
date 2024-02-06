@@ -3,17 +3,21 @@
     class="modal fade text-left">
     <div role="document" class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ __('lang.delivery') }}</h5>
-                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+            <div
+                class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                <h5 class="modal-title position-relative">{{ __('lang.delivery') }}
+                    <span class="position-absolute header-pill"></span>
+                </h5>
+                <button type="button" data-dismiss="modal" aria-label="Close"
+                    class="close btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"><span
                         aria-hidden="true"><i class="dripicons-cross"></i></span></button>
+                <span class="position-absolute modal-border"></span>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="customer_name">@lang('lang.customer_name'): <span
-                                    class="customer_name"></span></label>
+                            <label for="customer_name">@lang('lang.customer_name'): <span class="customer_name"></span></label>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -64,9 +68,16 @@
                     <div class="col-md-6">
                         <label for="delivery_cost">@lang('lang.delivery_cost'):</label>
                         @if (auth()->user()->can('settings.delivery_zone_cost.create_and_edit'))
-                            {!! Form::text('delivery_cost', !empty($transaction) ? $transaction->delivery_cost : null, ['class' => 'form-control', 'id' => 'delivery_cost']) !!}
+                            {!! Form::text('delivery_cost', !empty($transaction) ? $transaction->delivery_cost : null, [
+                                'class' => 'form-control',
+                                'id' => 'delivery_cost',
+                            ]) !!}
                         @else
-                            {!! Form::text('delivery_cost', !empty($transaction) ? $transaction->delivery_cost : null, ['class' => 'form-control', 'id' => 'delivery_cost', 'readonly' => true]) !!}
+                            {!! Form::text('delivery_cost', !empty($transaction) ? $transaction->delivery_cost : null, [
+                                'class' => 'form-control',
+                                'id' => 'delivery_cost',
+                                'readonly' => true,
+                            ]) !!}
                         @endif
                     </div>
                     <div class="col-md-6">
@@ -89,7 +100,11 @@
                     </div>
                     <div class="col-md-12">
                         <label for="delivery_address">@lang('lang.delivery_address'):</label>
-                        {!! Form::textarea('delivery_address', !empty($transaction->delivery_address) ? $transaction->delivery_address : null, ['class' => 'form-control delivery_address', 'rows' => 2]) !!}
+                        {!! Form::textarea(
+                            'delivery_address',
+                            !empty($transaction->delivery_address) ? $transaction->delivery_address : null,
+                            ['class' => 'form-control delivery_address', 'rows' => 2],
+                        ) !!}
                     </div>
                 </div>
                 <div class="modal-footer">

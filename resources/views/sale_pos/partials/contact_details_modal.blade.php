@@ -3,10 +3,16 @@
     class="modal fade text-left">
     <div role="document" class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ __('lang.customer_details') }}</h5>
-                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+            <div
+                class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                <h5 class="modal-title position-relative">{{ __('lang.customer_details') }}
+                    <span class="position-absolute header-pill"></span>
+                </h5>
+
+                <button type="button" data-dismiss="modal" aria-label="Close"
+                    class="close btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"><span
                         aria-hidden="true"><i class="dripicons-cross"></i></span></button>
+                <span class="position-absolute modal-border"></span>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -30,8 +36,7 @@
                             class="customer_points_value" value="0">
                     </div>
                     <div class="col-md-4">
-                        <b>@lang('lang.total_redeemable_value'):</b> <span
-                            class="customer_total_redeemable_span"></span>
+                        <b>@lang('lang.total_redeemable_value'):</b> <span class="customer_total_redeemable_span"></span>
                         <input type="hidden" name="customer_total_redeemable" id="customer_total_redeemable"
                             class="customer_total_redeemable" value="0">
                         <input type="hidden" name="rp_redeemed" id="rp_redeemed" class="rp_redeemed" value="0">
@@ -50,14 +55,19 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label for="customer_address">@lang('lang.address')</label>
-                            {!! Form::textarea('customer_address', null, ['class' => 'form-control', 'rows' => 3, 'id' => 'customer_address']) !!}
+                            {!! Form::textarea('customer_address', null, [
+                                'class' => 'form-control',
+                                'rows' => 3,
+                                'id' => 'customer_address',
+                            ]) !!}
                         </div>
                         <div class="col-md-3">
                             <button type="button" class="btn btn-primary" style="margin-top: 30px;"
                                 id="update_customer_address">@lang('lang.update_address')</button>
                         </div>
                         <div class="col-md-3">
-                            <button type="button" data-href="" class="btn btn-primary btn-modal text-white" data-container=".view_modal"  style="margin-top: 30px;"
+                            <button type="button" data-href="" class="btn btn-primary btn-modal text-white"
+                                data-container=".view_modal" style="margin-top: 30px;"
                                 id="pay_customer_due_btn">@lang('lang.pay_customer_due')</button>
                         </div>
                     </div>
