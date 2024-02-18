@@ -3,12 +3,13 @@
 @section('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url('front/css/supplier.css') }}">
     <style>
         .preview-container {
             /* display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px; */
+                                                                                                                                    flex-wrap: wrap;
+                                                                                                                                    gap: 10px;
+                                                                                                                                    margin-top: 20px; */
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
@@ -203,26 +204,40 @@
 @endsection
 
 @section('content')
-    <section class="forms">
+    <section class="forms py-0">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.add_supplier')</h4>
+                <div class="col-md-12 px-1">
+                    <div
+                        class="d-flex align-items-center my-2 @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
+                        <h5 class="mb-0 position-relative" style="margin-right: 30px">
+                            @lang('lang.add_supplier')
+                            <span class="position-absolute header-pill"></span>
+                        </h5>
+                    </div>
+                    <div class="card mb-2 d-flex flex-row justify-content-center align-items-center">
+                        <p class="italic mb-0 py-1">
+                            <small>@lang('lang.required_fields_info')</small>
+                        <div style="width: 30px;height: 30px;">
+                            <img class="w-100 h-100" src="{{ asset('front/images/icons/warning.png') }}" alt="warning!">
                         </div>
-                        <div class="card-body">
-                            <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
-                            {!! Form::open(['url' => action('SupplierController@store'), 'id' => 'supplier-form', 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-2">
+                            {!! Form::open([
+                                'url' => action('SupplierController@store'),
+                                'id' => 'supplier-form',
+                                'method' => 'POST',
+                                'class' => '',
+                                'enctype' => 'multipart/form-data',
+                            ]) !!}
 
                             @include('supplier.partial.create_supplier_form')
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <input type="button" value="{{ trans('lang.submit') }}" id="submit-btn"
-                                            class="btn btn-primary">
-                                    </div>
+                            <div class="row my-2 justify-content-center align-items-center">
+                                <div class="col-md-4">
+                                    <input type="button" value="{{ trans('lang.submit') }}" id="submit-btn" class="btn">
                                 </div>
                             </div>
                             {!! Form::close() !!}
@@ -300,6 +315,7 @@
 
             getImages()
         });
+
         function launchCropTool(img) {
             // Set up Croppie options
             const croppieOptions = {
@@ -361,14 +377,14 @@
                 $("#cropped_images").empty();
                 for (let i = 0; i < container[0].children.length; i++) {
                     images.push(container[0].children[i].children[0].src)
-                    var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0].children[i].children[0].src);
+                    var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0]
+                        .children[i].children[0].src);
                     $("#cropped_images").append(newInput);
                 }
                 console.log(images);
                 return images
             }, 300);
         }
-
     </script>
 
 
@@ -419,6 +435,24 @@
                     }
                 },
             });
+        });
+    </script>
+
+    <script src="{{ asset('front/js/bootstrap.min.js') }}"></script>
+
+
+    <script>
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#supplierCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#supplierCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#supplierCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#supplierCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
         });
     </script>
 @endsection

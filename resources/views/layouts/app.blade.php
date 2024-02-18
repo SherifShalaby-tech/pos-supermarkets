@@ -37,6 +37,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
+
         .preview-brand-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -45,6 +46,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
+
         .preview-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -53,6 +55,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
+
         .preview-class-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -61,6 +64,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
+
         .preview-edit-product-container {
             /* display: flex;
             flex-wrap: wrap;
@@ -275,20 +279,22 @@
             @endforeach
             <input type="hidden" id="__language" value="{{ session('language') }}">
             <input type="hidden" id="__decimal" value=".">
-            <input type="hidden" id="__currency_precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__currency_precision"
+                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
             <input type="hidden" id="__currency_symbol" value="$">
             <input type="hidden" id="__currency_thousand_separator" value=",">
             <input type="hidden" id="__currency_symbol_placement" value="before">
-            <input type="hidden" id="__precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
-            <input type="hidden" id="__quantity_precision" value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__precision"
+                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
+            <input type="hidden" id="__quantity_precision"
+                value="{{ !empty(App\Models\System::getProperty('numbers_length_after_dot')) ? App\Models\System::getProperty('numbers_length_after_dot') : 5 }}">
             <input type="hidden" id="system_mode" value="{{ env('SYSTEM_MODE') }}">
             @yield('content')
         </div>
 
-        @include('layouts.partials.footer')
 
 
-        <div class="modal view_modal no-print" role="dialog" aria-hidden="true" ></div>
+        <div class="modal view_modal no-print" role="dialog" aria-hidden="true"></div>
         <div class="modal" id="cropper_modal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -334,6 +340,7 @@
         <!-- This will be printed -->
         <section class="invoice print_closing_cash print-only" id="print_closing_cash"> </section>
     </div>
+    @include('layouts.partials.footer')
 
     <script type="text/javascript">
         base_path = "{{ url('/') }}";
@@ -457,8 +464,8 @@
                 url: $(this).data('href'),
                 dataType: 'html',
                 success: function(result) {
-                    if(result){
-                        if($('.add_closing_cash').length>0){
+                    if (result) {
+                        if ($('.add_closing_cash').length > 0) {
                             $('.add_closing_cash').hide();
                             $('.close').click();
                             $('#overlay').hide();

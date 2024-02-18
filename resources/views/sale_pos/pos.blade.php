@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', __('lang.pos'))
 @section('style')
-    <link rel="stylesheet" href="{{ url('css/pos.css') }}">
-    <link rel="stylesheet" href="{{ url('css/pos-modals.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url('front/css/pos.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url('front/css/pos-modals.css') }}">
 @endsection
 @section('content')
     @php

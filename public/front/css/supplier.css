@@ -1,0 +1,133 @@
+.header-pill,
+.toggle-pill,
+.header-modal-pill {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #21912A;
+    top: 13%;
+}
+
+.header-pill {
+    right: -35%;
+}
+
+.header-modal-pill {
+    right: -10%;
+}
+
+.toggle-pill {
+    right: -15%;
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.modal-input {
+    width: 100% !important;
+    background-color: #e6e6e6 !important;
+    outline: none !important;
+    border: 1px solid #e6e6e6 !important;
+    padding: 2px 5px !important;
+    border-radius: 6px !important;
+}
+
+.bootstrap-select {
+    width: 100% !important;
+    background-color: #e6e6e6 !important;
+    outline: none !important;
+    border: 1px solid #e6e6e6 !important;
+    padding: 2px 5px !important;
+    border-radius: 6px !important;
+}
+
+.bootstrap-select button {
+    height: 100%;
+    width: 100%;
+    padding: 0 15px;
+}
+
+.text-end {
+    text-align: end;
+}
+
+.toggle-button {
+    color: black !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 20px;
+    background-color: #cbe7cc;
+    border-radius: 8px;
+    outline: none !important;
+    border: none !important;
+    transition: 0.6s;
+}
+
+.toggle-button:hover {
+    color: black !important;
+    background-color: #b4e7b5;
+}
+
+.select-button {
+    outline: none;
+    border: none;
+    color: white;
+    background-color: #f9c751;
+    border-radius: 6px;
+}
+
+.select-button-group {
+    background-color: #e6e6e6 !important;
+    border-radius: 6px !important;
+}
+
+#submit-btn {
+    background-color: #21912A;
+    color: white;
+    width: 100%;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.btn-main {
+    background-color: #21912A !important;
+    color: white !important;
+}
+
+.close {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 30px;
+    height: 30px;
+    background-color: #d70007 !important;
+    opacity: 1;
+}
+
+.modal-header {
+    padding: 10px 40px;
+}
+
+.modal-border {
+    bottom: -12%;
+    left: 15%;
+    background-color: #dadada;
+    width: 70%;
+    height: 3px;
+}
+
+.modal-footer {
+    border-top: 4px solid #dadada;
+    width: 70%;
+    margin: auto;
+}
+
+.card {
+    box-shadow: 0 6px 8px -6px #999 !important;
+}
