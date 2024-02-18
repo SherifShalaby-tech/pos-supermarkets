@@ -275,11 +275,18 @@ $(document).ready(function () {
                     if (!ui.item.is_service) {
                         if (ui.item.qty_available > 0) {
                             $(this).val(null);
-                            get_label_product_row(
-                                ui.item.product_id,
-                                ui.item.variation_id,
-                                ui.item.add_stock_lines_id
-                            );
+                            if(ui.item.batch_number!==null){
+                                get_label_product_row(
+                                   ui.item.product_id,
+                                   ui.item.variation_id,
+                                   ui.item.add_stock_lines_id
+                               );
+                           }else{
+                                 get_label_product_row(
+                                   ui.item.product_id,
+                                   ui.item.variation_id,
+                               );
+                           }
                         } else {
                             out_of_stock_handle(
                                 ui.item.product_id,
