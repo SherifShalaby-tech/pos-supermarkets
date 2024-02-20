@@ -1,57 +1,7 @@
-<style>
-    .filterLabel {
+<div class="row">
 
-        display: grid;
-        grid-template-columns: 1em auto;
-        gap: 0.5em;
-    }
-
-    /*  */
-    .filterInput {
-        appearance: none;
-        background-color: transparent;
-        margin: 0;
-        font: inherit;
-        color: #21912A;
-        width: 1.15em;
-        height: 1.15em;
-        border: 0.15em solid #21912A;
-        border-radius: 0.15em;
-        transform: translateY(-0.075em);
-        display: grid;
-        place-content: center;
-        margin-top: 2px;
-    }
-
-    /*  */
-
-    .filterInput::before {
-        content: "";
-        width: 0.65em;
-        height: 0.65em;
-        transform: scale(0);
-        transition: 120ms transform ease-in-out;
-        box-shadow: inset 1em 1em var(--form-control-color);
-
-        background-color: CanvasText;
-
-        transform-origin: bottom left;
-        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-    }
-
-    .filterInput:checked::before {
-        transform: scale(1);
-        background-color: white;
-    }
-
-    .filterInput:checked {
-        background-color: #21912A
-    }
-</style>
-
-<div class="row font-responsive">
-    <br>
-    <div class="col-md-12">
+    <div class="col-md-12 p-1" style="height: 300px;
+    overflow: scroll;">
         <div class="filter-checkbox card" style="margin: 0px;">
             {{-- @if (session('system_mode') != 'restaurant')
                 <div class="card-header" style="padding: 5px 20px; color: #7c5cc4">
@@ -182,6 +132,95 @@
                             </div>
                         </div>
                     @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-12 p-1" style="height: 100%">
+        <div class="card" style="height: 100%;margin-bottom:0 ">
+
+            <div class="card-body" style="padding: 0;height: 100%">
+                <div class="col-lg-12 mt-1 table-container" style="height: 100%">
+                    <div class="filter-window" style="width: 100% !important; height: 100% !important">
+
+                        <div class="category mt-3" style="height: 100%;width: 100%">
+                            <div class="row ml-2 mr-2 px-2">
+                                <div class="col-7">@lang('lang.choose_category')</div>
+                                <div class="col-5 text-right">
+                                    <span class="btn btn-default btn-sm">
+                                        <i class="dripicons-cross"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap ml-2 mt-3">
+                                @foreach ($categories as $category)
+                                    <div class="col-lg-6 filter-by category-img text-center"
+                                        data-id="{{ $category->id }}" data-type="category" style="height: 100%;">
+                                        <img
+                                            src="@if (!empty($category->getFirstMediaUrl('category'))) {{ $category->getFirstMediaUrl('category') }}@else{{ asset('images/default.jpg') }} @endif" />
+                                        <p class="text-center">{{ $category->name }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+
+                        <div class="sub_category mt-3">
+                            <div class="row ml-2 mr-2 px-2">
+                                <div class="col-7">@lang('lang.choose_sub_category')</div>
+                                <div class="col-5 text-right">
+                                    <span class="btn btn-default btn-sm">
+                                        <i class="dripicons-cross"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row ml-2 mt-3">
+                                @foreach ($sub_categories as $category)
+                                    <div class="col-lg-3 filter-by category-img text-center"
+                                        data-id="{{ $category->id }}" data-type="sub_category">
+                                        <img
+                                            src="@if (!empty($category->getFirstMediaUrl('category'))) {{ $category->getFirstMediaUrl('category') }}@else{{ asset('images/default.jpg') }} @endif" />
+                                        <p class="text-center">{{ $category->name }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+
+                        <div class="brand mt-3">
+                            <div class="row ml-2 mr-2 px-2">
+                                <div class="col-7">@lang('lang.choose_brand')</div>
+                                <div class="col-5 text-right">
+                                    <span class="btn btn-default btn-sm">
+                                        <i class="dripicons-cross"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap ml-2 mt-3">
+                                @foreach ($brands as $brand)
+                                    <div class="col-lg-3 filter-by brand-img text-center"
+                                        data-id="{{ $brand->id }}" data-type="brand">
+                                        <img
+                                            src="@if (!empty($brand->getFirstMediaUrl('brand'))) {{ $brand->getFirstMediaUrl('brand') }}@else{{ asset('images/default.jpg') }} @endif" />
+                                        <p class="text-center">{{ $brand->name }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="table-responsive" style="max-height: 470px">
+                        <table id="filter-product-table" class="table no-shadow product-list"
+                            style="width: 100%; border: 0px;overflow: scroll">
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

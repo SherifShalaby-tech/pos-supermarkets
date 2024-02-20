@@ -175,7 +175,7 @@
                 </div>
             </div>
 
-            <div class="col-10 offset-1">
+            <div class="col-12 d-flex justify-content-center">
                 <div class="preview-container"></div>
             </div>
 

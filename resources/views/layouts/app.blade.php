@@ -196,6 +196,7 @@
             border-color: hsl(48, 100%, 67%);
         }
 
+        /*  */
         .file--uploading>label>i {
             animation: pulse 5s infinite;
         }
@@ -292,6 +293,7 @@
             @yield('content')
         </div>
 
+        @include('layouts.partials.footer')
 
 
         <div class="modal view_modal no-print" role="dialog" aria-hidden="true"></div>
@@ -340,7 +342,6 @@
         <!-- This will be printed -->
         <section class="invoice print_closing_cash print-only" id="print_closing_cash"> </section>
     </div>
-    @include('layouts.partials.footer')
 
     <script type="text/javascript">
         base_path = "{{ url('/') }}";

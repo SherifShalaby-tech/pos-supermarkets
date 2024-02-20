@@ -11,7 +11,6 @@
         cursor: pointer;
     }
 </style>
-{{--  --}}
 @php
     $new_notifications = App\Models\Notification::where('user_id', Auth::user()->id)
         ->whereDate('created_at', date('Y-m-d'))
@@ -26,11 +25,11 @@
         ->limit(10)
         ->get();
 @endphp
-<li class="nav-item" id="notification-icon" style="list-style: none">
+<li class="nav-item" id="notification-icon">
     <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-        class=" d-flex justify-content-center align-items-center dropdown-ite notification-list mr-1 mr-md-2"
-        style="color: black;background-color: white; font-size: 15px;width: 24px;height: 24px; border-radius: 4px;"><i
-            class="dripicons-bell"></i>
+        class="nav-link dropdown-ite notification-list dropdown-item  d-flex justify-content-center align-items-center"
+        style="color: black;background-color: white; font-size: 15px;width: 24px;height: 24px; border-radius: 8px;padding: 5px"><img
+            class="w-100 h-100" src="{{ asset('front/images/icons/notification.png') }}" alt="">
         @if ($new_count > 0)
             <span class="badge badge-danger notification-number">{{ $new_count }}</span>
         @endif

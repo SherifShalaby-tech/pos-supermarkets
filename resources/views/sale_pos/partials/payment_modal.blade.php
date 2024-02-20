@@ -2,6 +2,7 @@
 <div id="add-payment" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
     <div role="document" class="modal-dialog modal-lg">
         <div class="modal-content">
+            {{--  --}}
             <div
                 class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
                 <h5 id="exampleModalLabel" class="modal-title position-relative">@lang('lang.finalize_sale')
