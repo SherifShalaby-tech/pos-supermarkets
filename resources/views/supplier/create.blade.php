@@ -7,9 +7,9 @@
     <style>
         .preview-container {
             /* display: flex;
-                                                                                                                                    flex-wrap: wrap;
-                                                                                                                                    gap: 10px;
-                                                                                                                                    margin-top: 20px; */
+                                                                                                                                        flex-wrap: wrap;
+                                                                                                                                        gap: 10px;
+                                                                                                                                        margin-top: 20px; */
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
@@ -237,7 +237,8 @@
 
                             <div class="row my-2 justify-content-center align-items-center">
                                 <div class="col-md-4">
-                                    <input type="button" value="{{ trans('lang.submit') }}" id="submit-btn" class="btn">
+                                    <input type="button" value="{{ trans('lang.submit') }}" id="submit-btn"
+                                        class="btn py-1">
                                 </div>
                             </div>
                             {!! Form::close() !!}

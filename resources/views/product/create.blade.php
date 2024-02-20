@@ -1,32 +1,39 @@
 @extends('layouts.app')
 @section('title', __('lang.product'))
+
+@section('style')
+    <link rel="stylesheet" type="text/css" href="{{ url('front/css/supplier.css') }}">
+@endsection
 @section('content')
-    <section class="forms">
+    <section class="forms py-0">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="row mr-2 ml-2">
-                            <div class="card-header d-flex align-items-center col-md-7">
-                                <h4>@lang('lang.add_new_product')</h4>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
-                            {!! Form::open(['url' => action('ProductController@store'), 'id' => 'product-form', 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
-                            @include('product.partial.create_product_form')
-                            <div class="row">
-                                <div class="col-md-4 mt-5">
-                                    <div class="form-group">
-                                        <input type="button" value="{{ trans('lang.save') }}" id="submit-btn"
-                                            class="btn btn-primary">
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="cropped_images"></div>
-                            {!! Form::close() !!}
+                <div class="col-md-12 px-1">
+                    <div
+                        class="d-flex align-items-center my-2 @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
+                        <h4 class="mb-0">
+                            @lang('lang.add_new_product')
+                            <span class=" header-pill"></span>
+                        </h4>
+                    </div>
+
+                    {!! Form::open([
+                        'url' => action('ProductController@store'),
+                        'id' => 'product-form',
+                        'method' => 'POST',
+                        'class' => '',
+                        'enctype' => 'multipart/form-data',
+                    ]) !!}
+                    @include('product.partial.create_product_form')
+                    <div class="row my-2 justify-content-center align-items-center">
+                        <div class="col-md-4">
+                            <input type="button" value="{{ trans('lang.save') }}" id="submit-btn"
+                                class="btn btn-primary py-1">
                         </div>
                     </div>
+                    <div id="cropped_images"></div>
+                    {!! Form::close() !!}
+
                 </div>
             </div>
         </div>
@@ -64,7 +71,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -151,17 +158,18 @@
                         previewContainer.appendChild(preview);
                     });
                     reader.readAsDataURL(file);
-                }else{
+                } else {
                     Swal.fire({
                         icon: 'error',
-                        title: '{{ __("site.Oops...") }}',
-                        text: '{{ __("site.Sorry , You Should Upload Valid Image") }}',
+                        title: '{{ __('site.Oops...') }}',
+                        text: '{{ __('site.Sorry , You Should Upload Valid Image') }}',
                     })
                 }
             }
 
             getImages()
         });
+
         function launchCropTool(img) {
             // Set up Croppie options
             const croppieOptions = {
@@ -234,28 +242,28 @@
                 $("#cropped_images").empty();
                 for (let i = 0; i < container[0].children.length; i++) {
                     images.push(container[0].children[i].children[0].src)
-                    var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0].children[i].children[0].src);
+                    var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0]
+                        .children[i].children[0].src);
                     $("#cropped_images").append(newInput);
                 }
                 console.log(images);
                 return images
             }, 500);
         }
-
     </script>
 
     <script>
-        function get_unit(units,row_id) {
-            $v=document.getElementById('select_unit_id_'+row_id).value;
+        function get_unit(units, row_id) {
+            $v = document.getElementById('select_unit_id_' + row_id).value;
 
             $.each(units, function(key, value) {
-                
-                if($v == key){
-                    $('#number_vs_base_unit_'+row_id).val(value);
-                    if(value == 1){
-                        $('#number_vs_base_unit_'+row_id).attr("disabled", true);
-                    }else{
-                        $('#number_vs_base_unit_'+row_id).attr("disabled", false);
+
+                if ($v == key) {
+                    $('#number_vs_base_unit_' + row_id).val(value);
+                    if (value == 1) {
+                        $('#number_vs_base_unit_' + row_id).attr("disabled", true);
+                    } else {
+                        $('#number_vs_base_unit_' + row_id).attr("disabled", false);
                     }
 
                     console.log(value);
@@ -271,14 +279,117 @@
 
             $('#category_id').change();
 
-            if($('#is_service').prop('checked')){
+            if ($('#is_service').prop('checked')) {
                 $('.supplier_div').removeClass('hide');
-            }else{
+            } else {
                 $('.supplier_div').addClass('hide');
             }
         });
         $('.v_unit').on('change', function() {
-            alert( this.value );
+            alert(this.value);
         });
+    </script>
+
+    <script src="{{ asset('front/js/bootstrap.min.js') }}"></script>
+
+
+    <script>
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#productDetailsCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#productDetailsCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#productDetailsCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#productDetailsCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#productOtherDetailsCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#productOtherDetailsCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#productOtherDetailsCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#productOtherDetailsCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#addPrimaryMaterialCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#addPrimaryMaterialCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#addPrimaryMaterialCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#addPrimaryMaterialCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#discountInfoCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#discountInfoCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#discountInfoCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#discountInfoCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#moreInfoCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#moreInfoCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#moreInfoCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#moreInfoCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#pricesFromDifferentStoresCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#pricesFromDifferentStoresCollapse"] i').removeClass('fa-arrow-down')
+                .addClass(
+                    'fa-arrow-up');
+        });
+
+        $('#pricesFromDifferentStoresCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#pricesFromDifferentStoresCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#varientCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#varientCollapse"] i').removeClass('fa-arrow-down')
+                .addClass(
+                    'fa-arrow-up');
+        });
+
+        $('#varientCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#varientCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+    </script>
+    <script>
+        $('#add_raw_material_row').on('click', function() {
+            console.log($('.bootstrap-select button'));
+        })
     </script>
 @endsection

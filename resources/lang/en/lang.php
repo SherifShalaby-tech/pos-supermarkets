@@ -1460,6 +1460,15 @@ return [
     'correct_password' => 'Correct Password',
     'total_latest_payments' => 'Total Latest Payments',
     'recieved_amount' => 'Recieved amount',
-    'other_details' => 'Other Details'
+    'other_details' => 'Other Details',
+    'add_product_information' => 'Add Product Information',
+    'add_product_image' => 'Add Image',
+    'add_primary_materials' => 'Add Primary Materials',
+    'discount_information' => 'Discount Information',
+    'more_info' => 'More Information',
+    'prices_from_different_stores' => "The product different prices for different stores",
+    'has_varient' => "The product has varient",
+    'add_new' => "Add New",
+
 
 ];

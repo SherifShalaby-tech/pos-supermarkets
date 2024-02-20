@@ -1444,5 +1444,13 @@ return [
     'correct_password' => 'كلمة السر صحيحة',
     'total_latest_payments' => 'اجمالى المدفوعات المتأخرة',
     'recieved_amount' => 'المبلغ المستلم',
-    'other_details' => 'تفاصيل أخرى'
+    'other_details' => 'تفاصيل أخرى',
+    'add_product_information' => 'اضافة معلومات المنتج',
+    'add_product_image' => 'اضافة صورة',
+    'add_primary_materials' => 'اضافة مواد أولية',
+    'discount_information' => 'معلومات الخصم',
+    'more_info' => 'المزيد من المعلومات',
+    'prices_from_different_stores' => "أسعار المنتج المختلفة للمتاجر المختلفة",
+    'has_varient' => "المنتج له أصناف مختلفة",
+    'add_new' => "أضف جديد",
 ];

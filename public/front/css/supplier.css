@@ -8,13 +8,13 @@
     top: 13%;
 }
 
-.header-pill {
-    right: -35%;
+.section-header-pill {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #21912A;
 }
 
-.header-modal-pill {
-    right: -10%;
-}
 
 .toggle-pill {
     right: -15%;
@@ -22,7 +22,7 @@
 
 .form-label {
     font-weight: 500;
-    font-size: 12px;
+    font-size: 0.8rem !important;
 }
 
 .modal-input {
@@ -80,6 +80,7 @@
     color: white;
     background-color: #f9c751;
     border-radius: 6px;
+    height: 100%;
 }
 
 .select-button-group {
@@ -130,4 +131,8 @@
 
 .card {
     box-shadow: 0 6px 8px -6px #999 !important;
+}
+
+.btn-light {
+    background-color: transparent !important;
 }

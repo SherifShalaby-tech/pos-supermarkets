@@ -178,13 +178,13 @@
         }
 
         .file--upload>label {
-            color: hsl(204, 86%, 53%);
-            border-color: hsl(204, 86%, 53%);
+            color: #21912A;
+            border-color: #21912A;
         }
 
         .file--upload>label:hover {
-            border-color: hsl(204, 86%, 53%);
-            background-color: hsl(204, 86%, 96%);
+            border-color: #21912A;
+            background-color: #145d1a
         }
 
         .file--upload>label:active {
