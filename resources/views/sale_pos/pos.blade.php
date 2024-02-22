@@ -737,7 +737,8 @@
                                             color: #373737;
                                             box-shadow: 0 8px 6px -5px #bbb ;
                                             padding: 4px 6px;
-                                            width: 100%;">
+                                            width: 100%;
+                                            height: 30px;">
 
                                                         <select name="terms_and_condition_id" id="terms_and_condition_id"
                                                             style="width: 100%" class=" selectpicker terms"
@@ -763,7 +764,8 @@
                                             color: #373737;
                                             box-shadow: 0 8px 6px -5px #bbb ;
                                             padding: 4px 6px;
-                                            width: 100%;">
+                                            width: 100%;
+                                            height: 30px;">
                                                         {!! Form::select('commissioned_employees[]', $employees, false, [
                                                             'class' => ' selectpicker terms',
                                                             'style' => 'width:100%',
@@ -802,7 +804,7 @@
                                                         box-shadow: 0 8px 6px -5px #bbb ;
                                                         width: 100%;">
                                                     <span
-                                                        class="totals-title  height-responsive pl-2 pl-lg-0 promotion-padding"
+                                                        class="totals-title d-flex justify-content-center align-items-center height-responsive pl-2 pl-lg-0 promotion-padding"
                                                         style="background-color: #21912A;
                                                 width: fit-content;
                                                 height: 100%;
@@ -846,7 +848,8 @@
                                                     width: 100%;
                                                     margin-top: 0">
 
-                                                <span class=" height-responsive"
+                                                <span
+                                                    class=" height-responsive d-flex justify-content-center align-items-center"
                                                     style="background-color: #21912A;
                                                 width: fit-content;
                                                 height: 100%;
@@ -949,61 +952,84 @@
 
                         <div class="payment-options row table_room_hide"
                             style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
+                            <div class="col-md-12 d-flex justify-content-center align-items-center mb-3"
+                                style="font-size: 16px;font-weight: 600">
+                                <div class="col-md-2">
+                                    <button data-method="cash" style="background: #21912A" type="button"
+                                        class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
+                                        data-backdrop="static" data-keyboard="false" id="cash-btn"><i
+                                            class="fa fa-money"></i>
+                                        @lang('lang.pay')</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button data-method="cash" style="background: #21912A" type="button"
+                                        class="btn btn-custom" id="quick-pay-btn"><i class="fa fa-money"></i>
+                                        @lang('lang.quick_pay')</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button data-method="coupon" style="background: #21912A" type="button"
+                                        class="btn btn-custom" data-toggle="modal" data-target="#coupon_modal"
+                                        id="coupon-btn"><i class="fa fa-tag"></i>
+                                        @lang('lang.coupon')</button>
+                                </div>
+                                @if (session('system_mode') != 'restaurant')
+                                    <div class="col-md-2">
+                                        <button data-method="paypal" style="background-color: #21912A" type="button"
+                                            class="btn btn-custom payment-btn" data-toggle="modal"
+                                            data-target="#add-payment" data-backdrop="static" data-keyboard="false"
+                                            id="paypal-btn"><i class="fa fa-paypal"></i>
+                                            @lang('lang.other_online_payments')</button>
+                                    </div>
+                                @endif
+                                <div class="col-md-2">
+                                    <button data-method="draft" style="background-color: #21912A" type="button"
+                                        data-toggle="modal" data-target="#sale_note_modal" class="btn btn-custom"><i
+                                            class="dripicons-flag"></i>
+                                        @lang('lang.draft')</button>
+                                </div>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-center align-items-center">
+                                <div class="col-md-2">
+                                    <button data-method="draft" style="background-color: #21912A" type="button"
+                                        class="btn btn-custom" id="view-draft-btn"
+                                        data-href="{{ action('SellPosController@getDraftTransactions') }}"><i
+                                            class="dripicons-flag"></i>
+                                        @lang('lang.view_draft')</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button data-method="online-order" style="background-color: #21912A" type="button"
+                                        class="btn btn-custom" id="view-online-order-btn"
+                                        data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><img
+                                            src="{{ asset('images/online_order.png') }}"
+                                            style="height: 25px; width: 35px;" alt="icon">
+                                        @lang('lang.online_orders') <span
+                                            class="badge badge-danger online-order-badge">0</span></button>
+                                </div>
 
+                                <div class="col-md-2">
+                                    <button data-method="pay-later" style="background-color: #21912A" type="button"
+                                        class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
+                                        @lang('lang.pay_later')</button>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <button style="background-color: #ff0000;" type="button" class="btn btn-custom"
+                                        id="cancel-btn" onclick="return confirmCancel()"><i class="fa fa-close"></i>
+                                        @lang('lang.cancel')</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button style="background-color: #21912A;" type="button" class="btn btn-custom"
+                                        id="recent-transaction-btn"><i class="dripicons-clock"></i>
+                                        @lang('lang.recent_transactions')</button>
+                                </div>
+                            </div>
                             {{-- <div class="column-5">
                                 <button data-method="card" style="background: #0984e3" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="credit-card-btn"><i class="fa fa-credit-card"></i> @lang('lang.card')</button>
                             </div> --}}
-                            <div class="column-5">
-                                <button data-method="cash" style="background: #21912A" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    data-backdrop="static" data-keyboard="false" id="cash-btn"><i
-                                        class="fa fa-money"></i>
-                                    @lang('lang.pay')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="cash" style="background: #21912A" type="button"
-                                    class="btn btn-custom" id="quick-pay-btn"><i class="fa fa-money"></i>
-                                    @lang('lang.quick_pay')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="coupon" style="background: #21912A" type="button"
-                                    class="btn btn-custom" data-toggle="modal" data-target="#coupon_modal"
-                                    id="coupon-btn"><i class="fa fa-tag"></i>
-                                    @lang('lang.coupon')</button>
-                            </div>
-                            @if (session('system_mode') != 'restaurant')
-                                <div class="column-5">
-                                    <button data-method="paypal" style="background-color: #21912A" type="button"
-                                        class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                        data-backdrop="static" data-keyboard="false" id="paypal-btn"><i
-                                            class="fa fa-paypal"></i>
-                                        @lang('lang.other_online_payments')</button>
-                                </div>
-                            @endif
-                            <div class="column-5">
-                                <button data-method="draft" style="background-color: #21912A" type="button"
-                                    data-toggle="modal" data-target="#sale_note_modal" class="btn btn-custom"><i
-                                        class="dripicons-flag"></i>
-                                    @lang('lang.draft')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="draft" style="background-color: #21912A" type="button"
-                                    class="btn btn-custom" id="view-draft-btn"
-                                    data-href="{{ action('SellPosController@getDraftTransactions') }}"><i
-                                        class="dripicons-flag"></i>
-                                    @lang('lang.view_draft')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="online-order" style="background-color: #21912A" type="button"
-                                    class="btn btn-custom" id="view-online-order-btn"
-                                    data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><img
-                                        src="{{ asset('images/online_order.png') }}" style="height: 25px; width: 35px;"
-                                        alt="icon">
-                                    @lang('lang.online_orders') <span
-                                        class="badge badge-danger online-order-badge">0</span></button>
-                            </div>
+
+
                             {{-- <div class="column-5">
                                 <button data-method="cheque" style="background-color: #fd7272" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
@@ -1015,11 +1041,7 @@
                                     id="bank-transfer-btn"><i class="fa fa-building-o"></i>
                                     @lang('lang.bank_transfer')</button>
                             </div> --}}
-                            <div class="column-5">
-                                <button data-method="pay-later" style="background-color: #21912A" type="button"
-                                    class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
-                                    @lang('lang.pay_later')</button>
-                            </div>
+
                             {{-- <div class="column-5">
                                 <button data-method="gift_card" style="background-color: #5f27cd" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
@@ -1032,16 +1054,7 @@
                                     id="deposit-btn"><i class="fa fa-university"></i>
                                     @lang('lang.use_the_balance')</button>
                             </div> --}}
-                            <div class="column-5">
-                                <button style="background-color: #ff0000;" type="button" class="btn btn-custom"
-                                    id="cancel-btn" onclick="return confirmCancel()"><i class="fa fa-close"></i>
-                                    @lang('lang.cancel')</button>
-                            </div>
-                            <div class="column-5">
-                                <button style="background-color: #21912A;" type="button" class="btn btn-custom"
-                                    id="recent-transaction-btn"><i class="dripicons-clock"></i>
-                                    @lang('lang.recent_transactions')</button>
-                            </div>
+
 
                         </div>
 

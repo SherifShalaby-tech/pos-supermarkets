@@ -202,3 +202,11 @@ nav.navbar {
 .filterInput:checked {
     background-color: #21912A
 }
+
+.bootstrap-select {
+    border: none !important;
+}
+
+.bootstrap-select button {
+    padding: 0 20px;
+}
