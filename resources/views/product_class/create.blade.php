@@ -1,29 +1,45 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('ProductClassController@store'), 'method' => 'post', 'id' => $quick_add ? 'quick_add_product_class_form' : 'product_class_add_form']) !!}
+        {!! Form::open([
+            'url' => action('ProductClassController@store'),
+            'method' => 'post',
+            'id' => $quick_add ? 'quick_add_product_class_form' : 'product_class_add_form',
+        ]) !!}
 
-        <div class="modal-header">
+        <div
+            class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
 
-            <h4 class="modal-title">
+
+            <h4 class="modal-title  px-2 position-relative">
                 @if (session('system_mode') == 'restaurant')
-                    @lang( 'lang.add_category' )
+                    @lang('lang.add_category')
                 @else
                     @lang('lang.add_class')
                 @endif
+                <span class=" header-modal-pill"></span>
             </h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
+            <button type="button"
+                class="close btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"
+                data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <span class="position-absolute modal-border"></span>
         </div>
 
-        <div class="modal-body">
-            <div class="form-group">
-                {!! Form::label('name', __('lang.name') . ':*') !!}
-                <div class="input-group my-group">
-                    {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required']) !!}
+        <div
+            class="modal-body row @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif align-items-center">
+            <div class="col-sm-6 mb-2">
+                {!! Form::label('name', __('lang.name') . '*', [
+                    'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                ]) !!}
+                <div class="input-group my-group select-button-group">
+                    {!! Form::text('name', null, [
+                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                        'placeholder' => __('lang.name'),
+                        'required',
+                    ]) !!}
                     <span class="input-group-btn">
-                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button"
-                            data-type="product_class"><i class="dripicons-web text-primary fa-lg"></i></button>
+                        <button class="select-button btn-flat translation_btn" type="button"
+                            data-type="product_class"><i class="dripicons-web"></i></button>
                     </span>
                 </div>
             </div>
@@ -33,71 +49,76 @@
                 'type' => 'product_class',
             ])
             <input type="hidden" name="quick_add" value="{{ $quick_add }}">
-            <div class="form-group">
-                {!! Form::label('description', __('lang.description') . ':') !!}
-                {!! Form::text('description', null, ['class' => 'form-control', 'placeholder' => __('lang.description')]) !!}
+            <div class="col-sm-6 mb-2">
+                {!! Form::label('description', __('lang.description'), [
+                    'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                ]) !!}
+                {!! Form::text('description', null, [
+                    'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                    'placeholder' => __('lang.description'),
+                ]) !!}
             </div>
-            <div class="form-group">
-                {!! Form::label('sort', __('lang.sort') . ':*') !!}
-                {!! Form::number('sort', 1, ['class' => 'form-control', 'placeholder' => __('lang.sort'), 'required']) !!}
+            <div class="col-sm-6 mb-2">
+                {!! Form::label('sort', __('lang.sort') . '*', [
+                    'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                ]) !!}
+                {!! Form::number('sort', 1, [
+                    'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                    'placeholder' => __('lang.sort'),
+                    'required',
+                ]) !!}
             </div>
-            <div class="form-group">
+            <div class="col-md-6 d-flex flex-column mb-2">
+                {!! Form::label(null, __('lang.image') . '*', [
+                    'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                ]) !!}
+                <div
+                    class="d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+
+                    <div class="variants  col-md-6">
+                        <div class='file file--upload w-100'>
+                            <label for='file-class-input' class="w-100 modal-input m-0">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </label>
+                            <!-- <input  id="file-input" multiple type='file' /> -->
+                            <input type="file" id="file-class-input">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 d-flex justify-content-center">
+                        <div class="preview-class-container"></div>
+                    </div>
+                </div>
+
+                {{--                                                            <input type="file" id="projectinput2" --}}
+                {{--                                                                   class="form-control img" name="image" accept="image/*" /> --}}
+                {{--                                                                   <img src="{{ asset('images/logo.png') }}" alt="" class="img-thumbnail img-preview " style="width: 100px"> --}}
+                @error('image')
+                    <p class="text-danger" style="font-size: 12px">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="col-sm-6 d-flex justify-content-end align-items-center">
                 <div class="i-checks">
-                    <input id="status" name="status" type="checkbox" checked value="1" class="form-control-custom">
+                    <input id="status" name="status" type="checkbox" checked value="1"
+                        class="form-control-custom">
                     <label for="status"><strong>
                             @lang('lang.active')
                         </strong></label>
                 </div>
             </div>
-{{--            @include('layouts.partials.image_crop')--}}
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="projectinput2"> {{ __('categories.image') }}</label>
-                        <div class="container mt-3">
-                            <div class="row mx-0" style="border: 1px solid #ddd;padding: 30px 0px;">
-                                <div class="col-12">
-                                    <div class="mt-3">
-                                        <div class="row">
-                                            <div class="col-10 offset-1">
-                                                <div class="variants">
-                                                    <div class='file file--upload w-100'>
-                                                        <label for='file-class-input' class="w-100">
-                                                            <i class="fas fa-cloud-upload-alt"></i>Upload
-                                                        </label>
-                                                        <!-- <input  id="file-input" multiple type='file' /> -->
-                                                        <input type="file" id="file-class-input">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-10 offset-1">
-                                    <div class="preview-class-container"></div>
-                                </div>
-                            </div>
-                        </div>
-                        {{--                                                            <input type="file" id="projectinput2"--}}
-                        {{--                                                                   class="form-control img" name="image" accept="image/*" />--}}
-                        {{--                                                                   <img src="{{ asset('images/logo.png') }}" alt="" class="img-thumbnail img-preview " style="width: 100px">--}}
-                    </div>
-                    @error('image')
-                    <p class="text-danger" style="font-size: 12px">{{ $message }}</p>
-                    @enderror
-                </div>
+            {{--            @include('layouts.partials.image_crop') --}}
 
-            </div>
+
         </div>
         <div id="cropped_product_class_images"></div>
-        <div class="modal-footer">
-            <button id="create-product-class-btn" class="btn btn-primary">@lang( 'lang.save' )</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
+        <div class="modal-footer d-flex justify-content-center align-content-center gap-3">
+            <button id="create-product-class-btn" class="col-3 py-1 btn btn-main">@lang('lang.save')</button>
+            <button type="button" class="col-3 py-1 btn btn-danger" data-dismiss="modal">@lang('lang.close')</button>
         </div>
 
         {!! Form::close() !!}
-        <div class="modal fade" id="exampleClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleClassModalLabel"
-             aria-hidden="true">
+        <div class="modal fade" id="exampleClassModal" tabindex="-1" role="dialog"
+            aria-labelledby="exampleClassModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -109,8 +130,8 @@
                     <div class="modal-body">
                         <div id="croppie-class-modal" style="display:none">
                             <div id="croppie-class-container"></div>
-                            <button data-dismiss="modal" id="croppie-class-cancel-btn" type="button" class="btn btn-secondary"><i
-                                    class="fas fa-times"></i></button>
+                            <button data-dismiss="modal" id="croppie-class-cancel-btn" type="button"
+                                class="btn btn-secondary"><i class="fas fa-times"></i></button>
                             <button id="croppie-class-submit-btn" type="button" class="btn btn-primary"><i
                                     class="fas fa-crop"></i></button>
                         </div>
@@ -123,14 +144,13 @@
 </div><!-- /.modal-dialog -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
 <script>
-
-    $("#create-product-class-btn").click(function (e){
+    $("#create-product-class-btn").click(function(e) {
         e.preventDefault();
         getClassImages()
-        setTimeout(()=>{
+        setTimeout(() => {
             $("#product_class_add_form").submit();
             $("#quick_add_product_class_form").submit();
-        },500)
+        }, 500)
     });
     var fileClassInput = document.querySelector('#file-class-input');
     var previewClassContainer = document.querySelector('.preview-class-container');
@@ -146,7 +166,7 @@
             const file = files[i];
             console.log(file);
             let fileType = file.type.slice(file.type.indexOf('/') + 1);
-            let FileAccept = ["jpg","JPG","jpeg","JPEG","png","PNG","BMP","bmp"];
+            let FileAccept = ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG", "BMP", "bmp"];
             // if (file.type.match('image.*')) {
             if (FileAccept.includes(fileType)) {
                 const reader = new FileReader();
@@ -165,7 +185,7 @@
                     deleteBtn.innerHTML = '<i style="font-size: 20px;" class="fas fa-trash"></i>';
                     deleteBtn.addEventListener('click', () => {
                         Swal.fire({
-                            title: '{{ __("site.Are you sure?") }}',
+                            title: '{{ __('site.Are you sure?') }}',
                             text: "{{ __("site.You won't be able to delete!") }}",
                             icon: 'warning',
                             showCancelButton: true,
@@ -176,7 +196,7 @@
                             if (result.isConfirmed) {
                                 Swal.fire(
                                     'Deleted!',
-                                    '{{ __("site.Your Image has been deleted.") }}',
+                                    '{{ __('site.Your Image has been deleted.') }}',
                                     'success'
                                 )
                                 files.splice(file, 1)
@@ -200,17 +220,18 @@
                     previewClassContainer.appendChild(preview);
                 });
                 reader.readAsDataURL(file);
-            }else{
+            } else {
                 Swal.fire({
                     icon: 'error',
-                    title: '{{ __("site.Oops...") }}',
-                    text: '{{ __("site.Sorry , You Should Upload Valid Image") }}',
+                    title: '{{ __('site.Oops...') }}',
+                    text: '{{ __('site.Sorry , You Should Upload Valid Image') }}',
                 })
             }
         }
 
         getClassImages()
     });
+
     function launchClassCropTool(img) {
         // Set up Croppie options
         const croppieOptions = {
@@ -261,6 +282,7 @@
             });
         });
     }
+
     function getClassImages() {
         setTimeout(() => {
             const container = document.querySelectorAll('.preview-class-container');
@@ -268,7 +290,8 @@
             $("#cropped_product_class_images").empty();
             for (let i = 0; i < container[0].children.length; i++) {
                 images.push(container[0].children[i].children[0].src)
-                var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0].children[i].children[0].src);
+                var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0]
+                    .children[i].children[0].src);
                 $("#cropped_product_class_images").append(newInput);
             }
             return images

@@ -5,7 +5,7 @@
     height: 15px;
     border-radius: 50%;
     background-color: #21912A;
-    top: 13%;
+
 }
 
 .section-header-pill {
@@ -13,11 +13,6 @@
     height: 10px;
     border-radius: 50%;
     background-color: #21912A;
-}
-
-
-.toggle-pill {
-    right: -15%;
 }
 
 .form-label {

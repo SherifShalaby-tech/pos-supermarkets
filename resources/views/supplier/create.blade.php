@@ -7,9 +7,9 @@
     <style>
         .preview-container {
             /* display: flex;
-                                                                                                                                        flex-wrap: wrap;
-                                                                                                                                        gap: 10px;
-                                                                                                                                        margin-top: 20px; */
+                                                                                                                                            flex-wrap: wrap;
+                                                                                                                                            gap: 10px;
+                                                                                                                                            margin-top: 20px; */
             display: grid;
             grid-template-columns: repeat(auto-fill, 170px);
         }
@@ -212,7 +212,7 @@
                         class="d-flex align-items-center my-2 @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
                         <h5 class="mb-0 position-relative" style="margin-right: 30px">
                             @lang('lang.add_supplier')
-                            <span class="position-absolute header-pill"></span>
+                            <span class="header-pill"></span>
                         </h5>
                     </div>
                     <div class="card mb-2 d-flex flex-row justify-content-center align-items-center">

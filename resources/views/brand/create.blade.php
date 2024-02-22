@@ -1,61 +1,72 @@
-
 <div class="modal-dialog" role="document">
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('AddStockController@store'), 'method' => 'post', 'id' => $quick_add ?
-        'quick_add_brand_form' : 'brand_add_form', 'files' => true ]) !!}
+        {!! Form::open([
+            'url' => action('AddStockController@store'),
+            'method' => 'post',
+            'id' => $quick_add ? 'quick_add_brand_form' : 'brand_add_form',
+            'files' => true,
+        ]) !!}
 
-        <div class="modal-header">
+        <div
+            class="modal-header  position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
 
-            <h4 class="modal-title">@lang( 'lang.add_brand' )</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title px-2 position-relative">@lang('lang.add_brand')
+                <span class=" header-modal-pill"></span>
+
+            </h4>
+
+            <button type="button"
+                class="close btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"
+                data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <span class="position-absolute modal-border"></span>
         </div>
 
-        <div class="modal-body">
-            <div class="form-group">
-                {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
-                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required'
-                ]);
-                !!}
+        <div
+            class="modal-body row @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif align-items-center">
+            <div class="form-group px-5">
+                {!! Form::label('name', __('lang.name') . '*', [
+                    'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                ]) !!}
+                {!! Form::text('name', null, [
+                    'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                    'placeholder' => __('lang.name'),
+                    'required',
+                ]) !!}
             </div>
-            <input type="hidden" name="quick_add" value="{{$quick_add }}">
-            <div class="form-group">
-                <label for="projectinput2"> {{ __('categories.image') }}</label>
-                <div class="container mt-3">
-                    <div class="row mx-0" style="border: 1px solid #ddd;padding: 30px 0px;">
-                        <div class="col-12">
-                            <div class="mt-3">
-                                <div class="row">
-                                    <div class="col-10 offset-1">
-                                        <div class="variants">
-                                            <div class='file file--upload w-100'>
-                                                <label for='file-input-brand' class="w-100">
-                                                    <i class="fas fa-cloud-upload-alt"></i>Upload
-                                                </label>
-                                                <input type="file" id="file-input-brand">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-10 offset-1">
-                            <div class="preview-brand-container"></div>
+            <input type="hidden" name="quick_add" value="{{ $quick_add }}">
+            <div class="form-group px-5 d-flex flex-column mb-2">
+                <label
+                    class="form-label d-block mb-1  @if (app()->isLocale('ar')) text-end @else text-start @endif"
+                    for="projectinput2"> {{ __('lang.image') }}</label>
+
+                <div
+                    class="d-flex justify-content-center align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                    <div class="variants col-md-6">
+                        <div class='file file--upload w-100'>
+                            <label for='file-input-brand' class="w-100 modal-input m-0">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </label>
+                            <input type="file" id="file-input-brand">
                         </div>
                     </div>
+
+                    <div class="col-md-6 d-flex justify-content-center">
+                        <div class="preview-brand-container"></div>
+                    </div>
                 </div>
+
             </div>
         </div>
         <div id="cropped_brand_images"></div>
-        <div class="modal-footer">
-            <button id="submit-create-brand-btn" class="btn btn-primary">@lang( 'lang.save' )</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
+        <div class="modal-footer d-flex justify-content-center align-content-center gap-3">
+            <button id="submit-create-brand-btn"class="col-3 py-1 btn btn-main">@lang('lang.save')</button>
+            <button type="button" class="col-3 py-1 btn btn-danger" data-dismiss="modal">@lang('lang.close')</button>
         </div>
 
         {!! Form::close() !!}
         <div class="modal fade" id="brandModal" tabindex="-1" role="dialog" aria-labelledby="brandModalLabel"
-             aria-hidden="true">
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -67,8 +78,8 @@
                     <div class="modal-body">
                         <div id="croppie-brand-modal" style="display:none">
                             <div id="croppie-brand-container"></div>
-                            <button data-dismiss="modal" id="croppie-brand-cancel-btn" type="button" class="btn btn-secondary"><i
-                                    class="fas fa-times"></i></button>
+                            <button data-dismiss="modal" id="croppie-brand-cancel-btn" type="button"
+                                class="btn btn-secondary"><i class="fas fa-times"></i></button>
                             <button id="croppie-brand-submit-btn" type="button" class="btn btn-primary"><i
                                     class="fas fa-crop"></i></button>
                         </div>
@@ -82,25 +93,25 @@
 <script>
     $('#brand_category_id').selectpicker('render');
 
-    $('.view_modal').on('shown.bs.modal', function () {
-        let  brand_category_id = $('#sub_category_id').val();
-        if(brand_category_id){
+    $('.view_modal').on('shown.bs.modal', function() {
+        let brand_category_id = $('#sub_category_id').val();
+        if (brand_category_id) {
             $("#brand_category_id").selectpicker("val", brand_category_id);
-        }else{
-            let  brand_category_id = $('#category_id').val();
+        } else {
+            let brand_category_id = $('#category_id').val();
             $("#brand_category_id").selectpicker("val", brand_category_id);
         }
     })
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
 <script>
-    $("#submit-create-brand-btn").on("click",function (e){
+    $("#submit-create-brand-btn").on("click", function(e) {
         e.preventDefault();
-        setTimeout(()=>{
+        setTimeout(() => {
             getBrandImages();
             $("#brand_add_form").submit();
             $("#quick_add_brand_form").submit();
-        },500)
+        }, 500)
     });
 
     var fileBrandInput = document.querySelector('#file-input-brand');
@@ -116,7 +127,7 @@
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             let fileType = file.type.slice(file.type.indexOf('/') + 1);
-            let FileAccept = ["jpg","JPG","jpeg","JPEG","png","PNG","BMP","bmp"];
+            let FileAccept = ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG", "BMP", "bmp"];
             // if (file.type.match('image.*')) {
             if (FileAccept.includes(fileType)) {
                 const reader = new FileReader();
@@ -135,7 +146,7 @@
                     deleteBtn.innerHTML = '<i style="font-size: 20px;" class="fas fa-trash"></i>';
                     deleteBtn.addEventListener('click', () => {
                         Swal.fire({
-                            title: '{{ __("site.Are you sure?") }}',
+                            title: '{{ __('site.Are you sure?') }}',
                             text: "{{ __("site.You won't be able to delete!") }}",
                             icon: 'warning',
                             showCancelButton: true,
@@ -146,7 +157,7 @@
                             if (result.isConfirmed) {
                                 Swal.fire(
                                     'Deleted!',
-                                    '{{ __("site.Your Image has been deleted.") }}',
+                                    '{{ __('site.Your Image has been deleted.') }}',
                                     'success'
                                 )
                                 files.splice(file, 1)
@@ -170,17 +181,18 @@
                     previewBrandContainer.appendChild(preview);
                 });
                 reader.readAsDataURL(file);
-            }else{
+            } else {
                 Swal.fire({
                     icon: 'error',
-                    title: '{{ __("site.Oops...") }}',
-                    text: '{{ __("site.Sorry , You Should Upload Valid Image") }}',
+                    title: '{{ __('site.Oops...') }}',
+                    text: '{{ __('site.Sorry , You Should Upload Valid Image') }}',
                 })
             }
         }
 
         getBrandImages()
     });
+
     function launchBrandCropTool(img) {
         // Set up Croppie options
         const croppieOptions = {
@@ -231,6 +243,7 @@
             });
         });
     }
+
     function getBrandImages() {
         setTimeout(() => {
             const container = document.querySelectorAll('.preview-brand-container');
@@ -238,11 +251,11 @@
             $("#cropped_brand_images").empty();
             for (let i = 0; i < container[0].children.length; i++) {
                 images.push(container[0].children[i].children[0].src)
-                var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0].children[i].children[0].src);
+                var newInput = $("<input>").attr("type", "hidden").attr("name", "cropImages[]").val(container[0]
+                    .children[i].children[0].src);
                 $("#cropped_brand_images").append(newInput);
             }
             return images
         }, 300);
     }
-
 </script>

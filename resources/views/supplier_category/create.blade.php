@@ -12,7 +12,7 @@
 
             <h4 class="modal-title px-2 position-relative">
                 @lang('lang.add_supplier_category')
-                <span class="position-absolute header-modal-pill"></span>
+                <span class=" header-modal-pill"></span>
             </h4>
 
             <button type="button"
