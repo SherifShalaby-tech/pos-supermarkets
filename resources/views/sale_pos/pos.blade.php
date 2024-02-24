@@ -362,7 +362,7 @@
                                     <div class="col-6 d-flex flex-column flex-lg-row">
                                         <div class="col-lg-4 mb-2 mb-lg-0">
 
-                                            <div class="col-12 form-group input-group my-group d-flex flex-row justify-content-center height-responsive"
+                                            <div class="col-12 form-group input-group my-group d-flex flex-row justify-content-between height-responsive"
                                                 style="background-color: #dedede; border: none;
                                         border-radius: 16px;
                                         color: #373737;
@@ -380,30 +380,21 @@
                                                 ]) !!}
 
                                                 <span class="input-group-btn">
-                                                    {{-- @can('customer_module.customer.create_and_edit') --}}
-                                                    <a style="background-color: #F9C751;
-                                        width: 100%;
-                                        height: 100%;
-                                        border-radius: 16px;
-                                        padding: 6px 6px;
-                                    cursor: pointer;
-                                        "
-                                                        class="d-flex justify-content-center align-items-center top-0 right-0"
-                                                        data-href="{{ action('CustomerController@create') }}?quick_add=1"
-                                                        data-container=".view_modal">
-                                                        <svg class="plus" xmlns="http://www.w3.org/2000/svg"
-                                                            height="2em"
-                                                            viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-                                                            <style>
-                                                                .plus {
-                                                                    fill: #ffffff
-                                                                }
-                                                            </style>
-                                                            <path
-                                                                d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-                                                        </svg>
-                                                    </a>
-                                                    {{-- @endcan --}}
+
+
+                                                    @can('customer_module.customer.create_and_edit')
+                                                        <a style="background-color: #F9C751;
+                                                                width: 100%;
+                                                                height: 100%;
+                                                                border-radius: 16px;
+                                                                padding: 6px 6px;
+                                                            cursor: pointer;
+                                                            color: white !important;
+                                                                "
+                                                            class="d-flex btn-modal btn-flat justify-content-center align-items-center top-0 right-0"
+                                                            data-href="{{ action('CustomerController@create') }}?quick_add=1"
+                                                            data-container=".view_modal"><i class="fa fa-plus"></i></a>
+                                                    @endcan
                                                 </span>
 
                                             </div>
@@ -948,7 +939,6 @@
 
                             </div>
                         </div>
-
 
                         <div class="payment-options row table_room_hide"
                             style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">

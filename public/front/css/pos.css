@@ -210,3 +210,17 @@ nav.navbar {
 .bootstrap-select button {
     padding: 0 20px;
 }
+
+.select-button {
+    outline: none;
+    border: none;
+    color: white;
+    background-color: #f9c751;
+    border-radius: 6px;
+    height: 100%;
+}
+
+.select-button-group {
+    background-color: #e6e6e6 !important;
+    border-radius: 6px !important;
+}
