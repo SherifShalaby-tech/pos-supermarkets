@@ -5,8 +5,8 @@
         <div class="modal-content">
             <div
                 class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
-                <h5 class="modal-title position-relative">{{ __('lang.customer_details') }}
-                    <span class="position-absolute header-pill"></span>
+                <h5 class="modal-title position-relative  d-flex align-items-center" style="gap: 5px;">{{ __('lang.customer_details') }}
+                    <span class=" header-pill"></span>
                 </h5>
 
                 <button type="button" data-dismiss="modal" aria-label="Close"

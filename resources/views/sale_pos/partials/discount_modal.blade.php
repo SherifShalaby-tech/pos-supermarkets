@@ -5,8 +5,8 @@
         <div class="modal-content">
             <div
                 class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
-                <h5 id="exampleModalLabel" class="modal-title position-relative">@lang('lang.random_discount')
-                    <span class="position-absolute header-pill"></span>
+                <h5 id="exampleModalLabel" class="modal-title position-relative d-flex align-items-center" style="gap: 5px;">@lang('lang.random_discount')
+                    <span class=" header-pill"></span>
                 </h5>
                 <button type="button" data-dismiss="modal" aria-label="Close"
                     class="close btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"><span

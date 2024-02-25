@@ -25,8 +25,8 @@
                     <source src="{{ asset('audio/beep-long.mp3') }}">
                     </source>
                 </audio>
-                <!-- navbar-->
 
+                <!-- navbar-->
                 <header class="header col-12 py-1">
                     <nav class="navbar">
                         <div class="container-fluid">
@@ -202,16 +202,16 @@
 
                                     <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
                                         <div class="mb-2 mb-lg-0  height-responsive d-flex justify-content-center align-items-center"
-                                            style="background-color: #dedede; border: none;
-                                    border-radius: 16px;
+                                            style="background-color: #e6e6e6 ; border: none;
+                                    border-radius: 6px;
                                     color: #373737;
                                     box-shadow: 0 8px 6px -5px #bbb;
-                                    padding: 4px 6px;
+
                                     width: 100%;
                                     ">
                                             {{-- {!! Form::label('store_id', __('lang.store') . ':*', []) !!} --}}
                                             {!! Form::select('store_id', $stores, $store_pos->store_id, [
-                                                'class' => 'selectpicker first-head walk-in-customer',
+                                                'class' => 'selectpicker  ',
                                                 'data-live-search' => 'true',
                                                 'required',
                                                 'placeholder' => __('lang.please_select'),
@@ -222,16 +222,16 @@
 
                                     <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
                                         <div class="form-group mb-2 mb-lg-0 height-responsive d-flex justify-content-center align-items-center"
-                                            style="background-color: #dedede; border: none;
-                                    border-radius: 16px;
+                                            style="background-color: #e6e6e6 ; border: none;
+                                    border-radius: 6px;
                                     color: #373737;
                                     box-shadow: 0 8px 6px -5px #bbb;
-                                    padding: 4px 6px;
+
                                     width: 100%;
                                     ">
                                             {{-- {!! Form::label('store_pos_id', __('lang.pos') . ':*', []) !!} --}}
                                             {!! Form::select('store_pos_id', $store_poses, $store_pos->id, [
-                                                'class' => 'selectpicker first-head  walk-in-customer',
+                                                'class' => 'selectpicker   ',
                                                 'data-live-search' => 'true',
                                                 // 'required',
                                                 'placeholder' => __('lang.pos'),
@@ -242,11 +242,11 @@
 
                                     <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
                                         <div class="form-group mb-2 mb-lg-0 height-responsive d-flex justify-content-center align-items-center"
-                                            style="background-color: #dedede; border: none;
-                                    border-radius: 16px;
+                                            style="background-color: #e6e6e6 ; border: none;
+                                    border-radius: 6px;
                                     color: #373737;
                                     box-shadow: 0 8px 6px -5px #bbb;
-                                    padding: 4px 6px;
+
                                     width: 100%;
                                     ">
                                             <input type="hidden" name="setting_invoice_lang" id="setting_invoice_lang"
@@ -256,7 +256,7 @@
                                                 'invoice_lang',
                                                 $languages + ['ar_and_en' => 'Arabic and English'],
                                                 !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en',
-                                                ['class' => 'first-head walk-in-customer selectpicker', 'data-live-search' => 'true'],
+                                                ['class' => 'selectpicker', 'data-live-search' => 'true'],
                                             ) !!}
                                         </div>
                                     </div>
@@ -264,11 +264,11 @@
 
                                     <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
                                         <div class="form-group mb-2 mb-lg-0 height-responsive d-flex justify-content-center align-items-center"
-                                            style="background-color: #dedede; border: none;
-                                    border-radius: 16px;
+                                            style="background-color: #e6e6e6 ; border: none;
+                                    border-radius: 6px;
                                     color: #373737;
                                                 box-shadow: 0 8px 6px -5px #bbb;
-                                    padding: 4px 6px;
+
                                     width: 100%;
                                    ">
                                             <input type="hidden" name="exchange_rate" id="exchange_rate"
@@ -280,18 +280,18 @@
                                                 'received_currency_id',
                                                 $exchange_rate_currencies,
                                                 !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : null,
-                                                ['class' => 'first-head walk-in-customer selectpicker', 'data-live-search' => 'true'],
+                                                ['class' => '  selectpicker', 'data-live-search' => 'true'],
                                             ) !!}
                                         </div>
                                     </div>
 
                                     <div class="col-6 col-lg-2 d-flex justify-content-center align-items-center">
                                         <div class="form-group tax mb-2 mb-lg-0 height-responsive d-flex justify-content-center align-items-center"
-                                            style="background-color: #dedede; border: none;
-                                    border-radius: 16px;
+                                            style="background-color: #e6e6e6 ; border: none;
+                                    border-radius: 6px;
                                     color: #373737;
                                                 box-shadow: 0 8px 6px -5px #bbb;
-                                    padding: 4px 6px;
+
                                     width: 100%;
                                     ">
                                             <select class="form-control" name="tax_id" id="tax_id"
@@ -316,7 +316,7 @@
                                         <div class="col-6">
                                             <button type="button"
                                                 class="btn btn-link btn-sm d-flex justify-content-center align-items-center height-responsive"
-                                                style="background-color: #dedede; border: none;
+                                                style="background-color: #e6e6e6 ; border: none;
                                     border-radius: 16px;
                                     color: #373737;
                                                 box-shadow: 0 8px 6px -5px #bbb;
@@ -336,7 +336,7 @@
                                         <div class="col-6">
                                             <button type="button" id="print_and_draft"
                                                 class="btn btn-link btn-sm d-flex justify-content-center align-items-center height-responsive"
-                                                style="background-color: #dedede; border: none;
+                                                style="background-color: #e6e6e6 ; border: none;
                                     border-radius: 16px;
                                     color: #373737;
                                                 box-shadow: 0 8px 6px -5px #bbb;
@@ -362,8 +362,8 @@
                                     <div class="col-6 d-flex flex-column flex-lg-row">
                                         <div class="col-lg-4 mb-2 mb-lg-0">
 
-                                            <div class="col-12 form-group input-group my-group d-flex flex-row justify-content-between height-responsive"
-                                                style="background-color: #dedede; border: none;
+                                            <div class="col-12 form-group input-group my-group d-flex flex-row justify-content-center height-responsive"
+                                                style="background-color: #e6e6e6 ; border: none;
                                         border-radius: 16px;
                                         color: #373737;
                                         box-shadow: 0 8px 6px -5px #bbb;
@@ -372,7 +372,7 @@
                                         flex-wrap: nowrap;
                                         padding-right:25px">
                                                 {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, [
-                                                    'class' => 'selectpicker first-head  walk-in-customer',
+                                                    'class' => 'selectpicker   ',
                                                     'data-live-search' => 'true',
                                                     'style' => 'width: 80%',
                                                     'id' => 'customer_id',
@@ -380,20 +380,29 @@
                                                 ]) !!}
 
                                                 <span class="input-group-btn">
-
-
                                                     @can('customer_module.customer.create_and_edit')
                                                         <a style="background-color: #F9C751;
-                                                                width: 100%;
-                                                                height: 100%;
-                                                                border-radius: 16px;
-                                                                padding: 6px 6px;
-                                                            cursor: pointer;
-                                                            color: white !important;
-                                                                "
-                                                            class="d-flex btn-modal btn-flat justify-content-center align-items-center top-0 right-0"
+                                        width: 100%;
+                                        height: 100%;
+                                        border-radius: 16px;
+                                        padding: 6px 6px;
+                                    cursor: pointer;
+                                        "
+                                                            class="d-flex btn-modal justify-content-center align-items-center top-0 right-0"
                                                             data-href="{{ action('CustomerController@create') }}?quick_add=1"
-                                                            data-container=".view_modal"><i class="fa fa-plus"></i></a>
+                                                            data-container=".view_modal">
+                                                            <svg class="plus" xmlns="http://www.w3.org/2000/svg"
+                                                                height="2em"
+                                                                viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                                                                <style>
+                                                                    .plus {
+                                                                        fill: #ffffff
+                                                                    }
+                                                                </style>
+                                                                <path
+                                                                    d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                                                            </svg>
+                                                        </a>
                                                     @endcan
                                                 </span>
 
@@ -402,9 +411,9 @@
 
                                         <div class="col-lg-4 mb-2 mb-lg-0">
                                             <div style="width: 100%"
-                                                class="col-12 first-head p-0 input-group my-group d-flex flex-row justify-content-center height-responsive">
+                                                class="col-12  p-0 input-group my-group d-flex flex-row justify-content-center height-responsive">
                                                 <button type="button"
-                                                    style="background-color: #dedede;
+                                                    style="background-color: #e6e6e6 ;
                                     border: none;
                                         border-radius: 16px;
                                         color: #373737;
@@ -421,10 +430,10 @@
 
                                         <div class="col-lg-4 mb-2 mb-lg-0">
                                             <div style="width: 100%"
-                                                class="col-12 first-head p-0  input-group my-group d-flex flex-row justify-content-center height-responsive">
+                                                class="col-12  p-0  input-group my-group d-flex flex-row justify-content-center height-responsive">
 
                                                 <button type="button"
-                                                    style="background-color: #dedede;
+                                                    style="background-color: #e6e6e6 ;
                                     border: none;
                                         border-radius: 16px;
                                         color: #373737;
@@ -562,7 +571,7 @@
                                     style="border-radius: 8px;width: 100%">
 
                                     <div class="search-box input-group form-group input-group my-group d-flex justify-content-between"
-                                        style="background-color: #dedede; border: none;
+                                        style="background-color: #e6e6e6 ; border: none;
                                                                         border-radius: 16px;
                                                                         color: white;
                                                                         box-shadow: 0 8px 6px -5px #bbb ;
@@ -654,8 +663,8 @@
                                 </div>
 
                                 <div class=" py-2 col-12" style="border-radius: 8px;">
-                                    <div class="card">
-                                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mx-auto mb-3"
+                                    <div class="card mb-2">
+                                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mx-auto"
                                             style="width: 80%;">
 
                                             <div
@@ -723,11 +732,11 @@
                                                         'class' => 'label mb-0',
                                                     ]) !!}
                                                     <div
-                                                        style="background-color: #dedede; border: none;
-                                            border-radius: 16px;
+                                                        style="background-color: #e6e6e6 ; border: none;
+                                            border-radius: 6px;
                                             color: #373737;
                                             box-shadow: 0 8px 6px -5px #bbb ;
-                                            padding: 4px 6px;
+
                                             width: 100%;
                                             height: 30px;">
 
@@ -750,11 +759,11 @@
                                                     style="padding: 0;padding-left:2px">
                                                     {!! Form::label('commissioned_employees', __('lang.commissioned_employees'), ['class' => 'label mb-0']) !!}
                                                     <div class=""
-                                                        style="background-color: #dedede; border: none;
-                                            border-radius: 16px;
+                                                        style="background-color: #e6e6e6 ; border: none;
+                                            border-radius: 6px;
                                             color: #373737;
                                             box-shadow: 0 8px 6px -5px #bbb ;
-                                            padding: 4px 6px;
+
                                             width: 100%;
                                             height: 30px;">
                                                         {!! Form::select('commissioned_employees[]', $employees, false, [
@@ -810,13 +819,12 @@
                                                     <input type="hidden" id="sales_promotion-cost" value="0">
                                                 </div>
 
-                                                <div class="col-4 pl-lg-6 first-head height-responsive"
-                                                    style="width: 100%; ">
+                                                <div class="col-4 pl-lg-6  height-responsive" style="width: 100%; ">
                                                     @if (auth()->user()->can('sp_module.sales_promotion.view') ||
                                                             auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
                                                             auth()->user()->can('sp_module.sales_promotion.delete'))
                                                         <button type="button"
-                                                            style="background-color: #dedede;
+                                                            style="background-color: #e6e6e6 ;
                                                     border: none;
                                                 border-radius: 16px;
                                                 color: #373737;
@@ -830,7 +838,7 @@
                                             </div>
 
 
-                                            <div class="col-lg-6 pl-lg-6 first-head height-responsive payment-amount table_room_hide d-flex justify-content-between pl-0 height-responsive"
+                                            <div class="col-lg-6 pl-lg-6  height-responsive payment-amount table_room_hide d-flex justify-content-between pl-0 height-responsive"
                                                 style="background-color: white; border: none;
                                                     border: 1px solid #bbb;
                                                     border-radius: 16px;
@@ -940,77 +948,129 @@
                             </div>
                         </div>
 
+
                         <div class="payment-options row table_room_hide"
                             style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
-                            <div class="col-md-12 d-flex justify-content-center align-items-center mb-3"
+                            <div class="col-md-12 d-flex justify-content-center align-items-center mb-3  @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif"
                                 style="font-size: 16px;font-weight: 600">
-                                <div class="col-md-2">
-                                    <button data-method="cash" style="background: #21912A" type="button"
-                                        class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                        data-backdrop="static" data-keyboard="false" id="cash-btn"><i
-                                            class="fa fa-money"></i>
-                                        @lang('lang.pay')</button>
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                    <button data-method="cash"
+                                        style="background: #21912A;display: flex;justify-content: center;gap: 10px;"
+                                        type="button" class="btn btn-custom w-75 pos-button payment-btn"
+                                        data-toggle="modal" data-target="#add-payment" data-backdrop="static"
+                                        data-keyboard="false" id="cash-btn">
+                                        <div style="width: 18px">
+                                            <img class="w-100 h-100"
+                                                src="{{ asset('front/images/icons Png/Icon awesome-money-check-alt.png') }}"
+                                                alt="Pay">
+                                        </div>
+                                        @lang('lang.pay')
+                                    </button>
                                 </div>
-                                <div class="col-md-2">
-                                    <button data-method="cash" style="background: #21912A" type="button"
-                                        class="btn btn-custom" id="quick-pay-btn"><i class="fa fa-money"></i>
-                                        @lang('lang.quick_pay')</button>
-                                </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
                                     <button data-method="coupon" style="background: #21912A" type="button"
-                                        class="btn btn-custom" data-toggle="modal" data-target="#coupon_modal"
-                                        id="coupon-btn"><i class="fa fa-tag"></i>
+                                        class="btn  w-75 pos-button btn-custom" data-toggle="modal"
+                                        data-target="#coupon_modal" id="coupon-btn"><i class="fa fa-tag"></i>
                                         @lang('lang.coupon')</button>
                                 </div>
+
+
                                 @if (session('system_mode') != 'restaurant')
-                                    <div class="col-md-2">
-                                        <button data-method="paypal" style="background-color: #21912A" type="button"
-                                            class="btn btn-custom payment-btn" data-toggle="modal"
-                                            data-target="#add-payment" data-backdrop="static" data-keyboard="false"
-                                            id="paypal-btn"><i class="fa fa-paypal"></i>
-                                            @lang('lang.other_online_payments')</button>
+                                    <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                        <button data-method="paypal"
+                                            style="background-color: #21912A;display: flex;justify-content: center;gap: 10px;font-size: 10px"
+                                            type="button" class="btn btn-custom w-75 pos-button  payment-btn"
+                                            data-toggle="modal" data-target="#add-payment" data-backdrop="static"
+                                            data-keyboard="false" id="paypal-btn">
+                                            <div style="width: 18px">
+                                                <img class="w-100 h-100"
+                                                    src="{{ asset('front/images/icons Png/Icon zocial-paypal.png') }}"
+                                                    alt="Pay">
+                                            </div>
+                                            @lang('lang.online_payments')
+                                        </button>
                                     </div>
                                 @endif
-                                <div class="col-md-2">
-                                    <button data-method="draft" style="background-color: #21912A" type="button"
-                                        data-toggle="modal" data-target="#sale_note_modal" class="btn btn-custom"><i
-                                            class="dripicons-flag"></i>
-                                        @lang('lang.draft')</button>
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                    <button data-method="draft"
+                                        style="background-color: #21912A;display: flex;justify-content: center;gap: 10px;"
+                                        type="button" data-toggle="modal" data-target="#sale_note_modal"
+                                        class="btn  w-75 pos-button btn-custom">
+                                        <div style="width: 18px">
+                                            <img class="w-100 h-100"
+                                                src="{{ asset('front/images/icons Png/Icon awesome-flag.png') }}"
+                                                alt="Pay">
+                                        </div>
+                                        @lang('lang.draft')
+                                    </button>
                                 </div>
-                            </div>
-                            <div class="col-md-12 d-flex justify-content-center align-items-center">
-                                <div class="col-md-2">
-                                    <button data-method="draft" style="background-color: #21912A" type="button"
-                                        class="btn btn-custom" id="view-draft-btn"
-                                        data-href="{{ action('SellPosController@getDraftTransactions') }}"><i
-                                            class="dripicons-flag"></i>
-                                        @lang('lang.view_draft')</button>
-                                </div>
-                                <div class="col-md-2">
-                                    <button data-method="online-order" style="background-color: #21912A" type="button"
-                                        class="btn btn-custom" id="view-online-order-btn"
-                                        data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><img
-                                            src="{{ asset('images/online_order.png') }}"
-                                            style="height: 25px; width: 35px;" alt="icon">
-                                        @lang('lang.online_orders') <span
-                                            class="badge badge-danger online-order-badge">0</span></button>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <button data-method="pay-later" style="background-color: #21912A" type="button"
-                                        class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
-                                        @lang('lang.pay_later')</button>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <button style="background-color: #ff0000;" type="button" class="btn btn-custom"
-                                        id="cancel-btn" onclick="return confirmCancel()"><i class="fa fa-close"></i>
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                    <button style="background-color: #ff0000;" type="button"
+                                        class="btn  w-75 pos-button btn-custom" id="cancel-btn"
+                                        onclick="return confirmCancel()"><i class="fa fa-close"></i>
                                         @lang('lang.cancel')</button>
                                 </div>
-                                <div class="col-md-2">
-                                    <button style="background-color: #21912A;" type="button" class="btn btn-custom"
-                                        id="recent-transaction-btn"><i class="dripicons-clock"></i>
-                                        @lang('lang.recent_transactions')</button>
+                            </div>
+                            <div
+                                class="col-md-12 d-flex justify-content-center align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                    <button
+                                        style="background-color: #21912A;display: flex;justify-content: center;gap: 10px;"
+                                        type="button" class="btn  w-75 pos-button btn-custom"
+                                        id="recent-transaction-btn">
+                                        <div style="width: 18px">
+                                            <img class="w-100 h-100"
+                                                src="{{ asset('front/images/icons Png/Icon material-timer.png') }}"
+                                                alt="Pay">
+                                        </div>
+                                        @lang('lang.recent_transactions')
+                                    </button>
+                                </div>
+
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                    <button data-method="online-order"
+                                        style="background-color: #21912A;display: flex;justify-content: center;gap: 10px;"type="button"
+                                        class="btn w-75 pos-button  btn-custom" id="view-online-order-btn"
+                                        data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}">
+                                        <div style="width: 18px">
+                                            <img class="w-100 h-100"
+                                                src="{{ asset('front/images/icons Png/Icon map-department-store.png') }}"
+                                                alt="Pay">
+                                        </div>
+                                        @lang('lang.online_orders') <span class="badge badge-danger online-order-badge">0</span>
+                                    </button>
+                                </div>
+
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                    <button data-method="pay-later"
+                                        style="background-color: #21912A;display: flex;justify-content: center;gap: 10px;"
+                                        type="button" class="btn  w-75 pos-button btn-custom" id="pay-later-btn">
+                                        <div style="width: 18px">
+                                            <img class="w-100 h-100"
+                                                src="{{ asset('front/images/icons Png/Icon material-watch-later.png') }}"
+                                                alt="Pay">
+                                        </div>
+                                        @lang('lang.pay_later')
+                                    </button>
+                                </div>
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                    <button data-method="draft"
+                                        style="background-color: #21912A;display: flex;justify-content: center;gap: 10px;"
+                                        type="button" class="btn  w-75 pos-button  btn-custom" id="view-draft-btn"
+                                        data-href="{{ action('SellPosController@getDraftTransactions') }}">
+                                        <div style="width: 18px">
+                                            <img class="w-100 h-100"
+                                                src="{{ asset('front/images/icons Png/Icon awesome-flag.png') }}"
+                                                alt="Pay">
+                                        </div>
+                                        @lang('lang.view_draft')
+                                    </button>
+                                </div>
+                                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                    <button data-method="cash" style="background: #21912A" type="button"
+                                        class="btn w-75 pos-button btn-custom" id="quick-pay-btn"><i
+                                            class="fa fa-money"></i>
+                                        @lang('lang.quick_pay')</button>
                                 </div>
                             </div>
                             {{-- <div class="column-5">
@@ -1062,201 +1122,261 @@
                     @include('sale_pos.partials.sale_note')
 
                     {!! Form::close() !!}
-                </div>
 
-                <!-- product list -->
-                <div class="@if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-md-2 @else col-md-3 @endif">
+                    <!-- product list -->
+                    <div class="@if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-md-2 @else col-md-3 @endif">
 
-                    @include('sale_pos.partials.right_side')
-                </div>
+                        @include('sale_pos.partials.right_side')
+                    </div>
 
-                <!-- recent transaction modal -->
-                <div id="recentTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal text-left">
+                    <!-- recent transaction modal -->
+                    <div id="recentTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                        class="modal text-left">
 
-                    <div class="modal-dialog modal-xl" role="document" style="max-width: 65%;">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">@lang('lang.recent_transactions')</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="col-md-12 modal-filter">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('start_date', __('lang.start_date'), []) !!}
-                                                {!! Form::text('start_date', null, ['class' => 'form-control filter_transactions', 'id' => 'rt_start_date']) !!}
+                        <div class="modal-dialog modal-xl" role="document" style="max-width: 65%;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">@lang('lang.recent_transactions')
+                                        <span class="header-pill"></span>
+                                    </h5>
+                                    <button type="button"
+                                        class="close btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"
+                                        data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                    <span class="position-absolute modal-border"></span>
+                                </div>
+                                <div class="modal-body ">
+                                    <div class="col-md-12 modal-filter">
+                                        <div
+                                            class="row @if (app()->isLocale('ar')) flex-row-reverse justify-content-end @else justify-content-start flex-row @endif align-items-center">
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('start_date', __('lang.start_date'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::text('start_date', null, [
+                                                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start filter_transactions',
+                                                        'id' => 'rt_start_date',
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('end_date', __('lang.end_date'), []) !!}
-                                                {!! Form::text('end_date', null, ['class' => 'form-control filter_transactions', 'id' => 'rt_end_date']) !!}
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('end_date', __('lang.end_date'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::text('end_date', null, [
+                                                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start filter_transactions',
+                                                        'id' => 'rt_end_date',
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('rt_customer_id', __('lang.customer'), []) !!}
-                                                {!! Form::select('rt_customer_id', $customers, false, [
-                                                    'class' => 'form-control filter_transactions selectpicker',
-                                                    'id' => 'rt_customer_id',
-                                                    'data-live-search' => 'true',
-                                                    'placeholder' => __('lang.all'),
-                                                ]) !!}
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('rt_customer_id', __('lang.customer'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::select('rt_customer_id', $customers, false, [
+                                                        'class' => 'form-control filter_transactions selectpicker',
+                                                        'id' => 'rt_customer_id',
+                                                        'data-live-search' => 'true',
+                                                        'placeholder' => __('lang.all'),
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('rt_method', __('lang.payment_type'), []) !!}
-                                                {!! Form::select('rt_method', $payment_types, request()->method, [
-                                                    'class' => 'form-control filter_transactions',
-                                                    'placeholder' => __('lang.all'),
-                                                    'data-live-search' => 'true',
-                                                    'id' => 'rt_method',
-                                                ]) !!}
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('rt_method', __('lang.payment_type'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::select('rt_method', $payment_types, request()->method, [
+                                                        'class' => 'form-control filter_transactions',
+                                                        'placeholder' => __('lang.all'),
+                                                        'data-live-search' => 'true',
+                                                        'id' => 'rt_method',
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('rt_created_by', __('lang.cashier'), []) !!}
-                                                {!! Form::select('rt_created_by', $cashiers, false, [
-                                                    'class' => 'form-control selectpicker filter_transactions',
-                                                    'id' => 'rt_created_by',
-                                                    'data-live-search' => 'true',
-                                                    'placeholder' => __('lang.all'),
-                                                ]) !!}
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('rt_created_by', __('lang.cashier'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::select('rt_created_by', $cashiers, false, [
+                                                        'class' => 'form-control selectpicker filter_transactions',
+                                                        'id' => 'rt_created_by',
+                                                        'data-live-search' => 'true',
+                                                        'placeholder' => __('lang.all'),
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('rt_deliveryman_id', __('lang.deliveryman'), []) !!}
-                                                {!! Form::select('rt_deliveryman_id', $delivery_men, null, [
-                                                    'class' => 'form-control sale_filter filter_transactions',
-                                                    'placeholder' => __('lang.all'),
-                                                    'data-live-search' => 'true',
-                                                    'id' => 'rt_deliveryman_id',
-                                                ]) !!}
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('rt_deliveryman_id', __('lang.deliveryman'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::select('rt_deliveryman_id', $delivery_men, null, [
+                                                        'class' => 'form-control sale_filter filter_transactions',
+                                                        'placeholder' => __('lang.all'),
+                                                        'data-live-search' => 'true',
+                                                        'id' => 'rt_deliveryman_id',
+                                                    ]) !!}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        @include('sale_pos.partials.recent_transactions')
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                                    @include('sale_pos.partials.recent_transactions')
+
+                                <div class="modal-footer mb-3 d-flex justify-content-center align-content-center gap-3">
+                                    <button type="button" class="col-3 py-1 btn btn-danger"
+                                        data-dismiss="modal">@lang('lang.close')</button>
                                 </div>
-                            </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                    <!-- draft transaction modal -->
+                    <div id="draftTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                        class="modal text-left">
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">@lang('lang.close')</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div>
-                <!-- draft transaction modal -->
-                <div id="draftTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal text-left">
-
-                    <div class="modal-dialog" role="document" style="width: 65%">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">@lang('lang.draft_transactions')</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="col-md-12 modal-filter">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('draft_start_date', __('lang.start_date'), []) !!}
-                                                {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'draft_start_date']) !!}
+                        <div class="modal-dialog" role="document" style="width: 65%">
+                            <div class="modal-content">
+                                <div
+                                    class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                                    <h5 class="modal-title  px-2 position-relative d-flex align-items-center"
+                                        style="gap: 5px;">@lang('lang.draft_transactions')
+                                        <span class="header-pill"></span>
+                                    </h5>
+                                    <button type="button"
+                                        class="close  btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"
+                                        data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                    <span class="position-absolute modal-border"></span>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-md-12 modal-filter">
+                                        <div
+                                            class="row @if (app()->isLocale('ar')) flex-row-reverse justify-content-end @else justify-content-start flex-row @endif align-items-center">
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('draft_start_date', __('lang.start_date'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::text('start_date', null, [
+                                                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                                        'id' => 'draft_start_date',
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('draft_end_date', __('lang.end_date'), []) !!}
-                                                {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'draft_end_date']) !!}
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('draft_end_date', __('lang.end_date'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::text('end_date', null, [
+                                                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                                        'id' => 'draft_end_date',
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('draft_deliveryman_id', __('lang.deliveryman'), []) !!}
-                                                {!! Form::select('draft_deliveryman_id', $delivery_men, null, [
-                                                    'class' => 'form-control sale_filter',
-                                                    'placeholder' => __('lang.all'),
-                                                    'data-live-search' => 'true',
-                                                    'id' => 'draft_deliveryman_id',
-                                                ]) !!}
+                                            <div class="col-md-4 px-5">
+                                                <div class="form-group">
+                                                    {!! Form::label('draft_deliveryman_id', __('lang.deliveryman'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::select('draft_deliveryman_id', $delivery_men, null, [
+                                                        'class' => 'form-control sale_filter',
+                                                        'placeholder' => __('lang.all'),
+                                                        'data-live-search' => 'true',
+                                                        'id' => 'draft_deliveryman_id',
+                                                    ]) !!}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        @include('sale_pos.partials.view_draft')
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                                    @include('sale_pos.partials.view_draft')
+
+                                <div class="modal-footer mb-3 d-flex justify-content-center align-content-center gap-3">
+                                    <button type="button" class="col-3 py-1 btn btn-danger"
+                                        data-dismiss="modal">@lang('lang.close')</button>
                                 </div>
-                            </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                    <!-- onlineOrder transaction modal -->
+                    <div id="onlineOrderTransaction" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true" class="modal text-left">
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">@lang('lang.close')</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div>
-                <!-- onlineOrder transaction modal -->
-                <div id="onlineOrderTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal text-left">
-
-                    <div class="modal-dialog" role="document" style="width: 65%">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">@lang('lang.online_order_transactions')</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="col-md-12 modal-filter">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('online_order_start_date', __('lang.start_date'), []) !!}
-                                                {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'online_order_start_date']) !!}
+                        <div class="modal-dialog" role="document" style="width: 65%">
+                            <div class="modal-content">
+                                <div
+                                    class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                                    <h5 class="modal-title px-2 position-relative d-flex align-items-center"
+                                        style="gap: 5px;">@lang('lang.online_order_transactions')
+                                        <span class="header-pill"></span>
+                                    </h5>
+                                    <button type="button"
+                                        class="close  btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"
+                                        data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                    <span class="position-absolute modal-border"></span>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-md-12 modal-filter">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('online_order_start_date', __('lang.start_date'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::text('start_date', null, [
+                                                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                                        'id' => 'online_order_start_date',
+                                                    ]) !!}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                {!! Form::label('online_order_end_date', __('lang.end_date'), []) !!}
-                                                {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'online_order_end_date']) !!}
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    {!! Form::label('online_order_end_date', __('lang.end_date'), [
+                                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                                    ]) !!}
+                                                    {!! Form::text('end_date', null, [
+                                                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                                        'id' => 'online_order_end_date',
+                                                    ]) !!}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        @include('sale_pos.partials.view_online_order')
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                                    @include('sale_pos.partials.view_online_order')
-                                </div>
-                            </div>
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">@lang('lang.close')</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div>
-                <div id="dining_model" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                    class="modal text-left">
-                </div>
-                <div id="dining_table_action_modal" role="dialog" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true" class="modal fade text-left">
+                                <div class="modal-footer mb-3 d-flex justify-content-center align-content-center gap-3">
+                                    <button type="button" class="col-3 py-1 btn btn-danger"
+                                        data-dismiss="modal">@lang('lang.close')</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                    <div id="dining_model" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                        class="modal text-left">
+                    </div>
+                    <div id="dining_table_action_modal" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true" class="modal fade text-left">
+                    </div>
+
+
+
                 </div>
             </div>
-        </div>
-
-
     </section>
-
 
     <!-- This will be printed -->
     <section class="invoice print_section print-only" id="receipt_section"> </section>

@@ -13,7 +13,7 @@
                         class="d-flex align-items-center my-2 @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
                         <h4 class="mb-0">
                             @lang('lang.add_new_product')
-                            <span class=" header-pill"></span>
+                            <span class="header-pill"></span>
                         </h4>
                     </div>
 

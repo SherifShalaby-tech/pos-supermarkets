@@ -27,6 +27,7 @@
                 ]) !!}
                 {!! Form::text('name', null, [
                     'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+
                     'placeholder' => __('lang.name'),
                     'required',
                 ]) !!}

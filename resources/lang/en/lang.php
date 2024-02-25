@@ -429,6 +429,7 @@ return [
     'reference' => 'Reference',
     'thank_you_and_come_again' => 'Thank you for shopping with us. Please come again',
     'other_online_payments' => 'Other Online Payments',
+    'online_payments' => 'Online Payments',
     'print_the_transaction' => 'Print the Transaction',
     'delivery_man' => 'Delivery Man',
     'no_transaction_found' => 'No transaction found',

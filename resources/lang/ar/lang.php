@@ -1453,4 +1453,6 @@ return [
     'prices_from_different_stores' => "أسعار المنتج المختلفة للمتاجر المختلفة",
     'has_varient' => "المنتج له أصناف مختلفة",
     'add_new' => "أضف جديد",
+    'online_payments' => 'المدفوعات الإلكترونية',
+
 ];

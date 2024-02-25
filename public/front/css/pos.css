@@ -33,18 +33,7 @@ nav.navbar {
     }
 }
 
-.first-head {
-    width: 100% !important;
-}
 
-.first-head .btn {
-    border: none;
-    border-radius: 16px;
-    color: #373737;
-    font-weight: 200;
-    font-size: 10px;
-
-}
 
 .tax .btn-group {
     background-color: transparent;
@@ -64,12 +53,7 @@ nav.navbar {
     }
 }
 
-.walk-in-customer .btn {
-    padding-top: 1px;
-    padding-bottom: 1px;
-    padding-left: 20px;
-    color: #373737;
-}
+
 
 .terms .dropdown-menu {
     margin: 15px 0 0;
@@ -223,4 +207,14 @@ nav.navbar {
 .select-button-group {
     background-color: #e6e6e6 !important;
     border-radius: 6px !important;
+}
+
+.pos-button {
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 10px;
+}
+
+.main-footer {
+    display: none;
 }

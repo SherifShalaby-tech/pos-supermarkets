@@ -3,12 +3,14 @@
         <div class="modal-content">
             <div
                 class="modal-header position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
-                <h5 class="modal-title px-2 position-relative">@lang('lang.non_identifiable_item')
-                    <span class="position-absolute header-pill" style="right: -20%"></span>
+                <h5 class="modal-title px-2 position-relative d-flex align-items-center" style="gap: 5px;">
+                    @lang('lang.non_identifiable_item')
+                    <span class=" header-pill" style="right: -20%"></span>
                 </h5>
                 <button type="button" data-dismiss="modal" aria-label="Close"
                     class="close  btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"><span
                         aria-hidden="true"><i class="dripicons-cross"></i></span></button>
+                <span class="position-absolute modal-border"></span>
             </div>
             <div class="modal-body">
                 <div class="row @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
@@ -58,7 +60,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer d-flex justify-content-center">
+            <div class="modal-footer mb-3 d-flex justify-content-center">
                 <button type="button" class="btn btn-main mt-3 "
                     id="non_identifiable_submit">@lang('lang.submit')</button>
                 <button type="button" class="btn btn-danger mt-3 " data-dismiss="modal">@lang('lang.close')</button>

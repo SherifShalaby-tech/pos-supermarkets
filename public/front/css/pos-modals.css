@@ -27,13 +27,41 @@
     opacity: 1;
 }
 
-.header-pill {
-    width: 18px;
-    height: 18px;
+.header-pill,
+.toggle-pill,
+.header-modal-pill {
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
     background-color: #21912A;
-    top: 13%;
-    right: -35%;
+}
+
+.section-header-pill {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #21912A;
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 0.8rem !important;
+}
+
+.bootstrap-select {
+    width: 100% !important;
+    background-color: #e6e6e6 !important;
+    outline: none !important;
+    border: 1px solid #e6e6e6 !important;
+    padding: 2px 5px !important;
+    border-radius: 6px !important;
+    height: 100%;
+}
+
+.bootstrap-select button {
+    height: 100%;
+    width: 100%;
+    padding: 0 15px;
 }
 
 .text-end {
@@ -126,4 +154,44 @@ input.form-control-custom:checked+label::before {
 #submit-btn {
     width: 30%;
     margin: auto;
+}
+
+.btn-light {
+    background-color: transparent !important;
+}
+
+.modal-footer {
+    border-top: 4px solid #dadada;
+    width: 70%;
+    margin: auto;
+    margin-top: 15px;
+    padding: 0;
+    padding-top: 15px;
+}
+
+.referal-title {
+    position: relative;
+    margin-top: 25px;
+}
+
+.referal-border {
+    position: absolute;
+    top: -50%;
+    left: 15%;
+    background-color: #dadada;
+    width: 70%;
+    height: 3px;
+}
+
+.table-btns {
+    background-color: #f9c751;
+    color: white;
+    border-radius: 6px !important;
+    transition: 0.6s;
+}
+
+.table-btns:hover {
+    background-color: #dadada;
+    color: #888 !important;
+    border-radius: 6px !important;
 }

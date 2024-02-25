@@ -1,5 +1,3 @@
-rercrecr
-
 @forelse ($products->chunk(5) as $chunk)
     <tr style="font-size: 11px; padding: 5px;">
         @foreach ($chunk as $product)

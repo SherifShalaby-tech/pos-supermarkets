@@ -5,8 +5,8 @@
         <div class="modal-content">
             <div
                 class="modal-header  position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
-                <h5 class="modal-title position-relative">@lang('lang.sale_note')
-                    <span class="position-absolute header-pill"></span>
+                <h5 class="modal-title position-relative d-flex align-items-center" style="gap: 5px;">@lang('lang.sale_note')
+                    <span class="header-pill"></span>
                 </h5>
                 <button type="button" data-dismiss="modal" aria-label="Close"
                     class="close  btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"><span
@@ -18,11 +18,13 @@
                     {!! Form::label('sale_note', __('lang.sale_note'), [
                         'class' => 'modal-label mb-1 app()->isLocale("ar") ? d-block text-end : d-block',
                     ]) !!}
-                    <textarea rows="3" class="form-control modal-input" name="sale_note_draft" id="sale_note_draft">{{ !empty($transaction) ? $transaction->sale_note : '' }}</textarea>
+                    <textarea rows="3"
+                        class="form-control modal-input  @if (app()->isLocale('ar')) text-end @else  text-start @endif"
+                        name="sale_note_draft" id="sale_note_draft">{{ !empty($transaction) ? $transaction->sale_note : '' }}</textarea>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button data-method="draft" type="button" class="btn btn-main mt-3 " id="draft-btn"><i
+            <div class="modal-footer d-flex justify-content-center align-content-center gap-3">
+                <button data-method="draft" type="button" class="btn btn-main mb-3" id="draft-btn"><i
                         class="dripicons-flag"></i>
                     @lang('lang.save')</button>
             </div>

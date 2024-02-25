@@ -3,26 +3,31 @@
         <div class="modal-content">
             <div
                 class="modal-header  position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
-                <h5 class="modal-title position-relative">@lang('lang.weighing_scale')
-                    <span class="position-absolute header-pill"></span>
+                <h5 class="modal-title position-relative d-flex align-items-center" style="gap: 5px;">@lang('lang.weighing_scale')
+                    <span class=" header-pill"></span>
                 </h5>
-                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+                <button type="button" data-dismiss="modal" aria-label="Close"
+                    class="close btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"><span
                         aria-hidden="true"><i class="dripicons-cross"></i></span></button>
                 <span class="position-absolute modal-border"></span>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="d-flex justify-content-between align-items-end  flex-column">
                         <div class="form-group">
-                            {!! Form::label('weighing_scale_barcode', __('lang.weighing_scale_barcode') . ':') !!}
-                            {!! Form::text('weighing_scale_barcode', null, ['class' => 'form-control']) !!}
+                            {!! Form::label('weighing_scale_barcode', __('lang.weighing_scale_barcode'), [
+                                'class' => 'modal-label mb-1 app()->isLocale("ar") ? d-block text-end : d-block',
+                            ]) !!}
+                            {!! Form::text('weighing_scale_barcode', null, [
+                                'class' => 'form-control clear_input_form modal-input app()->isLocale("ar") ? text-end : text-start',
+                            ]) !!}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="weighing_scale_submit">@lang('lang.submit')</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.close')</button>
+            <div class="modal-footer d-flex justify-content-center align-content-center gap-3">
+                <button type="button"class="btn btn-main mb-3" id="weighing_scale_submit">@lang('lang.submit')</button>
+                <button type="button" class="btn btn-danger mb-3" data-dismiss="modal">@lang('lang.close')</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
