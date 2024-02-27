@@ -32,6 +32,14 @@
 
                 }
             }
+            if(isset($transaction_id) && isset($is_edit) && $is_edit=='1'){
+                $transaction_sell_line=\App\Models\TransactionSellLine::where('transaction_id',$transaction_id)
+                    ->where('product_id',$product->product_id)->where('variation_id',$product->variation_id)
+                    ->first();
+                if(!empty($transaction_sell_line)){
+                    $default_sell_price= $transaction_sell_line->sell_price??0;
+                }
+            }
                 $product_unit = \App\Models\Product::where('id',$product->product_id)->first();
                 if($product_unit && isset($product_unit->multiple_units) ){
                     foreach ($product_unit->multiple_units as $unit) {

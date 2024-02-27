@@ -20,6 +20,7 @@
                     {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' => 'PUT', 'files' => true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
                     <div class="card">
                         <div class="card-body" style="padding: 0px 10px; !important">
+                            <input type="hidden" name="is_edit" id="is_edit" value="1">
                             <input type="hidden" name="transaction_id" id="transaction_id" value="{{ $transaction->id }}">
                             <input type="hidden" name="store_id" id="store_id" value="{{ $transaction->store_id }}">
                             <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"

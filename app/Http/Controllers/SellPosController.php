@@ -1119,7 +1119,8 @@ class SellPosController extends Controller
             $is_direct_sale = $request->input('is_direct_sale');
 
             $added_products = json_decode($request->input('added_products'), true);
-
+            $is_edit = $request->input('is_edit');
+            $transaction_id = $request->input('transaction_id');
             $currency_id = $request->currency_id;
             $currency = Currency::find($currency_id);
             $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
@@ -1182,7 +1183,7 @@ class SellPosController extends Controller
                         'is_direct_sale',
                         'dining_table_id',
                         'exchange_rate',
-                        'edit_quantity'
+                        'edit_quantity','transaction_id','is_edit'
                     ))->render();
 
                 $output['success'] = true;
