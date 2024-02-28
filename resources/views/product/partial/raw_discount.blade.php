@@ -27,17 +27,9 @@
                 'pattern' => '\d{2}',
             ]) !!}
         </td>
-        <td class="py-2 px-1">
+        {{-- <td class="py-2 px-1">
 
-            <span class="i-checks d-flex justify-content-between align-items-center">
-                <input class="is_discount_permenant" name="is_discount_permenant[{{ $row_id }}]" type="checkbox"
-                    @if ($discount->is_discount_permenant) checked @endif class="form-control-custom">
-                <label class="mb-0" for="is_discount_permenant"><strong>
-                        @lang('lang.permenant')
-
-                    </strong></label>
-            </span>
-        </td>
+        </td> --}}
         <td class="py-2">
             {!! Form::text(
                 'discount_start_date[' . $row_id . ']',
@@ -82,7 +74,18 @@
                     class="fa fa-trash"></i></button>
         </td>
 
+
     </tr>
+    first
+    <span class="i-checks d-flex justify-content-between align-items-center">
+        first
+        <input class="is_discount_permenant" name="is_discount_permenant[{{ $row_id }}]" type="checkbox"
+            @if ($discount->is_discount_permenant) checked @endif class="form-control-custom">
+        <label class="mb-0" for="is_discount_permenant"><strong>
+                @lang('lang.permenant')
+
+            </strong></label>
+    </span>
 @elseif(isset($discount_product))
     <tr>
         <td class="py-2">
@@ -114,17 +117,10 @@
                 'pattern' => '\d{2}',
             ]) !!}
         </td>
-        <td class="py-2 px-1">
+        {{-- <td class="py-2 px-1">
 
-            <span class="i-checks d-flex justify-content-between align-items-center">
-                <input class="is_discount_permenant" name="is_discount_permenant[{{ $row_id }}]" type="checkbox"
-                    checked class="form-control-custom">
-                <label class="mb-0" for="is_discount_permenant"><strong>
-                        @lang('lang.permenant')
 
-                    </strong></label>
-            </span>
-        </td>
+        </td> --}}
         <td class="py-2">
 
             {!! Form::text(
@@ -171,6 +167,16 @@
         </td>
 
     </tr>
+    second
+    <span class="i-checks d-flex justify-content-between align-items-center">
+        second
+        <input class="is_discount_permenant" name="is_discount_permenant[{{ $row_id }}]" type="checkbox" checked
+            class="form-control-custom">
+        <label class="mb-0" for="is_discount_permenant"><strong>
+                @lang('lang.permenant')
+
+            </strong></label>
+    </span>
 @else
     <tr>
         <td class="py-2">
@@ -210,17 +216,10 @@
                 ],
             ) !!}
         </td>
-        <td class="py-2 px-1">
+        {{-- <td class="py-2 px-1">
 
-            <span class="i-checks d-flex justify-content-between align-items-center">
-                <input class="is_discount_permenant" name="is_discount_permenant[{{ $row_id }}]" type="checkbox"
-                    checked class="form-control-custom">
-                <label class="mb-0" for="is_discount_permenant"><strong>
-                        @lang('lang.permenant')
 
-                    </strong></label>
-            </span>
-        </td>
+        </td> --}}
         <td class="py-2">
 
             {!! Form::text(
@@ -273,4 +272,14 @@
         </td>
 
     </tr>
+    third
+    <span class="i-checks d-flex justify-content-between align-items-center">
+        third
+        <input class="is_discount_permenant" name="is_discount_permenant[{{ $row_id }}]" type="checkbox" checked
+            class="form-control-custom">
+        <label class="mb-0" for="is_discount_permenant"><strong>
+                @lang('lang.permenant')
+
+            </strong></label>
+    </span>
 @endif

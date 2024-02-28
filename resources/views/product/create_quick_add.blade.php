@@ -355,39 +355,49 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class="col-md-12">
-                    <table class="table table-bordered" id="consumption_table_discount">
+                    <table class="table" id="consumption_table_discount">
                         <thead>
-                            <tr>
-                                <th style="width: 20%;">@lang('lang.discount_type')</th>
-                                <th style="width: 15%;">@lang('lang.discount')</th>
-                                <th style="width: 20%;">@lang('lang.discount_start_date')</th>
-                                <th style="width: 20%;">@lang('lang.discount_end_date')</th>
-                                <th style="width: 20%;">@lang('lang.customer_type') <i class="dripicons-question"
-                                        data-toggle="tooltip" title="@lang('lang.discount_customer_info')"></i></th>
-                                <th style="width: 5%;"><button class="btn btn-xs btn-success add_discount_row"
-                                        type="button"><i class="fa fa-plus"></i></button></th>
+                            <tr style="
+    font-size: 9px;text-align: center;">
+                                <th>@lang('lang.discount_type')</th>
+                                <th>@lang('lang.discount')</th>
+                                <th>@lang('lang.discount_category')</th>
+                                <th>@lang('lang.discount_start_date')</th>
+                                <th>@lang('lang.discount_end_date')</th>
+                                <th>@lang('lang.customer_type') <i class="dripicons-question" data-toggle="tooltip"
+                                        title="@lang('lang.discount_customer_info')"></i></th>
+                                <th></th>
+                                {{-- <th style="width: 5%;"></th> --}}
                             </tr>
                         </thead>
                         <tbody>
                             @include('product.partial.raw_discount', ['row_id' => 0])
                         </tbody>
                     </table>
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-main px-5 py-1  add_discount_row"
+                            type="button">@lang('lang.add_new')</button>
+                    </div>
                     <input type="hidden" name="raw_discount_index" id="raw_discount_index" value="1">
                 </div>
 
-
-                <div class="col-md-4">
-                    <div class="i-checks">
-                        <input id="show_to_customer" name="show_to_customer" type="checkbox" checked value="1"
-                            class="form-control-custom">
-                        <label for="show_to_customer"><strong>@lang('lang.show_to_customer')</strong></label>
+                <div
+                    class="d-flex col-12 flex-column @if (app()->isLocale('ar')) align-items-end @else  align-items-start @endif
+                    ">
+                    <div
+                        class="col-md-4 d-flex @if (app()->isLocale('ar')) justify-content-end @else  justify-content-start @endif">
+                        <div class="i-checks">
+                            <input id="show_to_customer" name="show_to_customer" type="checkbox" checked
+                                value="1" class="form-control-custom">
+                            <label for="show_to_customer"><strong>@lang('lang.show_to_customer')</strong></label>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-12 show_to_customer_type_div">
-                    <div class="col-md-4">
+                    <div class="col-md-3 show_to_customer_type_div">
                         <div class="form-group">
-                            {!! Form::label('show_to_customer_types', __('lang.show_to_customer_types'), []) !!}
+                            {!! Form::label('show_to_customer_types', __('lang.show_to_customer_types'), [
+                                'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                            ]) !!}
                             <i class="dripicons-question" data-toggle="tooltip" title="@lang('lang.show_to_customer_types_info')"></i>
                             {!! Form::select('show_to_customer_types[]', $customer_types, false, [
                                 'class' => 'selectpicker form-control',
@@ -397,160 +407,161 @@
                             ]) !!}
                         </div>
                     </div>
-                </div>
 
-                <div class="col-md-12" style="margin-top: 10px; display:none">
-                    <div class="i-checks">
-                        <input id="different_prices_for_stores" name="different_prices_for_stores" type="checkbox"
-                            value="1" class="form-control-custom">
-                        <label for="different_prices_for_stores"><strong>@lang('lang.different_prices_for_stores')</strong></label>
+                    <div class="col-md-12" style="margin-top: 10px; display:none">
+                        <div class="i-checks">
+                            <input id="different_prices_for_stores" name="different_prices_for_stores"
+                                type="checkbox" value="1" class="form-control-custom">
+                            <label for="different_prices_for_stores"><strong>@lang('lang.different_prices_for_stores')</strong></label>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-12 different_prices_for_stores_div" style="display:none">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    @lang('lang.store')
-                                </th>
-                                <th>
-                                    @lang('lang.price')
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($stores as $store)
+                    <div class="col-md-12 different_prices_for_stores_div" style="display:none">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td>{{ $store->name }}</td>
-                                    <td><input type="text" class="form-control store_prices" style="width: 200px;"
-                                            name="product_stores[{{ $store->id }}][price]" value=""></td>
+                                    <th>
+                                        @lang('lang.store')
+                                    </th>
+                                    <th>
+                                        @lang('lang.price')
+                                    </th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="col-md-12" style="margin-top: 10px; display:none">
-                    <div class="i-checks">
-                        <input id="this_product_have_variant" name="this_product_have_variant" type="checkbox"
-                            value="1" class="form-control-custom">
-                        <label for="this_product_have_variant"><strong>@lang('lang.this_product_have_variant')</strong></label>
+                            </thead>
+                            <tbody>
+                                @foreach ($stores as $store)
+                                    <tr>
+                                        <td>{{ $store->name }}</td>
+                                        <td><input type="text" class="form-control store_prices"
+                                                style="width: 200px;"
+                                                name="product_stores[{{ $store->id }}][price]" value=""></td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+
+                    <div class="col-md-12" style="margin-top: 10px; display:none">
+                        <div class="i-checks">
+                            <input id="this_product_have_variant" name="this_product_have_variant" type="checkbox"
+                                value="1" class="form-control-custom">
+                            <label for="this_product_have_variant"><strong>@lang('lang.this_product_have_variant')</strong></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 this_product_have_variant_div" style="display:none">
+                        <table class="table" id="variation_table">
+                            <thead>
+                                <tr>
+                                    <th>@lang('lang.name')</th>
+                                    <th>@lang('lang.sku')</th>
+                                    <th>@lang('lang.color')</th>
+                                    <th>@lang('lang.size')</th>
+                                    <th>@lang('lang.grade')</th>
+                                    <th>@lang('lang.unit')</th>
+                                    <th>@lang('lang.purchase_price')</th>
+                                    <th>@lang('lang.sell_price')</th>
+                                    <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
+                                                class="dripicons-plus"></i></button></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <input type="hidden" name="row_id" id="row_id" value="0">
                 </div>
 
-                <div class="col-md-12 this_product_have_variant_div" style="display:none">
-                    <table class="table" id="variation_table">
-                        <thead>
-                            <tr>
-                                <th>@lang('lang.name')</th>
-                                <th>@lang('lang.sku')</th>
-                                <th>@lang('lang.color')</th>
-                                <th>@lang('lang.size')</th>
-                                <th>@lang('lang.grade')</th>
-                                <th>@lang('lang.unit')</th>
-                                <th>@lang('lang.purchase_price')</th>
-                                <th>@lang('lang.sell_price')</th>
-                                <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
-                                            class="dripicons-plus"></i></button></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
-                </div>
-                <input type="hidden" name="row_id" id="row_id" value="0">
+            </div>
+            <div class="modal-footer d-flex justify-content-center align-content-center gap-3">
+                <button type="button" class="btn btn-main mt-3 "
+                    id="submit-btn-add-product">@lang('lang.save')</button>
+                <button type="button" class="btn btn-danger mt-3 " data-dismiss="modal">@lang('lang.close')</button>
             </div>
 
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="submit-btn-add-product">@lang('lang.save')</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.close')</button>
-        </div>
+            {!! Form::close() !!}
 
-        {!! Form::close() !!}
-
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
-<script>
-    $('.datepicker').datepicker({
-        language: '{{ session('language') }}',
-        todayHighlight: true,
-    });
-    $('#store_ids').selectpicker('selectAll');
-
-    $('.selectpicker').selectpicker('render');
-    tinymce.init({
-        selector: "#product_details",
-        height: 130,
-        plugins: [
-            "advlist autolink lists link charmap print preview anchor textcolor",
-            "searchreplace visualblocks code fullscreen",
-            "insertdatetime table contextmenu paste code wordcount",
-        ],
-        toolbar: "insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat",
-        branding: false,
-    });
-    $(".show_to_customer_type_div").slideUp();
-    $("#show_to_customer").change(function() {
-        if ($(this).prop("checked")) {
-            $(".show_to_customer_type_div").slideUp();
-        } else {
-            $(".show_to_customer_type_div").slideDown();
-        }
-    });
-    $(document).on("click", ".add_discount_row", function() {
-        let row_id = parseInt($("#raw_discount_index").val());
-        $("#raw_discount_index").val(row_id + 1);
-
-        $.ajax({
-            method: "get",
-            url: "/product/get-raw-discount",
-            data: {
-                row_id: row_id
-            },
-            success: function(result) {
-                $("#consumption_table_discount > tbody").prepend(result);
-                $(".selectpicker").selectpicker("refresh");
-                $(".datepicker").datepicker("refresh");
-
-                // $(".raw_material_unit_id").selectpicker("refresh");
-            },
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+    <script>
+        $('.datepicker').datepicker({
+            language: '{{ session('language') }}',
+            todayHighlight: true,
         });
-    });
+        $('#store_ids').selectpicker('selectAll');
+
+        $('.selectpicker').selectpicker('render');
+        tinymce.init({
+            selector: "#product_details",
+            height: 130,
+            plugins: [
+                "advlist autolink lists link charmap print preview anchor textcolor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime table contextmenu paste code wordcount",
+            ],
+            toolbar: "insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat",
+            branding: false,
+        });
+        $(".show_to_customer_type_div").slideUp();
+        $("#show_to_customer").change(function() {
+            if ($(this).prop("checked")) {
+                $(".show_to_customer_type_div").slideUp();
+            } else {
+                $(".show_to_customer_type_div").slideDown();
+            }
+        });
+        $(document).on("click", ".add_discount_row", function() {
+            let row_id = parseInt($("#raw_discount_index").val());
+            $("#raw_discount_index").val(row_id + 1);
+
+            $.ajax({
+                method: "get",
+                url: "/product/get-raw-discount",
+                data: {
+                    row_id: row_id
+                },
+                success: function(result) {
+                    $("#consumption_table_discount > tbody").prepend(result);
+                    $(".selectpicker").selectpicker("refresh");
+                    $(".datepicker").datepicker("refresh");
+
+                    // $(".raw_material_unit_id").selectpicker("refresh");
+                },
+            });
+        });
 
 
-    $(document).ready(function() {
-        if ($('#is_service').prop('checked')) {
-            $('.supplier_div').removeClass('hide');
-        } else {
-            $('.supplier_div').addClass('hide');
-        }
-    });
-    $(document).on("change", "#is_service", function() {
-        if ($(this).prop("checked")) {
-            $(this).val(1);
-            $(".supplier_div").removeClass("hide");
-            $(".sell_price").removeClass('hide');
-            $(".purchase_price").removeClass('hide');
-            $(".purchase_price_th").removeClass('hide');
-            $(".sell_price_th").removeClass('hide');
-            $(".default_purchase_price_td").removeClass('hide');
-            $(".default_sell_price_td").removeClass('hide');
-            $(".default_purchase_price_th").removeClass('hide');
-            $(".default_sell_price_th").removeClass('hide');
-        } else {
-            $(this).val(0);
-            $(".supplier_div").addClass("hide");
-            $(".sell_price").addClass('hide');
-            $(".purchase_price").addClass('hide');
-            $(".purchase_price_th").addClass('hide');
-            $(".sell_price_th").addClass('hide');
-            $(".default_purchase_price_td").addClass('hide');
-            $(".default_sell_price_td").addClass('hide');
-            $(".default_purchase_price_th").addClass('hide');
-            $(".default_sell_price_th").addClass('hide');
-        }
-    });
-</script>
+        $(document).ready(function() {
+            if ($('#is_service').prop('checked')) {
+                $('.supplier_div').removeClass('hide');
+            } else {
+                $('.supplier_div').addClass('hide');
+            }
+        });
+        $(document).on("change", "#is_service", function() {
+            if ($(this).prop("checked")) {
+                $(this).val(1);
+                $(".supplier_div").removeClass("hide");
+                $(".sell_price").removeClass('hide');
+                $(".purchase_price").removeClass('hide');
+                $(".purchase_price_th").removeClass('hide');
+                $(".sell_price_th").removeClass('hide');
+                $(".default_purchase_price_td").removeClass('hide');
+                $(".default_sell_price_td").removeClass('hide');
+                $(".default_purchase_price_th").removeClass('hide');
+                $(".default_sell_price_th").removeClass('hide');
+            } else {
+                $(this).val(0);
+                $(".supplier_div").addClass("hide");
+                $(".sell_price").addClass('hide');
+                $(".purchase_price").addClass('hide');
+                $(".purchase_price_th").addClass('hide');
+                $(".sell_price_th").addClass('hide');
+                $(".default_purchase_price_td").addClass('hide');
+                $(".default_sell_price_td").addClass('hide');
+                $(".default_purchase_price_th").addClass('hide');
+                $(".default_sell_price_th").addClass('hide');
+            }
+        });
+    </script>
