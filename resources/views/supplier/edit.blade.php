@@ -1,123 +1,205 @@
 @extends('layouts.app')
 @section('title', __('lang.supplier'))
+
+@section('style')
+    <link rel="stylesheet" type="text/css" href="{{ url('front/css/supplier.css') }}">
+@endsection
+
 @section('content')
-    <section class="forms">
+    <section class="forms py-0">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.edit_supplier')</h4>
+                <div class="col-md-12 px-1">
+                    <div
+                        class="d-flex align-items-center my-2 @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
+                        <h5 class="mb-0 position-relative" style="margin-right: 30px">@lang('lang.edit_supplier')
+                            <span class="header-pill"></span>
+                        </h5>
+                    </div>
+                    <div class="card mb-2 d-flex flex-row justify-content-center align-items-center">
+                        <p class="italic mb-0 py-1"><small>@lang('lang.required_fields_info')</small>
+                        <div style="width: 30px;height: 30px;">
+                            <img class="w-100 h-100" src="{{ asset('front/images/icons/warning.png') }}" alt="warning!">
                         </div>
-                        <div class="card-body">
-                            <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
-                            {!! Form::open(['url' => action('SupplierController@update', $supplier->id), 'id' => 'supplier-form', 'method' => 'PUT', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-2">
+                            {!! Form::open([
+                                'url' => action('SupplierController@update', $supplier->id),
+                                'id' => 'supplier-form',
+                                'method' => 'PUT',
+                                'class' => '',
+                                'enctype' => 'multipart/form-data',
+                            ]) !!}
 
                             <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('supplier_category_id', __('lang.category') . ':') !!}
-                                        <div class="input-group my-group">
-                                            {!! Form::select('supplier_category_id', $supplier_categories, $supplier->supplier_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'supplier_category_id']) !!}
+                                <div class="col-md-6 px-5">
+                                    {!! Form::label('name', __('lang.representative_name') . '*', [
+                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                    ]) !!}
+                                    {!! Form::text('name', $supplier->name, [
+                                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                        'placeholder' => __('lang.name'),
+                                        'required',
+                                    ]) !!}
+                                </div>
+
+                                <div class="col-md-6 px-5">
+                                    {!! Form::label('company_name', __('lang.company_name'), [
+                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                    ]) !!}
+                                    {!! Form::text('company_name', $supplier->company_name, [
+                                        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                        'placeholder' => __('lang.company_name'),
+                                    ]) !!}
+                                </div>
+                            </div>
+
+                            <div
+                                class="d-flex my-2  @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
+                                <button class="text-decoration-none toggle-button mb-0" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#supplierCollapse" aria-expanded="false"
+                                    aria-controls="supplierCollapse">
+                                    <i class="fas fa-arrow-down"></i>
+                                    @lang('lang.other_details')
+                                    <span class="toggle-pill"></span>
+                                </button>
+                            </div>
+
+                            <div class="collapse show" id="supplierCollapse">
+                                <div class="row  @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('supplier_category_id', __('lang.category'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        <div class="input-group my-group select-button-group">
+                                            {!! Form::select('supplier_category_id', $supplier_categories, $supplier->supplier_category_id, [
+                                                'class' => 'selectpicker form-control',
+                                                'data-live-search' => 'true',
+                                                'style' => 'width: 80%',
+                                                'placeholder' => __('lang.please_select'),
+                                                'id' => 'supplier_category_id',
+                                            ]) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.product_class.create_and_edit')
-                                                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button class="btn-modal select-button btn-flat"
                                                         data-href="{{ action('SupplierCategoryController@create') }}?quick_add=1"
-                                                        data-container=".view_modal"><i
-                                                            class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                                                        data-container=".view_modal"><i class="fa fa-plus"></i></button>
                                                 @endcan
                                             </span>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('name', __('lang.representative_name') . ':*') !!}
-                                        {!! Form::text('name', $supplier->name, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required']) !!}
+
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('products', __('lang.products'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::select('products[]', $products, $supplier->supplier_products->pluck('product_id'), [
+                                            'class' => 'selectpicker form-control',
+                                            'data-live-search' => 'true',
+                                            'placeholder' => __('lang.please_select'),
+                                            'id' => 'products',
+                                            'multiple',
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('products', __('lang.products')) !!}
-                                        {!! Form::select('products[]', $products, $supplier->supplier_products->pluck('product_id'), ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select'), 'id' => 'products', 'multiple']) !!}
+
+
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('vat_number', __('lang.vat_number'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::text('vat_number', $supplier->vat_number, [
+                                            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                            'placeholder' => __('lang.vat_number'),
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('photo', __('lang.photo') . ':') !!} <br>
-                                        {!! Form::file('image', ['class']) !!}
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('email', __('lang.email'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::email('email', $supplier->email, [
+                                            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                            'placeholder' => __('lang.email'),
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('company_name', __('lang.company_name') . ':') !!}
-                                        {!! Form::text('company_name', $supplier->company_name, ['class' => 'form-control', 'placeholder' => __('lang.company_name')]) !!}
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('mobile_number', __('lang.mobile_number'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::text('mobile_number', $supplier->mobile_number, [
+                                            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                            'placeholder' => __('lang.mobile_number'),
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('vat_number', __('lang.vat_number') . ':') !!}
-                                        {!! Form::text('vat_number', $supplier->vat_number, ['class' => 'form-control', 'placeholder' => __('lang.vat_number')]) !!}
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('address', __('lang.address'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::text('address', $supplier->address, [
+                                            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                            'placeholder' => __('lang.balance'),
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('email', __('lang.email') . ':') !!}
-                                        {!! Form::email('email', $supplier->email, ['class' => 'form-control', 'placeholder' => __('lang.email')]) !!}
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('city', __('lang.city'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::text('city', $supplier->city, [
+                                            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                            'placeholder' => __('lang.balance'),
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('mobile_number', __('lang.mobile_number') . ':') !!}
-                                        {!! Form::text('mobile_number', $supplier->mobile_number, ['class' => 'form-control', 'placeholder' => __('lang.mobile_number')]) !!}
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('state', __('lang.state'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::text('state', $supplier->state, [
+                                            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                            'placeholder' => __('lang.balance'),
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('address', __('lang.address') . ':') !!}
-                                        {!! Form::text('address', $supplier->address, ['class' => 'form-control', 'placeholder' => __('lang.balance')]) !!}
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('postal_code', __('lang.postal_code'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::text('postal_code', $supplier->postal_code, [
+                                            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                            'placeholder' => __('lang.balance'),
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('city', __('lang.city') . ':') !!}
-                                        {!! Form::text('city', $supplier->city, ['class' => 'form-control', 'placeholder' => __('lang.balance')]) !!}
+                                    <div class="col-md-3 px-5 mb-2">
+                                        {!! Form::label('country ', __('lang.country'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::text('country ', $supplier->country, [
+                                            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start',
+                                            'placeholder' => __('lang.country'),
+                                        ]) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('state', __('lang.state') . ':') !!}
-                                        {!! Form::text('state', $supplier->state, ['class' => 'form-control', 'placeholder' => __('lang.balance')]) !!}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('postal_code', __('lang.postal_code') . ':') !!}
-                                        {!! Form::text('postal_code', $supplier->postal_code, ['class' => 'form-control', 'placeholder' => __('lang.balance')]) !!}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('country ', __('lang.country') . ':') !!}
-                                        {!! Form::text('country ', $supplier->country, ['class' => 'form-control', 'placeholder' => __('lang.country')]) !!}
+                                    <div class="col-md-6 px-5 mb-2">
+                                        {!! Form::label('photo', __('lang.photo'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
+                                        {!! Form::file('image', ['class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start']) !!}
                                     </div>
                                 </div>
                             </div>
-
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <input type="submit" value="{{ trans('lang.submit') }}" id="submit-btn"
-                                            class="btn btn-primary">
-                                    </div>
-                                </div>
-                            </div>
-                            {!! Form::close() !!}
                         </div>
+
+
+                        <div class="row my-2 justify-content-center align-items-center">
+                            <div class="col-md-4">
+                                <input type="submit" value="{{ trans('lang.submit') }}" id="submit-btn" class="btn py-1">
+                            </div>
+                        </div>
+                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
+        </div>
+        </div>
         </div>
     </section>
 @endsection
@@ -163,6 +245,24 @@
                     }
                 },
             });
+        });
+    </script>
+
+    <script src="{{ asset('front/js/bootstrap.min.js') }}"></script>
+
+
+    <script>
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#supplierCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#supplierCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#supplierCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#supplierCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
         });
     </script>
 @endsection

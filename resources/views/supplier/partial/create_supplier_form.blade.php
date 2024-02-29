@@ -18,6 +18,7 @@
         ]) !!}
     </div>
 </div>
+
 <div class="d-flex my-2  @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
     <button class="text-decoration-none toggle-button mb-0" type="button" data-bs-toggle="collapse"
         data-bs-target="#supplierCollapse" aria-expanded="false" aria-controls="supplierCollapse">
