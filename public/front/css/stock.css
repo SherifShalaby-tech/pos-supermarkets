@@ -151,3 +151,7 @@ th {
     font-size: 11px;
     text-align: center;
 }
+
+td {
+    padding: .25rem !important;
+}

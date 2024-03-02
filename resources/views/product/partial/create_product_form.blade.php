@@ -780,10 +780,12 @@
                 session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket'
                     ? __('lang.purchase_price')
                     : __('lang.cost') . ' *',
-                [],
+                [
+                    'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                ],
             ) !!}
             {!! Form::text('purchase_price', !empty($recent_product) ? @num_format($recent_product->purchase_price) : null, [
-                'class' => 'clear_input_form form-control',
+                'class' => 'form-control clear_input_form modal-input app()->isLocale("ar") ? text-end : text-start',
                 'placeholder' =>
                     session('system_mode') == 'pos' ||
                     session('system_mode') == 'garments' ||
@@ -798,9 +800,11 @@
 
 <div class="col-md-4 supplier_div">
     <div class="form-group">
-        {!! Form::label('sell_price', __('lang.sell_price') . ' *', []) !!}
+        {!! Form::label('sell_price', __('lang.sell_price') . ' *', [
+            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+        ]) !!}
         {!! Form::text('sell_price', !empty($recent_product) ? @num_format($recent_product->sell_price) : null, [
-            'class' => 'clear_input_form form-control',
+            'class' => 'form-control clear_input_form modal-input app()->isLocale("ar") ? text-end : text-start',
             'placeholder' => __('lang.sell_price'),
             'required',
         ]) !!}

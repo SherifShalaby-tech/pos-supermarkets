@@ -256,10 +256,9 @@
                             <span class="header-pill"></span>
                         </h6>
                     </div>
+
                     <div class="card mb-3">
                         <div class="card-body p-2">
-
-
                             <div class="row  @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
                                 <div class="col-md-3">
                                     <div class="form-group">
@@ -483,6 +482,8 @@
 @endsection
 
 @section('javascript')
+    {{-- <script src="{{ asset('front/js/bootstrap.min.js') }}"></script> --}}
+
     <script src="{{ asset('js/add_stock.js') }}"></script>
     <script src="{{ asset('js/product_selection.js') }}"></script>
     <script type="text/javascript">
@@ -677,7 +678,25 @@
             }
         })
     </script>
-
-    <script src="{{ asset('front/js/bootstrap.min.js') }}"></script>
+    <script>
+        function showDetails(i) {
+            if ($(`#row_details_${i}`).is(":visible")) {
+                $(`#row_details_${i}`).hide()
+            } else {
+                $(`#row_details_${i}`).show()
+            }
+            if ($(`#bounce_details_td_${i}`).is(":visible")) {
+                $(`#bounce_details_td_${i}`).hide()
+            } else {
+                $(`#bounce_details_td_${i}`).show()
+            }
+            if ($(`#row_batch_details_${i}`).is(":visible")) {
+                $(`#row_batch_details_${i}`).hide()
+            } else {
+                $(`#row_batch_details_${i}`).show()
+            }
+            $(`#arrow${i}`).toggleClass("fa-arrow-down fa-arrow-up")
+        }
+    </script>
 
 @endsection
