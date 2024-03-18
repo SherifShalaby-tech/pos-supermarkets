@@ -1981,7 +1981,7 @@ class ProductUtil extends Util
                 ->where('is_service', 0)
                 ->where('is_raw_material',0)
                 ->where('product_stores.store_id', $store->id)
-                ->where('add_stock_lines.purchase_price','>',0)
+                ->where('add_stock_lines.sell_price','>',0)
                 ;
                 $query->groupBy('variations.id')->select(
                     DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.sell_price) as current_stock_value'),
@@ -1998,7 +1998,7 @@ class ProductUtil extends Util
             ->where('product_stores.store_id', $store_id)
             ->where('is_service', 0)
             ->where('is_raw_material',0)
-            ->where('add_stock_lines.purchase_price','>',0)
+            ->where('add_stock_lines.sell_price','>',0)
             ;
 
         $query->groupBy('variations.id')->select(
@@ -2022,7 +2022,7 @@ class ProductUtil extends Util
                 ->where('is_service', 0)
                 ->where('is_raw_material',1)
                 ->where('product_stores.store_id', $store->id)
-                ->where('add_stock_lines.purchase_price','>',0)
+                ->where('add_stock_lines.sell_price','>',0)
                 ;
                 $query->groupBy('variations.id')->select(
                     DB::raw('SUM((add_stock_lines.quantity - add_stock_lines.quantity_sold ) * add_stock_lines.sell_price) as current_stock_value'),
@@ -2039,7 +2039,7 @@ class ProductUtil extends Util
             ->where('product_stores.store_id', $store_id)
             ->where('is_service', 0)
             ->where('is_raw_material',0)
-            ->where('add_stock_lines.purchase_price','>',0)
+            ->where('add_stock_lines.sell_price','>',0)
             ;
 
         $query->groupBy('variations.id')->select(
