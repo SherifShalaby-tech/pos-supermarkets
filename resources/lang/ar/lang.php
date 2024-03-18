@@ -1004,6 +1004,7 @@ return [
     'from_date' => 'من التاريخ',
     'to_date' => 'حتى الآن',
     'current_stock_value' => 'قيمة المخزون الحالي',
+    'sell_current_stock_value'=> 'قيمة المخزون الحالي(سعر البيع)',
     'sold_qty_mismatch_purchase_qty' => 'عدم تطابق بين الكمية المباعة وكمية الشراء.',
     'contact_us' => 'اتصل بنا',
     'your_message' => 'رسالتك',

@@ -1007,6 +1007,7 @@ return [
     'from_date' => 'From Date',
     'to_date' => 'To Date',
     'current_stock_value' => 'Current Stock Value',
+    'sell_current_stock_value'=> 'Current Stock Value (sell price)',
     'sold_qty_mismatch_purchase_qty' => 'Mismatch between sold and purchase quantity.',
     'contact_us' => 'Contact Us',
     'your_message' => 'Your message',
