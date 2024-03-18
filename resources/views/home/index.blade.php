@@ -58,7 +58,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
             <div class="container-fluid">
                 @if(auth()->user()->can('superadmin') || auth()->user()->is_admin)
                 <div class="row">
-                    
+
                         <!-- Count item widget-->
                         <div class="col-sm-2">
                             <div class="wrapper count-title text-center">
@@ -134,12 +134,23 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 </div>
                             </div>
                         </div>
-                       
-                    
+
+
                     {{-- </div> --}}
                     @endif
                 </div>
                 <div class="row">
+                    <div class="col-sm-2">
+                        <div class="wrapper count-title text-center" style="margin-top: 20px;">
+                            <div class="icon"><i class="fa fa-cubes" style="color: #498636"></i>
+                            </div>
+                            <div class="name"><strong
+                                    style="color: #498636">@lang('lang.sell_current_stock_value')</strong>
+                            </div>
+                            <div class="count-number sell_current_stock_value-data">
+                                {{ @num_format(0) }}</div>
+                        </div>
+                    </div>
                     <div class="col-sm-2">
                         <div class="wrapper count-title text-center" style="margin-top: 20px;">
                             <div class="icon"><i class="dripicons-trophy" style="color: #3f6dad"></i>
@@ -150,7 +161,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <div class="count-number net_profitt-data">{{ @num_format(0) }}
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="col-sm-2">
                         <div class="wrapper count-title text-center" style="margin-top: 20px;">
@@ -256,6 +267,10 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     let net_profit_string = '<div>';
                     let expense_string = '<div>';
                     let purchase_string = '<div>';
+
+                    let sell_currenct_stock_string = '<div>';
+                    let sell_currenct_stock_string_p = '<div>';
+                    let sell_currenct_stock_string_m = '<div>';
                     result.forEach(element => {
                         currenct_stock_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
                                             data-currency_id="${element.currency.currency_id}"
@@ -381,6 +396,40 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                             <span
                                                 class="total">${__currency_trans_from_en(element.data.purchase, false)}</span>
                                         </h3>`;
+                                        sell_currenct_stock_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.sell_current_stock_value}"
+                                            data-orig_value="${element.data.sell_current_stock_value}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.sell_current_stock_value, false)}</span>
+                                        </h3>
+                                      `;
+                                      sell_currenct_stock_string_p +=`<h5 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.sell_current_stock_value_product}"
+                                            data-orig_value="${element.data.sell_current_stock_value_product}"><span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.sell_current_stock_value_product, false)}</span>
+                                        <span style="color: #3fc3ee">P</span>
+                                        </h5>`;
+                                        sell_currenct_stock_string_m +=`<h5 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                            data-currency_id="${element.currency.currency_id}"
+                            data-is_default="${element.currency.is_default}"
+                            data-conversion_rate="${element.currency.conversion_rate}"
+                            data-base_conversion="${element.currency.conversion_rate * element.data.sell_current_stock_value_material}"
+                            data-orig_value="${element.data.sell_current_stock_value_material}"><span class="symbol" style="padding-right: 10px;">
+                                ${element.currency.symbol}</span>
+                            <span
+                                class="total">${__currency_trans_from_en(element.data.sell_current_stock_value_material, false)}</span>
+                        <span style="color: #3fc3ee">M</span>
+                        </h5>`;
 
                     });
                     currenct_stock_string += `</div>`;
@@ -394,6 +443,9 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     net_profit_string += '</div>';
                     expense_string += '</div>';
                     purchase_string += '</div>';
+                    sell_currenct_stock_string += `</div>`;
+                    sell_currenct_stock_string_p += `</div>`;
+                    sell_currenct_stock_string_m += `</div>`;
                     $(".revenue-data").html(revenue_string);
 
 
@@ -430,6 +482,11 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     $('.purchase-data').hide();
                     $(".purchase-data").html(purchase_string);
                     $('.purchase-data').show(500);
+
+                    $('.sell_current_stock_value-data').hide();
+                    $(".sell_current_stock_value-data").html(sell_currenct_stock_string + sell_currenct_stock_string_p + sell_currenct_stock_string_m);
+                    $('.sell_current_stock_value-data').show(500);
+
                 },
             });
             getChartAndTableSection(start_date, end_date, store_id);
