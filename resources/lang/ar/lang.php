@@ -1454,5 +1454,5 @@ return [
     'has_varient' => "المنتج له أصناف مختلفة",
     'add_new' => "أضف جديد",
     'online_payments' => 'المدفوعات الإلكترونية',
-
+'sell_current_stock_value'=> 'قيمة المخزون الحالي(سعر البيع)',
 ];

@@ -1470,6 +1470,6 @@ return [
     'prices_from_different_stores' => "The product different prices for different stores",
     'has_varient' => "The product has varient",
     'add_new' => "Add New",
-
+    'sell_current_stock_value' => 'Current Stock Value (sell price)',
 
 ];

@@ -829,15 +829,24 @@ class HomeController extends Controller
                 $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
                 $current_stock_value_product = $this->productUtil->getCurrentStockValueProductByStore($store_id);
                 $current_stock_value_material = $this->productUtil->getCurrentStockValueMaterialByStore($store_id);
+                $sell_current_stock_value = $this->productUtil->getCurrentSellStockValueByStore($store_id);
+                $sell_current_stock_value_product = $this->productUtil->getCurrentSellStockValueProductByStore($store_id);
+                $sell_current_stock_value_material = $this->productUtil->getCurrentSellStockValueMaterialByStore($store_id);
             } else {
                 $current_stock_value = 0; //expense does not have currency
                 $current_stock_value_product = 0; //expense does not have
                 $current_stock_value_material = 0; //expense does not have currency
+                $sell_current_stock_value = 0; //expense does not have currency
+                $sell_current_stock_value_product = 0; //expense does not have
+                $sell_current_stock_value_material = 0; //expense does not have currency
             }
         } else {
             $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
             $current_stock_value_product = $this->productUtil->getCurrentStockValueProductByStore($store_id);
             $current_stock_value_material = $this->productUtil->getCurrentStockValueMaterialByStore($store_id);
+            $sell_current_stock_value = $this->productUtil->getCurrentSellStockValueByStore($store_id);
+            $sell_current_stock_value_product = $this->productUtil->getCurrentSellStockValueProductByStore($store_id);
+            $sell_current_stock_value_material = $this->productUtil->getCurrentSellStockValueMaterialByStore($store_id);
         }
 
         $data['revenue'] = $revenue;
@@ -853,6 +862,9 @@ class HomeController extends Controller
         $data['current_stock_value'] = number_format($current_stock_value,2);
         $data['current_stock_value_product'] = number_format($current_stock_value_product,2);
         $data['current_stock_value_material'] = number_format($current_stock_value_material,2);
+        $data['sell_current_stock_value'] = number_format($sell_current_stock_value,2);
+        $data['sell_current_stock_value_product'] = number_format($sell_current_stock_value_product,2);
+        $data['sell_current_stock_value_material'] = number_format($sell_current_stock_value_material,2);
 
         return $data;
     }
