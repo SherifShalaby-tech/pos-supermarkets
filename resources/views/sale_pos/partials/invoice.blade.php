@@ -226,7 +226,7 @@ if (empty($invoice_lang)) {
                                     @endif
                                 </td>
                             @endif
-                            @if(isset($line->discount_category) && isset($line->product_discount_amount) && $line->product_discount_amount>0)
+                            @if(!empty($line->discount_category) && !empty($line->product_discount_amount) && $line->product_discount_amount>0)
                             <td style="text-align:center;vertical-align:bottom; width: 20%;font-size:{{$data_font}}">({{@num_format($line->product_discount_amount) }})</td>
                             @endif
                         </tr>
@@ -323,7 +323,7 @@ if (empty($invoice_lang)) {
                             </tr>
                         @endif
                         @if (!empty($transaction->deliveryman_id))
-                            <tr> 
+                            <tr>
                                 <th style="font-size: 20px;" colspan="3">@lang('lang.delivery_cost', [], $invoice_lang)
                                     @if (!empty($transaction->deliveryman->employee_name))
                                         ({{ $transaction->deliveryman->employee_name }})
