@@ -20,34 +20,35 @@
             $product_purchase_price = $purchase_price;
         }
     @endphp
-    <td class="py-2">
+
+    <td class="py-2" style="min-width: 120px">
         {!! Form::hidden('name_hidden', $product_name, ['class' => 'form-control name_hidden']) !!}
         {!! Form::text('variations[' . $row_id . '][name]', $product_name, [
             'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start v_name',
         ]) !!}
     </td>
-    <td class="py-2">{!! Form::text('variations[' . $row_id . '][sub_sku]', !empty($item) ? $item->sub_sku : null, [
+    <td class="py-2" style="min-width: 80px">{!! Form::text('variations[' . $row_id . '][sub_sku]', !empty($item) ? $item->sub_sku : null, [
         'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start v_sub_sku',
     ]) !!}</td>
-    <td class="py-2">{!! Form::select('variations[' . $row_id . '][color_id]', $colors, !empty($item) ? $item->color_id : false, [
+    <td class="py-2" style="min-width: 100px">{!! Form::select('variations[' . $row_id . '][color_id]', $colors, !empty($item) ? $item->color_id : false, [
         'class' => 'form-control selectpicker v_color',
         'data-live-search' => 'true',
         'placeholder' => '',
     ]) !!}
     </td>
-    <td class="py-2">{!! Form::select('variations[' . $row_id . '][size_id]', $sizes, !empty($item) ? $item->size_id : false, [
+    <td class="py-2" style="min-width: 100px">{!! Form::select('variations[' . $row_id . '][size_id]', $sizes, !empty($item) ? $item->size_id : false, [
         'class' => 'form-control selectpicker v_size',
         'data-live-search' => 'true',
         'placeholder' => '',
     ]) !!}
     </td>
-    <td class="py-2">{!! Form::select('variations[' . $row_id . '][grade_id]', $grades, !empty($item) ? $item->grade_id : false, [
+    <td class="py-2" style="min-width: 100px">{!! Form::select('variations[' . $row_id . '][grade_id]', $grades, !empty($item) ? $item->grade_id : false, [
         'class' => 'form-control selectpicker v_grade',
         'data-live-search' => 'true',
         'placeholder' => '',
     ]) !!}
     </td>
-    <td class="py-2">
+    <td class="py-2" style="min-width: 100px">
         {!! Form::select('variations[' . $row_id . '][unit_id]', $units, !empty($item) ? $item->unit_id : false, [
             'class' => 'form-control selectpicker v_unit unit_id',
             'data-live-search' => 'true',
@@ -57,21 +58,22 @@
         ]) !!}
     </td>
     @if (session('system_mode') != 'garments')
-        <td class=" py-2">{!! Form::number('variations[' . $row_id . '][number_vs_base_unit]', $number_vs_base_unit, [
+        <td class=" py-2" style="min-width: 100px">{!! Form::number('variations[' . $row_id . '][number_vs_base_unit]', $number_vs_base_unit, [
             'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start
-                                                                                                                                                                                number_vs_base_unit',
+                                                                                                               number_vs_base_unit',
             'id' => 'number_vs_base_unit_' . $row_id,
         ]) !!}</td>
     @endif
     {{-- @if (empty($is_service)) hide @endif --}}
-    <td class=" default_purchase_price_td px-5 py-2 @if (empty($is_service)) hide @endif">
+    <td style="min-width: 100px" class=" default_purchase_price_td py-2 @if (empty($is_service)) hide @endif">
         {!! Form::text('variations[' . $row_id . '][default_purchase_price]', $product_purchase_price, [
             'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start
-                                                                                                                                                default_purchase_price',
+                                                                                                                                                                                                                                                                default_purchase_price',
         ]) !!}</td>
-    <td class="py-2 default_sell_price_td @if (empty($is_service)) hide @endif">{!! Form::text('variations[' . $row_id . '][default_sell_price]', $product_sale_price, [
-        'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start default_sell_price',
-    ]) !!}
+    <td style="min-width: 100px" class="py-2 default_sell_price_td @if (empty($is_service)) hide @endif">
+        {!! Form::text('variations[' . $row_id . '][default_sell_price]', $product_sale_price, [
+            'class' => 'form-control modal-input app()->isLocale("ar") ? text-end : text-start default_sell_price',
+        ]) !!}
     </td>
     <td class="py-2 d-flex justify-content-center align-items-center"> <button type="button"
             class="btn btn-danger btn-xs remove_row"><i class="dripicons-trash"></i></button>

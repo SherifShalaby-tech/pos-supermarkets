@@ -76,9 +76,9 @@
 
 
     </tr>
-    first
+
     <span class="i-checks d-flex justify-content-between align-items-center">
-        first
+
         <input class="is_discount_permenant" name="is_discount_permenant[{{ $row_id }}]" type="checkbox"
             @if ($discount->is_discount_permenant) checked @endif class="form-control-custom">
         <label class="mb-0" for="is_discount_permenant"><strong>

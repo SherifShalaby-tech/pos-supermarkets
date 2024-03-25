@@ -1446,7 +1446,9 @@ return [
     'recieved_amount' => 'المبلغ المستلم',
     'other_details' => 'تفاصيل أخرى',
     'add_product_information' => 'اضافة معلومات المنتج',
+    'product_information' => ' معلومات المنتج',
     'add_product_image' => 'اضافة صورة',
+    'product_image' => ' صورةالمنتج',
     'add_primary_materials' => 'اضافة مواد أولية',
     'discount_information' => 'معلومات الخصم',
     'more_info' => 'المزيد من المعلومات',
@@ -1454,5 +1456,5 @@ return [
     'has_varient' => "المنتج له أصناف مختلفة",
     'add_new' => "أضف جديد",
     'online_payments' => 'المدفوعات الإلكترونية',
-'sell_current_stock_value'=> 'قيمة المخزون الحالي(سعر البيع)',
+    'sell_current_stock_value' => 'قيمة المخزون الحالي(سعر البيع)',
 ];
