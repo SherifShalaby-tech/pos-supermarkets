@@ -2,36 +2,41 @@
     $index = $index ?? '';
 @endphp
 
-<button type="button" class="btn d-flex justify-content-center align-items-center" data-toggle="modal"
-    data-target="#select_products_modal{{ $index ?? '' }}"
-    style="height: 30px;background-color:#e6e6e6;color: black;font-weight: 500 ">
+<button type="button" class="btn select_product_button d-flex justify-content-center align-items-center"
+    data-toggle="modal" data-target="#select_products_modal{{ $index ?? '' }}">
     @lang('lang.select_products')
 </button>
 <div class="modal fade" id="select_products_modal{{ $index }}" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="width: 100%;">
     <div class="modal-dialog modal-lg" role="document" id="select_products_modal">
         <div class="modal-content">
-            <div class="modal-header">
+            <div
+                class="modal-header  position-relative border-0 d-flex justify-content-between align-items-center @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
 
-                <h4 class="modal-title">@lang('lang.select_products')</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+
+                <h5 class=" modal-title position-relative  d-flex align-items-center" style="gap: 5px;">
+                    @lang('lang.select_products')
+                    <span class=" header-pill"></span>
+                </h5>
+                <button type="button"
+                    class="close btn btn-danger d-flex justify-content-center align-items-center rounded-circle text-white"
+                    data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i
+                            class="dripicons-cross"></i></span></button>
+                <span class="position-absolute modal-border"></span>
             </div>
 
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="card mt-3">
                         <div class="col-md-12">
-                            <div class="row">
+                            <div class="row @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_product_class_id', __('lang.product_class') . ':', []) !!}
+                                        {!! Form::label('filter_product_class_id', __('lang.product_class'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_product_class_id', $product_classes, request()->filter_product_class_id, [
-                                            'class' =>
-                                                'form-control filter_product' .
-                                                $index .
-                                                '
-                                                                                                                                                                selectpicker',
+                                            'class' => 'form-control filter_product' . $index . ' selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_product_class_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -40,13 +45,15 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_category_id', __('lang.category') . ':', []) !!}
+                                        {!! Form::label('filter_category_id', __('lang.category'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_category_id', $categories, request()->category_id, [
                                             'class' =>
                                                 'form-control filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_category_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -55,13 +62,15 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_sub_category_id', __('lang.sub_category') . ':', []) !!}
+                                        {!! Form::label('filter_sub_category_id', __('lang.sub_category'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_sub_category_id', $sub_categories, request()->sub_category_id, [
                                             'class' =>
                                                 'form-control filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_sub_category_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -70,14 +79,16 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_brand_id', __('lang.brand') . ':', []) !!}
+                                        {!! Form::label('filter_brand_id', __('lang.brand'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_brand_id', $brands, request()->brand_id, [
                                             'class' =>
                                                 'form-control
-                                                                                                                                                                filter_product' .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_brand_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -86,14 +97,16 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_unit_id', __('lang.unit') . ':', []) !!}
+                                        {!! Form::label('filter_unit_id', __('lang.unit'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_unit_id', $units, request()->unit_id, [
                                             'class' =>
                                                 'form-control
-                                                                                                                                                                filter_product' .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_unit_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -102,14 +115,16 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_color_id', __('lang.color') . ':', []) !!}
+                                        {!! Form::label('filter_color_id', __('lang.color'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_color_id', $colors, request()->color_id, [
                                             'class' =>
                                                 'form-control
-                                                                                                                                                                filter_product' .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_color_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -118,14 +133,16 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_size_id', __('lang.size') . ':', []) !!}
+                                        {!! Form::label('filter_size_id', __('lang.size'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_size_id', $sizes, request()->size_id, [
                                             'class' =>
                                                 'form-control
-                                                                                                                                                                filter_product' .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_size_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -134,14 +151,16 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_grade_id', __('lang.grade') . ':', []) !!}
+                                        {!! Form::label('filter_grade_id', __('lang.grade'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_grade_id', $grades, request()->grade_id, [
                                             'class' =>
                                                 'form-control
-                                                                                                                                                                filter_product' .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_grade_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -150,14 +169,16 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_tax_id', __('lang.tax') . ':', []) !!}
+                                        {!! Form::label('filter_tax_id', __('lang.tax'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_tax_id', $taxes_array, request()->tax_id, [
                                             'class' =>
                                                 'form-control
-                                                                                                                                                                filter_product' .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_tax_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -166,7 +187,9 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_store_id', __('lang.store'), []) !!}
+                                        {!! Form::label('filter_store_id', __('lang.store'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_store_id', $stores, request()->store_id, [
                                             'class' => 'form-control filter_product' . $index,
                                             'id' => 'filter_store_id' . $index,
@@ -177,13 +200,15 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_customer_type_id', __('lang.customer_type') . ':', []) !!}
+                                        {!! Form::label('filter_customer_type_id', __('lang.customer_type'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_customer_type_id', $customer_types, request()->customer_type_id, [
                                             'class' =>
                                                 'form-control filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_customer_type_id' . $index,
                                             'placeholder' => __('lang.all'),
@@ -192,13 +217,15 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {!! Form::label('filter_created_by', __('lang.created_by') . ':', []) !!}
+                                        {!! Form::label('filter_created_by', __('lang.created_by'), [
+                                            'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                        ]) !!}
                                         {!! Form::select('filter_created_by', $users, request()->created_by, [
                                             'class' =>
                                                 'form-control filter_product' .
                                                 $index .
                                                 '
-                                                                                                                                                                selectpicker',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        selectpicker',
                                             'data-live-search' => 'true',
                                             'id' => 'filter_created_by' . $index,
                                             'placeholder' => __('lang.all'),
@@ -207,56 +234,56 @@
                                 </div>
                                 <div class="col-md-3">
                                     <button type="button"
-                                        class="btn btn-danger mt-4 clear_filters{{ $index }}">@lang('lang.clear_filters')</button>
+                                        class="btn btn-danger mb-3 clear_filters{{ $index }}">@lang('lang.clear_filters')</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button" value="1"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.image')</button>
-                            <button type="button" value="5"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.class')</button>
-                            <button type="button" value="6"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
-                            <button type="button" value="7"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.sub_category')</button>
-                            <button type="button" value="8"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
-                            <button type="button" value="9"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
-                            <button type="button" value="10"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
-                            <button type="button" value="11"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
-                            <button type="button" value="12"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
-                            <button type="button" value="13"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
-                            <button type="button" value="14"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
-                            <button type="button" value="15"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
-                            <button type="button" value="16"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.grade')</button>
-                            @if (empty($page))
-                                <button type="button" value="17"
-                                    class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
-                            @endif
-                            <button type="button" value="18"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
-                            <button type="button" value="19"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
-                            <button type="button" value="20"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
-                            <button type="button" value="21"
-                                class="badge badge-pill badge-primary column-toggle">@lang('lang.discount')</button>
-                            @can('product_module.purchase_price.view')
-                                <button type="button" value="22"
-                                    class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
-                            @endcan
-                        </div>
+                    <div class="row flex-wrap @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+
+                        <button type="button" value="1"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.image')</button>
+                        <button type="button" value="5"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.class')</button>
+                        <button type="button" value="6"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.category')</button>
+                        <button type="button" value="7"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.sub_category')</button>
+                        <button type="button" value="8"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.purchase_history')</button>
+                        <button type="button" value="9"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.batch_number')</button>
+                        <button type="button" value="10"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.selling_price')</button>
+                        <button type="button" value="11"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.tax')</button>
+                        <button type="button" value="12"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.brand')</button>
+                        <button type="button" value="13"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.unit')</button>
+                        <button type="button" value="14"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.color')</button>
+                        <button type="button" value="15"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.size')</button>
+                        <button type="button" value="16"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.grade')</button>
+                        @if (empty($page))
+                            <button type="button" value="17"
+                                class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.current_stock')</button>
+                        @endif
+                        <button type="button" value="18"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.customer_type')</button>
+                        <button type="button" value="19"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.expiry_date')</button>
+                        <button type="button" value="20"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.manufacturing_date')</button>
+                        <button type="button" value="21"
+                            class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.discount')</button>
+                        @can('product_module.purchase_price.view')
+                            <button type="button" value="22"
+                                class="select_product_button mx-1 mb-2 column-toggle">@lang('lang.purchase_price')</button>
+                        @endcan
+
                     </div>
 
                 </div>
@@ -267,7 +294,6 @@
                                 <th>@lang('lang.select')<br>
                                     <input type="checkbox" name="product_select_all" class="product_select_all" />
                                 </th>
-
                                 <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.product_code')</th>

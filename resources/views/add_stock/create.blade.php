@@ -464,7 +464,6 @@
                                 <div class="col-md-4 w-25">
                                     <button type="submit" name="submit" id="submit-save" value="save"
                                         class="btn btn-primary py-1 w-100 pull-right btn-flat submit">@lang('lang.save')</button>
-
                                 </div>
                             </div>
                         </div>

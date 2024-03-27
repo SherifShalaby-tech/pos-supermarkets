@@ -1,77 +1,106 @@
 @extends('layouts.app')
 @section('title', __('lang.raw_materials'))
-
+@section('style')
+    <link rel="stylesheet" type="text/css" href="{{ url('front/css/stock.css') }}">
+@endsection
 @section('content')
 
-    <section class="forms">
+    <section class="forms py-0">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.add_new_production')</h4>
+                <div class="col-md-12 px-1">
+                    <div
+                        class="d-flex align-items-center my-2 @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
+                        <h5 class="mb-0 position-relative" style="margin-right: 30px">
+                            @lang('lang.add_new_production')
+                            <span class="header-pill"></span>
+                        </h5>
+                    </div>
+                    <div class="card mb-2 d-flex flex-row justify-content-center align-items-center">
+                        <p class="italic mb-0 py-1">
+                            <small>@lang('lang.required_fields_info')</small>
+                        <div style="width: 30px;height: 30px;">
+                            <img class="w-100 h-100" src="{{ asset('front/images/icons/warning.png') }}" alt="warning!">
                         </div>
-                        <div class="card-body">
-                            <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
-                            {!! Form::open(['url' =>action('ManufacturingController@store'), 'id' =>'product-edit-form', 'method'=>'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
+                        </p>
+                    </div>
+                    {!! Form::open([
+                        'url' => action('ManufacturingController@store'),
+                        'id' => 'product-edit-form',
+                        'method' => 'POST',
+                        'class' => '',
+                        'enctype' => 'multipart/form-data',
+                    ]) !!}
+                    <div class="card mb-2">
+                        <div class="card-body p-2">
                             {{-- <input type="hidden" name="is_add_stock" id="is_add_stock" value="1"> --}}
-                            <div class="row">
-                                <div class="col-md-3">
-                                    {!! Form::label('store_id', __('lang.store'), []) !!}
+                            <div class="row @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                                <div class="col-md-3  px-5">
+                                    {!! Form::label('store_id', __('lang.store'), [
+                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                    ]) !!}
                                     <div class="input-group my-group">
-                                        {!! Form::select('store_id', $stores, false,
-                                            ['class' => 'select_store_id selectpicker form-control',
-                                             'data-live-search' => 'true',
-                                              'style' => 'width: 80%', 'id' => 'store_id']) !!}
+                                        {!! Form::select('store_id', $stores, false, [
+                                            'class' => 'select_store_id selectpicker form-control',
+                                            'data-live-search' => 'true',
+                                            'style' => 'width: 80%',
+                                            'id' => 'store_id',
+                                        ]) !!}
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    {!! Form::label('manufacturer_id', __('lang.manufacturers'), []) !!}
+                                <div class="col-md-3 px-5">
+                                    {!! Form::label('manufacturer_id', __('lang.manufacturers'), [
+                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                    ]) !!}
                                     <div class="input-group my-group">
-                                        {!! Form::select('manufacturer_id', $manufacturers, false,
-                                            ['class' => 'select_manufacturer_id selectpicker form-control',
-                                             'data-live-search' => 'true',
-                                              'style' => 'width: 80%', 'id' => 'manufacturer_id']) !!}
-
+                                        {!! Form::select('manufacturer_id', $manufacturers, false, [
+                                            'class' => 'select_manufacturer_id selectpicker form-control',
+                                            'data-live-search' => 'true',
+                                            'style' => 'width: 80%',
+                                            'id' => 'manufacturer_id',
+                                        ]) !!}
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
-                                    {!! Form::label('product_ids', __('lang.manufacturing_material'), []) !!}
+                                <div class="col-md-3 px-5">
+                                    {!! Form::label('product_ids', __('lang.manufacturing_material'), [
+                                        'class' => 'form-label d-block mb-1 app()->isLocale("ar") ? text-end : text-start',
+                                    ]) !!}
                                     <div class="input-group my-group">
-                                        @include(
-                                            'quotation.partial.product_selection'
-                                        )
-{{--                                        <select required name="product_ids[]" id="product_ids" multiple--}}
-{{--                                                class='select_product_ids selectpicker select2 form-control'--}}
-{{--                                                data-live-search='true' style='width: 30%;'--}}
-{{--                                                placeholder="{{__('lang.please_select')}}">--}}
-{{--                                            @foreach($products as $item)--}}
-{{--                                                @if($item->current_stock > 0)--}}
-{{--                                                    <option stock="{{ $item->current_stock }}" name="{{$item->name}}"--}}
-{{--                                                            id="product_{{$item->id}}" value="{{$item->id}}">--}}
-{{--                                                        {{ $item->name }}--}}
-{{--                                                    </option>--}}
-{{--                                                @endif--}}
-{{--                                            @endforeach--}}
-{{--                                        </select>--}}
+                                        @include('quotation.partial.product_selection')
+                                        {{--                                        <select required name="product_ids[]" id="product_ids" multiple --}}
+                                        {{--                                                class='select_product_ids selectpicker select2 form-control' --}}
+                                        {{--                                                data-live-search='true' style='width: 30%;' --}}
+                                        {{--                                                placeholder="{{__('lang.please_select')}}"> --}}
+                                        {{--                                            @foreach ($products as $item) --}}
+                                        {{--                                                @if ($item->current_stock > 0) --}}
+                                        {{--                                                    <option stock="{{ $item->current_stock }}" name="{{$item->name}}" --}}
+                                        {{--                                                            id="product_{{$item->id}}" value="{{$item->id}}"> --}}
+                                        {{--                                                        {{ $item->name }} --}}
+                                        {{--                                                    </option> --}}
+                                        {{--                                                @endif --}}
+                                        {{--                                            @endforeach --}}
+                                        {{--                                        </select> --}}
                                     </div>
                                 </div>
                             </div>
-                            <br>
+                        </div>
+                    </div>
+                    <div class="card mb-2">
+                        <div class="card-body p-2">
                             <div class="row">
                                 <div class="col-md-12">
                                     <table class="table table-bordered table-striped table-condensed" id="product_table">
                                         <thead>
-                                        <tr>
+                                            <tr>
 
-                                            <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
-                                            <th style="width: 10%" class="col-sm-8">@lang( 'lang.products' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.current_stock' )</th>
-                                            <th style="width: 5%" class="col-sm-4">@lang( 'lang.quantity' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.unit' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
-                                        </tr>
+                                                <th style="width: 7%" class="col-sm-8">@lang('lang.image')</th>
+                                                <th style="width: 10%" class="col-sm-8">@lang('lang.products')</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang('lang.current_stock')</th>
+                                                <th style="width: 5%" class="col-sm-4">@lang('lang.quantity')</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang('lang.unit')</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang('lang.action')</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
 
@@ -79,65 +108,70 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="col-md-12 text-center">
-                                <h4>@lang('lang.items_count'): <span class="items_quantity_count"style="margin-right: 15px;">0</span> </h4>
-                                <h4>@lang('lang.items_quantity'): <span class="items_product_count" style="margin-right: 15px;">0</span> </h4>
+                            <div class="w-75 m-auto d-flex justify-content-between">
+                                <h4
+                                    class="count_wrapper col-md-6 d-flex @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                                    <span class="count_title col-md-6">@lang('lang.items_count')</span>
+                                    <span class="count_value_style col-md-6 items_quantity_count">0</span>
+                                </h4>
+                                <h4
+                                    class="count_wrapper col-md-6 d-flex @if (app()->isLocale('ar')) flex-row-reverse @else flex-row @endif">
+                                    <span class="count_title col-md-6">@lang('lang.items_quantity')</span>
+                                    <span class="count_value_style col-md-6 items_product_count">0</span>
+                                </h4>
                             </div>
-
-
-
 
                             <input type="hidden" name="active" value="1">
-                            <div class="row">
-                                <div class="col-md-4 mt-5">
-                                    <div class="form-group">
-                                        <input type="button" value="{{trans('lang.manufacturing')}}" id="submit-btn"
-                                               class="btn btn-primary">
-                                        <a href="{{ route("manufacturing-s.index") }}"
-                                           class="btn btn-dark">{{trans('lang.cancel')}}</a>
-                                    </div>
+                            <div class="row my-2 justify-content-center align-items-center">
+                                <div class="col-md-4 w-25">
+                                    <input type="button" value="{{ trans('lang.manufacturing') }}" id="submit-btn"
+                                        class="btn btn-primary py-1 w-100 pull-right btn-flat">
+                                </div>
+                                <div class="col-md-4 w-25">
+                                    <a href="{{ route('manufacturing-s.index') }}"
+                                        class="btn btn-dark py-1 w-100 pull-right btn-flat">{{ trans('lang.cancel') }}</a>
                                 </div>
                             </div>
-                            {!! Form::close() !!}
+
                         </div>
                     </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
     </section>
-{{--    <div class="modal fade" id="ProductsModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">--}}
-{{--        <div class="modal-dialog" role="document">--}}
-{{--            <div class="modal-content">--}}
-{{--                <div class="modal-header">--}}
-{{--                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>--}}
-{{--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">--}}
-{{--                        <span aria-hidden="true">&times;</span>--}}
-{{--                    </button>--}}
-{{--                </div>--}}
-{{--                <div class="modal-body">--}}
-{{--                    <table id="product-modal" class="table table-striped table-bordered">--}}
-{{--                        <thead>--}}
-{{--                            <th>@lang('lang.name')</th>--}}
-{{--                            <th>@lang('lang.stock')</th>--}}
-{{--                            <th>@lang('lang.quantity')</th>--}}
-{{--                            <th>@lang('lang.unit')</th>--}}
-{{--                        </thead>--}}
-{{--                        <tbody>--}}
+    {{--    <div class="modal fade" id="ProductsModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true"> --}}
+    {{--        <div class="modal-dialog" role="document"> --}}
+    {{--            <div class="modal-content"> --}}
+    {{--                <div class="modal-header"> --}}
+    {{--                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5> --}}
+    {{--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"> --}}
+    {{--                        <span aria-hidden="true">&times;</span> --}}
+    {{--                    </button> --}}
+    {{--                </div> --}}
+    {{--                <div class="modal-body"> --}}
+    {{--                    <table id="product-modal" class="table table-striped table-bordered"> --}}
+    {{--                        <thead> --}}
+    {{--                            <th>@lang('lang.name')</th> --}}
+    {{--                            <th>@lang('lang.stock')</th> --}}
+    {{--                            <th>@lang('lang.quantity')</th> --}}
+    {{--                            <th>@lang('lang.unit')</th> --}}
+    {{--                        </thead> --}}
+    {{--                        <tbody> --}}
 
-{{--                        </tbody>--}}
-{{--                    </table>--}}
-{{--                </div>--}}
-{{--                <div class="modal-footer">--}}
-{{--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>--}}
-{{--                    <button type="button" id="addQuantity" class="btn btn-primary">Understood</button>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
+    {{--                        </tbody> --}}
+    {{--                    </table> --}}
+    {{--                </div> --}}
+    {{--                <div class="modal-footer"> --}}
+    {{--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+    {{--                    <button type="button" id="addQuantity" class="btn btn-primary">Understood</button> --}}
+    {{--                </div> --}}
+    {{--            </div> --}}
+    {{--        </div> --}}
+    {{--    </div> --}}
 @endsection
 
 @push('javascripts')
-
     <script src="{{ asset('js/add_stock.js') }}"></script>
     <script src="{{ asset('js/product_selection_manufacturing.js') }}"></script>
     <script type="text/javascript">
@@ -149,7 +183,7 @@
             //Search for variation id in each row of pos table
             $("#product_table tbody")
                 .find("tr")
-                .each(function () {
+                .each(function() {
                     var row_v_id = $(this).find(".variation_id").val();
                     if (row_v_id == variation_id && !is_added) {
                         add_via_ajax = false;
@@ -181,24 +215,25 @@
                         store_id: store_id,
                         currency_id: currency_id,
                     },
-                    success: function (result) {
+                    success: function(result) {
                         $('.items_quantity_count').text(0);
                         $("table#product_table tbody").prepend(result);
 
                         let product_id = $("#product_id").val();
 
-                        $("#input_product_"+product_id).on('keyup',function (e){
-                            if(Number($("#input_product_"+product_id).val()) == 0){
-                                $("#input_product_"+product_id).val(1)
+                        $("#input_product_" + product_id).on('keyup', function(e) {
+                            if (Number($("#input_product_" + product_id).val()) == 0) {
+                                $("#input_product_" + product_id).val(1)
                                 swal("Error", "Sorry You Should enter quentity more than 0", "error");
                             }
-                            if(Number($("#input_product_"+product_id).val()) > Number(document.getElementById("product_stock_"+product_id).innerHTML) ){
-                                $("#input_product_"+product_id).val(1)
+                            if (Number($("#input_product_" + product_id).val()) > Number(document
+                                    .getElementById("product_stock_" + product_id).innerHTML)) {
+                                $("#input_product_" + product_id).val(1)
                                 swal("Error", "Sorry Out Of Stock", "error");
                             }
                             let q = 0;
-                            for(i=0;i < $('#product_table tbody tr').length;i++){
-                                q+= Number($($(".product_row")[i].children[3].children[1]).val())
+                            for (i = 0; i < $('#product_table tbody tr').length; i++) {
+                                q += Number($($(".product_row")[i].children[3].children[1]).val())
                             }
                             $('.items_product_count').text(q);
                         })
@@ -206,12 +241,12 @@
                         $('.items_quantity_count').text(items_quantity_count);
 
 
-                       setTimeout(t=>{
-                           for(i=0;i < $('#product_table tbody tr').length;i++){
-                               q+= Number($($(".product_row")[i].children[3].children[1]).val())
-                           }
-                           $('.items_product_count').text(q);
-                       },1000)
+                        setTimeout(t => {
+                            for (i = 0; i < $('#product_table tbody tr').length; i++) {
+                                q += Number($($(".product_row")[i].children[3].children[1]).val())
+                            }
+                            $('.items_product_count').text(q);
+                        }, 1000)
 
 
 
@@ -223,7 +258,7 @@
                 });
             }
         }
-        $(document).on("click", ".remove_product_row", function () {
+        $(document).on("click", ".remove_product_row", function() {
             let index = $(this).data("index");
             let q = 0;
             $(this).closest("tr").remove();
@@ -231,8 +266,8 @@
             $(".bounce_details_td_" + index).remove();
 
 
-            for(i=0;i < $('#product_table tbody tr').length;i++){
-                q+= Number($($(".product_row")[i].children[3].children[1]).val())
+            for (i = 0; i < $('#product_table tbody tr').length; i++) {
+                q += Number($($(".product_row")[i].children[3].children[1]).val())
             }
             $('.items_product_count').text(q);
 
@@ -253,11 +288,11 @@
             product_table.ajax.reload();
         })
         @if (!empty($product_id) && !empty($variation_id))
-        $(document).ready(function(){
-            $('.items_quantity_count').text(0);
-            get_label_product_row({{ $product_id }},{{ $variation_id }});
+            $(document).ready(function() {
+                $('.items_quantity_count').text(0);
+                get_label_product_row({{ $product_id }}, {{ $variation_id }});
 
-        })
+            })
         @endif
         $('#po_no').change(function() {
             let po_no = $(this).val();
@@ -384,26 +419,26 @@
         })
 
 
-        $(document).ready(function () {
-            $("#submit-btn").on("click", function (e) {
+        $(document).ready(function() {
+            $("#submit-btn").on("click", function(e) {
                 e.preventDefault();
                 if ($("#product-edit-form").valid()) {
                     $.ajax({
                         type: "POST",
                         url: $("#product-edit-form").attr("action"),
-                        data:  $("#product-edit-form").serialize(),
-                        success: function (response) {
+                        data: $("#product-edit-form").serialize(),
+                        success: function(response) {
                             if (response.success) {
                                 swal("Success", response.msg, "success")
-                                setTimeout(t=>{
+                                setTimeout(t => {
                                     window.history.back()
-                                },2000)
+                                }, 2000)
                             }
                             if (!response.success) {
                                 swal("Error", response.msg, "error");
                             }
                         },
-                        error: function (response) {
+                        error: function(response) {
                             if (!response.success) {
                                 swal("Error", response.msg, "error");
                             }
@@ -413,10 +448,6 @@
                 }
             });
         });
-
-
-
-
     </script>
 
 
@@ -429,119 +460,119 @@
 
 
 
-{{--     select multi js--}}
+    {{--     select multi js --}}
 
-{{--        let data = [];--}}
-{{--        let Quantities = [];--}}
-{{--        $(document).ready(function () {--}}
-{{--            $("#submit-btn").on("click", function (e) {--}}
-{{--                e.preventDefault();--}}
-{{--                if ($("#product-edit-form").valid()) {--}}
-{{--                    $.ajax({--}}
-{{--                        type: "POST",--}}
-{{--                        url: $("#product-edit-form").attr("action"),--}}
-{{--                        data: {--}}
-{{--                            "store_id" :$("#store_id").val(),--}}
-{{--                            "manufacturer_id" :$("#manufacturer_id").val(),--}}
-{{--                            "product_quentity" :Quantities,--}}
-{{--                        },--}}
-{{--                        success: function (response) {--}}
-{{--                            if (response.success) {--}}
-{{--                                swal("Success", response.msg, "success")--}}
-{{--                            }--}}
-{{--                            if (!response.success) {--}}
-{{--                                swal("Error", response.msg, "error");--}}
-{{--                            }--}}
-{{--                        },--}}
-{{--                        error: function (response) {--}}
-{{--                            if (!response.success) {--}}
-{{--                                swal("Error", response.msg, "error");--}}
-{{--                            }--}}
-{{--                        },--}}
-{{--                    });--}}
+    {{--        let data = []; --}}
+    {{--        let Quantities = []; --}}
+    {{--        $(document).ready(function () { --}}
+    {{--            $("#submit-btn").on("click", function (e) { --}}
+    {{--                e.preventDefault(); --}}
+    {{--                if ($("#product-edit-form").valid()) { --}}
+    {{--                    $.ajax({ --}}
+    {{--                        type: "POST", --}}
+    {{--                        url: $("#product-edit-form").attr("action"), --}}
+    {{--                        data: { --}}
+    {{--                            "store_id" :$("#store_id").val(), --}}
+    {{--                            "manufacturer_id" :$("#manufacturer_id").val(), --}}
+    {{--                            "product_quentity" :Quantities, --}}
+    {{--                        }, --}}
+    {{--                        success: function (response) { --}}
+    {{--                            if (response.success) { --}}
+    {{--                                swal("Success", response.msg, "success") --}}
+    {{--                            } --}}
+    {{--                            if (!response.success) { --}}
+    {{--                                swal("Error", response.msg, "error"); --}}
+    {{--                            } --}}
+    {{--                        }, --}}
+    {{--                        error: function (response) { --}}
+    {{--                            if (!response.success) { --}}
+    {{--                                swal("Error", response.msg, "error"); --}}
+    {{--                            } --}}
+    {{--                        }, --}}
+    {{--                    }); --}}
 
-{{--                }--}}
-{{--            });--}}
-{{--            });--}}
+    {{--                } --}}
+    {{--            }); --}}
+    {{--            }); --}}
 
-{{--            $(document).on("change", "#product_ids", function (e) {--}}
+    {{--            $(document).on("change", "#product_ids", function (e) { --}}
 
-{{--                if(data.length < $(this).val().length){--}}
-{{--                    let product_current;--}}
-{{--                    $(this).val().forEach(e=>{--}}
-{{--                        if (data.filter(function(g) { return g.id == e; }).length == 0) {--}}
-{{--                            product_current =e;--}}
-{{--                        }--}}
-{{--                    })--}}
-{{--                    // select added new value--}}
-{{--                    $("#product-modal tbody").empty()--}}
-{{--                    $("#product-modal tbody").append(`--}}
-{{--                <tr>--}}
-{{--                        <td>--}}
-{{--                            ${data.length == 0 ? $('#product_'+$(this).val()[0]).attr('name'): $('#product_'+product_current).attr('name')}--}}
-{{--                        </td>--}}
-{{--                        <td>--}}
-{{--                              ${data.length == 0 ? $('#product_'+$(this).val()[0]).attr('stock'): $('#product_'+product_current).attr('stock')}--}}
-{{--                        </td>--}}
-{{--                        <td>--}}
-{{--                            <input class="form-control" type="number" id="product_quantity">--}}
-{{--                            <input type="hidden" id="product_stock" value=" ${data.length == 0 ? $('#product_'+$(this).val()[0]).attr('stock'): $('#product_'+product_current).attr('stock')}">--}}
-{{--                            <input type="hidden" id="product_id" value=" ${data.length == 0 ? $('#product_'+$(this).val()[0]).val(): $('#product_'+product_current).val()}">--}}
-{{--                        </td>--}}
-{{--                        <td>--}}
-{{--                            GM--}}
-{{--                        </td>--}}
-{{--                    </tr>--}}
-{{--                `)--}}
-{{--                    $("#ProductsModal").modal("show")--}}
-{{--                }else{--}}
-{{--                    // select  remove old  value--}}
+    {{--                if(data.length < $(this).val().length){ --}}
+    {{--                    let product_current; --}}
+    {{--                    $(this).val().forEach(e=>{ --}}
+    {{--                        if (data.filter(function(g) { return g.id == e; }).length == 0) { --}}
+    {{--                            product_current =e; --}}
+    {{--                        } --}}
+    {{--                    }) --}}
+    {{--                    // select added new value --}}
+    {{--                    $("#product-modal tbody").empty() --}}
+    {{--                    $("#product-modal tbody").append(` --}}
+    {{--                <tr> --}}
+    {{--                        <td> --}}
+    {{--                            ${data.length == 0 ? $('#product_'+$(this).val()[0]).attr('name'): $('#product_'+product_current).attr('name')} --}}
+    {{--                        </td> --}}
+    {{--                        <td> --}}
+    {{--                              ${data.length == 0 ? $('#product_'+$(this).val()[0]).attr('stock'): $('#product_'+product_current).attr('stock')} --}}
+    {{--                        </td> --}}
+    {{--                        <td> --}}
+    {{--                            <input class="form-control" type="number" id="product_quantity"> --}}
+    {{--                            <input type="hidden" id="product_stock" value=" ${data.length == 0 ? $('#product_'+$(this).val()[0]).attr('stock'): $('#product_'+product_current).attr('stock')}"> --}}
+    {{--                            <input type="hidden" id="product_id" value=" ${data.length == 0 ? $('#product_'+$(this).val()[0]).val(): $('#product_'+product_current).val()}"> --}}
+    {{--                        </td> --}}
+    {{--                        <td> --}}
+    {{--                            GM --}}
+    {{--                        </td> --}}
+    {{--                    </tr> --}}
+    {{--                `) --}}
+    {{--                    $("#ProductsModal").modal("show") --}}
+    {{--                }else{ --}}
+    {{--                    // select  remove old  value --}}
 
-{{--                    console.log("$(this).val()",$(this).val())--}}
-{{--                    if($(this).val().length == 0){--}}
-{{--                        Quantities =[];--}}
-{{--                    }else{--}}
-{{--                        Quantities.forEach(a=>{--}}
-{{--                            if ($(this).val().filter(function(g) { return g == a.product_id; }).length == 0) {--}}
-{{--                                const index = Quantities.indexOf(a);--}}
-{{--                                if (index > -1) {--}}
-{{--                                    Quantities.splice(index, 1);--}}
-{{--                                }--}}
-{{--                            }--}}
-{{--                        })--}}
-{{--                    }--}}
+    {{--                    console.log("$(this).val()",$(this).val()) --}}
+    {{--                    if($(this).val().length == 0){ --}}
+    {{--                        Quantities =[]; --}}
+    {{--                    }else{ --}}
+    {{--                        Quantities.forEach(a=>{ --}}
+    {{--                            if ($(this).val().filter(function(g) { return g == a.product_id; }).length == 0) { --}}
+    {{--                                const index = Quantities.indexOf(a); --}}
+    {{--                                if (index > -1) { --}}
+    {{--                                    Quantities.splice(index, 1); --}}
+    {{--                                } --}}
+    {{--                            } --}}
+    {{--                        }) --}}
+    {{--                    } --}}
 
-{{--                    console.log(Quantities)--}}
+    {{--                    console.log(Quantities) --}}
 
-{{--                }--}}
+    {{--                } --}}
 
-{{--                data = [];--}}
-{{--                product_ids = $(this).val();--}}
-{{--                product_ids.forEach(e => {--}}
-{{--                    data.push({--}}
-{{--                        "id": e,--}}
-{{--                        "name": $('#product_' + e).attr('name'),--}}
-{{--                        "stock": $('#product_' + e).attr('stock')--}}
-{{--                    })--}}
-{{--                });--}}
+    {{--                data = []; --}}
+    {{--                product_ids = $(this).val(); --}}
+    {{--                product_ids.forEach(e => { --}}
+    {{--                    data.push({ --}}
+    {{--                        "id": e, --}}
+    {{--                        "name": $('#product_' + e).attr('name'), --}}
+    {{--                        "stock": $('#product_' + e).attr('stock') --}}
+    {{--                    }) --}}
+    {{--                }); --}}
 
-{{--            });--}}
-{{--            $(document).on("click", "#addQuantity", function (e) {--}}
-{{--                let userQuantity= Number($("#product_quantity").val());--}}
-{{--                let product_stock= Number($("#product_stock").val());--}}
-{{--                let product_id= Number($("#product_id").val());--}}
-{{--                if(userQuantity == null || userQuantity==''){--}}
-{{--                    swal("Error", "Please Fill Quantity Input", "error");--}}
-{{--                }else if(userQuantity > product_stock){--}}
-{{--                    swal("Error", "Sorry Out Of Stock", "error");--}}
-{{--                }else{--}}
-{{--                    Quantities.push({--}}
-{{--                        "product_id" :product_id,--}}
-{{--                        "quantity" :userQuantity,--}}
-{{--                    })--}}
-{{--                    // console.log(Quantities)--}}
-{{--                    swal("Success", 'Quantity Added Successfully', "success");--}}
-{{--                    $("#ProductsModal").modal("hide")--}}
-{{--                }--}}
-{{--            });--}}
+    {{--            }); --}}
+    {{--            $(document).on("click", "#addQuantity", function (e) { --}}
+    {{--                let userQuantity= Number($("#product_quantity").val()); --}}
+    {{--                let product_stock= Number($("#product_stock").val()); --}}
+    {{--                let product_id= Number($("#product_id").val()); --}}
+    {{--                if(userQuantity == null || userQuantity==''){ --}}
+    {{--                    swal("Error", "Please Fill Quantity Input", "error"); --}}
+    {{--                }else if(userQuantity > product_stock){ --}}
+    {{--                    swal("Error", "Sorry Out Of Stock", "error"); --}}
+    {{--                }else{ --}}
+    {{--                    Quantities.push({ --}}
+    {{--                        "product_id" :product_id, --}}
+    {{--                        "quantity" :userQuantity, --}}
+    {{--                    }) --}}
+    {{--                    // console.log(Quantities) --}}
+    {{--                    swal("Success", 'Quantity Added Successfully', "success"); --}}
+    {{--                    $("#ProductsModal").modal("hide") --}}
+    {{--                } --}}
+    {{--            }); --}}
 @endpush

@@ -1,27 +1,43 @@
 @extends('layouts.app')
 @section('title', __('lang.customer'))
+@section('style')
+    <link rel="stylesheet" type="text/css" href="{{ url('front/css/stock.css') }}">
+@endsection
 @section('content')
-    <section class="forms">
+    <section class="forms py-0">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.add_customer')</h4>
+                <div class="col-md-12 px-1">
+                    <div
+                        class="d-flex align-items-center my-2 @if (app()->isLocale('ar')) justify-content-end @else justify-content-start @endif">
+                        <h5 class="mb-0 position-relative" style="margin-right: 30px">
+                            @lang('lang.add_customer')
+                            <span class="header-pill"></span>
+                        </h5>
+                    </div>
+                    <div class="card mb-2 d-flex flex-row justify-content-center align-items-center">
+                        <p class="italic mb-0 py-1">
+                            <small>@lang('lang.required_fields_info')</small>
+                        <div style="width: 30px;height: 30px;">
+                            <img class="w-100 h-100" src="{{ asset('front/images/icons/warning.png') }}" alt="warning!">
                         </div>
-                        <div class="card-body">
-                            <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
-                            {!! Form::open(['url' => action('CustomerController@store'), 'id' => 'customer-form', 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
-
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-2">
+                            {!! Form::open([
+                                'url' => action('CustomerController@store'),
+                                'id' => 'customer-form',
+                                'method' => 'POST',
+                                'class' => '',
+                                'enctype' => 'multipart/form-data',
+                            ]) !!}
                             @include('customer.partial.create_customer_form')
 
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <input type="submit" value="{{ trans('lang.save') }}" id="submit-btn"
-                                            class="btn btn-primary">
-                                    </div>
+                            <div class="row my-2 justify-content-center align-items-center">
+                                <div class="col-md-4">
+                                    <input type="submit" value="{{ trans('lang.save') }}" id="submit-btn" class="btn py-1">
                                 </div>
                             </div>
                             {!! Form::close() !!}
@@ -35,6 +51,34 @@
 @endsection
 
 @section('javascript')
+    <script src="{{ asset('front/js/bootstrap.min.js') }}"></script>
+
+
+    <script>
+        // Add an event listener for the 'show.bs.collapse' and 'hide.bs.collapse' events
+        $('#importantDatesCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#importantDatesCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#importantDatesCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#importantDatesCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+        $('#referralCollapse').on('show.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-up' when the content is expanded
+            $('button[data-bs-target="#referralCollapse"] i').removeClass('fa-arrow-down').addClass(
+                'fa-arrow-up');
+        });
+
+        $('#referralCollapse').on('hide.bs.collapse', function() {
+            // Change the arrow icon to 'chevron-down' when the content is collapsed
+            $('button[data-bs-target="#referralCollapse"] i').removeClass('fa-arrow-up').addClass(
+                'fa-arrow-down');
+        });
+    </script>
     <script src="{{ asset('js/customer_pst.js') }}"></script>
     <script type="text/javascript">
         $('#customer-type-form').submit(function() {
@@ -153,4 +197,5 @@
             todayHighlight: true,
         });
     </script>
+
 @endsection

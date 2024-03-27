@@ -195,3 +195,19 @@ input.form-control-custom:checked+label::before {
     color: #888 !important;
     border-radius: 6px !important;
 }
+
+.select_product_button {
+    border: none;
+    outline: none;
+    background-color: #cbe7cc;
+    border-radius: 6px;
+    padding: 0px 12px;
+    transition: 0.6s;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.select_product_button:hover {
+    background-color: #21912A;
+    color: white;
+}
