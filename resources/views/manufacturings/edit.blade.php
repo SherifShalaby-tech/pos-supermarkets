@@ -1,9 +1,11 @@
 @extends('layouts.app')
 @section('title', __('lang.raw_materials'))
-
+@section('style')
+    <link rel="stylesheet" type="text/css" href="{{ url('front/css/stock.css') }}">
+@endsection
 @section('content')
 
-    <section class="forms">
+    <section class="forms py-0">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
@@ -13,19 +15,25 @@
                         </div>
                         <div class="card-body">
                             <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
-                            {!! Form::open(['url' =>action('ManufacturingController@updates'), 'id' =>'product-edit-form', 'method'=>'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
+                            {!! Form::open([
+                                'url' => action('ManufacturingController@updates'),
+                                'id' => 'product-edit-form',
+                                'method' => 'POST',
+                                'class' => '',
+                                'enctype' => 'multipart/form-data',
+                            ]) !!}
                             <input type="hidden" name="store_id" value="{{ $manufacturing->store->id }}">
                             <input type="hidden" name="manufacturer_id" value="{{ $manufacturing->manufacturer->id }}">
                             <input type="hidden" name="manufacturing_id" value="{{ $manufacturing->id }}">
-                            <input type="hidden" id="product_ids" name="product_ids" value="{{ json_encode($product_ids) }}">
+                            <input type="hidden" id="product_ids" name="product_ids"
+                                value="{{ json_encode($product_ids) }}">
                             <div class="row">
                                 <div class="col-md-6">
                                     {!! Form::label('store_id', __('lang.store'), []) !!}
                                     <div class="input-group my-group">
                                         <select required name="store_id" id="store_id"
-                                                class='select_product_ids selectpicker  form-control'
-                                                data-live-search='true' style='width: 30%;'
-                                                placeholder="{{__('lang.please_select')}}">
+                                            class='select_product_ids selectpicker  form-control' data-live-search='true'
+                                            style='width: 30%;' placeholder="{{ __('lang.please_select') }}">
 
                                             <option selected disabled value="{{ $manufacturing->store->id }}">
                                                 {{ $manufacturing->store->name }}
@@ -37,9 +45,8 @@
                                     {!! Form::label('manufacturer_id', __('lang.manufacturer'), []) !!}
                                     <div class="input-group my-group">
                                         <select required name="manufacturer_id" id="manufacturer_id"
-                                                class='select_product_ids selectpicker  form-control'
-                                                data-live-search='true' style='width: 30%;'
-                                                placeholder="{{__('lang.please_select')}}">
+                                            class='select_product_ids selectpicker  form-control' data-live-search='true'
+                                            style='width: 30%;' placeholder="{{ __('lang.please_select') }}">
                                             <option selected disabled value="{{ $manufacturing->manufacturer->id }}">
                                                 {{ $manufacturing->manufacturer->name }}
                                             </option>
@@ -53,100 +60,99 @@
                             <br>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table class="table table-bordered table-striped table-condensed"
-                                           id="product_table">
+                                    <table class="table table-bordered table-striped table-condensed" id="product_table">
                                         <thead>
-                                        <tr>
+                                            <tr>
 
-                                            <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
-                                            <th style="width: 10%" class="col-sm-8">@lang( 'lang.products' )</th>
-                                            <th style="width: 10%" class="col-sm-8">@lang( 'lang.status' )</th>
-                                            <th style="width: 5%" class="col-sm-4">@lang( 'lang.quantity' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.unit' )</th>
-                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
-                                        </tr>
+                                                <th style="width: 7%" class="col-sm-8">@lang('lang.image')</th>
+                                                <th style="width: 10%" class="col-sm-8">@lang('lang.products')</th>
+                                                <th style="width: 10%" class="col-sm-8">@lang('lang.status')</th>
+                                                <th style="width: 5%" class="col-sm-4">@lang('lang.quantity')</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang('lang.unit')</th>
+                                                <th style="width: 10%" class="col-sm-4">@lang('lang.action')</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        @if(isset($underManufacturings) && count($underManufacturings) >0)
-                                            @foreach($underManufacturings as $material)
-                                                <tr>
-                                                    <td>
-                                                        <img
-                                                            src="@if(!empty($material->product->getFirstMediaUrl('product'))){{$material->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                                                            alt="photo" width="50" height="50"></td>
-                                                    </td>
-                                                    <td>
-                                                        {{$material->product->name}}
-                                                    </td>
-                                                    <td>
-                                                        {{$material->status == "1" ?  __('lang.manufactured') : __('lang.underManufacturing') }}
-                                                    </td>
-                                                    <input type="hidden" id="product_stock_{{$material->product->id}}" value="{{ $material->product->product_stores->first()->qty_available }} ">
-                                                    <td>
+                                            @if (isset($underManufacturings) && count($underManufacturings) > 0)
+                                                @foreach ($underManufacturings as $material)
+                                                    <tr>
+                                                        <td>
+                                                            <img src="@if (!empty($material->product->getFirstMediaUrl('product'))) {{ $material->product->getFirstMediaUrl('product') }}@else{{ asset('/uploads/' . session('logo')) }} @endif"
+                                                                alt="photo" width="50" height="50">
+                                                        </td>
+                                                        </td>
+                                                        <td>
+                                                            {{ $material->product->name }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $material->status == '1' ? __('lang.manufactured') : __('lang.underManufacturing') }}
+                                                        </td>
                                                         <input type="hidden"
-                                                               class="form-control quantity product_{{$material->product->id}}"
-                                                               id="input_product_status_{{$material->product->id}}"
-                                                               name="product_material_under_manufactured[{{$material->product->id}}][status]"
-                                                               required
-                                                               value="{{ $material->status }}">
-                                                        <input type="text"
-                                                               class="form-control quantity product_{{$material->product->id}}"
-                                                               id="input_product_{{$material->product->id}}"
-                                                               name="product_material_under_manufactured[{{$material->product->id}}][quantity]"
-                                                               required
-                                                               value="{{ $material->quantity }}">
-                                                    </td>
-                                                    <td>
+                                                            id="product_stock_{{ $material->product->id }}"
+                                                            value="{{ $material->product->product_stores->first()->qty_available }} ">
+                                                        <td>
+                                                            <input type="hidden"
+                                                                class="form-control quantity product_{{ $material->product->id }}"
+                                                                id="input_product_status_{{ $material->product->id }}"
+                                                                name="product_material_under_manufactured[{{ $material->product->id }}][status]"
+                                                                required value="{{ $material->status }}">
+                                                            <input type="text"
+                                                                class="form-control quantity product_{{ $material->product->id }}"
+                                                                id="input_product_{{ $material->product->id }}"
+                                                                name="product_material_under_manufactured[{{ $material->product->id }}][quantity]"
+                                                                required value="{{ $material->quantity }}">
+                                                        </td>
+                                                        <td>
 
-                                                    </td>
-                                                    <td>
-                                                        <button style="margin-top: 33px;" type="button"
+                                                        </td>
+                                                        <td>
+                                                            <button style="margin-top: 33px;" type="button"
                                                                 class="btn btn-danger btn-sx remove_product_row"><i
-                                                                class="fa fa-times"></i></button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
+                                                                    class="fa fa-times"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
 
-                                        @if(isset($manufactureds) && count($manufactureds) >0)
-                                            @foreach($manufactureds as $material)
-                                                <tr>
-                                                    <td>
-                                                        <img
-                                                            src="@if(!empty($material->product->getFirstMediaUrl('product'))){{$material->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                                                            alt="photo" width="50" height="50"></td>
-                                                    </td>
-                                                    <td>
-                                                        {{$material->product->name}}
-                                                    </td>
-                                                    <td>
-                                                        {{$material->status == "1" ?  __('lang.manufactured') : __('lang.underManufacturing') }}
-                                                    </td>
-                                                    <input type="hidden" id="product_stock_{{$material->product->id}}" value="{{ $material->product->product_stores->first()->qty_available }} ">
-                                                    <td>
+                                            @if (isset($manufactureds) && count($manufactureds) > 0)
+                                                @foreach ($manufactureds as $material)
+                                                    <tr>
+                                                        <td>
+                                                            <img src="@if (!empty($material->product->getFirstMediaUrl('product'))) {{ $material->product->getFirstMediaUrl('product') }}@else{{ asset('/uploads/' . session('logo')) }} @endif"
+                                                                alt="photo" width="50" height="50">
+                                                        </td>
+                                                        </td>
+                                                        <td>
+                                                            {{ $material->product->name }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $material->status == '1' ? __('lang.manufactured') : __('lang.underManufacturing') }}
+                                                        </td>
                                                         <input type="hidden"
-                                                               class="form-control quantity product_{{$material->product->id}}"
-                                                               id="input_product_status_{{$material->product->id}}"
-                                                               name="product_material_recived[{{$material->product->id}}][status]"
-                                                               required
-                                                               value="{{ $material->status }}">
-                                                        <input type="text"
-                                                               class="form-control quantity product_{{$material->product->id}}"
-                                                               id="input_product_{{$material->product->id}}"
-                                                               name="product_material_recived[{{$material->product->id}}][quantity]"
-                                                               required
-                                                               value="{{ $material->quantity }}">
-                                                    </td>
-                                                    <td>
-                                                    </td>
-                                                    <td>
-                                                        <button style="margin-top: 33px;" type="button"
+                                                            id="product_stock_{{ $material->product->id }}"
+                                                            value="{{ $material->product->product_stores->first()->qty_available }} ">
+                                                        <td>
+                                                            <input type="hidden"
+                                                                class="form-control quantity product_{{ $material->product->id }}"
+                                                                id="input_product_status_{{ $material->product->id }}"
+                                                                name="product_material_recived[{{ $material->product->id }}][status]"
+                                                                required value="{{ $material->status }}">
+                                                            <input type="text"
+                                                                class="form-control quantity product_{{ $material->product->id }}"
+                                                                id="input_product_{{ $material->product->id }}"
+                                                                name="product_material_recived[{{ $material->product->id }}][quantity]"
+                                                                required value="{{ $material->quantity }}">
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                        <td>
+                                                            <button style="margin-top: 33px;" type="button"
                                                                 class="btn btn-danger btn-sx remove_product_row"><i
-                                                                class="fa fa-times"></i></button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
+                                                                    class="fa fa-times"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>
@@ -157,10 +163,10 @@
                             <div class="row">
                                 <div class="col-md-4 mt-5">
                                     <div class="form-group">
-                                        <input type="button" value="{{trans('lang.edit')}}" id="submit-btns"
-                                               class="btn btn-primary mr-3">
-                                        <a href="{{ route("manufacturing-s.index") }}"
-                                           class="btn btn-danger">{{trans('lang.cancel')}}</a>
+                                        <input type="button" value="{{ trans('lang.edit') }}" id="submit-btns"
+                                            class="btn btn-primary mr-3">
+                                        <a href="{{ route('manufacturing-s.index') }}"
+                                            class="btn btn-danger">{{ trans('lang.cancel') }}</a>
                                     </div>
                                 </div>
                             </div>
@@ -174,41 +180,40 @@
 @endsection
 
 @push('javascripts')
-
     <script src="{{ asset('js/add_stock.js') }}"></script>
     <script src="{{ asset('js/product_selection_manufacturing.js') }}"></script>
     <script type="text/javascript">
+        $(document).ready(function() {
 
-        $(document).ready(function () {
-
-              let product_ids =JSON.parse($("#product_ids").val()) ;
-              for (var key in product_ids) {
-                  if (product_ids.hasOwnProperty(key)) {
-                      console.log($("#input_product_" + key).val())
-                      let product_id = key;
-                      let quentity =  Number(product_ids[key]);
-                      let stock = Number($("#product_stock_"+product_id).val())
-                      let status = $("#input_product_"+product_id).val()
-                      $("#input_product_" + product_id).on('keyup', function (e) {
-                          setTimeout(g=>{
-                              if(Number($("#input_product_"+product_id).val()) == 0){
-                                  $("#input_product_"+product_id).val(1)
-                                  swal("Error", "Sorry You Should enter quentity more than 0", "error");
-                              }
-                          },5000)
-                          if( Number($("#input_product_" + product_id).val()) > (quentity+stock)){
-                              $("#input_product_" + product_id).val(1)
-                              swal("Error", "Sorry Out Of Stock", "error");
-                          }
-                      })
-                  }
-              }
+            let product_ids = JSON.parse($("#product_ids").val());
+            for (var key in product_ids) {
+                if (product_ids.hasOwnProperty(key)) {
+                    console.log($("#input_product_" + key).val())
+                    let product_id = key;
+                    let quentity = Number(product_ids[key]);
+                    let stock = Number($("#product_stock_" + product_id).val())
+                    let status = $("#input_product_" + product_id).val()
+                    $("#input_product_" + product_id).on('keyup', function(e) {
+                        setTimeout(g => {
+                            if (Number($("#input_product_" + product_id).val()) == 0) {
+                                $("#input_product_" + product_id).val(1)
+                                swal("Error", "Sorry You Should enter quentity more than 0",
+                                    "error");
+                            }
+                        }, 5000)
+                        if (Number($("#input_product_" + product_id).val()) > (quentity + stock)) {
+                            $("#input_product_" + product_id).val(1)
+                            swal("Error", "Sorry Out Of Stock", "error");
+                        }
+                    })
+                }
+            }
 
 
         })
 
 
-        $(document).on("click", ".remove_product_row", function () {
+        $(document).on("click", ".remove_product_row", function() {
 
         })
 
@@ -221,7 +226,7 @@
             //Search for variation id in each row of pos table
             $("#product_table tbody")
                 .find("tr")
-                .each(function () {
+                .each(function() {
                     var row_v_id = $(this).find(".variation_id").val();
                     if (row_v_id == variation_id && !is_added) {
                         add_via_ajax = false;
@@ -253,7 +258,7 @@
                         store_id: store_id,
                         currency_id: currency_id,
                     },
-                    success: function (result) {
+                    success: function(result) {
                         $('.items_quantity_count').text(0);
                         $("table#product_table tbody").prepend(result);
 
@@ -281,7 +286,7 @@
             }
         }
 
-        $(document).on("click", ".remove_product_row", function () {
+        $(document).on("click", ".remove_product_row", function() {
             let index = $(this).data("index");
             let q = 0;
             $(this).closest("tr").remove();
@@ -301,22 +306,22 @@
             calculate_sub_totals();
             reset_row_numbering();
         });
-        $(document).on('click', '#add-selected-btn', function () {
+        $(document).on('click', '#add-selected-btn', function() {
             $('#select_products_modal').modal('hide');
-            $.each(product_selected, function (index, value) {
+            $.each(product_selected, function(index, value) {
                 get_label_product_row(value.product_id, value.variation_id);
             });
             product_selected = [];
             product_table.ajax.reload();
         })
         @if (!empty($product_id) && !empty($variation_id))
-        $(document).ready(function () {
-            $('.items_quantity_count').text(0);
-            get_label_product_row({{ $product_id }}, {{ $variation_id }});
+            $(document).ready(function() {
+                $('.items_quantity_count').text(0);
+                get_label_product_row({{ $product_id }}, {{ $variation_id }});
 
-        })
+            })
         @endif
-        $('#po_no').change(function () {
+        $('#po_no').change(function() {
             let po_no = $(this).val();
 
             if (po_no) {
@@ -325,14 +330,14 @@
                     url: '/add-stock/get-purchase-order-details/' + po_no,
                     data: {},
                     contentType: 'html',
-                    success: function (result) {
+                    success: function(result) {
                         $("table#product_table tbody").empty().append(result);
                         calculate_sub_totals()
                     },
                 });
             }
         });
-        $(document).on("click", '#submit-btn-add-product', function (e) {
+        $(document).on("click", '#submit-btn-add-product', function(e) {
             e.preventDefault();
             var sku = $('#sku').val();
             if ($("#product-form-quick-add").valid()) {
@@ -341,7 +346,7 @@
                     type: "POST",
                     url: "/product",
                     data: $("#product-form-quick-add").serialize(),
-                    success: function (response) {
+                    success: function(response) {
                         if (response.success) {
                             swal("Success", response.msg, "success");
                             $("#search_product").val(sku);
@@ -349,7 +354,7 @@
                             $('.view_modal').modal('hide');
                         }
                     },
-                    error: function (response) {
+                    error: function(response) {
                         if (!response.success) {
                             swal("Error", response.msg, "error");
                         }
@@ -357,14 +362,14 @@
                 });
             }
         });
-        $(document).on("change", "#category_id", function () {
+        $(document).on("change", "#category_id", function() {
             $.ajax({
                 method: "get",
                 url: "/category/get-sub-category-dropdown?category_id=" +
                     $("#category_id").val(),
                 data: {},
                 contentType: "html",
-                success: function (result) {
+                success: function(result) {
                     $("#sub_category_id").empty().append(result).change();
                     $("#sub_category_id").selectpicker("refresh");
 
@@ -374,7 +379,7 @@
                 },
             });
         });
-        $('#payment_status').change(function () {
+        $('#payment_status').change(function() {
             var payment_status = $(this).val();
 
             if (payment_status === 'paid' || payment_status === 'partial') {
@@ -403,7 +408,7 @@
                 $('.due_fields').addClass('hide');
             }
         })
-        $('#method').change(function () {
+        $('#method').change(function() {
             var method = $(this).val();
 
             if (method === 'cash') {
@@ -415,17 +420,17 @@
             }
         });
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#payment_status').change();
             $('#source_type').change();
         })
-        $('#source_type').change(function () {
+        $('#source_type').change(function() {
             if ($(this).val() !== '') {
                 $.ajax({
                     method: 'get',
                     url: '/add-stock/get-source-by-type-dropdown/' + $(this).val(),
                     data: {},
-                    success: function (result) {
+                    success: function(result) {
                         $("#source_id").empty().append(result);
                         $("#source_id").selectpicker("refresh");
                     },
@@ -433,7 +438,7 @@
             }
         });
 
-        $(document).on('change', '.expiry_date', function () {
+        $(document).on('change', '.expiry_date', function() {
             if ($(this).val() != '') {
                 let tr = $(this).parents('tr');
                 tr.find('.days_before_the_expiry_date').val(15);
@@ -441,19 +446,20 @@
         })
 
 
-        $(document).ready(function () {
-            $("#submit-btns").on("click", function (e) {
+        $(document).ready(function() {
+            $("#submit-btns").on("click", function(e) {
                 e.preventDefault();
                 if ($('#product_table tbody tr').length > 0) {
                     $.ajax({
                         type: "POST",
                         url: $("#product-edit-form").attr("action"),
                         data: $("#product-edit-form").serialize(),
-                        success: function (response) {
+                        success: function(response) {
                             if (response.success) {
                                 swal("Success", response.msg, "success")
                                 setTimeout(t => {
-                                    window.location.href = "{{ action('ManufacturingController@index')}}";
+                                    window.location.href =
+                                        "{{ action('ManufacturingController@index') }}";
                                 }, 2000)
 
                             }
@@ -461,7 +467,7 @@
                                 swal("Error", response.msg, "error");
                             }
                         },
-                        error: function (response) {
+                        error: function(response) {
                             if (!response.success) {
                                 swal("Error", response.msg, "error");
                             }

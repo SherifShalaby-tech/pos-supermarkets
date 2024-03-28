@@ -23,26 +23,20 @@
                         </div>
                         </p>
                     </div>
-                    <div class="card">
-                        <div class="card-body p-2">
-                            {!! Form::open([
-                                'url' => action('CustomerController@store'),
-                                'id' => 'customer-form',
-                                'method' => 'POST',
-                                'class' => '',
-                                'enctype' => 'multipart/form-data',
-                            ]) !!}
-                            @include('customer.partial.create_customer_form')
-
-
-                            <div class="row my-2 justify-content-center align-items-center">
-                                <div class="col-md-4">
-                                    <input type="submit" value="{{ trans('lang.save') }}" id="submit-btn" class="btn py-1">
-                                </div>
-                            </div>
-                            {!! Form::close() !!}
+                    {!! Form::open([
+                        'url' => action('CustomerController@store'),
+                        'id' => 'customer-form',
+                        'method' => 'POST',
+                        'class' => '',
+                        'enctype' => 'multipart/form-data',
+                    ]) !!}
+                    @include('customer.partial.create_customer_form')
+                    <div class="row my-2 justify-content-center align-items-center">
+                        <div class="col-md-4">
+                            <input type="submit" value="{{ trans('lang.save') }}" id="submit-btn" class="btn py-1">
                         </div>
                     </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>

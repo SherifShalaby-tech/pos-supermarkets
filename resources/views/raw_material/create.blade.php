@@ -23,29 +23,26 @@
                         </div>
                         </p>
                     </div>
-                    <div class="card">
-                        <div class="card-body p-2">
-                            {!! Form::open([
-                                'url' => action('RawMaterialController@store'),
-                                'id' => 'product-form',
-                                'method' => 'POST',
-                                'class' => '',
-                                'enctype' => 'multipart/form-data',
-                            ]) !!}
-                            @include('raw_material.partial.create_raw_material_form')
-                            <input type="hidden" name="active" value="1">
-                            <div class="row my-2 justify-content-center align-items-center">
-                                <div class="col-md-4">
-                                    <input type="button" value="{{ trans('lang.submit') }}" id="submit-btn"
-                                        class="btn py-1">
-                                </div>
-                            </div>
-                            {!! Form::close() !!}
+
+                    {!! Form::open([
+                        'url' => action('RawMaterialController@store'),
+                        'id' => 'product-form',
+                        'method' => 'POST',
+                        'class' => '',
+                        'enctype' => 'multipart/form-data',
+                    ]) !!}
+                    @include('raw_material.partial.create_raw_material_form')
+                    <input type="hidden" name="active" value="1">
+                    <div class="row my-2 justify-content-center align-items-center">
+                        <div class="col-md-4">
+                            <input type="button" value="{{ trans('lang.submit') }}" id="submit-btn" class="btn py-1">
                         </div>
                     </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
+
     </section>
 
     <div class="modal fade" id="product_cropper_modal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
